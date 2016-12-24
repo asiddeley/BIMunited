@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <title>BIMsoup</title>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+ <!--link rel="stylesheet" href="bootstrap-3.3.5-dist/css/bootstrap.min.css"-->
+ <!--link rel="stylesheet" href="bootstrap-3.3.5-dist/css/custom.css"-->
+ 
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+ <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+ <!--script src="bootstrap-3.3.5-dist/js/bootstrap.min.js"></script-->
+  
+ <script data-main="javascript/BIMsoup.js" src="javascript/require/require.js"></script>
+ <!--script src="javascripts/require/require.js"></script-->
+
+ 
+<script type="text/javascript">
+
+	$(document).ready( function(){
+	
+		//B$ is a global variable to BIMsoup library
+		//BIM$=require(['javascripts/BIMsoup']);
+		//alert(bim$);//.hello();
+		//$(window).resize();
+		//canvasMax();
+		//alert(Cad);
+		
+		requirejs(['BIMsoup','jquery'],function(BIM,$){
+			BIM.allo("Andrew"); 
+			BIM.board($("#myCanvas"));
+			BIM.commandLineInput("#myInput");
+			BIM.database("database connection");
+			BIM.engage();
+		});
+
+	}); 
+</script>
+
+</head>
+<body>
+	
+<nav class="navbar navbar-sm">
+<div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+	<span class="sr-only">Toggle navigation</span>
+	<span class="icon-bar"></span>
+	<span class="icon-bar"></span>
+	<span class="icon-bar"></span>
+	</button>
+	<a class="navbar-brand" href="#">BIMsoup</a>
+    </div>
+    <!-- Rest of Navbar -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	<ul class="nav navbar-nav">
+	
+	<!-- DROPDOWN User -->		
+	<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+	User<span class="caret"></span></a>
+	<ul class="dropdown-menu">
+	<li><a href="#">Project</a></li>
+	<li role="separator" class="divider"></li>
+	<li><a href="#">Add</a></li>
+	<li><a href="#">Edit</a></li>
+	<li><a href="#">Delete</a></li>
+	<li role="separator" class="divider"></li>
+	<li><a href="#">Settings</a></li>
+	</ul>
+	</li>	
+	
+	
+	
+	<!-- DROPDOWN -->		
+	<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+	Project<span class="caret"></span></a>
+	<ul class="dropdown-menu">
+	<li><a href="#">Project</a></li>
+	<li role="separator" class="divider"></li>
+	<li><a href="#">New</a></li>
+	<li><a href="#">Open</a></li>
+	<li><a href="#">Print</a></li>
+	<li><a href="#">Save</a></li>
+	<li><a href="#">Save as</a></li>
+	<li role="separator" class="divider"></li>
+	<li><a href="#">Settings</a></li>
+	</ul>
+	</li>
+	
+	<!-- DROPDOWN -->	
+	<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+	Tools<span class="caret"></span></a>
+	<ul class="dropdown-menu">
+	<li><a href="#">Filer</a></li>
+	<li><a href="#">Finder</a></li>
+	<li><a href="#">Grapher</a></li>			
+	<li><a href="#">Picker</a></li>
+	<li><a href="#">Protractor</a></li>		
+	<li><a href="#">Ruler</a></li>
+	<li><a href="#">Selecter</a></li>
+	<li><a href="#">Spline</a></li>			
+	<li><a href="#">T-Square</a></li>			
+	<li><a href="#">Zoomer</a></li>
+	</ul>
+	</li>
+	
+	<!-- DROPDOWN Elements -->	
+	<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+	Parts<span class="caret"></span></a>
+	<ul class="dropdown-menu">
+	<li><a title="A line." href="#">
+	line</a></li>
+	<li role="separator" class="divider"></li>
+	<li><a title="An arc, arch, chord like element."   onclick="alert('bend');" href="#">
+	bend</a></li>
+	<li><a title="A rectangle." href="#">
+	boxx</a></li>
+	<li><a title="An instance of a lair or other compound, like an insert in other CAD apps." href="#">
+	link</a></li>
+	<li><a title="A bitmap, jpeg, png etc"  href="#">
+	mapp</a></li>			
+	<li><a title="A basic coordinate or point"  href="#">
+	node</a></li>
+	<li><a title="A circle, oval or pie like element" href="#">
+	oval</a></li>	
+	<li><a title="An open or closed group of arc and line segements, like a polyline in other CAD apps."  href="#">
+	path</a></li>
+	<li><a title="A text."   href="#">
+	text</a></li>
+	</ul>
+	</li>
+		
+
+	</ul>
+
+		
+	<form class="navbar-form navbar-left" role="search">
+	<div class="form-group">
+	<input id="myInput" type="text" class="form-control" placeholder="Command">
+	</div>
+	<button type="submit" class="btn btn-default">Go</button>
+	</form>
+		
+	<ul class="nav navbar-nav navbar-right">
+	<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+	Help<span class="caret"></span></a>
+	<ul class="dropdown-menu">
+	<li><a href="#">About</a></li>
+	<li><a href="#">item</a></li>
+	<li><a href="#">item</a></li>
+	<li role="separator" class="divider"></li>
+	<li><a href="#">item</a></li>
+	</ul>
+	</li>
+	</ul>
+	</div><!-- /.navbar-collapse -->
+</div><!-- /.container-fluid -->
+</nav>
+
+<canvas id="myCanvas" width="600" height="600" style="background:black"></canvas>
+
+</body>
+</html>

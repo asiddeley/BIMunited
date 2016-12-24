@@ -1,0 +1,215 @@
+<?php session_start();
+	//normally this is set during logon validation
+	$_SESSION['Role']="Arch";
+	$_SESSION['PermissionEdit']="true";
+	//include "Lib.php";
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <title>Caddeley</title>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+ <!--link rel="stylesheet" href="bootstrap-3.3.5-dist/css/bootstrap.min.css"-->
+ <!--link rel="stylesheet" href="bootstrap-3.3.5-dist/css/custom.css"-->
+ 
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+ <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+ <!--script src="bootstrap-3.3.5-dist/js/bootstrap.min.js"></script-->
+ 
+ <script src="Caddeley JS/sylvester.src.js"></script>
+ <script src="Caddeley JS/Caddeley.src.js"></script>
+
+ 
+<script type="text/javascript">
+	function roomDeficPage(floor, room){
+		alert("Hello");
+		//window.location.href="roomDeficPage.php?floor="+floor+"&room="+room;
+	}
+	
+	function roomDeficRange(floor, room1, room2){
+		alert("Hello");
+		//window.location.href="roomDeficRange.php?floor="+floor+"&room1="+room1+"&room2="+room2;
+	}
+	function caddeleyStart(){
+		//alert("Hello");
+		var c = document.getElementById("myCanvas");
+		var ctx = c.getContext("2d");
+
+		// Create gradient
+		var grd = ctx.createLinearGradient(0,0,200,0);
+		grd.addColorStop(0,"red");
+		grd.addColorStop(1,"white");
+
+		// Fill with gradient
+		//ctx.fillStyle = grd;
+		ctx.fillstyle="black"
+		ctx.fillRect(0,0,1500,1500);		
+	}
+	
+	function canvasMax(){
+		var c = $('#myCanvas');
+		var container = $(c).parent();
+		var w=$(container).width();
+		var h=0.25*w;
+		//var h=$(container).height();
+		c.attr('width', w); //max width
+		c.attr('height', h); //max height
+		//redraw contents
+		var ctx = c.get(0).getContext('2d');
+		ctx.fillstyle="black";
+		ctx.fillRect(0,0,w,h);
+	}
+	
+	$(document).ready( function(){
+		$(window).resize(canvasMax);
+		canvasMax();
+		alert(Cad);
+		//cad=new Caddeley();
+		//cad.msg();
+
+		//cad.addCanvas(cad,$('#myCanvas'),"test1");
+		//for (var i=0, i<25;i++){cad.clair.add(new cad.el.Line(clair));}
+
+		
+	}); 
+</script>
+
+</head>
+<body>
+	
+<nav class="navbar navbar-sm">
+<div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+	<span class="sr-only">Toggle navigation</span>
+	<span class="icon-bar"></span>
+	<span class="icon-bar"></span>
+	<span class="icon-bar"></span>
+	</button>
+	<a class="navbar-brand" href="#">BIMsoup</a>
+    </div>
+    <!-- Rest of Navbar -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	<ul class="nav navbar-nav">
+	
+	<!-- DROPDOWN File -->		
+	<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+	File<span class="caret"></span></a>
+	<ul class="dropdown-menu">
+	<li><a href="#">Project</a></li>
+	<li role="separator" class="divider"></li>
+	<li><a href="#">New</a></li>
+	<li><a href="#">Open</a></li>
+	<li><a href="#">Print</a></li>
+	<li><a href="#">Save</a></li>
+	<li><a href="#">Save as</a></li>
+	<li role="separator" class="divider"></li>
+	<li><a href="#">Settings</a></li>
+	</ul>
+	</li>
+	
+	<!-- DROPDOWN Instruments -->	
+	<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+	Instruments<span class="caret"></span></a>
+	<ul class="dropdown-menu">
+	<li><a href="#">Filer</a></li>
+	<li><a href="#">Finder</a></li>
+	<li><a href="#">Grapher</a></li>			
+	<li><a href="#">Picker</a></li>
+	<li><a href="#">Protractor</a></li>		
+	<li><a href="#">Ruler</a></li>
+	<li><a href="#">Selecter</a></li>
+	<li><a href="#">Spline</a></li>			
+	<li><a href="#">T-Square</a></li>			
+	<li><a href="#">Zoomer</a></li>
+	</ul>
+	</li>
+	
+	<!-- DROPDOWN Elements -->	
+	<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+	Elements<span class="caret"></span></a>
+	<ul class="dropdown-menu">
+	<li><a title="A line." href="#">
+	line</a></li>
+	<li role="separator" class="divider"></li>
+	<li><a title="An arc, arch, chord like element."   onclick="alert('bend');" href="#">
+	bend</a></li>
+	<li><a title="A rectangle." href="#">
+	boxx</a></li>
+	<li><a title="An instance of a lair or other compound, like an insert in other CAD apps." href="#">
+	link</a></li>
+	<li><a title="A bitmap, jpeg, png etc"  href="#">
+	mapp</a></li>			
+	<li><a title="A basic coordinate or point"  href="#">
+	node</a></li>
+	<li><a title="A circle, oval or pie like element" href="#">
+	oval</a></li>	
+	<li><a title="An open or closed group of arc and line segements, like a polyline in other CAD apps."  href="#">
+	path</a></li>
+	<li><a title="A text."   href="#">
+	text</a></li>
+	</ul>
+	</li>
+		
+	<!-- DROPDOWN Compounds -->	
+	<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+	Compounds<span class="caret"></span></a>
+	<ul class="dropdown-menu">
+	<li><a title="Basic container for elements and other lairs.  Like a layer in other CAD apps." href="#">
+	lair</a></li>
+	<li role="separator" class="divider"></li>		
+	<li><a title="Can be a glossary, legend, table, library"   href="#">
+	book</a></li>
+	<li class="disabled"><a title="Reserved." href="#">
+	font</a></li>	
+	<li><a title="Reserved." href="#">
+	item</a></li>	
+	<li><a title="Reserved." href="#">
+	list</a></li>	
+	<li><a title="An arrow, attribute, dimension, label, label-leader, text or auto-text like annotative-text in other CAD apps." href="#">
+	note</a></li>
+	<li><a title="Reserved." href="#">
+	part</a></li>	
+	<li><a title="Reserved." href="#">
+	tree</a></li>		
+	</ul>
+	</li>
+	</ul>
+
+		
+	<form class="navbar-form navbar-left" role="search">
+	<div class="form-group">
+	<input type="text" class="form-control" placeholder="Command">
+	</div>
+	<button type="submit" class="btn btn-default">Go</button>
+	</form>
+		
+	<ul class="nav navbar-nav navbar-right">
+	<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+	Help<span class="caret"></span></a>
+	<ul class="dropdown-menu">
+	<li><a href="#">About</a></li>
+	<li><a href="#">item</a></li>
+	<li><a href="#">item</a></li>
+	<li role="separator" class="divider"></li>
+	<li><a href="#">item</a></li>
+	</ul>
+	</li>
+	</ul>
+	</div><!-- /.navbar-collapse -->
+</div><!-- /.container-fluid -->
+</nav>
+
+<canvas id="myCanvas" width="600" height="600" ></canvas>
+
+</body>
+</html>
