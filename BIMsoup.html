@@ -21,17 +21,10 @@
 
 	$(document).ready( function(){
 	
-		//B$ is a global variable to BIMsoup library
-		//BIM$=require(['javascripts/BIMsoup']);
-		//alert(bim$);//.hello();
-		//$(window).resize();
-		//canvasMax();
-		//alert(Cad);
-		
 		requirejs(['BIMsoup','jquery'],function(BIM,$){
-			BIM.allo("Andrew"); 
-			BIM.board($("#myCanvas"));
-			BIM.commandLineInput("#myInput");
+			BIM.allo('andrew'); 
+			BIM.board($("#myCanvas").get(0));
+			BIM.command($("#myInput").get(0), $("#myConsole").get(0) );
 			BIM.database("database connection");
 			BIM.engage();
 		});
@@ -165,7 +158,7 @@
 </div><!-- /.container-fluid -->
 </nav>
 
-<canvas id="myCanvas" width="600" height="600" style="background:black"></canvas>
+<canvas id="myCanvas" width="600" height="300" style="background:black"></canvas>
 
 </body>
 </html>
