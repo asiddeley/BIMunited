@@ -3,22 +3,11 @@
 //babylon lights and camera
 
 var basicStage = {
-	// API
-	'addCamera':function(camera){this.aCamera.push(camera);},	
-	'addLight':function(light){this.aLights.push(light);},	
-	// storage
-	'aCamera':[],
-	'aLight':[],
+	'cameras':{},
+	'lights':{},
+	'matLib':{},
 	'name':'unnamed',
-	'setScene':function(scene, canvas){
-		for (var i=0; i<this.aCamera.length; i++){
-			this.aCamera[i].setScene(scene);
-			//this.aCamera[i].attachControl(canvas, false);
-		}
-		for (var i=0; i<this.aLight.length; i++){
-			this.aLight[i].setScene(scene, canvas);
-		}
-	},
+	'setScene':function(scene, canvas){ },
 	'type':'basicStage'
 };
 
@@ -41,17 +30,21 @@ return {
 
 	'basic':function(){
 		// basic stage with one hemi light and a free camera
-		var r=$.extend(basicStage, {'type':'basicS'});
+		var r=$.extend({}, basicStage);
 		// override setScene method
 		r.setScene=function(scene, canvas){
-			//alert('canvas '+ canvas);
-			var cam=new BABYLON.FreeCamera('freeCam1', new BABYLON.Vector3(0, 5,-10), scene);
-            // target the camera to scene origin
-            cam.setTarget(BABYLON.Vector3.Zero());
-            // attach the camera to the canvas
-            cam.attachControl(canvas, false);	
-			//alert('cam '+ cam);
-			var light=new BABYLON.HemisphericLight('hemi1', new BABYLON.Vector3(0,1,0), scene);
+			// Cameras
+			this.cameras.free=new BABYLON.FreeCamera('free', new BABYLON.Vector3(0, 5,-10), scene);
+            this.cameras.free.setTarget(BABYLON.Vector3.Zero());
+            this.cameras.free.attachControl(canvas, false);	
+			
+			// Lights
+			this.lights.hemi=new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0,1,0), scene);
+			
+			// Materials
+			this.matLib.picked=new BABYLON.StandardMaterial('picked', scene);
+			this.matLib.picked.diffuseColor = new BABYLON.Color3(255, 215, 0);
+			//this.matLib.picked.alpha=0.5;
 			
 		};		
 		return r;

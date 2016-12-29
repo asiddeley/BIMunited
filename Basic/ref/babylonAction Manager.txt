@@ -1,0 +1,25 @@
+Experimenting actions
+
+So basically, let's imagine you want to almost hide a mesh when the user touches it. First of all you have to add a BABYLON.ActionManager on it:
+
+mesh.actionManager = new BABYLON.ActionManager(scene);
+
+Then you can create an action that will be associated with the BABYLON.ActionManager.OnPickTrigger trigger. This action will interpolate the mesh.visibility property to 0.2:
+
+var action = new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPickTrigger, mesh, "visibility", 0.2, 1000);
+
+Then add this action to the mesh:
+
+mesh.actionManager.registerAction(action);
+
+And you're done! Easy, right?
+
+You can also chain another action to restore the mesh.visibility property to default value:
+
+var action = new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPickTrigger, mesh, "visibility", 0.2, 1000);
+
+var action2 = new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPickTrigger, mesh, "visibility", 1.0, 1000);
+
+mesh.actionManager.registerAction(action).then(action2);
+
+In this case, the first click will hide the button, the following click will restore it, and so on...
