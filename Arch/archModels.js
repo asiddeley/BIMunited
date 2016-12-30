@@ -46,8 +46,8 @@ define(
 		r.addPart( spheres.basic({'width':3, 'position':new v(4,0,0)}));
 		r.addPart( spheres.basic({'width':3, 'position':new v(6,0,0)}));
 
-		r.addPart( discs.basic() );
-		r.addPart( planes.basic() );
+		//r.addPart( discs.basic() );
+		//r.addPart( planes.basic() );
 		//alert('# parts '+r.aPart.length);
 		return r;
 	},

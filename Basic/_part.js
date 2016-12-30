@@ -20,7 +20,7 @@ function(babylon){
 return {
 	// properties
 	'name':'unnamed',
-	'mutable':false,
+	'mutable':true,
 	'partobj':null,
 	'position':new babylon.Vector3(0,0,0),
 	'segment':16,

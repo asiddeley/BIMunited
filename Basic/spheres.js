@@ -10,7 +10,8 @@
 
 var sphere={
 	'setScene':function(scene, canvas){
-		var baby=BABYLON.Mesh.CreateSphere(this.name, this.segment, this.width, scene);
+		var baby=BABYLON.Mesh.CreateSphere(	this.name, this.segment, this.width, scene, this.mutable,
+		BABYLON.Mesh.DEFAULTSIDE);
 		baby.position=this.position;
 	},
 	'type':'sphere'

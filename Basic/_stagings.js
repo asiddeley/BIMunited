@@ -44,6 +44,9 @@ return {
 			// Materials
 			this.matLib.picked=new BABYLON.StandardMaterial('picked', scene);
 			this.matLib.picked.diffuseColor = new BABYLON.Color3(255, 215, 0);
+			this.matLib.unpicked=new BABYLON.StandardMaterial('unpicked', scene);
+			this.matLib.unpicked.diffuseColor = new BABYLON.Color3(100, 100, 100);
+
 			//this.matLib.picked.alpha=0.5;
 			
 		};		
