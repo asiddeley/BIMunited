@@ -22,40 +22,39 @@
 	usage:
 
 	by: 		Andrew Siddeley 
-	started:	28-Dec-2016
+	started:	30-Dec-2016
 	
 */
 
-
 define(
 // load dependencies...
-['babylon'],
+['jquery','window'],
 
 // then do...
-function(babylon){
+function($,win){
 	
 // return basic part
-return {
-	// properties
-	'name':'unnamed',
-	'mutable':false,
-	'partobj':null,
-	'position':new babylon.Vector3(0,0,0),
-	'segment':16,
-	'type':'part',
-	'width':1
-	
-	// methods
-	'setScene':function(scene, canvas){
-		this.partobj=new Babylon.CreateSphere(this.name, this.segment, this.width, scene);
-		this.partobj.position=this.position;	
-		//this.partobj.rotation.x = Math.PI/4;	//rotate around x axis
-		//this.partobj.scaling = new BABYLON.Vector3(2,1,1);
-		//this.partobj.parent = otherPartObj; //all of parent's Tx will be applies to this
-	},
+return (
 
+function (evt, pickResult) {
+	if (pickResult.hit) {
+		if (pickResult.pickedMesh != null) {
+			//alert(pickResult.pickedMesh);
+			//var t=JSON.stringify(pickResult.pickedMesh, replacer);
+			var pm=pickResult.pickedMesh;
+			var so=pm.soupData;
+			var msg='type:'+so.type+'<br>name:'+so.name;
+			$('#myConsole').html('username:'+win.BIMsoup.settings.user+'<br>'+msg);
+			
+			//clone
+			var n=so.another(win.BIMsoup.scene, win.BIMsoup.settings.canvas);
+			
+		}
+	}
 }
 
-});
+); //return
+
+}); //define
 
 

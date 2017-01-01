@@ -14,16 +14,26 @@ function(vmath) {
 // return a constructed basicModel
 return {
 
-	'addPart':function(part){this.aPart.push(part);},
-	'aPart':[],
+	'addPart':function(part){
+		part.parent=this;
+		this.parts.push(part);
+		if (this.scene!=null)
+			part.setScene(this.scene, this.canvas);
+		},
+	'canvas':null,
 	'discipline':null,
 	'name':'unnamed',
+	'parts':[],
+	'scene':null,
 	'setScene':function(scene, canvas){
-		for (var i=0; i<this.aPart.length; i++)
-			{this.aPart[i].setScene(scene, canvas);}
-	},
+		if (this.scene==null) {this.scene=scene;this.canvas=canvas;}
+		for (var i=0; i<this.parts.length; i++){
+			//part_static(part[i],scene, canvas);
+			this.parts[i].setScene(scene, canvas);
+			}
+		},
 	'tags':[],
-	'type':'basicModel',
+	'type':'model',
 	'visit':function(visitor){visitor.welcome(this);},			
 	'xyz':vmath.V([1,2,3])			
 };

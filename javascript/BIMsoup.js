@@ -11,38 +11,43 @@ requirejs.config({
  "paths": {
         "arch": "../Arch",
 		"basic": "../Basic",
+		"kits": "../kits",
 		//"jq": "jquery",
-		//"jq":"//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min",
-		"sylvester": "sylvester/sylvesterExp",
+		//"jq": "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min",
+		"sylvester": "sylvester/sylvesterXp",
 		"jq":"jquery",
-		"babylon":"../webGL/babylonXP"
+		"babylon":"../webGL/babylonXp",
+		"BIMsoup":"BIMsoup"
     }
 });
 
 
 var settings = {
 	'canvas':null,
-	'cli':null,
+	'cli':null, //command line input
+	'console':null, //command line output
 	'dbapi':null,
 	'user':"defaultUser"	
 };
 
 define(
 // load dependencies...
-['arch/archModels','jquery', 'babylon', 'basic/_stagings'],
+['arch/archModels','jquery', 'babylon', 'basic/_stagings', 'kits/_kits'],
 
 // then do this...
-function (models, $, BABYLON, stagings) {
+function (models, $, BABYLON, stagings, kits) {
 	
 // return BIMsoup object
 return {
 	
 	// properties
-	'aModel':[],	
 	'engine':null,
+	'kit':{}, 		//tool-event manager
+	'library':{}, 	//available parts
+	'model':{}, 
 	'scene':null,
 	'settings':settings,
-	'stage':{},
+	'stage':{}, 	//lights and cameras
 	
 	// API methods
 	'allo':function(user){
@@ -57,7 +62,7 @@ return {
 			
 	'command':function(input, output){
 		// command line input and output
-		$.extend(this.settings, {'cli':input, 'clo':output});
+		$.extend(this.settings, {'cli':input, 'console':output});
 	},
 
 	'database':function(dbapi){
@@ -78,9 +83,15 @@ return {
 		this.settings.window.BIMsoup=this;
 		
 		// Set model EXAMPLE 1
-		this.aModel.push(models.example(1));
+		//this.aModel.push(models.example(1));
+		this.model=models.example(1);
+		
 		// Set the stage, cameras, lights, materials
-		this.stage=stagings.basic();
+		this.stage=stagings.example(1);
+		
+		// sets the kit which manages tools-events
+		this.kit=kits.pickToDump();
+
 		
 		// prepare engine
 		var c=this.settings.canvas;
@@ -89,60 +100,22 @@ return {
 		var s=this.scene;
 		
 		// camera, lights
-		this.stage.setScene(this.scene, c);
+		this.stage.setScene(s, c);
 		
 		// visit all parts to set the babylon scene		
-		for (var i=0; i<this.aModel.length;i++){this.aModel[i].setScene(this.scene, c);}
+		this.model.setScene(s, c);
 		
 		// scene events
-		s.onPointerDown=this.onPointerDown;
-		
-		//this.settings.window.addEventListener("click", function () {
-			// We try to pick an object
-			//var pickResult=s.pick(s.pointerX, s.pointerY);
-		//});
+		//s.onPointerDown=this.kits.onPointerDown;
+		this.kit.setScene(s, c);
+
+		//s.debugLayer.show();
 		
 		// engage
 		this.engine.runRenderLoop(function(){s.render();});	
-	},
-	
-	
-	// private methods
-	
 
-    'onPointerDown' : function (evt, pickResult) {
-		// var matLib=this.stage.matLib.picked;
-        // if the click hits the ground object, we change the impact position
-        if (pickResult.hit) {
-			//alert('pickResult = '+pickResult.pickedPoint.x);
-            //impact.position.x = pickResult.pickedPoint.x;
-            //impact.position.y = pickResult.pickedPoint.y;
-			if (pickResult.pickedMesh != null) {
-				//highlight
-				var picked=BIMsoup.stage.matLib.picked;
-				var unpicked=BIMsoup.stage.matLib.unpicked;
-				//alert('picked:'+picked+' / unpicked ' +unpicked)				
-				if (typeof pickResult.pickedMesh.matBackup == 'undefinded'){
-					pickResult.pickedMesh.matBackup=false;
-				}
-				if (pickResult.pickedMesh.matBackup==true) {
-					// apply indicator material to picked mesh
-					//alert(pickResult.pickedMesh.material.toString());
-					pickResult.pickedMesh.matBackup=false;
-					pickResult.pickedMesh.material=unpicked;					
-				} else {
-					//alert('matBackup'+pickResult.pickedMesh.matBackup);
-					// restore original material to unpicked mesh
-					pickResult.pickedMesh.material=picked;
-					pickResult.pickedMesh.matBackup=true;	
-				}
-			}
-        }
-    }
+	}
 	
-	
-		
-
 	
 };		
 	

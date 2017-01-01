@@ -21,10 +21,10 @@
 
 	$(document).ready( function(){
 	
-		requirejs(['BIMsoup','jquery'],function(BIM,$){
+		requirejs(['BIMsoup','window'],function(BIM, window){
 			BIM.allo('andrew'); 
-			BIM.board($("#myCanvas").get(0));
-			BIM.command($("#myInput").get(0), $("#myConsole").get(0) );
+			BIM.board(window.document.getElementById('myCanvas'));
+			BIM.command(window.document.getElementById('myInput'));
 			BIM.database("database connection");
 			BIM.engage({'window':window});
 		});
@@ -34,9 +34,9 @@
 
 </head>
 <body>
-	
-<nav class="navbar navbar-sm">
 <div class="container-fluid">
+<nav class="navbar navbar-sm">
+
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
 	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -155,10 +155,18 @@
 	</li>
 	</ul>
 	</div><!-- /.navbar-collapse -->
-</div><!-- /.container-fluid -->
+	
+	
+
 </nav>
+<div id="myConsole" style="float:left;height:300px;width:200px;background:silver;">Console area...</div>
+<canvas id="myCanvas" style="height:300px;width:400px;background:black"></canvas>
 
-<canvas id="myCanvas" width="600" height="300" style="background:black"></canvas>
 
+
+</div><!-- /.container-fluid -->
 </body>
+
+
+
 </html>

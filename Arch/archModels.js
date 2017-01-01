@@ -32,19 +32,17 @@ define(
 
  return {
 	// archModel factories...
-	'basic':function(userStuff){
-		//empty Architectural Model
-		return $.extend(basicModel, archModel, userStuff);
-	},
 	
 	'ex1':function(userStuff){
 		//example 1
 		//Arch model with a sphere
 		var r=$.extend(basicModel, archModel, userStuff);
 		var v=BABYLON.Vector3;
-		r.addPart( spheres.basic({'width':3}));
-		r.addPart( spheres.basic({'width':3, 'position':new v(4,0,0)}));
-		r.addPart( spheres.basic({'width':3, 'position':new v(6,0,0)}));
+		r.addPart( spheres.simple({'name':'s1', 'width':3, 'position':new v(0,0,0)}));
+		r.addPart( spheres.simple({'name':'s2','width':3, 'position':new v(6,0,0)}));
+		r.addPart( spheres.simple({'name':'s3','width':3, 'position':new v(0,6,0)}));
+		r.addPart( spheres.simple({'name':'s4','width':3, 'position':new v(6,6,0)}));
+
 
 		//r.addPart( discs.basic() );
 		//r.addPart( planes.basic() );

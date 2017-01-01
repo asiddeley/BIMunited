@@ -28,7 +28,16 @@ function(BABYLON, $){
 // stage factories...
 return {
 
-	'basic':function(){
+	'example':function(num){
+		var that=this;
+		switch(num){
+			case 1:	return that.simple(); break;
+			default:return that.simple();					
+		}
+
+	},
+
+	'simple':function(){
 		// basic stage with one hemi light and a free camera
 		var r=$.extend({}, basicStage);
 		// override setScene method
