@@ -60,9 +60,9 @@ return {
 		$.extend(this.settings, {'canvas':canvas});
 	},	
 			
-	'command':function(input, output){
+	'console':function(output){
 		// command line input and output
-		$.extend(this.settings, {'cli':input, 'console':output});
+		$.extend(this.settings, { 'console':output});
 	},
 
 	'database':function(dbapi){

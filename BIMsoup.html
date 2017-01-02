@@ -15,21 +15,19 @@
   
  <script data-main="javascript/BIMsoup.js" src="javascript/require/require.js"></script>
  <!--script src="javascripts/require/require.js"></script-->
+ 
 
  
 <script type="text/javascript">
 
-	$(document).ready( function(){
-	
-		requirejs(['BIMsoup','window'],function(BIM, window){
-			BIM.allo('andrew'); 
-			BIM.board(window.document.getElementById('myCanvas'));
-			BIM.command(window.document.getElementById('myInput'));
-			BIM.database("database connection");
-			BIM.engage({'window':window});
-		});
+requirejs(['BIMsoup','window'],function(BIM, win){
+	BIM.allo('andrew'); 
+	BIM.board(win.document.getElementById('myBoard'));
+	BIM.console(win.document.getElementById('myConsole'));
+	BIM.database("database connection");
+	BIM.engage({'window':win});
+});
 
-	}); 
 </script>
 
 </head>
@@ -159,8 +157,8 @@
 	
 
 </nav>
-<div id="myConsole" style="float:left;height:300px;width:200px;background:silver;">Console area...</div>
-<canvas id="myCanvas" style="height:300px;width:400px;background:black"></canvas>
+<div id="myConsole" style="float:left;height:600px;width:200px;background:silver;">Console area...</div>
+<canvas id="myBoard" style="height:600px;width:800px;background:black"></canvas>
 
 
 

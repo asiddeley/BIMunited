@@ -32,7 +32,7 @@ return {
 	'another':function(scene, canvas){
 		var p=this.position;
 		var baby=this.create(scene, canvas);
-		baby.position=new babylon.Vector3(Math.random(10), Math.random(10), Math.random(10));
+		baby.position=new babylon.Vector3(Math.random()*10, Math.random()*10, Math.random()*10);
 		return baby;
 	},
 	
