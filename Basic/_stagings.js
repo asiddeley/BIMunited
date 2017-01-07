@@ -28,7 +28,7 @@ function(BABYLON, $){
 // stage factories...
 return {
 
-	'example':function(num){
+	'demo':function(num){
 		var that=this;
 		switch(num){
 			case 1:	return that.simple(); break;

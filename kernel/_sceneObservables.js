@@ -15,7 +15,8 @@
 
 	
 	project:	BIMsoup
-	desc:		(B)uilding(I)nformation(M)odel(s)ource(o)pen(u)tility(p)rogram 
+	desc:		(B)uilding(I)nformation(M)odel
+				(s)cript(o)riented(u)tility(p)ackage 
 		
 	module: 	module
 	desc: 

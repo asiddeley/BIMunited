@@ -24,8 +24,7 @@ define(
  'sylvester',
  'basic/spheres',
  'basic/discs',
- 'basic/planes'
- ], 
+ 'basic/planes'], 
  
  //Then do this...
  function(basicModel, $, vmath, spheres, discs, planes) {
@@ -33,7 +32,7 @@ define(
  return {
 	// archModel factories...
 	
-	'ex1':function(userStuff){
+	'demo1':function(userStuff){
 		//example 1
 		//Arch model with a sphere
 		var r=$.extend(basicModel, archModel, userStuff);
@@ -50,11 +49,11 @@ define(
 		return r;
 	},
 	
-	'example':function(num){
+	'demo':function(num){
 		var that=this;
 		switch(num){
 			case 1:
-				return that.ex1();
+				return that.demo1();
 			break;
 			default:
 				return that.basic();			

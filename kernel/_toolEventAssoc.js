@@ -26,9 +26,10 @@
 	
 */
 
+
 define(
 // load dependencies...
-['jquery', 'babylon', 'kits/highlight', 'kits/dump'],
+['jquery', 'babylon', 'kernel/highlight', 'kernel/dump'],
 
 // then do...
 function($, babylon, highlight, dump ){
@@ -36,7 +37,7 @@ function($, babylon, highlight, dump ){
 return {
 	
 	//returns kit number n
-	'example':function(n, usettings){
+	'demo':function(n, usettings){
 		var that=this;
 		switch(n){
 			case 1:that.pickToHighlight(usettings);break;
@@ -44,36 +45,30 @@ return {
 		}		
 	},
 	
-	//pick-highlight kit
-	'pickToHighlight':function(){
-		//kit with pick-highlight
-		var r= {
-			'setScene':function(scene, canvas){
-				scene.onPointerDown=highlight;		
-			}
-			
-		}
-		//return $.extend()
-		return r;
+	'setScene':function(scene, canvas){
+		scene.onPointerDown=function(evt, pickResult){
+			highlight(evt, pickResult);
+			dump(evt, pickResult);
+		};		
 	},
-	
-	'pickToDump':function(){
-		//kit with pick to dump mesh contents to console
-		var r= {
-			'setScene':function(scene, canvas){
-				scene.onPointerDown=function(evt, pickResult){
-					highlight(evt, pickResult);
-					dump(evt, pickResult);
-				}		
-			}
-	
-		}
-		//return $.extend()
-		return r;
-	}
-	
-
-	
+		
+	'command':function(command, console, scene, canvas){
+		//input interpreter
+		var that=this;
+		switch (command) {
+			case 'pick':
+				scene.onPointerDown=highlight;	
+				return 'pick mode<br>';
+			break;
+			case 'prop':
+				scene.onPointerDown=dump;
+				return 'properties mode<br>';
+			break;
+			default:
+				return 'unknown command '+command+'<br>';
+			break;			
+		};
+	}	
 	
 }
 
