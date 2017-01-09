@@ -15,13 +15,13 @@
 
 	
 	project:	BIMsoup
-	desc:		(B)uilding(I)nformation(M)odel(s)ource(o)pen(u)tility(p)rogram 
+	desc:		Building Information Model source open utility program 
 		
-	module: 	onpick module
+	module: 	Tool Event Administrator (TEA)
 	desc: 
 	usage:
 
-	by: 		Andrew Siddeley 
+	author: 	Andrew Siddeley 
 	started:	28-Dec-2016
 	
 */
@@ -29,10 +29,14 @@
 
 define(
 // load dependencies...
-['jquery', 'babylon', 'kernel/highlight', 'kernel/dump'],
+['jquery',
+'babylon',
+'kernel/toolClone',
+'kernel/toolProps',
+'kernel/toolHighlight'],
 
-// then do...
-function($, babylon, highlight, dump ){
+// construct and return the TEA...
+function($, babylon, clone, props, highlight){
 	
 return {
 	
@@ -46,22 +50,30 @@ return {
 	},
 	
 	'setScene':function(scene, canvas){
+		
 		scene.onPointerDown=function(evt, pickResult){
 			highlight(evt, pickResult);
 			dump(evt, pickResult);
+			//BIMsoup.settings.console('setScene<br>');
 		};		
 	},
 		
-	'command':function(command, console, scene, canvas){
+	'command':function(command, scene, canvas){
 		//input interpreter
 		var that=this;
 		switch (command) {
+			case 'clone':
+				scene.onPointerDown=clone;
+				return 'clone mode<br>';
+			break;			
+			
 			case 'pick':
 				scene.onPointerDown=highlight;	
 				return 'pick mode<br>';
 			break;
-			case 'prop':
-				scene.onPointerDown=dump;
+			
+			case 'props':
+				scene.onPointerDown=props;
 				return 'properties mode<br>';
 			break;
 			default:

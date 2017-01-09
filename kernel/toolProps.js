@@ -28,33 +28,24 @@
 
 define(
 // load dependencies...
-['jquery','window'],
+['jquery','kernel/window'],
 
 // then do...
-function($,win){
-	
-// return basic part
-return (
-
-function (evt, pickResult) {
-	if (pickResult.hit) {
-		if (pickResult.pickedMesh != null) {
-			//alert(pickResult.pickedMesh);
-			//var t=JSON.stringify(pickResult.pickedMesh, replacer);
-			var pm=pickResult.pickedMesh;
-			var so=pm.soupData;
-			var msg='type:'+so.type+'<br>name:'+so.name;
-			$('#myConsole').html('username:'+win.BIMsoup.settings.user+'<br>'+msg);
-			
-			//clone
-			var n=so.another(win.BIMsoup.scene, win.BIMsoup.settings.canvas);
-			
+function($, win){
+	return (
+		function (evt, pickResult) {
+			if (pickResult.hit) {
+				if (pickResult.pickedMesh != null) {
+					//alert(pickResult.pickedMesh);
+					//var t=JSON.stringify(pickResult.pickedMesh, replacer);
+					var pm=pickResult.pickedMesh;
+					var sd=pm.soupData;
+					var msg='type:'+sd.type+'<br>name:'+sd.name+'<br>';
+					BIMsoup.settings.console(msg);
+				}
+			}
 		}
-	}
-}
-
-); //return
-
+	); //return
 }); //define
 
 

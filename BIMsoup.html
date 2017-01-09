@@ -20,24 +20,30 @@
  
 <script type="text/javascript">
 
+function handleInput(ev){
+	
+	ev.preventDefault(); //disable normal form submit behavior
+	var i=$("#myInput").val();
+	var r=BIMsoup.input(i);//get text from form and pass it to BIMsoup 
+	$("#myConsole").append(r); //display result
+	return false; //prevent further bubbling of event
+}
+
+function handleOutput(msg){
+	$("#myConsole").append(msg);
+}
+
+
 requirejs(['BIMsoup','window'],function(BIM, win){
 	BIM.allo('andrew'); 
 	BIM.board(win.document.getElementById('myBoard'));
-	BIM.console(win.document.getElementById('myConsole'));
+	BIM.console(handleOutput);
 	BIM.database("database connection API");
 	BIM.engage();
 });
 
 
-function handleCommand(ev){
-	ev.preventDefault(); //disable normal form submit behavior
-	var i=$("#myInput").val();
-	//alert(i);
-	var r=BIMsoup.instruction(i); //get text from form and pass it to BIMsoup
-	//note that BIMsoup is set as global when it is loaded.
-	$("#myConsole").append(r); //display result
-	return false; //prevent further bubbling of event
-}
+
 
 </script>
 
@@ -143,7 +149,7 @@ function handleCommand(ev){
 	</ul>
 
 		
-	<form class="navbar-form navbar-left" role="search" onSubmit="return handleCommand(event)">
+	<form class="navbar-form navbar-left" role="search" onSubmit="return handleInput(event)">
 	<div class="form-group">
 	<input id="myInput" type="text" class="form-control" placeholder="Command" >
 	</div>

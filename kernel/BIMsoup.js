@@ -20,15 +20,13 @@ requirejs.config({
 	"sylvester": "sylvester/sylvesterXp",
 	"jq":"../javascript/jquery",
 	"babylon":"../webGL/babylonXp",
-	//"BS":"../kernel/BIMsoup"
 }
 });
 
 
 var settings = {
 	'canvas':null,
-	'cli':null, //command line input
-	'console':null, //DOM element for BIMsoup messages and output 
+	'console':function(msg){alert(msg);}, //callback for when BIMsoup has a message 
 	'dbapi':null,
 	'user':"defaultUser"	
 };
@@ -39,7 +37,7 @@ define(
 'jquery', 
 'babylon',
 'basic/_stagings',
-'kernel/_toolEventAssoc',
+'kernel/tool_event_admin',
 'kernel/window'],
 
 // then do this...
@@ -65,7 +63,6 @@ return {
 	
 	// API methods
 	'allo':function(user){
-		
 		$.extend(this.settings, {'user':user});
 		//alert("welcome "+settings.user+"\n");				
 	},
@@ -74,9 +71,11 @@ return {
 		$.extend(this.settings, {'canvas':canvas});
 	},	
 			
-	'console':function(output){
+	'console':function(callback){
 		// command line input and output
-		$.extend(this.settings, { 'console':output});
+		if (callback instanceof Function){
+			$.extend(this.settings, { 'console':callback});
+		}
 	},
 
 	'database':function(dbapi){
@@ -98,7 +97,7 @@ return {
 		// Set the stage, cameras, lights, materials
 		this.stage=stagings.demo(1);
 		
-		// sets the tools-event association helper
+		// sets the tools-event assoc 
 		this.tea=tea;
 		
 		// prepare engine
@@ -126,7 +125,7 @@ return {
 	
 	
 	//control
-	'instruction':function(input){
+	'input':function(input){
 		return this.tea.command(input, this.scene, this.settings.canvas);
 	}
 	

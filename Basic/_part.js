@@ -36,7 +36,7 @@ var prop = {
 	// properties
 	'name':'unnamed',
 	'mutable':true,
-	'babyData':null, //initialized during setScene
+	'babyData':null, //initialize during setScene
 	'parent':null,
 	'position':null, //initialize during construction
 	'segment':16,
@@ -56,12 +56,10 @@ var prop = {
 	//override this method to create 
 	'create':function(scene, canvas){
 		//return this.babylon.Mesh.CreateSphere(this.name, this.segment, this.width, scene);
-		return BIMsoup.babylon.Mesh.CreateSphere(this.name, this.segment, this.width, scene);		
-		
+		return BIMsoup.babylon.Mesh.CreateSphere(this.name, this.segment, this.width, scene);	
 	},
 	
 	'setScene':function(scene, canvas){
-
 		//then link it to soup model
 		var baby=this.create(scene, canvas);
 		baby.position=this.position;
@@ -72,7 +70,7 @@ var prop = {
 
 //Static properties / methods of a part
 //These are common to each instance of a part
-//For static methods, first arg is always part
+//For static methods, first arg is always a part
 
 var stat = {
 	//not tested

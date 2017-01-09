@@ -37,10 +37,10 @@ define(
 		//Arch model with a sphere
 		var r=$.extend(basicModel, archModel, userStuff);
 		var v=BABYLON.Vector3;
-		r.addPart( spheres.simple({'name':'s1', 'width':3, 'position':new v(0,0,0)}));
-		r.addPart( spheres.simple({'name':'s2','width':3, 'position':new v(6,0,0)}));
+		r.addPart( spheres.simple({'name':'s1', 'width':1, 'position':new v(0,0,0)}));
+		r.addPart( spheres.simple({'name':'s2','width':2, 'position':new v(6,0,0)}));
 		r.addPart( spheres.simple({'name':'s3','width':3, 'position':new v(0,6,0)}));
-		r.addPart( spheres.simple({'name':'s4','width':3, 'position':new v(6,6,0)}));
+		r.addPart( spheres.simple({'name':'s4','width':4, 'position':new v(6,6,0)}));
 
 
 		//r.addPart( discs.basic() );
