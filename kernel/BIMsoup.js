@@ -24,16 +24,11 @@ requirejs.config({
 });
 
 
-var settings = {
-	'canvas':null,
-	'console':function(msg){alert(msg);}, //callback for when BIMsoup has a message 
-	'dbapi':null,
-	'user':"defaultUser"	
-};
+
 
 define(
 // load dependencies...
-['arch/archModels',
+['arch/archModel',
 'jquery', 
 'babylon',
 'basic/_stagings',
@@ -41,25 +36,28 @@ define(
 'kernel/window'],
 
 // then do this...
-function (
-models,
-$, 
-babylon, stagings, tea, win
-) {
+function (model, $,  babylon, stagings, tea, win) {
+
+var settings = {
+	'canvas':null,
+	'console':function(msg){ alert(msg); }, //callback for when BIMsoup has a message 
+	'dbapi':null,
+	'user':"defaultUser"	
+};
 	
 // return BIMsoup library object
-return {
+BIM={
 	
 	// properties
 	'babylon':babylon,
 	'engine':null,
-	'library':{}, 	//available parts
+	'library':{}, 	// available parts
 	'model':{}, 
 	'scene':null,
 	'settings':settings,
-	'stage':{}, 	//lights and cameras
-	'tea':{}, 		//tool-event associations (mapping)
-	'window':win,	//BIMsoup references window and window ref's BIMsoup
+	'stage':{}, 	// lights and cameras
+	'tea':{}, 		// tool event admin 
+	'window':win,	// BIMsoup references window and window ref's BIMsoup
 	
 	// API methods
 	'allo':function(user){
@@ -87,12 +85,9 @@ return {
 		// settings
 		$.extend(this.settings, usettings);
 		
-		//make BIMsoup global
-		win.BIMsoup=this;
-		
 		// Set model EXAMPLE 1
 		//this.aModel.push(models.example(1));
-		this.model=models.demo(1);
+		this.model=model.demo(1);
 		
 		// Set the stage, cameras, lights, materials
 		this.stage=stagings.demo(1);
@@ -132,6 +127,8 @@ return {
 	
 }		
 	
+win.BIM=BIM;
+return BIM;
 });
 
 
