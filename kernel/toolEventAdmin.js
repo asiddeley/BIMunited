@@ -24,7 +24,7 @@
 	author: 	Andrew Siddeley 
 	started:	28-Dec-2016
 	
-*/
+*************************************************************************/
 
 
 define(
@@ -40,7 +40,6 @@ function($, babylon, clone, props, highlight){
 	
 return {
 	
-	//returns kit number n
 	'demo':function(n, usettings){
 		var that=this;
 		switch(n){
@@ -49,14 +48,7 @@ return {
 		}		
 	},
 	
-	'setScene':function(scene, canvas){
-		
-		scene.onPointerDown=function(evt, pickResult){
-			highlight(evt, pickResult);
-			dump(evt, pickResult);
-			//BIMsoup.settings.console('setScene<br>');
-		};		
-	},
+	'setScene':function(scene, canvas){ },
 		
 	'command':function(command, scene, canvas){
 		//input interpreter

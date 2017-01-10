@@ -54,8 +54,10 @@ var sphereHandlers = $.extend( {}, part, {
 			scene.mutable,
 			scene.babylon.Mesh.DEFAULTSIDE
 		);
-		// note two way reference between BIM part and babylon element 
+		// note two way relation between BIM part and babylon element 
 		sphere.baby.BIMP=sphere;
+		//set position
+		sphere.baby.position=sphere.position;
 	},
 		
 
@@ -81,10 +83,8 @@ var sphere = {
 	'baby':null, 
 	'handler':sphereHandler,
 	'name':'unnamed',
-	'radius':1,
-	'x':0,
-	'y':0,
-	'z':0
+	'position':BABYLON.Vector3(0,0,0),
+	'radius':1
 });
 
 

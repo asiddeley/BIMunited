@@ -24,19 +24,17 @@ requirejs.config({
 });
 
 
-
-
 define(
 // load dependencies...
-['arch/archModel',
+[ 'arch/archModel',
 'jquery', 
 'babylon',
-'basic/_stagings',
-'kernel/tool_event_admin',
+'kernel/stage',
+'kernel/toolEventAdmin',
 'kernel/window'],
 
 // then do this...
-function (model, $,  babylon, stagings, tea, win) {
+function (model, $,  babylon, stage, tea, win) {
 
 var settings = {
 	'canvas':null,
@@ -90,7 +88,7 @@ BIM={
 		this.model=model.demo(1);
 		
 		// Set the stage, cameras, lights, materials
-		this.stage=stagings.demo(1);
+		this.stage=stage.demo(1);
 		
 		// sets the tools-event assoc 
 		this.tea=tea;
