@@ -27,43 +27,45 @@
 *************************************************************************/
 
 define(
- //Load dependencies...
- [ 'jquery','kernel/model','kernel/partSphere'], 
+//Load dependencies...
+[ 'jquery','kernel/model','kernel/partSphere'], 
   
- //Then do this...
- function($, model, sphere) {
+//Then do this...
+function($, model, sphere) {
 
- var archModel={
-	//extends basicModel adding/overwriting:
+var archModel={
 	'name':'archModel',
 	'discpline':'Arch',
 	'type':'archModel',
 	'visible':true
 }
- 
+
+//archModel object...
 return {
-	// archModel factories...
-	'demo':function(num, userStuff){
+	
+	'create':function(usettings){ return $.extend(model.create(), archModel, usettings);},
+
+	'demo':function(num, usettings){
 		var that=this;
 		switch(num){
-			case 1: return that.demo1(userStuff); break;
-			default: return that.demo1(userStuff);			
+			case 1: return that.demo1(usettings); break;
+			default: return that.demo1(usettings);			
 		}		
 	},
 	
-	'demo1':function(userStuff){
-		//example 1
-		//Arch model with a sphere
-		var r=$.extend(basicModel, archModel, userStuff);
+	'demo1':function(usettings){
+		//demo 1
+		//Arch model with some sphere
+		var m=this.create(usettings);
 		var v=BABYLON.Vector3;
-		r.addPart( sphere.demo({'name':'s1', 'radius':0.5, 'position':new v(0,0,0)}));
-		r.addPart( sphere.demo({'name':'s2', 'radius':1, 'position':new v(6,0,0)}));
-		r.addPart( sphere.demo({'name':'s3', 'radius':1.5, 'position':new v(0,6,0)}));
-		r.addPart( sphere.demo({'name':'s4',  'radius':2, 'position':new v(6,6,0)}));
-		//r.addPart( discs.basic() );
-		//r.addPart( planes.basic() );
-		//alert('# parts '+r.aPart.length);
-		return r;
+		m.addPart( sphere.demo({'name':'s1', 'radius':0.5, 'position':new v(0,0,0)}));
+		m.addPart( sphere.demo({'name':'s2', 'radius':1, 'position':new v(6,0,0)}));
+		m.addPart( sphere.demo({'name':'s3', 'radius':1.5, 'position':new v(0,6,0)}));
+		m.addPart( sphere.demo({'name':'s4', 'radius':2, 'position':new v(6,6,0)}));
+		return m;
+	},
+	
+	
 	}
 	
 
