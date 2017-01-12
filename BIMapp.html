@@ -24,7 +24,7 @@ function handleInput(ev){
 	
 	ev.preventDefault(); //disable normal form submit behavior
 	var i=$("#myInput").val();
-	var r=BIMsoup.input(i);//get text from form and pass it to BIMsoup 
+	var r=BIM.input(i);//get text from form and pass it to BIM
 	$("#myConsole").append(r); //display result
 	return false; //prevent further bubbling of event
 }
@@ -34,7 +34,7 @@ function handleOutput(msg){
 }
 
 
-requirejs(['BIMsoup','window'],function(BIM, win){
+requirejs(['kernel/BIMmain'],function(BIM){
 	BIM.allo('andrew'); 
 	BIM.board(win.document.getElementById('myBoard'));
 	BIM.console(handleOutput);

@@ -28,31 +28,31 @@
 
 define(
 // load dependencies...
-['babylon', 'jquery'],
+['babylon', 'jquery', 'kernel/window'],
 
 // then construct part object...
-function(babylon, $){
+function(babylon, $, win){
 
 //construct sphere handler, AKA bunch of static properties and methods.
 var partHandlers = {
 
+	/////////////////////
+	// Must haves...
 	// returns a new part 	
-	'create':function(userData){ $.extend( {}, part, userData); },	 
+	'create':function(userData){ return $.extend( {}, part, userData); },	 
 	// returns a new part element with a random radius between 0 and 1
 	'demo':function(){ return $.extend( {}, part, { 'radius':Math.random() }); },
 	// list of propterty access functions - functions may just display property or provide means of editing
 	'properties': [ this.name, this.position ],
-
 	// babylon scene constructor
-	'setScene':function(part, scene, canvas){
-		
+	'setScene':function(part){	
 		part.baby = babylon.Mesh.CreateSphere(	
 			part.name, 
 			part.segment,
 			part.radius*2,
-			scene,
-			scene.mutable,
-			scene.babylon.Mesh.DEFAULTSIDE
+			win.BIM.scene,
+			part.mutable,
+			part.faceOrientation
 		);
 		// note two way reference between BIM part and babylon element 
 		part.baby.BIMP=part;
@@ -61,22 +61,14 @@ var partHandlers = {
 	},
 	
 	//////////////////////////////////////
-	// property access functions 
+	// Property access functions 
 	// include these in properties list above to expose
-	'host':function(part, dashboard){
-		//part's parent
-	},
+	'host':function(part, dashboard){  /*expose the part's parent */   },
 	
 	'name':function(part, dashboard){
-		var callback=function(part){
-			//no action required 
-		};		
-		//shows and allows edit of a position
-		dashboard.editText('name', part.name,  callback);
-		//note that editXXX should take care of undo functions and log
+		dashboard.editText('name', part.name,  function(part){ /* no action required */});
 	},
 		
-
 	'position':function(part, dashboard){ 
 		var callback=function(part){
 			part.baby.position=part.position;
@@ -85,21 +77,29 @@ var partHandlers = {
 		//shows and allows edit of a position
 		dashboard.editPosition('position', part.position,  callback);
 		//note that editXXX should take care of undo functions and log
-	}
+	},
 
-	
+	'type':function(part, dashboard){
+		var callback=function(part){ 
+			//change type eg line to sphere 
+		};
+		dashboard.label('name', part.type, callback );
+	},
 	
 }
 
 // sphere properties 
-// note, sphereHandler is defined first because it is referenced below
-// remember, model may have many spheres but only one shpere handler
+// sphereHandler is defined first because it is referenced below
+// the model may contain many spheres but only one set of sphere handlers
 var part = {
-	'baby':null, 
+	'baby':null,  //set during setScene
+	'faceOrientation':BABYLON.Mesh.DEFAULTSIDE, //scene.babylon.Mesh.DEFAULTSIDE
 	'handlers':partHandlers,
 	'name':'unnamed',
 	'position':BABYLON.Vector3(0,0,0),
+	'segment':12,
 	'radius':1
+	'updateable':true,
 });
 
 return partHandlers;

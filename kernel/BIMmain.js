@@ -105,7 +105,7 @@ BIM={
 		this.stage.setScene(s, c);
 		
 		// visit all parts to set the babylon scene		
-		this.model.setScene(s, c);
+		this.model.handlers.setScene( this.model );
 		
 		// scene events
 		//s.onPointerDown=this.kits.onPointerDown;
