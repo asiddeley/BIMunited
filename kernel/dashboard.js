@@ -17,40 +17,26 @@
 	project:	BIMsoup
 	desc:		(B)uilding(I)nformation(M)odel(s)ource(o)pen(u)tility(p)rogram 
 		
-	module: 	onpick module
+	module: 	dashboard
 	desc: 
 	usage:
 
 	by: 		Andrew Siddeley 
-	started:	30-Dec-2016
+	started:	12-Jan-2017
 	
 */
 
+
 define(
 // load dependencies...
-['jquery','kernel/window'],
+[],
 
 // then do...
-function($, win){
-return (
-function (evt, pickResult) {
-	if (pickResult.hit) {
-		if (pickResult.pickedMesh != null) {
-			//alert(pickResult.pickedMesh);
-			//var t=JSON.stringify(pickResult.pickedMesh, replacer);
-			var mesh=pickResult.pickedMesh;
-			//var sd=mesh.BIMO;
-			//var msg='type:'+sd.type+'<br>name:'+sd.name+'<br>';
-			//BIM.settings.console(msg);
-			var ff=mesh.BIMP.handlers.properties; //list of functions to access part's properties
-			BIM.settings.dashboard.clear; //prepare panel for new set of properties
-			for (var i=0; i<ff.length; i++){
-				ff[i](mesh.BIMP, BIM.settings.dashboard);
-			}
-		}
-	}
+function(babylon){
+return {
+
 }
-); //return
-}); //define
+
+});
 
 

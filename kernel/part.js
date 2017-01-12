@@ -35,13 +35,13 @@ function(babylon, $){
 
 //construct sphere handler, AKA bunch of static properties and methods.
 var partHandlers = {
- 	
+
+	// returns a new part 	
+	'create':function(userData){ $.extend( {}, part, userData); },	 
 	// returns a new part element with a random radius between 0 and 1
 	'demo':function(){ return $.extend( {}, part, { 'radius':Math.random() }); },
-	// returns a new part 	
-	'make':function(userData){ $.extend( {}, part, userData); },	 
 	// list of propterty access functions - functions may just display property or provide means of editing
-	'properties': [ this.position ],
+	'properties': [ this.name, this.position ],
 
 	// babylon scene constructor
 	'setScene':function(part, scene, canvas){
@@ -59,17 +59,33 @@ var partHandlers = {
 		//set position
 		part.baby.position=part.position;
 	},
+	
+	//////////////////////////////////////
+	// property access functions 
+	// include these in properties list above to expose
+	'host':function(part, dashboard){
+		//part's parent
+	},
+	
+	'name':function(part, dashboard){
+		var callback=function(part){
+			//no action required 
+		};		
+		//shows and allows edit of a position
+		dashboard.editText('name', part.name,  callback);
+		//note that editXXX should take care of undo functions and log
+	},
 		
 
-	'position':function(part, control){ 
+	'position':function(part, dashboard){ 
 		var callback=function(part){
 			part.baby.position=part.position;
 			//changed part will show with next scene render 
 		};		
 		//shows and allows edit of a position
-		control.editPosition('position', part.position,  callback);
+		dashboard.editPosition('position', part.position,  callback);
 		//note that editXXX should take care of undo functions and log
-	},
+	}
 
 	
 	
@@ -80,7 +96,7 @@ var partHandlers = {
 // remember, model may have many spheres but only one shpere handler
 var part = {
 	'baby':null, 
-	'handler':partHandlers,
+	'handlers':partHandlers,
 	'name':'unnamed',
 	'position':BABYLON.Vector3(0,0,0),
 	'radius':1

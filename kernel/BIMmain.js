@@ -29,17 +29,19 @@ define(
 [ 'arch/archModel',
 'jquery', 
 'babylon',
+'kernel/dashboard',
 'kernel/stage',
 'kernel/toolEventAdmin',
 'kernel/window'],
 
 // then do this...
-function (model, $,  babylon, stage, tea, win) {
+function (model, $,  babylon, dashboard, stage, tea, win) {
 
 var settings = {
 	'canvas':null,
 	'console':function(msg){ alert(msg); }, //callback for when BIMsoup has a message 
 	'dbapi':null,
+	'dashboard':dashboard.create(), //used to display and edit a part's propertes
 	'user':"defaultUser"	
 };
 	
