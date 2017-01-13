@@ -1,1 +1,10 @@
-define([],function(){return window;});
+/////////////
+//
+define(
+[ 'jquery' ],
+
+function( $ ){ 
+	alert('window...');
+	return window;
+});
+

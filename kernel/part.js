@@ -33,6 +33,8 @@ define(
 // then construct part object...
 function(babylon, $, win){
 
+//alert('part...');
+
 //construct sphere handler, AKA bunch of static properties and methods.
 var partHandlers = {
 

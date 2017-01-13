@@ -29,13 +29,11 @@
 
 define(
 // load dependencies...
-[],
+[ ],
 
 // then do...
-function(babylon){
-return {
-
-}
+function(){
+return {}
 
 });
 

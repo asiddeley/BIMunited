@@ -20,6 +20,7 @@
  
 <script type="text/javascript">
 
+
 function handleInput(ev){
 	
 	ev.preventDefault(); //disable normal form submit behavior
@@ -34,12 +35,13 @@ function handleOutput(msg){
 }
 
 
-requirejs(['kernel/BIMmain'],function(BIM){
-	BIM.allo('andrew'); 
-	BIM.board(win.document.getElementById('myBoard'));
-	BIM.console(handleOutput);
-	BIM.database("database connection API");
-	BIM.engage();
+requirejs( [ 'kernel/BIMmain'  ], function(BIM ){
+	alert ('BIMapp...'+BIM);
+	//BIM.allo('andrew'); 
+	//BIM.board(window.document.getElementById('myBoard'));
+	//BIM.console(handleOutput);
+	//BIM.database("database connection API");
+	//BIM.engage();
 });
 
 

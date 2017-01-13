@@ -2,14 +2,7 @@
 //stage items
 //babylon lights and camera
 
-var basicStage = {
-	'cameras':{},
-	'lights':{},
-	'matLib':{},
-	'name':'unnamed',
-	'setScene':function(scene, canvas){ },
-	'type':'basicStage'
-};
+
 
 /*
 var basicLight={
@@ -20,10 +13,21 @@ var basicLight={
 */
 
 define(
-// dependencies
+// load dependencies...
 ['babylon','jquery'],
-// constructor
+
+// then do this...
 function(BABYLON, $){
+
+var basicStage = {
+	'cameras':{},
+	'lights':{},
+	'matLib':{},
+	'name':'unnamed',
+	'setScene':function(scene, canvas){ },
+	'type':'basicStage'
+};
+
 
 // stage factories...
 return {

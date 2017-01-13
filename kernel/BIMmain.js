@@ -19,8 +19,9 @@ requirejs.config({
 	//"jq": "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min",
 	"sylvester": "sylvester/sylvesterXp",
 	"jq":"../javascript/jquery",
-	"babylon":"../babylon/babylonXp",
+	"babylon":"../babylon/babylonXp"
 }
+
 });
 
 
@@ -32,22 +33,24 @@ define(
 'kernel/dashboard',
 'kernel/stage',
 'kernel/toolEventAdmin',
-'kernel/window'],
+'kernel/window' ],
 
 // then do this...
 function (model, $,  babylon, dashboard, stage, tea, win) {
 
-var settings = {
+//alert('BIMmain...');
+
+var settings={
 	'canvas':null,
 	'console':function(msg){ alert(msg); }, //callback for when BIMsoup has a message 
 	'dbapi':null,
 	'dashboard':null, //dashboard.create(), //used to display and edit a part's propertes
-	'user':"defaultUser"	
+	'user':"defaultUser"
 };
+
 	
 // return BIMsoup library object
-BIM={
-	
+var BIM={
 	// properties
 	'babylon':babylon,
 	'engine':null,
@@ -61,7 +64,7 @@ BIM={
 	
 	// API methods
 	'allo':function(user){
-		$.extend(this.settings, {'user':user});
+		$.extend(this.settings, {'user':user} );
 		//alert("welcome "+settings.user+"\n");				
 	},
 
@@ -84,7 +87,7 @@ BIM={
 				
 		// settings
 		$.extend(this.settings, usettings);
-		
+		//alert('engage');
 		// Set model EXAMPLE 1
 		// this.aModel.push(models.example(1));
 		this.model=model.demo(1);
@@ -114,21 +117,21 @@ BIM={
 		//s.debugLayer.show();
 		
 		// engage
-		this.engine.runRenderLoop(function(){s.render();});	
+		this.engine.runRenderLoop(function(){ s.render();} );	
 
 	},
-	
 	
 	//control
 	'input':function(input){
 		return this.tea.command(input, this.scene, this.settings.canvas);
 	}
-	
-	
-}		
-	
-win.BIM=BIM;
+		
+}; // var BIM		
+
+//alert('BIMmain...'+BIM);
+//win.BIM=BIM;
 return BIM;
+
 });
 
 

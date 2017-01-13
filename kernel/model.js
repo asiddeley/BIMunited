@@ -33,15 +33,19 @@ define(
 // then do...
 function($, part, win) {
 
+//alert('model...');
+
 // modelHandlers inherits from partHandlers
-var modelHandlers=$.extend({}, part, {
+var modelHandlers=$.extend( {}, part, {
 
 	// override - returns a new model
 	'create':function(userData){ return $.extend({}, model, userData); },
 	
 	// extend - list of property access functions 
-	'properties': $.extend({}, part.properties, {'name':this.name, 'position':this.position }),
+	//'properties': $.extend( {}, part.properties, {'name':this.name, 'position':this.position }),
+	'properties': $.extend( {}, part.properties, { }),
 
+	
 	// override - babylon scene constructor
 	'setScene':function(model){
 		for (var i=0; i<this.parts.length; i++){

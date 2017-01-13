@@ -28,16 +28,18 @@
 
 define(
 //Load dependencies...
-[ 'jquery','kernel/model','kernel/partSphere'], 
+[ 'jquery', 'kernel/model', 'kernel/partSphere'], 
   
 //Then do this...
 function($, model, sphere) {
 
+//alert('archModel...');
+
 //archModelHandlers inherits from modelHandlers...
-var archModelHandlers=$.extend({}, model, {
+var archModelHandlers=$.extend( {}, model, {
 	
 	//override
-	'create':function(){ return $.extend(model.create(), archModel);},
+	'create':function(){ return $.extend( model.create(), archModel ); },
 
 	//override
 	'demo':function(num){
@@ -64,8 +66,7 @@ var archModelHandlers=$.extend({}, model, {
 var archModel={
 	'disc':'all',
 	'handlers':archModelHandlers,
-	'type':'archModel',
-
+	'type':'archModel'
 };
 
 	return archModelHandlers;
