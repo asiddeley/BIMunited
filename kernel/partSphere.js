@@ -70,18 +70,15 @@ var sphereHandlers = $.extend( {}, part, {
 		//shows and allows edit of real 
 		editReal('Sphere radius', sphere.radius,  whenDone);
 		//note that editReal should take care of undo functions and log
-	},
+	}
+}); // extend
 
-	
-	
-}
-
-// sphere properties 
+// sphere properties, extends part properties
 // note, sphereHandler is defined first because it is referenced below
 // remember, model may have many spheres but only one shpere handler
-var sphere = {
+var sphere=$.extend(part.create(), {
 	'baby':null, 
-	'handler':sphereHandler,
+	'handler':sphereHandlers,
 	'name':'unnamed',
 	'position':BABYLON.Vector3(0,0,0),
 	'radius':1
@@ -90,6 +87,6 @@ var sphere = {
 
 
 
-return sphereHandler;
+return sphereHandlers;
 
 });

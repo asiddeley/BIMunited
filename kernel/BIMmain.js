@@ -41,7 +41,7 @@ var settings = {
 	'canvas':null,
 	'console':function(msg){ alert(msg); }, //callback for when BIMsoup has a message 
 	'dbapi':null,
-	'dashboard':dashboard.create(), //used to display and edit a part's propertes
+	'dashboard':null, //dashboard.create(), //used to display and edit a part's propertes
 	'user':"defaultUser"	
 };
 	
@@ -51,13 +51,13 @@ BIM={
 	// properties
 	'babylon':babylon,
 	'engine':null,
-	'library':{}, 	// available parts
-	'model':{}, 
-	'scene':null,
+	'library':{},	// like a model but not displayed.  Has available parts & models
+	'model':null, 	// main model - created inside engage()
+	'scene':null,	// the scene - created inside engage()
 	'settings':settings,
-	'stage':{}, 	// lights and cameras
+	'stage':{}, 	// lights and cameras - created inside engage
 	'tea':{}, 		// tool event admin 
-	'window':win,	// BIMsoup references window and window ref's BIMsoup
+	'window':win,	// BIM references window and window ref's BIM
 	
 	// API methods
 	'allo':function(user){
@@ -86,7 +86,7 @@ BIM={
 		$.extend(this.settings, usettings);
 		
 		// Set model EXAMPLE 1
-		//this.aModel.push(models.example(1));
+		// this.aModel.push(models.example(1));
 		this.model=model.demo(1);
 		
 		// Set the stage, cameras, lights, materials

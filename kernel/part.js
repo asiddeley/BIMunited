@@ -40,10 +40,20 @@ var partHandlers = {
 	// Must haves...
 	// returns a new part 	
 	'create':function(userData){ return $.extend( {}, part, userData); },	 
+	
 	// returns a new part element with a random radius between 0 and 1
-	'demo':function(){ return $.extend( {}, part, { 'radius':Math.random() }); },
+	'demo':function(num){ 
+		var that=this;
+		switch(num){
+			case 1: return that.create({ 'radius':Math.random() }); break;
+			default: return that.create({ 'radius':Math.random() }); 			
+		}
+		return 
+	},	
+	
 	// list of propterty access functions - functions may just display property or provide means of editing
-	'properties': [ this.name, this.position ],
+	'properties': { 'name':this.name, 'position':this.position},
+	
 	// babylon scene constructor
 	'setScene':function(part){	
 		part.baby = babylon.Mesh.CreateSphere(	
@@ -66,7 +76,9 @@ var partHandlers = {
 	'host':function(part, dashboard){  /*expose the part's parent */   },
 	
 	'name':function(part, dashboard){
-		dashboard.editText('name', part.name,  function(part){ /* no action required */});
+		dashboard.editText('name', part.name,  function(part){ 
+		/* no action required */
+		});
 	},
 		
 	'position':function(part, dashboard){ 
@@ -86,11 +98,11 @@ var partHandlers = {
 		dashboard.label('name', part.type, callback );
 	},
 	
-}
+};
 
-// sphere properties 
-// sphereHandler is defined first because it is referenced below
-// the model may contain many spheres but only one set of sphere handlers
+// part properties 
+// partHandler is defined first because it is referenced below
+// the model may contain many part but only one set of part handlers
 var part = {
 	'baby':null,  //set during setScene
 	'faceOrientation':BABYLON.Mesh.DEFAULTSIDE, //scene.babylon.Mesh.DEFAULTSIDE
@@ -98,9 +110,9 @@ var part = {
 	'name':'unnamed',
 	'position':BABYLON.Vector3(0,0,0),
 	'segment':12,
-	'radius':1
-	'updateable':true,
-});
+	'radius':1,
+	'updateable':true
+};
 
 return partHandlers;
 });

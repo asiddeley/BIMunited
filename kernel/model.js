@@ -33,49 +33,46 @@ define(
 // then do...
 function($, part, win) {
 
-// construct and return model handlers
-var modelHandlers={
-	/////////////////////
-	// Must haves...
-	// returns a new model
-	'create':function(userData){ return $.extend( {}, model, userData); },	 
-	// returns a new model
-	'demo':function(){ return $.extend( {}, model, { 'radius':Math.random() }); },
-	// list of propterty access functions - functions may just display property or provide means of editing
-	'properties': [ this.name, this.position ],
-	// babylon scene constructor
+// modelHandlers inherits from partHandlers
+var modelHandlers=$.extend({}, part, {
+
+	// override - returns a new model
+	'create':function(userData){ return $.extend({}, model, userData); },
 	
+	// extend - list of property access functions 
+	'properties': $.extend({}, part.properties, {'name':this.name, 'position':this.position }),
+
+	// override - babylon scene constructor
 	'setScene':function(model){
-		//may be called before scene is initialized i.e when decendent (archModel) model is constructed
-		if (win.BIM.scene != null) {
-			for (var i=0; i<this.parts.length; i++){
-				model.parts[i].setScene( parts[i] );
-			}
+		for (var i=0; i<this.parts.length; i++){
+			model.parts[i].setScene( parts[i] );
 		}
 	},
 	
 	////////////////////
 	// specific to model
 	'addPart':function(model, part){
-		//part.parent=this;
+		// part.parent=this;
 		model.parts.push(part);
-		model.handlers.setScene(model);
+		// check scene because setScene may be called before scene is initialized 
+		// i.e	when decendent (archModel) model is constructed
+		if (win.BIM.scene != null) { model.handlers.setScene(model);}
 	},
 	
 	'visit':function(model, visitor){ 
 		visitor.welcome(model);
-		
 	}
-};
+});
 
 
 // model data, inherits stuff from part
 var model=$.extend( part.create(), {
-	'discipline':'all',
+	'disc':'all',
 	'handlers':modelHandlers,
-	'parts',[],
+	'parts':[],
 	'tags':[],
-	'type':'model'
+	'type':'model',
+	'visible':true
 });
 
 return modelHandlers;

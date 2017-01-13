@@ -17,7 +17,7 @@
 	project:	BIMsoup
 	desc:		Building Information Model source open utility program 
 		
-	module: 	ArchModel
+	module: 	archModel
 	desc: 
 	usage:
 
@@ -33,43 +33,42 @@ define(
 //Then do this...
 function($, model, sphere) {
 
-var archModel={
-	'name':'archModel',
-	'discpline':'Arch',
-	'type':'archModel',
-	'visible':true
-}
-
-//archModel object...
-return {
+//archModelHandlers inherits from modelHandlers...
+var archModelHandlers=$.extend({}, model, {
 	
-	'create':function(usettings){ return $.extend(model.create(), archModel, usettings);},
+	//override
+	'create':function(){ return $.extend(model.create(), archModel);},
 
-	'demo':function(num, usettings){
+	//override
+	'demo':function(num){
 		var that=this;
 		switch(num){
-			case 1: return that.demo1(usettings); break;
-			default: return that.demo1(usettings);			
-		}		
+			case 1: return that.demo1(); break;
+			default: return that.demo1();			
+		}
 	},
 	
-	'demo1':function(usettings){
+	'demo1':function(){
 		//demo 1
 		//Arch model with some sphere
-		var m=this.create(usettings);
+		var m=this.create();
 		var v=BABYLON.Vector3;
 		m.addPart( sphere.demo({'name':'s1', 'radius':0.5, 'position':new v(0,0,0)}));
 		m.addPart( sphere.demo({'name':'s2', 'radius':1, 'position':new v(6,0,0)}));
 		m.addPart( sphere.demo({'name':'s3', 'radius':1.5, 'position':new v(0,6,0)}));
 		m.addPart( sphere.demo({'name':'s4', 'radius':2, 'position':new v(6,6,0)}));
 		return m;
-	},
-	
-	
 	}
+});
 	
+var archModel={
+	'disc':'all',
+	'handlers':archModelHandlers,
+	'type':'archModel',
 
-}
+};
+
+	return archModelHandlers;
 });
 
 
