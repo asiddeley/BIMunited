@@ -27,33 +27,53 @@
 ****************************************************************/
 define(
 
-//load dependencies...
-['babylon', 'jquery', 'kernel/part'],
+// load dependencies...
+['babylon', 'jquery', 'kernel/part', 'kernel/window'],
 
-//then do...
-function(babylon, $, part){
-
-//construct sphere handler, AKA bunch of static properties and methods.
-var sphereHandlers = $.extend( {}, part, {
+// then do...
+function(babylon, $, Part, win){
+	
+// Construct sphere handlers, AKA list of static methods.
+var sphereHandlers = $.extend( {}, Part, {
+	
+	// override - constructs and returns a new sphere inherits from part 
+	'create':function(userData){ return $.extend( {}, Part.create(), sphere, userData ); },
  	
 	// returns a new shere element (extended from part) with a random radius between 0 and 1
-	'demo':function(){ return $.extend( part.make, sphere, { 'radius':Math.random() }  ); },
-	// returns a new sphere element which includes the properties of part (ancestor of all elements)	
-	'make':function(){ $.extend( {}, part.make(), sphere); },	 
-	// list of propterty access functions - functions may just display property or provide means of editing
-	'properties': [ this.radius ],
+	'demo':function(num){ 
+		var that=this;
+		switch(num){
+			case 1: return that.create({ 'radius':Math.random() }); break;
+			default: return that.create({ 'radius':Math.random() }); 			
+		}
+	},	
+
+	'getProperties':function(){
+		var that=this;
+		return $.extend(Part.getProperties(),{
+			'radius':that.radius
+		});
+	},
 
 	// babylon scene constructor
-	'setScene':function(sphere, scene, canvas){
-		
+	'setScene':function(sphere){
+
+		alert('adding sphere'+
+			'<br>name:'+phere.name+
+			'<br>segment:'+sphere.segment+
+			'<br>rad:'+sphere.radius*2+
+			'<br>scene:'+win.BIM.scene+
+			'<br>updatable:'+sphere.updatable+
+			'<br>faceMode:'+sphere.faceMode+'<br>');
+			
 		sphere.baby = babylon.Mesh.CreateSphere(	
 			sphere.name, 
 			sphere.segment,
 			sphere.radius*2,
-			scene,
-			scene.mutable,
-			scene.babylon.Mesh.DEFAULTSIDE
-		);
+			win.BIM.scene,
+			sphere.updatable,
+			sphere.faceMode);
+			
 		// note two way relation between BIM part and babylon element 
 		sphere.baby.BIMP=sphere;
 		//set position
@@ -61,31 +81,32 @@ var sphereHandlers = $.extend( {}, part, {
 	},
 		
 
-	'radius':function(sphere){ 
-		var whenDone=function(sphere){
+	'radius':function(sphere, dashboard){ 
+		var callback=function(){
+			//update babylon element
+			//changed sphere will show with next babyoln scene render 
 			sphere.baby.width=sphere.radius*2;
-			//changed sphere will show with next scene render 
 		};		
-		//showReal('Shpere radius', sphere.radius);		
-		//shows and allows edit of real 
-		editReal('Sphere radius', sphere.radius,  whenDone);
-		//note that editReal should take care of undo functions and log
-	}
-}); // extend
+		//shows and allows edit of real and maintains undo log
+		dashboard.real('radius', sphere.radius, callback);
+	},
+	
+	'hello':'hello'
+}); 
 
-// sphere properties, extends part properties
-// note, sphereHandler is defined first because it is referenced below
-// remember, model may have many spheres but only one shpere handler
-var sphere=$.extend(part.create(), {
-	'baby':null, 
+
+// Construct sphere properties.
+// Used to extend part properties when Sphere.create() is called.
+// SphereHandler is defined first because it is referenced below.
+// Model may have many spheres but only one shpere handler.
+var sphere={
 	'handler':sphereHandlers,
-	'name':'unnamed',
-	'position':BABYLON.Vector3(0,0,0),
+	'position':babylon.Vector3(0,0,0),
 	'radius':1
-});
+};
 
 
-
+//alert('partSphere constructed:'+sphereHandlers.hello);
 
 return sphereHandlers;
 

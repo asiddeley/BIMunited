@@ -44,17 +44,13 @@ var partHandlers = {
 	'create':function(userData){ return $.extend( {}, part, userData); },	 
 	
 	// returns a new part element with a random radius between 0 and 1
-	'demo':function(num){ 
+	'demo':function(){ return this.create({'radius':Math.random()}); },
+
+	// return a bunch of propterty access functions
+	'getProperties':function(){
 		var that=this;
-		switch(num){
-			case 1: return that.create({ 'radius':Math.random() }); break;
-			default: return that.create({ 'radius':Math.random() }); 			
-		}
-		return 
-	},	
-	
-	// list of propterty access functions - functions may just display property or provide means of editing
-	'properties': { 'name':this.name, 'position':this.position},
+		return {'name':that.name, 'position':that.position};
+	},
 	
 	// babylon scene constructor
 	'setScene':function(part){	
@@ -74,11 +70,12 @@ var partHandlers = {
 	
 	//////////////////////////////////////
 	// Property access functions 
-	// include these in properties list above to expose
+	// Include these in list that is returned by getProperties() above.
+	// Functions may just display property or provide means of editing
 	'host':function(part, dashboard){  /*expose the part's parent */   },
 	
 	'name':function(part, dashboard){
-		dashboard.editText('name', part.name,  function(part){ 
+		dashboard.text('name', part.name,  function(part){ 
 		/* no action required */
 		});
 	},
@@ -89,16 +86,17 @@ var partHandlers = {
 			//changed part will show with next scene render 
 		};		
 		//shows and allows edit of a position
-		dashboard.editPosition('position', part.position,  callback);
+		dashboard.point3d('position', part.position,  callback);
 		//note that editXXX should take care of undo functions and log
 	},
 
 	'type':function(part, dashboard){
 		var callback=function(part){ 
-			//change type eg line to sphere 
+			//no action required since a part's type is unchanging.
+			//or is it? Some type changes possible, eg cube to sphere 
 		};
-		dashboard.label('name', part.type, callback );
-	},
+		dashboard.label('type', 'part', callback );
+	}
 	
 };
 
@@ -107,15 +105,16 @@ var partHandlers = {
 // the model may contain many part but only one set of part handlers
 var part = {
 	'baby':null,  //set during setScene
-	'faceOrientation':BABYLON.Mesh.DEFAULTSIDE, //scene.babylon.Mesh.DEFAULTSIDE
+	'faceMode':babylon.Mesh.DEFAULTSIDE, //scene.babylon.Mesh.DEFAULTSIDE
 	'handlers':partHandlers,
 	'name':'unnamed',
-	'position':BABYLON.Vector3(0,0,0),
-	'segment':12,
+	'position':babylon.Vector3(0,0,0),
 	'radius':1,
+	'segment':12,
 	'updateable':true
 };
 
+//alert('Part constructed');
 return partHandlers;
 });
 

@@ -28,7 +28,7 @@
 
 define(
 // load dependencies...
-['jquery'],
+['jquery', 'kernel/window'],
 
 // then do...
 function($, win){

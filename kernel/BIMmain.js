@@ -7,19 +7,18 @@
 
 requirejs.config({
 	
-//default base URL is same as HTML file ie. root or /BIMsoup,
+//default base URL is same as HTML 
 //but needs to be the same as jquery for jquery to work
 "baseUrl": "javascript/",
 
 "paths": {
 	"arch": "../Arch",
-	"basic": "../Basic",
 	"kernel": "../kernel",
 	//"jq": "jquery",
 	//"jq": "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min",
 	"sylvester": "sylvester/sylvesterXp",
 	"jq":"../javascript/jquery",
-	"babylon":"../babylon/babylonXp"
+	"babylon":"../babylon/babylonXP"
 }
 
 });
@@ -27,29 +26,30 @@ requirejs.config({
 
 define(
 // load dependencies...
-[ 'arch/archModel',
-'jquery', 
+[
+'arch/archModel',
+'jquery',
 'babylon',
 'kernel/dashboard',
 'kernel/stage',
-'kernel/toolEventAdmin',
-'kernel/window' ],
+'kernel/eventAdmin',
+'kernel/window'
+],
 
 // then do this...
-function (model, $,  babylon, dashboard, stage, tea, win) {
+function (Model, $, babylon, dashboard, stage, tea, win) {
 
 //alert('BIMmain...');
 
 var settings={
+	//callback functions for when BIMsoup has a message 
+	'boards':{'black':function(msg){alert(msg);}, 'white':function(msg){alert(msg);}},
 	'canvas':null,
-	'console':function(msg){ alert(msg); }, //callback for when BIMsoup has a message 
 	'dbapi':null,
-	'dashboard':null, //dashboard.create(), //used to display and edit a part's propertes
 	'user':"defaultUser"
 };
-
 	
-// return BIMsoup library object
+// construct library object for return
 var BIM={
 	// properties
 	'babylon':babylon,
@@ -67,16 +67,22 @@ var BIM={
 		$.extend(this.settings, {'user':user} );
 		//alert("welcome "+settings.user+"\n");				
 	},
-
-	'board':function(canvas){
-		$.extend(this.settings, {'canvas':canvas});
-	},	
 			
-	'console':function(callback){
-		// command line input and output
-		if (callback instanceof Function){
-			$.extend(this.settings, { 'console':callback});
+	'boards':function(a){
+		// this.settings.boards.black - callback fn for BIM messages 
+		// this.settings.boards.white - callback fn for BIM properties and other controls		
+		if (a instanceof Function){
+			// a is a function so override boards property thus
+			$.extend(this.settings, {'boards':{'black':a, 'white':a}});
+		} else if (a instanceof Object) {
+			// a is an object so override boards property thus
+			$.extend(this.settings, {'boards':a});
+			a.black('BIM blackboard...<br>');
 		}
+	},
+	
+	'canvas':function(canvas){
+		$.extend(this.settings, {'canvas':canvas});
 	},
 
 	'database':function(dbapi){
@@ -87,10 +93,9 @@ var BIM={
 				
 		// settings
 		$.extend(this.settings, usettings);
+		
 		//alert('engage');
-		// Set model EXAMPLE 1
-		// this.aModel.push(models.example(1));
-		this.model=model.demo(1);
+		this.model=Model.demo(1);
 		
 		// Set the stage, cameras, lights, materials
 		this.stage=stage.demo(1);
@@ -100,8 +105,13 @@ var BIM={
 		
 		// prepare engine
 		var c=this.settings.canvas;
-		this.engine = new BABYLON.Engine(c, true);
-		this.scene = new BABYLON.Scene(this.engine);
+		this.engine = new babylon.Engine(c, true);
+		//why webgl dest rect smaller than viewport rect warning
+		//try...
+		//http://doc.babylonjs.com/classes/2.5/Engine
+		//this.engine.setViewport(new babylon.Viewport(0,0,700,500));
+		
+		this.scene = new babylon.Scene(this.engine);
 		var s=this.scene;
 		
 		// camera, lights
@@ -109,10 +119,12 @@ var BIM={
 		
 		// visit all parts to set the babylon scene		
 		this.model.handlers.setScene( this.model );
+		//MSG('model.handlers.setScene:'+s); //ok
 		
 		// scene events
 		//s.onPointerDown=this.kits.onPointerDown;
 		this.tea.setScene(s, c);
+
 
 		//s.debugLayer.show();
 		
@@ -124,12 +136,18 @@ var BIM={
 	//control
 	'input':function(input){
 		return this.tea.command(input, this.scene, this.settings.canvas);
-	}
+	},
+	
+	'hello':'hello'
 		
-}; // var BIM		
+}; 		
 
-//alert('BIMmain...'+BIM);
-//win.BIM=BIM;
+// quit message output
+var MSG=function(msg){settings.boards.black(msg);};
+
+
+win.BIM=BIM;
+//alert('BIMmain...'+win.BIM);
 return BIM;
 
 });

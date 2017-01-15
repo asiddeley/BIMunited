@@ -2,52 +2,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <title>BIM</title>
- <meta charset="utf-8">
- <meta name="viewport" content="width=device-width, initial-scale=1">
- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
- <!--link rel="stylesheet" href="bootstrap-3.3.5-dist/css/bootstrap.min.css"-->
- <!--link rel="stylesheet" href="bootstrap-3.3.5-dist/css/custom.css"-->
+<title>BIM</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<!--link rel="stylesheet" href="bootstrap-3.3.5-dist/css/bootstrap.min.css"-->
+<!--link rel="stylesheet" href="bootstrap-3.3.5-dist/css/custom.css"-->
  
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
- <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
- <!--script src="bootstrap-3.3.5-dist/js/bootstrap.min.js"></script-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<!--script src="bootstrap-3.3.5-dist/js/bootstrap.min.js"></script-->
   
- <script data-main="kernel/BIMmain.js" src="javascript/require/require.js"></script>
- <!--script src="javascripts/require/require.js"></script-->
- 
+<script data-main="kernel/BIMmain.js" src="javascript/require/require.js"></script>
 
  
 <script type="text/javascript">
-
+//$(document).ready(function(){
 
 function handleInput(ev){
 	
 	ev.preventDefault(); //disable normal form submit behavior
 	var i=$("#myInput").val();
 	var r=BIM.input(i);//get text from form and pass it to BIM
-	$("#myConsole").append(r); //display result
+	$("#myBlackboard").append(i+'<br>'+r); //display input and result
 	return false; //prevent further bubbling of event
 }
 
-function handleOutput(msg){
-	$("#myConsole").append(msg);
-}
+function blackboard(msg){$("#myBlackboard").append(msg);}
+
+function whiteboard(html){$("#myWhiteboard").html(html);}
 
 
-requirejs( [ 'kernel/BIMmain'  ], function(BIM ){
-	alert ('BIMapp...'+BIM);
-	//BIM.allo('andrew'); 
-	//BIM.board(window.document.getElementById('myBoard'));
-	//BIM.console(handleOutput);
-	//BIM.database("database connection API");
-	//BIM.engage();
+
+requirejs(['BIMmain'], function(BIM){
+	// alert ('BIMapp...'+BIM.hello);
+	// the BIM a-b-c-d-e starter functions...
+	BIM.allo('andrew'); 
+	BIM.boards({'black':blackboard, 'white':whiteboard});
+	BIM.canvas(window.document.getElementById('myCanvas'));
+	BIM.database("database connecti on API");
+	BIM.engage();
 });
 
+
+//}); //ready
 
 
 
 </script>
+<style>
+#myBlackboard { 
+padding:5px;
+float:left;
+background:black;
+color:white; }
+
+
+</style>
+
 
 </head>
 <body>
@@ -176,12 +188,14 @@ requirejs( [ 'kernel/BIMmain'  ], function(BIM ){
 	
 
 </nav>
-<div id="myConsole" style="float:left;height:600px;width:200px;background:silver;">Console area...<br></div>
-<canvas id="myBoard" style="height:600px;width:800px;background:black"></canvas>
 
-
+<div id="myBlackboard" style="width:200px;height:600px;"></div>
+<canvas id="myCanvas" style="width:800px;height:600px;"></canvas>
 
 </div><!-- /.container-fluid -->
+
+
+
 </body>
 
 

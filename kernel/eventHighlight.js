@@ -33,20 +33,15 @@ define(
 // then do...
 function(babylon){
 	
-// return basic part
+
 return (
 
 function (evt, pickResult) {
-	// var matLib=this.stage.matLib.picked;
-	// if the click hits the ground object, we change the impact position
 	if (pickResult.hit) {
-		//alert('pickResult = '+pickResult.pickedPoint.x);
-		//impact.position.x = pickResult.pickedPoint.x;
-		//impact.position.y = pickResult.pickedPoint.y;
 		if (pickResult.pickedMesh != null) {
 			//highlight
-			var picked=BIMsoup.stage.matLib.picked;
-			var unpicked=BIMsoup.stage.matLib.unpicked;
+			var picked=BIM.stage.matLib.picked;
+			var unpicked=BIM.stage.matLib.unpicked;
 			//alert('picked:'+picked+' / unpicked ' +unpicked)				
 			if (typeof pickResult.pickedMesh.matBackup == 'undefinded'){
 				pickResult.pickedMesh.matBackup=false;

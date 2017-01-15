@@ -4,7 +4,7 @@ define(
 [ 'jquery' ],
 
 function( $ ){ 
-	alert('window...');
+	//alert('window...');
 	return window;
 });
 

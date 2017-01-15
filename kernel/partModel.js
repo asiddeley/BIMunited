@@ -31,25 +31,33 @@ define(
 ['jquery', 'kernel/part', 'kernel/window'],
 
 // then do...
-function($, part, win) {
+function($, Part, win) {
+	
+// Note Part vs part (Capital P vs lower case p)
+// Part - part handlersm, one handler collection
+// part - part data, constructed by Part.create(), many individual datas 
 
 //alert('model...');
 
 // modelHandlers inherits from partHandlers
-var modelHandlers=$.extend( {}, part, {
+var modelHandlers=$.extend( {}, Part, {
 
 	// override - returns a new model
-	'create':function(userData){ return $.extend({}, model, userData); },
+	'create':function(userData){ return $.extend({}, Part.create, model, userData); },
 	
-	// extend - list of property access functions 
-	//'properties': $.extend( {}, part.properties, {'name':this.name, 'position':this.position }),
-	'properties': $.extend( {}, part.properties, { }),
-
+	// override - list of property access functions 
+	'getProperties': function(){
+		var that=this;
+		// construct collection of property access functions, inherit from part
+		return $.extend({}, Part.getProperties(), 
+			{'tags': that.tags}
+		); //extend
+	},
 	
 	// override - babylon scene constructor
 	'setScene':function(model){
-		for (var i=0; i<this.parts.length; i++){
-			model.parts[i].setScene( parts[i] );
+		for (var i=0; i<model.parts.length; i++){
+			model.parts[i].handlers.setScene( model.parts[i] );
 		}
 	},
 	
@@ -63,22 +71,36 @@ var modelHandlers=$.extend( {}, part, {
 		if (win.BIM.scene != null) { model.handlers.setScene(model);}
 	},
 	
+	'tags':function(model, dashboard){
+		var callback=function(){};
+		dashboard.list('tags', model.tags, callback);		
+	},
+	
+	'type':function(part, dashboard){
+		var callback=function(part){ 
+			//no action required since a part's type is unchanging.
+			//or is it? Some type changes possible, eg cube to sphere 
+		};
+		dashboard.label('type', 'model', callback );
+	},	
+	
 	'visit':function(model, visitor){ 
 		visitor.welcome(model);
+		//to do, access visit parts
 	}
 });
 
 
-// model data, inherits stuff from part
-var model=$.extend( part.create(), {
+// Construct model data.  Used to extend part later in Model.Create()
+var model={
 	'disc':'all',
 	'handlers':modelHandlers,
 	'parts':[],
 	'tags':[],
-	'type':'model',
 	'visible':true
-});
+};
 
+//alert('Model constructed:'+modelHandlers);
 return modelHandlers;
 
 });

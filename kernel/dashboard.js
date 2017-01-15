@@ -29,11 +29,11 @@
 
 define(
 // load dependencies...
-[ ],
+['jquery'],
 
 // then do...
-function(){
-return {}
+function($){
+	return {};
 
 });
 

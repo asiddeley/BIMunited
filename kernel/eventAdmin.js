@@ -31,20 +31,20 @@ define(
 // load dependencies...
 ['jquery',
 'babylon',
-'kernel/toolClone',
-'kernel/toolProps',
-'kernel/toolHighlight'],
+'kernel/eventClone',
+'kernel/eventProps',
+'kernel/eventHighlight'],
 
 // construct and return the TEA...
 function($, babylon, clone, props, highlight){
 	
 return {
 	
-	'demo':function(n, usettings){
+	'demo':function(n){
 		var that=this;
 		switch(n){
-			case 1:that.pickToHighlight(usettings);break;
-			default:that.pickToHighlight(usettings);break;			
+			case 1:that.pickToHighlight();break;
+			default:that.pickToHighlight();			
 		}		
 	},
 	

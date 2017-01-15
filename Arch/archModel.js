@@ -28,21 +28,22 @@
 
 define(
 //Load dependencies...
-[ 'jquery', 'kernel/model', 'kernel/partSphere'], 
+['babylon', 'jquery', 'kernel/partModel', 'kernel/partSphere'], 
   
 //Then do this...
-function($, model, sphere) {
+function(babylon, $, Model, Sphere) {
 
 //alert('archModel...');
 
 //archModelHandlers inherits from modelHandlers...
-var archModelHandlers=$.extend( {}, model, {
+var archModelHandlers=$.extend( {}, Model, {
 	
-	//override
-	'create':function(){ return $.extend( model.create(), archModel ); },
+	// override
+	'create':function(){ return $.extend( Model.create(), archModel ); },
 
-	//override
+	// override
 	'demo':function(num){
+		//alert('demo:'+num);
 		var that=this;
 		switch(num){
 			case 1: return that.demo1(); break;
@@ -53,23 +54,28 @@ var archModelHandlers=$.extend( {}, model, {
 	'demo1':function(){
 		//demo 1
 		//Arch model with some sphere
+
 		var m=this.create();
-		var v=BABYLON.Vector3;
-		m.addPart( sphere.demo({'name':'s1', 'radius':0.5, 'position':new v(0,0,0)}));
-		m.addPart( sphere.demo({'name':'s2', 'radius':1, 'position':new v(6,0,0)}));
-		m.addPart( sphere.demo({'name':'s3', 'radius':1.5, 'position':new v(0,6,0)}));
-		m.addPart( sphere.demo({'name':'s4', 'radius':2, 'position':new v(6,6,0)}));
+		var v=babylon.Vector3;
+		m.handlers.addPart(m, Sphere.create({'name':'s1', 'radius':0.5, 'position':new v(0,0,0)}));
+		m.handlers.addPart(m, Sphere.create({'name':'s2', 'radius':1, 'position':new v(6,0,0)}));
+		m.handlers.addPart(m, Sphere.create({'name':'s3', 'radius':1.5, 'position':new v(0,6,0)}));
+		m.handlers.addPart(m, Sphere.create({'name':'s4', 'radius':2, 'position':new v(6,6,0)}));
+		//alert('model demo1');
 		return m;
 	}
 });
-	
+
+// ArchModel inherits from Model
 var archModel={
 	'disc':'all',
 	'handlers':archModelHandlers,
 	'type':'archModel'
 };
 
-	return archModelHandlers;
+
+//alert('ArchModel constructed:'+archModelHandlers);
+return archModelHandlers;
 });
 
 
