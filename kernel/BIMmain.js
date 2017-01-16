@@ -43,7 +43,7 @@ function (Model, $, babylon, dashboard, stage, tea, win) {
 
 var settings={
 	//callback functions for when BIMsoup has a message 
-	'boards':{'black':function(msg){alert(msg);}, 'white':function(msg){alert(msg);}},
+	'blackboard':function(msg){alert(msg);},
 	'canvas':null,
 	'dbapi':null,
 	'user':"defaultUser"
@@ -63,22 +63,17 @@ var BIM={
 	'window':win,	// BIM references window and window ref's BIM
 	
 	// API methods
-	'allo':function(user){
+	'admin':function(user){
 		$.extend(this.settings, {'user':user} );
 		//alert("welcome "+settings.user+"\n");				
 	},
 			
-	'boards':function(a){
-		// this.settings.boards.black - callback fn for BIM messages 
-		// this.settings.boards.white - callback fn for BIM properties and other controls		
-		if (a instanceof Function){
-			// a is a function so override boards property thus
-			$.extend(this.settings, {'boards':{'black':a, 'white':a}});
-		} else if (a instanceof Object) {
-			// a is an object so override boards property thus
-			$.extend(this.settings, {'boards':a});
-			a.black('BIM blackboard...<br>');
-		}
+	'blackboard':function(fn){
+		if (fn instanceof Function){
+			// a is a function so override blackboard setting thus
+			$.extend(this.settings, {'blackboard':fn});
+		};
+		fn("Blackboard...<br>");
 	},
 	
 	'canvas':function(canvas){
@@ -133,21 +128,17 @@ var BIM={
 
 	},
 	
-	//control
+	// control
 	'input':function(input){
 		return this.tea.command(input, this.scene, this.settings.canvas);
 	},
 	
-	'hello':'hello'
+	// simple text message to blackboard
+	'log':function(msg){this.settings.blackboard(msg, 'console');}
 		
 }; 		
 
-// quit message output
-var MSG=function(msg){settings.boards.black(msg);};
-
-
 win.BIM=BIM;
-//alert('BIMmain...'+win.BIM);
 return BIM;
 
 });

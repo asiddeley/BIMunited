@@ -28,17 +28,22 @@ function handleInput(ev){
 	return false; //prevent further bubbling of event
 }
 
-function blackboard(msg){$("#myBlackboard").append(msg);}
-
-function whiteboard(html){$("#myWhiteboard").html(html);}
+function outputHandler(msg, type){
+	switch(type){
+		case 'console':$("#myBlackboard").append(msg);break;
+		case 'floatingMenu':$("#myBlackboard").append(msg);break;
+		case 'properties':$("#myBlackboard").append(msg);break;
+		default:$("#myBlackboard").append(msg);break;
+	}
+};
 
 
 
 requirejs(['BIMmain'], function(BIM){
 	// alert ('BIMapp...'+BIM.hello);
 	// the BIM a-b-c-d-e starter functions...
-	BIM.allo('andrew'); 
-	BIM.boards({'black':blackboard, 'white':whiteboard});
+	BIM.admin('andrew'); 
+	BIM.blackboard(outputHandler);
 	BIM.canvas(window.document.getElementById('myCanvas'));
 	BIM.database("database connecti on API");
 	BIM.engage();
