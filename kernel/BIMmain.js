@@ -42,8 +42,7 @@ function (Model, $, babylon, dashboard, stage, tea, win) {
 //alert('BIMmain...');
 
 var settings={
-	//callback functions for when BIMsoup has a message 
-	'blackboard':function(msg){alert(msg);},
+	'blackboard':function(msg){alert(msg);},	 //basic callback function for BIM messages 
 	'canvas':null,
 	'dbapi':null,
 	'user':"defaultUser"
@@ -52,14 +51,14 @@ var settings={
 // construct library object for return
 var BIM={
 	// properties
-	'babylon':babylon,
+	//'babylon':babylon,
 	'engine':null,
 	'library':{},	// like a model but not displayed.  Has available parts & models
 	'model':null, 	// main model - created inside engage()
 	'scene':null,	// the scene - created inside engage()
 	'settings':settings,
 	'stage':{}, 	// lights and cameras - created inside engage
-	'tea':{}, 		// tool event admin 
+	'tea':{}, 		// the event administrator 
 	'window':win,	// BIM references window and window ref's BIM
 	
 	// API methods
@@ -69,10 +68,7 @@ var BIM={
 	},
 			
 	'blackboard':function(fn){
-		if (fn instanceof Function){
-			// a is a function so override blackboard setting thus
-			$.extend(this.settings, {'blackboard':fn});
-		};
+		if (fn instanceof Function){$.extend(this.settings, {'blackboard':fn}); };
 		fn("Blackboard...<br>");
 	},
 	
@@ -93,6 +89,7 @@ var BIM={
 		this.model=Model.demo(1);
 		
 		// Set the stage, cameras, lights, materials
+		//  todo include this in model 
 		this.stage=stage.demo(1);
 		
 		// sets the tools-event assoc 
@@ -134,7 +131,11 @@ var BIM={
 	},
 	
 	// simple text message to blackboard
-	'log':function(msg){this.settings.blackboard(msg, 'console');}
+	'log':function(msg){this.settings.blackboard(msg, 'console');},
+	
+	// grows textarea fit text - useful for typing in a small textarea 
+	'uiAautoHeight'=function (el) { $(el).css('height', 'auto').css('height', el.scrollHeight + 5);}
+	
 		
 }; 		
 
