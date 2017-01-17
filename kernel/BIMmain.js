@@ -56,9 +56,9 @@ var BIM={
 	'library':{},	// like a model but not displayed.  Has available parts & models
 	'model':null, 	// main model - created inside engage()
 	'scene':null,	// the scene - created inside engage()
-	'settings':settings,
-	'stage':{}, 	// lights and cameras - created inside engage
-	'tea':{}, 		// the event administrator 
+	'settings':settings, //settings - extended in engage()
+	'stage':{}, 	// lights and cameras - created in engage()
+	'tea':{}, 		// the event administrator - set in engage()
 	'window':win,	// BIM references window and window ref's BIM
 	
 	// API methods
@@ -134,9 +134,7 @@ var BIM={
 	'log':function(msg){this.settings.blackboard(msg, 'console');},
 	
 	// grows textarea fit text - useful for typing in a small textarea 
-	'uiAautoHeight'=function (el) { $(el).css('height', 'auto').css('height', el.scrollHeight + 5);}
-	
-		
+	'uiAutoHeight':function(el){$(el).css('height','auto').css('height', el.scrollHeight+5);}		
 }; 		
 
 win.BIM=BIM;
