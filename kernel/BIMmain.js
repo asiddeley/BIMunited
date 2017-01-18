@@ -43,6 +43,7 @@ function (Model, $, babylon, dashboard, stage, tea, win) {
 
 var settings={
 	'blackboard':function(msg){alert(msg);},	 //basic callback function for BIM messages 
+	'boards':null,
 	'canvas':null,
 	'dbapi':null,
 	'user':"defaultUser"
@@ -69,7 +70,11 @@ var BIM={
 			
 	'blackboard':function(fn){
 		if (fn instanceof Function){$.extend(this.settings, {'blackboard':fn}); };
-		fn("Blackboard...<br>");
+		//fn("Blackboard...<br>");
+	},
+		
+	'boards':function(el){
+		$.extend(this.settings, {'boards':el});
 	},
 	
 	'canvas':function(canvas){

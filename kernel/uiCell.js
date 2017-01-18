@@ -36,7 +36,7 @@ define(
 // Then do...
 function($, ui) {
 
-$.widget ("bim.cell", {
+$.widget ("bim.dashboard", {
 	
     options: {
 		name: 'unnamed',
@@ -51,17 +51,12 @@ $.widget ("bim.cell", {
 	_create:function() {
 		this.options.name=this.element.attr("id");
 		this.options.text=this.element.text();
-		this.options.idi=this.options.name+'input';
-		this.options.idr=this.options.name+'result';
-		this.options.idn=this.options.name+'name';
-		//this.options=$.extend(this.options, soup.dataLoad(this.options));
-		//this.styleRestore();		
 		this._on( this.element, {
-			dragstop:'stylingStop',
-			resizestop:'stylingStop',
-			mouseenter:'_highlight', 
-			mouseleave:'_highlightoff' ,
-			contextmenu:'_contextmenu'
+			//dragstop:'stylingStop',
+			//resizestop:'stylingStop',
+			//mouseenter:'_highlight', 
+			//mouseleave:'_highlightoff' ,
+			//contextmenu:'_contextmenu'
 			//click:'_contentEdit'
 		});
 		this.render();
@@ -69,52 +64,12 @@ $.widget ("bim.cell", {
 	
 
 	_contextmenu:function(event) {
-		//var c=window.getComputedStyle(this.element[0],null);
-		//var c=this.element.data("ui-draggable"); //long running script
-		//$("#dialog").dialog('open').html(soup.anything(c));
-		//return false;
-		//alert('Cell context menu');
+
 		return false; //cancel other context menus
 	},
 	
 	_destroy: function() {
         //this.element.removeClass( "savable" ).text( "" );
-    },
-	
-	_highlight:function(event) {
-		//this.element.css('background-color','silver'); 
-		this.options.xtxt=$("#" + this.options.idi).val();
-		//$("#"+this.options.idn).show();
-		$("#"+this.options.idi).show().css({'position':'relative', 'z-index':10000, 'background':'silver'});
-		$("#"+this.options.idr).hide();	
-	},
-	
-	_highlightoff:function(event) {
-		//this.element.css('background-color','white'); 
-		var ntxt=$("#" + this.options.idi).val();
-		//text has changed so 
-		if( ntxt != this.options.xtxt) {
-			//text changed so save
-			ntxt=(ntxt=='')?'--':ntxt;
-			this.options.undo.push(this.options.xtxt);
-			if (this.options.undo.length > 10) {this.options.undo.shift();}
-			this.options.text=ntxt;
-			$("#"+this.options.idr).text(this._process(ntxt));	
-			//soup.dataSave(this.options);
-		}
-		//$("#"+this.options.idn).hide();
-		$("#"+this.options.idi).hide();
-		$("#"+this.options.idr).show();	
-	},
-	
-	
-	_process: function( valu ) {
-		//check for and evaluate expression in cell content if it is prefixed with equal sign
-		if (valu.substr(0,1) == '=') {
-			try{valu=eval(valu.substr(1));}
-			catch(er){valu=er.toString();}
-		}
-        return valu;
     },
 	
 	render: function() {		
@@ -135,7 +90,7 @@ $.widget ("bim.cell", {
     },
 	
 	result: function(){
-		return this._process(this.options.text);
+		//return this._process(this.options.text);
 	},
 	
     _setOption: function( key, valu ) {
@@ -169,9 +124,6 @@ $.widget ("bim.cell", {
 		//save position
 		var c=window.getComputedStyle(this.element[0],null);
 		this.options=$.extend(this.options, this.styleGet(c));
-		//console.log (soup.anything(this.options));
-		//soup.dataSave(this.options);
-		//return false;
 	}
 
 });

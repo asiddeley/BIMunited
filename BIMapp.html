@@ -23,16 +23,16 @@ function handleInput(ev){
 	ev.preventDefault(); //disable normal form submit behavior
 	var i=$("#myInput").val();
 	var r=BIM.input(i);//get text from form and pass it to BIM
-	$("#myBlackboard").append(i+'<br>'+r); //display input and result
+	$("#blackboard").append(i+'<br>'+r); //display input and result
 	return false; //prevent further bubbling of event
 }
 
 function outputHandler(msg, type){
 	switch(type){
-		case 'console':$("#myBlackboard").append(msg);break;
-		case 'floatingMenu':$("#myBlackboard").append(msg);break;
-		case 'properties':$("#myBlackboard").append(msg);break;
-		default:$("#myBlackboard").append(msg);break;
+		case 'console':$("#blackboard").append(msg);break;
+		case 'floatingMenu':$("#blackboard").append(msg);break;
+		case 'properties':$("#blackboard").append(msg);break;
+		default:$("#blackboard").append(msg);break;
 	}
 };
 
@@ -40,10 +40,15 @@ function outputHandler(msg, type){
 
 requirejs(['BIMmain'], function(BIM){
 	// alert ('BIMapp...'+BIM.hello);
+
+	var dashboard=window.document.getElementById('dashboard');
+	var canvas=window.document.getElementById('canvas');
+	
 	// the BIM a-b-c-d-e starter functions...
 	BIM.admin('andrew'); 
 	BIM.blackboard(outputHandler);
-	BIM.canvas(window.document.getElementById('myCanvas'));
+	BIM.boards({'properties':dashboard});
+	BIM.canvas(canvas);
 	BIM.database("database connecti on API");
 	BIM.engage();
 });
@@ -55,12 +60,24 @@ requirejs(['BIMmain'], function(BIM){
 
 </script>
 <style>
-#myBlackboard { 
+#blackboard { 
+overflow:auto;
+width:100%;
+height:50%;
 padding:5px;
 float:left;
 background:black;
 color:white; }
 
+#dashboard { 
+overflow:auto;
+width:100%;
+height:50%;
+width:100%;
+padding:5px;
+float:left;
+background:gray;
+}
 
 </style>
 
@@ -193,8 +210,11 @@ color:white; }
 
 </nav>
 
-<div id="myBlackboard" style="width:200px;height:600px;"></div>
-<canvas id="myCanvas" style="width:800px;height:600px;"></canvas>
+<div id="sidebar" style="float:left;width:200px;height:300px;">
+	<div id="blackboard">blackboard...</div>
+	<div id="dashboard">dashboard...</div>
+</div>
+<canvas id="canvas" style="width:800px;height:600px;"></canvas>
 
 </div><!-- /.container-fluid -->
 
