@@ -36,7 +36,9 @@ define(
 // Then do...
 function($, ui) {
 
-$.widget ("bim.dashboard", {
+// versatile property control
+
+$.widget ("bim.partProperty", {
 	
     options: {
 		name: 'unnamed',
@@ -49,7 +51,7 @@ $.widget ("bim.dashboard", {
 	},
 	
 	_create:function() {
-		this.options.name=this.element.attr("id");
+		//this.options.name=this.element.attr("id");
 		this.options.text=this.element.text();
 		this._on( this.element, {
 			//dragstop:'stylingStop',
@@ -61,10 +63,8 @@ $.widget ("bim.dashboard", {
 		});
 		this.render();
     },
-	
 
 	_contextmenu:function(event) {
-
 		return false; //cancel other context menus
 	},
 	
