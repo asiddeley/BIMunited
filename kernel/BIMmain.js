@@ -30,20 +30,19 @@ define(
 'arch/archModel',
 'jquery',
 'babylon',
-'kernel/dashboard',
 'kernel/stage',
 'kernel/eventAdmin',
 'kernel/window'
 ],
 
 // then do this...
-function (Model, $, babylon, dashboard, stage, tea, win) {
+function (Model, $, babylon, stage, tea, win) {
 
 //alert('BIMmain...');
 
 var settings={
 	'blackboard':function(msg){alert(msg);},	 //basic callback function for BIM messages 
-	'boards':null,
+	'boards':{'blackboard':null, 'propertyboard':null},
 	'canvas':null,
 	'dbapi':null,
 	'user':"defaultUser"
@@ -130,16 +129,39 @@ var BIM={
 
 	},
 	
+	// function store 
+	'fun':{
+		'autoHeight':function(el){
+			// grows textarea fit text - useful for typing in a small textarea 
+			$(el).css('height','auto').css('height', el.scrollHeight+5);
+		},
+		'uid':function(name){
+			//Returns a simple unique id string based on a given name and
+			//how many time that name is called.  If no name given then 'id' is the default name.
+			//eg. 'cell1', 'line1', 'cell2', 'line2', 'line3', 'id1' ...
+			name=(typeof name == 'undefined')?'id':name.toString();
+			var count=this.uidstore[name];
+			count=(typeof count == 'undefined')?1:count+1; //define or increment id number
+			this.uidstore[name]=count; //save count
+			//alert( name+count.toString());
+			return name+count.toString();
+		},
+		'uidstore':{}		
+	},
+	
 	// control
 	'input':function(input){
-		return this.tea.command(input, this.scene, this.settings.canvas);
+		//return this.tea.command(input, this.scene, this.settings.canvas);
+		var result=this.tea.command(input);
+		this.log(input); this.log(result);		
 	},
 	
 	// simple text message to blackboard
-	'log':function(msg){this.settings.blackboard(msg, 'console');},
+	'log':function(msg){
+		//this.settings.blackboard(msg, 'console');
+		this.stage.ui.uiBlackboard.log(msg);
+	},
 	
-	// grows textarea fit text - useful for typing in a small textarea 
-	'uiAutoHeight':function(el){$(el).css('height','auto').css('height', el.scrollHeight+5);}		
 }; 		
 
 win.BIM=BIM;

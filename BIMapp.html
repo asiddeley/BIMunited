@@ -4,16 +4,18 @@
 <head>
 <title>BIM</title>
 <meta charset="utf-8">
+
+<!--script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script-->
+<script src="javascript/jquery.js"></script>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-<!--link rel="stylesheet" href="bootstrap-3.3.5-dist/css/bootstrap.min.css"-->
-<!--link rel="stylesheet" href="bootstrap-3.3.5-dist/css/custom.css"-->
- 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-<!--script src="bootstrap-3.3.5-dist/js/bootstrap.min.js"></script-->
-  
+<!--link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"-->
+<link rel="stylesheet" type="text/css" href="javascript/bootstrap/bootstrap.min.css"></link>
+<!--script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script-->
+<script src="javascript/bootstrap/bootstrap.min.js"></script>
+
 <script data-main="kernel/BIMmain.js" src="javascript/require/require.js"></script>
+<link rel="stylesheet" type="text/css" href="kernel/BIMstylesheet.css">
 
  
 <script type="text/javascript">
@@ -23,7 +25,7 @@ function handleInput(ev){
 	ev.preventDefault(); //disable normal form submit behavior
 	var i=$("#myInput").val();
 	var r=BIM.input(i);//get text from form and pass it to BIM
-	$("#blackboard").append(i+'<br>'+r); //display input and result
+	//$("#blackboard").append(i+'<br>'+r); //display input and result
 	return false; //prevent further bubbling of event
 }
 
@@ -37,50 +39,23 @@ function outputHandler(msg, type){
 };
 
 
-
 requirejs(['BIMmain'], function(BIM){
-	// alert ('BIMapp...'+BIM.hello);
-
 	var dashboard=window.document.getElementById('dashboard');
 	var canvas=window.document.getElementById('canvas');
 	
 	// the BIM a-b-c-d-e starter functions...
 	BIM.admin('andrew'); 
 	BIM.blackboard(outputHandler);
-	BIM.boards({'properties':dashboard});
+	BIM.boards({
+		'blackboard':window.document.getElementById('blackboard'),
+		'partProperties':window.document.getElementById('dashboard'),
+		'propertyboard':window.document.getElementById('dashboard')
+	});
 	BIM.canvas(canvas);
 	BIM.database("database connecti on API");
 	BIM.engage();
 });
-
-
-//}); //ready
-
-
-
 </script>
-<style>
-#blackboard { 
-overflow:auto;
-width:100%;
-height:50%;
-padding:5px;
-float:left;
-background:black;
-color:white; }
-
-#dashboard { 
-overflow:auto;
-width:100%;
-height:50%;
-width:100%;
-padding:5px;
-float:left;
-background:gray;
-}
-
-</style>
-
 
 </head>
 <body>

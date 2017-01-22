@@ -50,26 +50,26 @@ return {
 	
 	'setScene':function(scene, canvas){ },
 		
-	'command':function(command, scene, canvas){
+	'command':function(command){
 		//input interpreter
 		var that=this;
 		switch (command) {
 			case 'clone':
-				scene.onPointerDown=clone;
-				return 'clone mode<br>';
+				BIM.scene.onPointerDown=clone;
+				return 'clone mode';
 			break;			
 			
 			case 'pick':
-				scene.onPointerDown=highlight;	
-				return 'pick mode<br>';
+				BIM.scene.onPointerDown=highlight;	
+				return 'pick mode';
 			break;
 			
 			case 'props':
 				scene.onPointerDown=props;
-				return 'properties mode<br>';
+				return 'properties mode';
 			break;
 			default:
-				return 'unknown command '+command+'<br>';
+				return 'unknown command';
 			break;			
 		};
 	}	

@@ -17,116 +17,175 @@
 	project:	BIM
 	desc:		
 		
-	module: 	uiCell
-	desc: 		Defines a cell widget in jquery.  Load this module before create a cell widget.  
-	A cell shows a text and allows its editing when the curser enters it and commits changes when cursor leaves.
-
-	usage:	$( DOMelement ).cell(); // To create a cell widget on the provided DOM element
-
+	module: 	widgetPartProperty
+	desc: 		Defines a part property widget in jquery.    
+	Load this module before creating a part property widget.  It features the following:  
+	Shows a property and allows its editing when the curser enters the edit field.
+	Processes and commits changes when cursor leaves the edit field.
+	Fields are name, edit and result.
+	values in the edit field that begin with '=' are treated as expressions and processed similar
+	to a cell in a spreadsheet.
+	This work is a continuation of soup cell widget.
+	
+	usage:	$( DOMelement ).wPartProperty({name:'radius', valu:2.1});
+	
+	
 	by: 			Andrew Siddeley 
 	started:	16-Jan-2017
-	
-*/
+**************************************************************/
 
 define(
 
 // Load dependencies...
-['jquery', 'jquery-ui'],
+['jquery', 'jquery-ui', 'kernel/window'],
 
 // Then do...
-function($, ui) {
+function($, ui, win) {
 
-// versatile property control
+// define a widget for a versatile part property ui control
+$.widget ("bim.wPartProperty", {
 
-$.widget ("bim.partProperty", {
-	
-    options: {
-		name: 'unnamed',
-		text: 'default',
-		xtxt: 'default', //existing text
-		undo: [],
-		idi: 'default',
-		idr: 'default',
-		idn: 'default'
-	},
-	
-	_create:function() {
-		//this.options.name=this.element.attr("id");
-		this.options.text=this.element.text();
-		this._on( this.element, {
-			//dragstop:'stylingStop',
-			//resizestop:'stylingStop',
-			//mouseenter:'_highlight', 
-			//mouseleave:'_highlightoff' ,
-			//contextmenu:'_contextmenu'
-			//click:'_contentEdit'
-		});
-		this.render();
-    },
+// option defaults
+options: {
+	idi: 'input', //id of DOM element (field) that displays the input
+	idr: 'result', //id of field that displays the result
+	idn: 'name', //id of field that displays the name|title
+	mode: 'text', //type of partProperty eg. text, point3d, real, cell etc
+	name: 'unnamed',
+	undo: [],
+	valu: 'hello' //value
+	//valx: 'default', //value backup
+},
 
-	_contextmenu:function(event) {
-		return false; //cancel other context menus
-	},
-	
-	_destroy: function() {
-        //this.element.removeClass( "savable" ).text( "" );
-    },
-	
-	render: function() {		
-		//wrap text so it can be saved & edited
-		//console.log('cell foreachItem:'+this.element.foreachItem); //undefined
-		this.element.html(
-			"<p id='"+ this.options.idn + "' style='display:none;' >"+ this.options.name +"</p>"+
-			"<textarea id='"+this.options.idi+"' type='text' style='z-index=10001; "+
-			"display:none;width:100%;height:auto;'"+
-			"onclick='BIM.uiAutoHeight(this)' onkeyup='BIM.uiAutoHeight(this)' >"+
-			this.options.text+
-			"</textarea>"+
-			"<p id='"+this.options.idr+"' class='cellresult'>"+
-			this._process(this.options.text)+
-			"</p>"	
-		);
-		//this._trigger( "refreshed", null, { text: this.options.text } );
-    },
-	
-	result: function(){
-		//return this._process(this.options.text);
-	},
-	
-    _setOption: function( key, valu ) {
-       //if ( key === "valu" ) { valu = this._checkValu( valu );  }
-       this._super( key, valu );
-	},
-	
-	_setOptions: function( options ) {
-        this._super( options );
-    },	
+_create:function() {
+	//this.element is a reference to the DOMelement|div the widget is bound
+	//this.options.name=this.element.attr("id");
+	//this.options.text=this.element.text();
+	var id=win.BIM.fun.uid('cell');
+	this.options.idi=id+'input';
+	this.options.idr=id+'result';
+	this.options.idn=id+'name';	
 	
 	
-	styleGet:function(c){
-		//return an object with only drag properties from a given object
-		return	$.extend( { }, 
-			{ 'position': c['position'] },
-			{ 'left': c['left'] },
-			//{ 'right': c['right'] },
-			{ 'top': c['top'] },
-			//{ 'bottom': c['bottom'] },
-			{ 'height': c['height'] },
-			{ 'width': c['width'] }
-		);	
-	},
-	
-	styleRestore:function(c){
-		this.element.css(this.styleGet(this.options));
-	},			
-		
-	stylingStop:function(event, ui){
-		//save position
-		var c=window.getComputedStyle(this.element[0],null);
-		this.options=$.extend(this.options, this.styleGet(c));
+	this._on( this.element, {
+		//dragstop:'stylingStop',
+		//resizestop:'stylingStop',
+		mouseenter:'_highlight', 
+		mouseleave:'_highlightoff',
+		contextmenu:'_contextmenu'
+		//click:'_contentEdit'
+	});
+	this.render();
+},
+
+_contextmenu:function(event) {
+	return false; //cancel other context menus
+},
+
+_destroy: function() {
+	//this.element.removeClass( "savable" ).text( "" );
+},
+
+_highlight:function(event) {
+	//this.element.css('background-color','silver'); 
+	//this.options.valx=$("#" + this.options.idi).val();
+	//$("#"+this.options.idn).show();
+	$("#"+this.options.idi).show().css({'position':'relative', 'z-index':10000, 'background':'silver'});
+	$("#"+this.options.idr).hide();	
+},
+
+_highlightoff:function(event) {
+	//this.element.css('background-color','white'); 
+	var v=$("#" + this.options.idi).val();
+	//check if value|text has changed so 
+	if( v != this.options.valu) {
+		//text changed so save it to the undo stack before updating it
+		this.options.undo.push(this.options.valu);
+		//but limit the undo to just 10 changes
+		if (this.options.undo.length > 10) {this.options.undo.shift();}
+		//update value, eliminating nulls
+		v=(v=='')?'--':v;
+		this.options.valu=v;
+		//process it and update the result field
+		$("#"+this.options.idr).text(this._process(v));
+		//To do, commit to database...
+		//soup.dataSave(this.options);
 	}
+	//$("#"+this.options.idn).hide();
+	//cursor has left the cell so just show result field
+	$("#"+this.options.idi).hide();
+	$("#"+this.options.idr).show();	
+},
 
-});
 
-});
+_process: function( v ) {
+	//check for and evaluate any code found in cell
+	if (v.substr(0,1) == '=') {
+		try{valu=eval(v.substr(1));}
+		catch(er){v=er.toString();}
+	}
+	return v;
+},
+
+render: function() {	
+	var that=this;
+	
+	switch(this.options.mode){
+		case 'text':		
+		that.element.html(
+		"<div id='"+ that.options.idn + "' class='BimPbName' >"+ that.options.name +"</div>"+
+		"<textarea id='"+that.options.idi + "' class='BimPbInput' "+
+		"style='z-index=10001;display:none;width:100%;height:auto;'"+
+		"onclick='BIM.fun.autoHeight(this)'"+
+		"onkeyup='BIM.fun.autoHeight(this)' >"+
+		that.options.valu.toString()+
+		"</textarea>"+
+		"<div id='"+that.options.idr+"' class='BimPbResult'>"+
+		that._process(that.options.valu)+"</div>");
+		break;
+		default:
+		that.element.html('<div class="BIMcell">unknown property type</div>');		
+	}
+	//this._trigger( "refreshed", null, { text: this.options.text } );
+},
+
+result: function(){
+	//return this._process(this.options.text);
+},
+
+_setOption: function( key, valu ) {
+   //if ( key === "valu" ) { valu = this._checkValu( valu );  }
+   this._super( key, valu );
+},
+
+_setOptions: function( options ) {
+	this._super( options );
+},	
+
+
+styleGet:function(c){
+	//return an object with only drag properties from a given object
+	return	$.extend( { }, 
+		{ 'position': c['position'] },
+		{ 'left': c['left'] },
+		//{ 'right': c['right'] },
+		{ 'top': c['top'] },
+		//{ 'bottom': c['bottom'] },
+		{ 'height': c['height'] },
+		{ 'width': c['width'] }
+	);	
+},
+
+styleRestore:function(c){
+	this.element.css(this.styleGet(this.options));
+},			
+	
+stylingStop:function(event, ui){
+	//save position
+	var c=window.getComputedStyle(this.element[0],null);
+	this.options=$.extend(this.options, this.styleGet(c));
+}
+
+}); //end of widget
+}); //end of define
 

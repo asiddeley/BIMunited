@@ -14,30 +14,41 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	project:	BIM
-	module: 	dashboard
+	module: 	uiPartProperties
 	desc: 
 	usage:
 	by: 		Andrew Siddeley 
-	started:	12-Jan-2017
+	started:	19-Jan-2017
 	
 */
 
 
 define(
 // load dependencies...
-['jquery', 'widgetPartProperty'],
+// just loading widgetPartProperty initialized the widget factory in jquery.  Passed argument wp not used.
+['jquery', 'kernel/widgetPartProperty'],
 
 // then do...
 function($,  wp){
+
+
+var UiPropertyBoard={
 	
-var uiPartProperties={
-	
+	'aPartProperty':[],	// array for various property widgets
+
 	'create':function(el){
-		// el - DOM element (div reference) to contain elements (div references) for multiple property widgets
-		for (var i=0; i<5; i++){
-			// create nested div element and widgetize it as a partProperty control 
-			this.partProperty.push( $(el).append.('<div></div>').partProperty( { 'name':i } )  );
-		}		
+		// create a new copy (of this template) and initialize
+		var r=$.extend({}, UiPropertyBoard);
+		// el DOM element (div reference) to contain elements (div references) for multiple property widgets
+		var div;
+		for (var i=0; i<6; i++){
+			// create nested div element and widgetize it as a partProperty 
+			div=$('<div></div>').text(i.toString());
+			$(el).append(div);
+			div.wPartProperty({'text':i.toString()});
+			r.aPartProperty.push(div); 
+		}
+		return r;		
 	},
 
 	'label':function(title, label, callback){
@@ -45,13 +56,12 @@ var uiPartProperties={
 		//Set up control with callback and pass to blackboard
 		//Create undo operation
 		
-		var label1=$(el).cell({'name':title});
+		//var label1=$(el).cell({'name':title});
 	
 	
-		window.BIM.blackboard(message, 'control');
+		//window.BIM.blackboard(message, 'control');
 	},
 	
-	'partProperty':[],	// container for various property widgets
 
 	'point3d':function(title, point3d, callback){
 		//callback(point3d);
@@ -85,7 +95,7 @@ var uiPartProperties={
 
 };
 
-return uiProperties;
+return UiPropertyBoard;
 
 });
 
