@@ -26,27 +26,27 @@
 define(
 // load dependencies...
 // just loading widgetPartProperty initialized the widget factory in jquery.  Passed argument wp not used.
-['jquery', 'kernel/widgetPartProperty'],
+['jquery', 'kernel/widgetProperty'],
 
 // then do...
-function($,  wp){
+function($, wp){
 
 
 var UiPropertyBoard={
 	
-	'aPartProperty':[],	// array for various property widgets
+	'aProperty':[],	// array for various property widgets
 
 	'create':function(el){
 		// create a new copy (of this template) and initialize
 		var r=$.extend({}, UiPropertyBoard);
 		// el DOM element (div reference) to contain elements (div references) for multiple property widgets
-		var div;
-		for (var i=0; i<6; i++){
-			// create nested div element and widgetize it as a partProperty 
+		var div, i;
+		for (i=0; i<6; i++){
+			// create nested div element and widgetize it as a wProperty 
 			div=$('<div></div>').text(i.toString());
 			$(el).append(div);
-			div.wPartProperty({'text':i.toString()});
-			r.aPartProperty.push(div); 
+			div.wProperty({'text':i.toString()});
+			r.aProperty.push(div); 
 		}
 		return r;		
 	},

@@ -43,7 +43,7 @@ define(
 function($, ui, win) {
 
 // define a widget for a versatile part property ui control
-$.widget ("bim.wPartProperty", {
+$.widget ("bim.wProperty", {
 
 // option defaults
 options: {
@@ -61,10 +61,11 @@ _create:function() {
 	//this.element is a reference to the DOMelement|div the widget is bound
 	//this.options.name=this.element.attr("id");
 	//this.options.text=this.element.text();
-	var id=win.BIM.fun.uid('cell');
+	var id=win.BIM.get.uid('cell');
 	this.options.idi=id+'input';
 	this.options.idr=id+'result';
 	this.options.idn=id+'name';	
+	this.element.addClass('BimProp');
 	
 	
 	this._on( this.element, {
@@ -133,14 +134,14 @@ render: function() {
 	switch(this.options.mode){
 		case 'text':		
 		that.element.html(
-		"<div id='"+ that.options.idn + "' class='BimPbName' >"+ that.options.name +"</div>"+
-		"<textarea id='"+that.options.idi + "' class='BimPbInput' "+
+		"<div id='"+ that.options.idn + "' class='BimPropName' >"+ that.options.name +"</div>"+
+		"<textarea id='"+that.options.idi + "' class='BimPropInput' "+
 		"style='z-index=10001;display:none;width:100%;height:auto;'"+
 		"onclick='BIM.fun.autoHeight(this)'"+
 		"onkeyup='BIM.fun.autoHeight(this)' >"+
 		that.options.valu.toString()+
 		"</textarea>"+
-		"<div id='"+that.options.idr+"' class='BimPbResult'>"+
+		"<div id='"+that.options.idr+"' class='BimPropResult'>"+
 		that._process(that.options.valu)+"</div>");
 		break;
 		default:

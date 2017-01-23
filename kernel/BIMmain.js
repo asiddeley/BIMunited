@@ -134,7 +134,12 @@ var BIM={
 		'autoHeight':function(el){
 			// grows textarea fit text - useful for typing in a small textarea 
 			$(el).css('height','auto').css('height', el.scrollHeight+5);
-		},
+		}	
+	},
+	
+	'get':{
+		'canvas':function(){return this.setting.canvas;},
+		'scene':function(){return this.scene;},
 		'uid':function(name){
 			//Returns a simple unique id string based on a given name and
 			//how many time that name is called.  If no name given then 'id' is the default name.
@@ -146,8 +151,9 @@ var BIM={
 			//alert( name+count.toString());
 			return name+count.toString();
 		},
-		'uidstore':{}		
+		'uidstore':{}	
 	},
+
 	
 	// control
 	'input':function(input){

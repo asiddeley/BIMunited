@@ -1,0 +1,15 @@
+22-Jan-2016
+http://stackoverflow.com/questions/13064901/how-to-prevent-the-changing-of-a-variable-value-in-javascript
+
+Yes, there is. At least for object properties, ES5 gave us the possiblity to alter the property descriptor flags by hand. So we can do that like
+
+var data = { };
+
+Object.defineProperty(data, 'secret', {
+    value: 42,
+    writable : false,
+    enumerable : true,
+    configurable : false
+});
+
+That way, we created a property secret with the value 42 within data, which cannot get modfied nor deleted. 
