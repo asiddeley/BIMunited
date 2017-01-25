@@ -31,12 +31,12 @@ define(
 'jquery',
 'babylon',
 'kernel/stage',
-'kernel/eventAdmin',
+'kernel/interpreter',
 'kernel/window'
 ],
 
 // then do this...
-function (Model, $, babylon, stage, tea, win) {
+function (Model, $, babylon, stage, interpreter, win) {
 
 //alert('BIMmain...');
 
@@ -52,16 +52,16 @@ var settings={
 var BIM={
 	// properties
 	//'babylon':babylon,
-	'engine':null,
+	//'engine':null,
 	'library':{},	// like a model but not displayed.  Has available parts & models
 	'model':null, 	// main model - created inside engage()
 	'scene':null,	// the scene - created inside engage()
 	'settings':settings, //settings - extended in engage()
 	'stage':{}, 	// lights and cameras - created in engage()
-	'tea':{}, 		// the event administrator - set in engage()
+	//'tea':{}, 		// the event administrator - set in engage()
 	'window':win,	// BIM references window and window ref's BIM
 	
-	// API methods
+	// The a, b, c, d & e main API methods...
 	'admin':function(user){
 		$.extend(this.settings, {'user':user} );
 		//alert("welcome "+settings.user+"\n");				
@@ -93,21 +93,17 @@ var BIM={
 		this.model=Model.demo(1);
 		
 		// Set the stage, cameras, lights, materials
-		//  todo include this in model 
+		// To do, include this in model 
 		this.stage=stage.demo(1);
-		
-		// sets the tools-event assoc 
-		this.tea=tea;
 		
 		// prepare engine
 		var c=this.settings.canvas;
-		this.engine = new babylon.Engine(c, true);
-		//why webgl dest rect smaller than viewport rect warning
-		//try...
-		//http://doc.babylonjs.com/classes/2.5/Engine
-		//this.engine.setViewport(new babylon.Viewport(0,0,700,500));
+		var engine = new babylon.Engine(c, true);
+		// why webgl dest rect smaller than viewport rect warning, from
+		// http://doc.babylonjs.com/classes/2.5/Engine, try this...
+		// this.engine.setViewport(new babylon.Viewport(0,0,700,500));
 		
-		this.scene = new babylon.Scene(this.engine);
+		this.scene = new babylon.Scene(engine);
 		var s=this.scene;
 		
 		// camera, lights
@@ -115,17 +111,13 @@ var BIM={
 		
 		// visit all parts to set the babylon scene		
 		this.model.handlers.setScene( this.model );
-		//MSG('model.handlers.setScene:'+s); //ok
+		// MSG('model.handlers.setScene:'+s); //ok
 		
-		// scene events
-		//s.onPointerDown=this.kits.onPointerDown;
-		this.tea.setScene(s, c);
-
-
-		//s.debugLayer.show();
+		// This is a cool Babylon feature
+		// s.debugLayer.show();
 		
 		// engage
-		this.engine.runRenderLoop(function(){ s.render();} );	
+		engine.runRenderLoop(function(){ s.render();} );	
 
 	},
 	
@@ -133,13 +125,8 @@ var BIM={
 	'fun':{
 		'autoHeight':function(el){
 			// grows textarea fit text - useful for typing in a small textarea 
-			$(el).css('height','auto').css('height', el.scrollHeight+5);
-		}	
-	},
-	
-	'get':{
-		'canvas':function(){return this.setting.canvas;},
-		'scene':function(){return this.scene;},
+			$(el).css('height','auto').css('height', el.scrollHeight+5);		
+		},
 		'uid':function(name){
 			//Returns a simple unique id string based on a given name and
 			//how many time that name is called.  If no name given then 'id' is the default name.
@@ -151,14 +138,21 @@ var BIM={
 			//alert( name+count.toString());
 			return name+count.toString();
 		},
-		'uidstore':{}	
+		'uidstore':{ }			
+	},
+	
+	'get':{
+		'canvas':function() {return this.setting.canvas;},
+		'scene': function() {return this.scene;},
+		'uid': function(name) {return BIM.fun.uid(name);}
 	},
 
 	
 	// control
 	'input':function(input){
 		//return this.tea.command(input, this.scene, this.settings.canvas);
-		var result=this.tea.command(input);
+		//var result=this.tea.command(input);
+		var result=interpreter.command(input);
 		this.log(input); this.log(result);		
 	},
 	

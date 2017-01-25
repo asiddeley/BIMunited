@@ -35,23 +35,12 @@ define(
 'kernel/eventProps',
 'kernel/eventHighlight'],
 
-// construct and return the TEA...
+// Then return the interpreter hash, only one instance required...
 function($, babylon, clone, props, highlight){
 	
 return {
 	
-	'demo':function(n){
-		var that=this;
-		switch(n){
-			case 1:that.pickToHighlight();break;
-			default:that.pickToHighlight();			
-		}		
-	},
-	
-	'setScene':function(scene, canvas){ },
-		
 	'command':function(command){
-		//input interpreter
 		var that=this;
 		switch (command) {
 			case 'clone':
