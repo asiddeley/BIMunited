@@ -75,8 +75,8 @@ var Stage={
 			this.matLib.unpicked.diffuseColor = new BABYLON.Color3(100, 100, 100);
 			
 			// UI
-			this.ui.uiPropertyboard=UIPB.create(BIM.settings.boards.propertyboard);
-			this.ui.uiBlackboard=UIBB.create(BIM.settings.boards.blackboard);
+			this.ui.uiPropertyboard=UIPB.create(BIM.get.divPropertyboard());
+			this.ui.uiBlackboard=UIBB.create(BIM.get.divBlackboard());
 		}});		
 	},
 

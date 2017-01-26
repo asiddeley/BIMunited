@@ -38,56 +38,34 @@ define(
 // then do this...
 function (Model, $, babylon, stage, interpreter, win) {
 
-//alert('BIMmain...');
-
-var settings={
-	'blackboard':function(msg){alert(msg);},	 //basic callback function for BIM messages 
-	'boards':{'blackboard':null, 'propertyboard':null},
-	'canvas':null,
-	'dbapi':null,
-	'user':"defaultUser"
-};
-	
 // construct library object for return
 var BIM={
-	// properties
-	//'babylon':babylon,
-	//'engine':null,
-	'library':{},	// like a model but not displayed.  Has available parts & models
-	'model':null, 	// main model - created inside engage()
-	'scene':null,	// the scene - created inside engage()
-	'settings':settings, //settings - extended in engage()
-	'stage':{}, 	// lights and cameras - created in engage()
-	//'tea':{}, 		// the event administrator - set in engage()
-	'window':win,	// BIM references window and window ref's BIM
 	
 	// The a, b, c, d & e main API methods...
-	'admin':function(user){
-		$.extend(this.settings, {'user':user} );
-		//alert("welcome "+settings.user+"\n");				
+	admin:function(user){
+		$.extend(this.options, {'user':user} );
 	},
 			
-	'blackboard':function(fn){
-		if (fn instanceof Function){$.extend(this.settings, {'blackboard':fn}); };
-		//fn("Blackboard...<br>");
+	blackboard:function(fn){
+		if (fn instanceof Function){$.extend(this.options, {'blackboard':fn}); };
 	},
 		
-	'boards':function(el){
-		$.extend(this.settings, {'boards':el});
+	boards:function(el){
+		$.extend(this.options, {'boards':el});
 	},
 	
-	'canvas':function(canvas){
-		$.extend(this.settings, {'canvas':canvas});
+	canvas:function(canvas){
+		$.extend(this.options, {'canvas':canvas});
 	},
 
-	'database':function(dbapi){
-		$.extend(this.settings, {'dbapi':dbapi});
+	database:function(dbapi){
+		$.extend(this.options, {'dbapi':dbapi});
 	},
 	
-	'engage':function(usettings){
+	engage:function(uOptions){
 				
 		// settings
-		$.extend(this.settings, usettings);
+		$.extend(this.options, uOptions);
 		
 		//alert('engage');
 		this.model=Model.demo(1);
@@ -97,7 +75,7 @@ var BIM={
 		this.stage=stage.demo(1);
 		
 		// prepare engine
-		var c=this.settings.canvas;
+		var c=this.options.canvas;
 		var engine = new babylon.Engine(c, true);
 		// why webgl dest rect smaller than viewport rect warning, from
 		// http://doc.babylonjs.com/classes/2.5/Engine, try this...
@@ -111,7 +89,6 @@ var BIM={
 		
 		// visit all parts to set the babylon scene		
 		this.model.handlers.setScene( this.model );
-		// MSG('model.handlers.setScene:'+s); //ok
 		
 		// This is a cool Babylon feature
 		// s.debugLayer.show();
@@ -122,7 +99,7 @@ var BIM={
 	},
 	
 	// function store 
-	'fun':{
+	fun:{
 		'autoHeight':function(el){
 			// grows textarea fit text - useful for typing in a small textarea 
 			$(el).css('height','auto').css('height', el.scrollHeight+5);		
@@ -141,26 +118,49 @@ var BIM={
 		'uidstore':{ }			
 	},
 	
-	'get':{
-		'canvas':function() {return this.setting.canvas;},
-		'scene': function() {return this.scene;},
-		'uid': function(name) {return BIM.fun.uid(name);}
+	get:{
+		divBlackboard:function() {return BIM.options.boards.blackboard;},
+		divCanvas:function() {return BIM.options.canvas;},
+		divPropertyboard:function() {return BIM.options.boards.propertyboard;},
+		scene: function() {return BIM.scene;},
+		uid: function(name) {return BIM.fun.uid(name);}
 	},
 
 	
 	// control
-	'input':function(input){
+	input:function(input){
 		//return this.tea.command(input, this.scene, this.settings.canvas);
 		//var result=this.tea.command(input);
 		var result=interpreter.command(input);
 		this.log(input); this.log(result);		
 	},
 	
+	juliet:null,
+	
+	kilo:null,
+	
 	// simple text message to blackboard
-	'log':function(msg){
+	log:function(msg){
 		//this.settings.blackboard(msg, 'console');
 		this.stage.ui.uiBlackboard.log(msg);
 	},
+	
+	// main model - created inside engage()
+	model:null,
+	
+	// Extended by user in a,b,c,d&e API functions
+	options:{
+		blackboard:function(msg){alert(msg);},	 //basic callback function for BIM messages 
+		boards:{blackboard:null, propertyboard:null},
+		canvas:null,
+		dbapi:null,
+		user:"defaultUser"
+	},	
+	
+	scene:null,	// the scene - created inside engage()
+	stage:{}, 	// lights and cameras - created in engage()
+	'window':win	// BIM references window and window ref's BIM
+		
 	
 }; 		
 
