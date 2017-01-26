@@ -33,23 +33,27 @@ function($){
 
 var uiBlackboard={
 	
-	'create':function(el){
+	create:function(div){
 		// create a new copy (of this template) and initialize
+		this.div=div;
 		var r=$.extend({}, uiBlackboard);
 		return r;		
 	},
+	
+	div:null,
 
-	'log':function(msg){
+	log:function(msg){
 		this.store.push(msg);	
 		//limit store to the last n messages
 		if (this.store.length>50){this.store.shift();}
 		var htm='', lim=10;
 		var lim=(this.store.length<lim)?this.store.length:lim;
 		for (var i=0; i<lim; i++){htm+=this.store[i]+'<br>'}
-		$(BIM.settings.boards.blackboard).html(htm);
+		//$(BIM.options.boards.blackboard).html(htm);
+		$(this.div).html(htm);
 	},
 	
-	'store':[]
+	store:[]
 };
 
 

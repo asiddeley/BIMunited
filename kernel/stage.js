@@ -27,10 +27,10 @@
 ****************************************************************/
 define(
 // load dependencies...
-['babylon','jquery', 'kernel/uiPropertyBoard', 'kernel/uiBlackboard'],
+['babylon','jquery'],
 
 // then do this...
-function(BABYLON, $, UIPB, UIBB){
+function(BABYLON, $){
 
 // stage properties
 var stage = {
@@ -40,7 +40,7 @@ var stage = {
 	'name':'unnamed',
 	'setScene':function(scene, canvas){ },
 	'type':'Stage', //set by create
-	'ui':{} //user interface
+	//'ui':{} //user interface
 };
 
 // stage methods...
@@ -75,8 +75,8 @@ var Stage={
 			this.matLib.unpicked.diffuseColor = new BABYLON.Color3(100, 100, 100);
 			
 			// UI
-			this.ui.uiPropertyboard=UIPB.create(BIM.get.divPropertyboard());
-			this.ui.uiBlackboard=UIBB.create(BIM.get.divBlackboard());
+			//this.ui.uiPropertyboard=UIPB.create(BIM.get.divPropertyboard());
+			//this.ui.uiBlackboard=UIBB.create(BIM.get.divBlackboard());
 		}});		
 	},
 

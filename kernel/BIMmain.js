@@ -32,11 +32,12 @@ define(
 'babylon',
 'kernel/stage',
 'kernel/interpreter',
-'kernel/window'
+'kernel/uiBlackboard',
+'kernel/uiPropertyBoard'
 ],
 
 // then do this...
-function (Model, $, babylon, stage, interpreter, win) {
+function (Model, $, babylon, stage, interpreter, uibb, uipb) {
 
 // construct library object for return
 var BIM={
@@ -45,13 +46,15 @@ var BIM={
 	admin:function(user){
 		$.extend(this.options, {'user':user} );
 	},
-			
-	blackboard:function(fn){
-		if (fn instanceof Function){$.extend(this.options, {'blackboard':fn}); };
-	},
 		
-	boards:function(el){
-		$.extend(this.options, {'boards':el});
+	board:function(el){
+		$.extend(this.options, {'board':el});		
+		var bb=$('<div class="BIMblackboard">blackboard</div>'); 
+		$(el).append(bb);
+		this.ui.blackboard=uibb.create(bb);		
+		var pb=$('<div class="BIMpropboard">properties</div>');
+		$(el).append(pb);
+		this.ui.propertyboard=uipb.create(pb);
 	},
 	
 	canvas:function(canvas){
@@ -68,7 +71,7 @@ var BIM={
 		$.extend(this.options, uOptions);
 		
 		//alert('engage');
-		this.model=Model.demo(1);
+		this.mainModel=Model.demo(1);
 		
 		// Set the stage, cameras, lights, materials
 		// To do, include this in model 
@@ -76,9 +79,9 @@ var BIM={
 		
 		// prepare engine
 		var c=this.options.canvas;
-		var engine = new babylon.Engine(c, true);
-		// why webgl dest rect smaller than viewport rect warning, from
-		// http://doc.babylonjs.com/classes/2.5/Engine, try this...
+		var engine = new babylon.Engine(c,  true);
+		// why warning re. webgl dest rect smaller than viewport rect?
+		// See, http://doc.babylonjs.com/classes/2.5/Engine, try this...
 		// this.engine.setViewport(new babylon.Viewport(0,0,700,500));
 		
 		this.scene = new babylon.Scene(engine);
@@ -88,7 +91,7 @@ var BIM={
 		this.stage.setScene(s, c);
 		
 		// visit all parts to set the babylon scene		
-		this.model.handlers.setScene( this.model );
+		this.mainModel.handlers.setScene( this.mainModel );
 		
 		// This is a cool Babylon feature
 		// s.debugLayer.show();
@@ -104,6 +107,7 @@ var BIM={
 			// grows textarea fit text - useful for typing in a small textarea 
 			$(el).css('height','auto').css('height', el.scrollHeight+5);		
 		},
+		log:function(message){this.ui.blackboard.log(message);},
 		'uid':function(name){
 			//Returns a simple unique id string based on a given name and
 			//how many time that name is called.  If no name given then 'id' is the default name.
@@ -139,14 +143,10 @@ var BIM={
 	
 	kilo:null,
 	
-	// simple text message to blackboard
-	log:function(msg){
-		//this.settings.blackboard(msg, 'console');
-		this.stage.ui.uiBlackboard.log(msg);
-	},
+	lights:{},
 	
 	// main model - created inside engage()
-	model:null,
+	mainModel:null,
 	
 	// Extended by user in a,b,c,d&e API functions
 	options:{
@@ -157,14 +157,41 @@ var BIM={
 		user:"defaultUser"
 	},	
 	
+	project:{
+		discpline:'arch',	
+		location:'unknown',
+		name:'unnamed',
+		projectNumber:'xxxx'
+	},
+	
+	// collections of items not part of scene unless called/referenced from mainModel
+	// all items must have setScene function - sceneable
+	references:{		
+		arrangers:{},
+		colours:{},
+		lights:{},
+		models:{},
+		robots:{}, // populators, defaults, tests etc
+		texmat:{}, // babylon materals and textures
+		views:{} // babylon cameras
+	},
+	
 	scene:null,	// the scene - created inside engage()
+	
 	stage:{}, 	// lights and cameras - created in engage()
-	'window':win	// BIM references window and window ref's BIM
-		
+	
+	// Various user interfaces.  Initialized by this.board()
+	ui:{
+		blackboard:{}, 
+		propertyboard:{} 
+	}
+	
+	//'window':win	// BIM references window and window ref's BIM
+	
 	
 }; 		
 
-win.BIM=BIM;
+window.BIM=BIM;
 return BIM;
 
 });

@@ -40,17 +40,18 @@ function outputHandler(msg, type){
 
 
 requirejs(['BIMmain'], function(BIM){
-	var dashboard=window.document.getElementById('dashboard');
+	//var dashboard=window.document.getElementById('dashboard');
 	var canvas=window.document.getElementById('canvas');
 	
 	// the BIM a-b-c-d-e starter functions...
 	BIM.admin('andrew'); 
-	BIM.blackboard(outputHandler);
-	BIM.boards({
-		'blackboard':window.document.getElementById('blackboard'),
-		'partProperties':window.document.getElementById('dashboard'),
-		'propertyboard':window.document.getElementById('dashboard')
-	});
+	BIM.board(window.document.getElementById('sideboard'));
+	//BIM.blackboard(outputHandler);
+	//BIM.boards({
+	//	'blackboard':window.document.getElementById('blackboard'),
+	//	'partProperties':window.document.getElementById('dashboard'),
+	//	'propertyboard':window.document.getElementById('dashboard')
+	//});
 	BIM.canvas(canvas);
 	BIM.database("database connecti on API");
 	BIM.engage();
@@ -185,9 +186,9 @@ requirejs(['BIMmain'], function(BIM){
 
 </nav>
 
-<div id="sidebar" style="float:left;width:200px;height:300px;">
-	<div id="blackboard">blackboard</div>
-	<div id="dashboard">property board</div>
+<div id="sideboard" style="float:left;width:200px;height:300px;">
+	<!--div id="blackboard">blackboard</div>
+	<div id="dashboard">property board</div-->
 </div>
 <canvas id="canvas" style="width:800px;height:600px;"></canvas>
 
