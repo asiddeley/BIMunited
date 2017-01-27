@@ -122,12 +122,12 @@ var BIM={
 		'uidstore':{ }			
 	},
 	
+	//shortcuts
 	get:{
-		divBlackboard:function() {return BIM.options.boards.blackboard;},
-		divCanvas:function() {return BIM.options.canvas;},
-		divPropertyboard:function() {return BIM.options.boards.propertyboard;},
+		canvas:function() {return BIM.options.canvas;},
 		scene: function() {return BIM.scene;},
 		uid: function(name) {return BIM.fun.uid(name);}
+		uipb:function() {return BIM.ui.propertyboard;},
 	},
 
 	
@@ -157,7 +157,10 @@ var BIM={
 		user:"defaultUser"
 	},	
 	
+	parts:{},
 	project:{
+		//partInfo
+		//non graphic element
 		discpline:'arch',	
 		location:'unknown',
 		name:'unnamed',
@@ -166,25 +169,29 @@ var BIM={
 	
 	// collections of items not part of scene unless called/referenced from mainModel
 	// all items must have setScene function - sceneable
-	references:{		
-		arrangers:{},
-		colours:{},
-		lights:{},
-		models:{},
-		robots:{}, // populators, defaults, tests etc
-		texmat:{}, // babylon materals and textures
-		views:{} // babylon cameras
+	referenceModels:{		
+		//arrangers:{},
+		//colours:{},
+		//lights:{},
+		//models:{},
+		//robots:{}, // populators, defaults, tests etc
+		//texmat:{}, // babylon materals and textures
+		//views:{} // babylon cameras
 	},
 	
 	scene:null,	// the scene - created inside engage()
 	
 	stage:{}, 	// lights and cameras - created in engage()
 	
+	textures:{},
+	
 	// Various user interfaces.  Initialized by this.board()
 	ui:{
 		blackboard:{}, 
 		propertyboard:{} 
-	}
+	},
+	
+	views:{},
 	
 	//'window':win	// BIM references window and window ref's BIM
 	

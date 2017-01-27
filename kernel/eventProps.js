@@ -36,16 +36,11 @@ return (
 function (evt, pickResult) {
 	if (pickResult.hit) {
 		if (pickResult.pickedMesh != null) {
-			//alert(pickResult.pickedMesh);
-			//var t=JSON.stringify(pickResult.pickedMesh, replacer);
 			var mesh=pickResult.pickedMesh;
-			//var sd=mesh.BIMO;
-			//var msg='type:'+sd.type+'<br>name:'+sd.name+'<br>';
-			//BIM.settings.console(msg);
-			var ff=mesh.BIMP.handlers.properties; //list of functions to access part's properties
-			BIM.settings.dashboard.clear; //prepare panel for new set of properties
+			var ff=mesh.bim.handler.properties; //list of functions to access part's properties
+			BIM.ui.propertyboard.clear; //prepare panel for new set of properties
 			for (var i=0; i<ff.length; i++){
-				ff[i](mesh.BIMP, BIM.settings.dashboard);
+				//ff[i](mesh.bim, BIM.ui.propertyboard);
 			}
 		}
 	}

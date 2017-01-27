@@ -25,35 +25,18 @@ function handleInput(ev){
 	ev.preventDefault(); //disable normal form submit behavior
 	var i=$("#myInput").val();
 	var r=BIM.input(i);//get text from form and pass it to BIM
-	//$("#blackboard").append(i+'<br>'+r); //display input and result
 	return false; //prevent further bubbling of event
 }
 
-function outputHandler(msg, type){
-	switch(type){
-		case 'console':$("#blackboard").append(msg);break;
-		case 'floatingMenu':$("#blackboard").append(msg);break;
-		case 'properties':$("#blackboard").append(msg);break;
-		default:$("#blackboard").append(msg);break;
-	}
-};
-
 
 requirejs(['BIMmain'], function(BIM){
-	//var dashboard=window.document.getElementById('dashboard');
 	var canvas=window.document.getElementById('canvas');
-	
+	var sideboard=window.document.getElementById('sideboard');
 	// the BIM a-b-c-d-e starter functions...
 	BIM.admin('andrew'); 
-	BIM.board(window.document.getElementById('sideboard'));
-	//BIM.blackboard(outputHandler);
-	//BIM.boards({
-	//	'blackboard':window.document.getElementById('blackboard'),
-	//	'partProperties':window.document.getElementById('dashboard'),
-	//	'propertyboard':window.document.getElementById('dashboard')
-	//});
+	BIM.board(sideboard);
 	BIM.canvas(canvas);
-	BIM.database("database connecti on API");
+	BIM.database("database connection API");
 	BIM.engage();
 });
 </script>
@@ -186,10 +169,7 @@ requirejs(['BIMmain'], function(BIM){
 
 </nav>
 
-<div id="sideboard" style="float:left;width:200px;height:300px;">
-	<!--div id="blackboard">blackboard</div>
-	<div id="dashboard">property board</div-->
-</div>
+<div id="sideboard" style="float:left;width:200px;height:300px;"></div>
 <canvas id="canvas" style="width:800px;height:600px;"></canvas>
 
 </div><!-- /.container-fluid -->

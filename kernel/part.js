@@ -36,24 +36,24 @@ function(babylon, $, win){
 //alert('part...');
 
 //construct sphere handler, AKA bunch of static properties and methods.
-var partHandlers = {
+var partHandler = {
 
 	/////////////////////
 	// Must haves...
 	// returns a new part 	
-	'create':function(userData){ return $.extend( {}, part, userData); },	 
+	create:function(userData){ return $.extend( {}, part, userData); },	 
 	
 	// returns a new part element with a random radius between 0 and 1
-	'demo':function(){ return this.create({'radius':Math.random()}); },
+	demo:function(){ return this.create({'radius':Math.random()}); },
 
 	// return a bunch of propterty access functions
-	'getProperties':function(){
+	getProperties:function(){
 		var that=this;
 		return {'name':that.name, 'position':that.position};
 	},
 	
 	// babylon scene constructor
-	'setScene':function(part){	
+	setScene:function(part){	
 		part.baby = babylon.Mesh.CreateSphere(	
 			part.name, 
 			part.segment,
@@ -62,8 +62,8 @@ var partHandlers = {
 			part.mutable,
 			part.faceOrientation
 		);
-		// note two way reference between BIM part and babylon element 
-		part.baby.BIMP=part;
+		// note two way reference between BIM and babylon elements
+		part.baby.bim=part;
 		//set position
 		part.baby.position=part.position;
 	},
@@ -72,15 +72,15 @@ var partHandlers = {
 	// Property access functions 
 	// Include these in list that is returned by getProperties() above.
 	// Functions may just display property or provide means of editing
-	'host':function(part, dashboard){  /*expose the part's parent */   },
+	host:function(part, dashboard){  /*expose the part's parent */   },
 	
-	'name':function(part, dashboard){
+	name:function(part, dashboard){
 		dashboard.text('name', part.name,  function(part){ 
 		/* no action required */
 		});
 	},
 		
-	'position':function(part, dashboard){ 
+	position:function(part, dashboard){ 
 		var callback=function(part){
 			part.baby.position=part.position;
 			//changed part will show with next scene render 
@@ -90,7 +90,7 @@ var partHandlers = {
 		//note that editXXX should take care of undo functions and log
 	},
 
-	'type':function(part, dashboard){
+	type:function(part, dashboard){
 		var callback=function(part){ 
 			//no action required since a part's type is unchanging.
 			//or is it? Some type changes possible, eg cube to sphere 
@@ -104,18 +104,18 @@ var partHandlers = {
 // partHandler is defined first because it is referenced below
 // the model may contain many part but only one set of part handlers
 var part = {
-	'baby':null,  //set during setScene
-	'faceMode':babylon.Mesh.DEFAULTSIDE, //scene.babylon.Mesh.DEFAULTSIDE
-	'handlers':partHandlers,
-	'name':'unnamed',
-	'position':babylon.Vector3(0,0,0),
-	'radius':1,
-	'segment':12,
-	'updateable':true
+	baby:null,  //set during setScene
+	faceMode:babylon.Mesh.DEFAULTSIDE, //scene.babylon.Mesh.DEFAULTSIDE
+	handler:partHandler,
+	name:'unnamed',
+	position:babylon.Vector3(0,0,0),
+	radius:1,
+	segment:12,
+	updateable:true
 };
 
 //alert('Part constructed');
-return partHandlers;
+return partHandler;
 });
 
 
