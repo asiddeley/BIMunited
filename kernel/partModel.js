@@ -40,7 +40,7 @@ function($, Part, win) {
 //alert('model...');
 
 // modelHandlers inherits from partHandlers
-var modelHandlers=$.extend( {}, Part, {
+var modelHandler=$.extend( {}, Part, {
 
 	// override - returns a new model
 	'create':function(userData){ return $.extend({}, Part.create, model, userData); },
@@ -57,7 +57,7 @@ var modelHandlers=$.extend( {}, Part, {
 	// override - babylon scene constructor
 	'setScene':function(model){
 		for (var i=0; i<model.parts.length; i++){
-			model.parts[i].handlers.setScene( model.parts[i] );
+			model.parts[i].handler.setScene( model.parts[i] );
 		}
 	},
 	
@@ -68,7 +68,9 @@ var modelHandlers=$.extend( {}, Part, {
 		model.parts.push(part);
 		// check scene because setScene may be called before scene is initialized 
 		// i.e	when decendent (archModel) model is constructed
-		if (win.BIM.scene != null) { model.handlers.setScene(model);}
+		if (typeof BIM !='undefined') {
+			if(BIM.scene) { model.handler.setScene(model);}
+		}
 	},
 	
 	'tags':function(model, dashboard){
@@ -94,14 +96,14 @@ var modelHandlers=$.extend( {}, Part, {
 // Construct model data.  Used to extend part later in Model.Create()
 var model={
 	'disc':'all',
-	'handlers':modelHandlers,
+	'handler':modelHandler,
 	'parts':[],
 	'tags':[],
 	'visible':true
 };
 
 //alert('Model constructed:'+modelHandlers);
-return modelHandlers;
+return modelHandler;
 
 });
 

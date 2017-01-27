@@ -27,40 +27,44 @@
 ****************************************************************/
 define(
 // load dependencies...
-['babylon','jquery'],
+['babylon', 'jquery'],
 
 // then do this...
 function(BABYLON, $){
 
-// Light methods...
-var Light={
+// view handler methods...
+var View={
 	
 	create:function(udata){
-		return $.extend({}, light, udata);
+		return $.extend({}, view, udata);
 		},
 
 	demo:function(num){
 		var that=this;
 		switch(num){
-			case 1: return that.create({name:'hemi'}); break;
-			default: return that.create({name:'hemi'});					
+			case 1: return that.create({name:'free'}); break;
+			default: return that.create({name:'free'});					
 		}
 	},
-
-	setScene:function(light){
-		light.baby=new BABYLON.HemisphericLight('hemi', light.position, window.BIM.scene);
-		light.baby.bim=light;
+		
+	setScene:function(view){
+		// bim view - babylon camera
+		view.baby=new BABYLON.FreeCamera('free', view.position , window.BIM.scene);
+        view.baby.setTarget(view.target);
+        view.baby.attachControl(canvas, false);	
+		view.baby.bim=view;
 	},
 	
-	type:'lightHemi'	
+	type:'viewFree'	
 }
 
-// light properties
-var light = {
+// view properties
+var view = {
 	baby:null, //babylon entity
-	handler:Light,
-	position:new BABYLON.Vector3(0,1,0)
+	handler:View,
+	position:new BABYLON.Vector3(0, 5,-10),
+	target:new BABYLON.Vector3.Zero()
 };
 
-return Light;
+return View;
 });

@@ -33,25 +33,27 @@ define(
 'kernel/stage',
 'kernel/interpreter',
 'kernel/uiBlackboard',
-'kernel/uiPropertyBoard'
+'kernel/uiPropertyBoard',
+'kernel/lightHemi',
+'kernel/viewFree'
 ],
 
 // then do this...
-function (Model, $, babylon, stage, interpreter, uibb, uipb) {
+function (Model, $, babylon, stage, interpreter, uibb, uipb, Light, View) {
 
 // construct library object for return
 var BIM={
 	
 	// The a, b, c, d & e main API methods...
-	admin:function(user){
-		$.extend(this.options, {'user':user} );
+	admin:function(username){
+		$.extend(this.options, { user:username} );
 	},
 		
 	board:function(el){
 		$.extend(this.options, {'board':el});		
 		var bb=$('<div class="BIMblackboard">blackboard</div>'); 
 		$(el).append(bb);
-		this.ui.blackboard=uibb.create(bb);		
+		this.ui.blackboard=uibb.create(bb);
 		var pb=$('<div class="BIMpropboard">properties</div>');
 		$(el).append(pb);
 		this.ui.propertyboard=uipb.create(pb);
@@ -70,13 +72,6 @@ var BIM={
 		// settings
 		$.extend(this.options, uOptions);
 		
-		//alert('engage');
-		this.mainModel=Model.demo(1);
-		
-		// Set the stage, cameras, lights, materials
-		// To do, include this in model 
-		this.stage=stage.demo(1);
-		
 		// prepare engine
 		var c=this.options.canvas;
 		var engine = new babylon.Engine(c,  true);
@@ -84,31 +79,35 @@ var BIM={
 		// See, http://doc.babylonjs.com/classes/2.5/Engine, try this...
 		// this.engine.setViewport(new babylon.Viewport(0,0,700,500));
 		
+		// initialize the scene
 		this.scene = new babylon.Scene(engine);
 		var s=this.scene;
 		
-		// camera, lights
-		this.stage.setScene(s, c);
+		// set light in scene
+		this.light.handler.setScene( this.light );
 		
 		// visit all parts to set the babylon scene		
-		this.mainModel.handlers.setScene( this.mainModel );
+		this.model.handler.setScene( this.model );
+		
+		// set view in scene
+		this.view.handler.setScene(this.view);
 		
 		// This is a cool Babylon feature
 		// s.debugLayer.show();
 		
-		// engage
+		// engage the engine!
 		engine.runRenderLoop(function(){ s.render();} );	
 
 	},
 	
 	// function store 
 	fun:{
-		'autoHeight':function(el){
+		autoHeight:function(el){
 			// grows textarea fit text - useful for typing in a small textarea 
 			$(el).css('height','auto').css('height', el.scrollHeight+5);		
 		},
-		log:function(message){this.ui.blackboard.log(message);},
-		'uid':function(name){
+		log:function(message) {BIM.ui.blackboard.log(message);},
+		uid:function(name){
 			//Returns a simple unique id string based on a given name and
 			//how many time that name is called.  If no name given then 'id' is the default name.
 			//eg. 'cell1', 'line1', 'cell2', 'line2', 'line3', 'id1' ...
@@ -119,34 +118,34 @@ var BIM={
 			//alert( name+count.toString());
 			return name+count.toString();
 		},
-		'uidstore':{ }			
+		uidstore:{ }			
 	},
 	
 	//shortcuts
 	get:{
 		canvas:function() {return BIM.options.canvas;},
 		scene: function() {return BIM.scene;},
-		uid: function(name) {return BIM.fun.uid(name);}
-		uipb:function() {return BIM.ui.propertyboard;},
+		uid: function(name) {return BIM.fun.uid(name);},
+		uipb:function() {return BIM.ui.propertyboard;}
 	},
-
 	
 	// control
 	input:function(input){
 		//return this.tea.command(input, this.scene, this.settings.canvas);
 		//var result=this.tea.command(input);
 		var result=interpreter.command(input);
-		this.log(input); this.log(result);		
+		this.fun.log(input); this.fun.log(result);		
 	},
 	
 	juliet:null,
 	
 	kilo:null,
 	
-	lights:{},
+	// main light
+	light:Light.demo(1),
 	
-	// main model - created inside engage()
-	mainModel:null,
+	// main model 
+	model:Model.demo(1),
 	
 	// Extended by user in a,b,c,d&e API functions
 	options:{
@@ -158,6 +157,7 @@ var BIM={
 	},	
 	
 	parts:{},
+	
 	project:{
 		//partInfo
 		//non graphic element
@@ -169,7 +169,7 @@ var BIM={
 	
 	// collections of items not part of scene unless called/referenced from mainModel
 	// all items must have setScene function - sceneable
-	referenceModels:{		
+	referenceModel:{		
 		//arrangers:{},
 		//colours:{},
 		//lights:{},
@@ -191,7 +191,7 @@ var BIM={
 		propertyboard:{} 
 	},
 	
-	views:{},
+	view:View.demo(),
 	
 	//'window':win	// BIM references window and window ref's BIM
 	

@@ -34,7 +34,7 @@ define(
 function(babylon, $, Part, win){
 	
 // Construct sphere handlers, AKA list of static methods.
-var sphereHandlers = $.extend( {}, Part, {
+var sphereHandler = $.extend( {}, Part, {
 	
 	// override - constructs and returns a new sphere inherits from part 
 	'create':function(userData){ return $.extend( {}, Part.create(), sphere, userData ); },
@@ -58,13 +58,15 @@ var sphereHandlers = $.extend( {}, Part, {
 	// babylon scene constructor
 	'setScene':function(sphere){
 
+		/*
 		alert('adding sphere'+
-			'<br>name:'+phere.name+
+			'<br>name:'+sphere.name+
 			'<br>segment:'+sphere.segment+
 			'<br>rad:'+sphere.radius*2+
 			'<br>scene:'+win.BIM.scene+
 			'<br>updatable:'+sphere.updatable+
 			'<br>faceMode:'+sphere.faceMode+'<br>');
+		*/
 			
 		sphere.baby = babylon.Mesh.CreateSphere(	
 			sphere.name, 
@@ -100,7 +102,7 @@ var sphereHandlers = $.extend( {}, Part, {
 // SphereHandler is defined first because it is referenced below.
 // Model may have many spheres but only one shpere handler.
 var sphere={
-	'handler':sphereHandlers,
+	'handler':sphereHandler,
 	'position':babylon.Vector3(0,0,0),
 	'radius':1
 };
@@ -108,6 +110,6 @@ var sphere={
 
 //alert('partSphere constructed:'+sphereHandlers.hello);
 
-return sphereHandlers;
+return sphereHandler;
 
 });
