@@ -28,41 +28,49 @@
 
 define(
 // load dependencies...
-['babylon'],
+['babylon', 'jquery'],
 
 // then do...
-function(babylon){
-	
-
-return (
+function(babylon, $){return(
 
 function (evt, pickResult) {
 	if (pickResult.hit) {
 		if (pickResult.pickedMesh != null) {
-			//highlight
-			var picked=BIM.stage.matLib.picked;
-			var unpicked=BIM.stage.matLib.unpicked;
-			//alert('picked:'+picked+' / unpicked ' +unpicked)				
-			if (typeof pickResult.pickedMesh.matBackup == 'undefinded'){
-				pickResult.pickedMesh.matBackup=false;
-			}
-			if (pickResult.pickedMesh.matBackup==true) {
-				// apply indicator material to picked mesh
-				//alert(pickResult.pickedMesh.material.toString());
-				pickResult.pickedMesh.matBackup=false;
-				pickResult.pickedMesh.material=unpicked;					
+			//BIM.fun.log('pickedMesh.bim '+pickResult.pickedMesh.bim); 
+			//if (typeof pickResult.pickedMesh.material =='undefined'){
+			//	BIM.fun.log('material undefined'); 
+			//	pickResult.pickedMesh.material=BIM.tcmLib.maincolour.baby;
+			//}
+			if (pickResult.pickedMesh.bim.poked==false) {
+				//apply material from library to indicate mesh is poked
+				//BIM.fun.log('picked material '+pickResult.pickedMesh.material); 
+				pickResult.pickedMesh.bim.pickRestore=pickResult.pickedMesh.material;
+				pickResult.pickedMesh.material=BIM.tcmLib.poked.baby;	
+				pickResult.pickedMesh.bim.poked=true;
+				
+				//get properties and connect them to property board
+				var board=BIM.ui.propertyboard;
+				var bim=pickResult.pickedMesh.bim;
+				var pp=bim.handler.getProperties();
+				board.clear();
+				BIM.fun.log('properties...');
+				for (var k in pp){ 
+					BIM.fun.log(k);
+					pp[k](bim, board); 
+				} //call each property function
+				
+				
 			} else {
-				//alert('matBackup'+pickResult.pickedMesh.matBackup);
-				// restore original material to unpicked mesh
-				pickResult.pickedMesh.material=picked;
-				pickResult.pickedMesh.matBackup=true;	
+				//restore material with a copy since matRestore needs to be set to false
+				//to indicate unpicked, if not a copy then material would also be set.
+				//pickResult.pickedMesh.material=BIM.tcmLib.pokedoff.baby;
+				pickResult.pickedMesh.material=pickResult.pickedMesh.bim.pickeRestore;
+				pickResult.pickedMesh.bim.poked=false;	
 			}
 		}
 	}
 }
 
-); //return
-
-}); //define
+);}); //define
 
 

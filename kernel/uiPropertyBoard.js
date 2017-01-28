@@ -34,9 +34,9 @@ function($, wp){
 
 var UiPropertyBoard={
 	
-	'aProperty':[],	// array for various property widgets
+	aProperty:[],	// array for various property widgets
 
-	'create':function(el){
+	create:function(el){
 		// create a new copy (of this template) and initialize
 		var r=$.extend({}, UiPropertyBoard);
 		// el DOM element (div reference) to contain elements (div references) for multiple property widgets
@@ -50,24 +50,31 @@ var UiPropertyBoard={
 		}
 		return r;		
 	},
+	
+	clear:function(){
+		//clear all values from aProperties
+		this.count=0;
+	},
+	
+	count:0,
 
-	'label':function(title, label, callback){
-		//TODO
+	label:function(title, label, callback){
+		//TO DO
 		//Set up control with callback and pass to blackboard
 		//Create undo operation
+		var p=this.aProperty[this.count++];
 		
-		//var label1=$(el).cell({'name':title});
-	
-	
-		//window.BIM.blackboard(message, 'control');
+		//call the widgetProperty options method with parameters...
+		$(p).wProperty('label', title, label, callback);
+
 	},
 	
 
-	'point3d':function(title, point3d, callback){
+	point3d:function(title, point3d, callback){
 		//callback(point3d);
 	},
 
-	'real':function(title, real, callback){
+	real:function(title, real, callback){
 		//TODO
 		//Set up control with callback and pass to blackboard
 		//Create undo operation
@@ -88,7 +95,7 @@ var UiPropertyBoard={
 	
 
 	
-	'text':function(title, text, callback){
+	text:function(title, text, callback){
 	
 		//callback(text);
 	}

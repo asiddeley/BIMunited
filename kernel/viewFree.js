@@ -62,7 +62,7 @@ var View={
 var view = {
 	baby:null, //babylon entity
 	handler:View,
-	position:new BABYLON.Vector3(0, 5,-10),
+	position:new BABYLON.Vector3(0, 10,-10),
 	target:new BABYLON.Vector3.Zero()
 };
 

@@ -27,7 +27,7 @@
 	to a cell in a spreadsheet.
 	This work is a continuation of soup cell widget.
 	
-	usage:	$( DOMelement ).wPartProperty({name:'radius', valu:2.1});
+	usage:	$( DOMelement ).wProperty({name:'radius', valu:2.1});
 	
 	
 	by: 			Andrew Siddeley 
@@ -65,6 +65,7 @@ _create:function() {
 	this.options.idi=id+'input';
 	this.options.idr=id+'result';
 	this.options.idn=id+'name';	
+	this.options.name=id;	
 	this.element.addClass('BimProp');
 	
 	
@@ -118,15 +119,23 @@ _highlightoff:function(event) {
 	$("#"+this.options.idr).show();	
 },
 
+label:function(title, valu, callback){
+	this.options.name=title;
+	this.options.valu=valu;
+	this.render();
+},
 
 _process: function( v ) {
 	//check for and evaluate any code found in cell
+	v=v.toString(); //just in case v is a real
 	if (v.substr(0,1) == '=') {
 		try{valu=eval(v.substr(1));}
 		catch(er){v=er.toString();}
 	}
 	return v;
 },
+
+
 
 render: function() {	
 	var that=this;

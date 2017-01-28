@@ -30,23 +30,23 @@ define(
 'arch/archModel',
 'jquery',
 'babylon',
-'kernel/stage',
 'kernel/interpreter',
 'kernel/uiBlackboard',
 'kernel/uiPropertyBoard',
 'kernel/lightHemi',
-'kernel/viewFree'
+'kernel/viewFree',
+'kernel/tcm'
 ],
 
 // then do this...
-function (Model, $, babylon, stage, interpreter, uibb, uipb, Light, View) {
+function (Model, $, babylon, interpreter, uibb, uipb, Light, View, TCM) {
 
 // construct library object for return
 var BIM={
 	
 	// The a, b, c, d & e main API methods...
-	admin:function(username){
-		$.extend(this.options, { user:username} );
+	admin:function(adminData){
+		$.extend(this.options, {admin:adminData} );
 	},
 		
 	board:function(el){
@@ -63,18 +63,18 @@ var BIM={
 		$.extend(this.options, {'canvas':canvas});
 	},
 
-	database:function(dbapi){
-		$.extend(this.options, {'dbapi':dbapi});
+	database:function(udata){
+		$.extend(this.options, {database:udata});
 	},
 	
-	engage:function(uOptions){
-				
-		// settings
-		$.extend(this.options, uOptions);
+	engage:function(){
+		
+		var that=this;	
 		
 		// prepare engine
 		var c=this.options.canvas;
 		var engine = new babylon.Engine(c,  true);
+		this.options.engine=engine;
 		// why warning re. webgl dest rect smaller than viewport rect?
 		// See, http://doc.babylonjs.com/classes/2.5/Engine, try this...
 		// this.engine.setViewport(new babylon.Viewport(0,0,700,500));
@@ -84,13 +84,21 @@ var BIM={
 		var s=this.scene;
 		
 		// set light in scene
-		this.light.handler.setScene( this.light );
+		this.light.handler.setScene(this.light);
 		
 		// visit all parts to set the babylon scene		
-		this.model.handler.setScene( this.model );
+		this.model.handler.setScene(this.model);
 		
-		// set view in scene
-		this.view.handler.setScene(this.view);
+		// initialize scene materials
+		//this.fun.log('initializing tcm');
+		for (var key in this.tcmLib) {
+			var m=this.tcmLib[key];
+			m.handler.setScene(m);
+			//that.fun.log(key);that.fun.log(m.handler.type);
+		}
+		
+		// initialize view-camera in scene
+		this.viewLib.main.handler.setScene(this.viewLib.main);
 		
 		// This is a cool Babylon feature
 		// s.debugLayer.show();
@@ -128,6 +136,10 @@ var BIM={
 		uid: function(name) {return BIM.fun.uid(name);},
 		uipb:function() {return BIM.ui.propertyboard;}
 	},
+
+	help:function(input){
+		this.fun.log('help on '+input);
+	},
 	
 	// control
 	input:function(input){
@@ -137,9 +149,11 @@ var BIM={
 		this.fun.log(input); this.fun.log(result);		
 	},
 	
-	juliet:null,
+	//Reserved
+	j:null,
 	
-	kilo:null,
+	//callbacks, 
+	kickbacks:{},
 	
 	// main light
 	light:Light.demo(1),
@@ -147,54 +161,45 @@ var BIM={
 	// main model 
 	model:Model.demo(1),
 	
-	// Extended by user in a,b,c,d&e API functions
+	// Reserved
+	n:null,
+	
+	// Extended by user in a, b, c, d & e API functions
 	options:{
-		blackboard:function(msg){alert(msg);},	 //basic callback function for BIM messages 
-		boards:{blackboard:null, propertyboard:null},
+		admin:{user:"unnamed", disc:'arch'},
+		board:null,
 		canvas:null,
-		dbapi:null,
-		user:"defaultUser"
+		database:null,
+		engine:null 
 	},	
 	
-	parts:{},
+	//parts library
+	partLib:{},
 	
-	project:{
-		//partInfo
-		//non graphic element
-		discpline:'arch',	
-		location:'unknown',
-		name:'unnamed',
-		projectNumber:'xxxx'
-	},
+	//Reserved
+	q:null,
+
+	//Libaray of models not rendered unless called/referenced from model
+	//All items must have setScene function ie. sceneable
+	referenceLib:{},
 	
-	// collections of items not part of scene unless called/referenced from mainModel
-	// all items must have setScene function - sceneable
-	referenceModel:{		
-		//arrangers:{},
-		//colours:{},
-		//lights:{},
-		//models:{},
-		//robots:{}, // populators, defaults, tests etc
-		//texmat:{}, // babylon materals and textures
-		//views:{} // babylon cameras
-	},
+	//Babylon scene, analog to BIM.model, initialized inside engage()
+	scene:null,	
 	
-	scene:null,	// the scene - created inside engage()
+	//Texture colour material library ie. hash
+	tcmLib:TCM.stdLib(),
 	
-	stage:{}, 	// lights and cameras - created in engage()
-	
-	textures:{},
-	
-	// Various user interfaces.  Initialized by this.board()
+	//User interfaces, initialized by this.board()
 	ui:{
 		blackboard:{}, 
 		propertyboard:{} 
 	},
 	
-	view:View.demo(),
+	//View library, A view is the BIM analog to babylon a camera
+	viewLib:{main:View.demo()},
 	
-	//'window':win	// BIM references window and window ref's BIM
-	
+	//Reserved
+	wxyz:null
 	
 }; 		
 

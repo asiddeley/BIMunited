@@ -49,7 +49,10 @@ var partHandler = {
 	// return a bunch of propterty access functions
 	getProperties:function(){
 		var that=this;
-		return {'name':that.name, 'position':that.position};
+		return {
+			name:that.name,
+			position:that.position
+		};
 	},
 	
 	// babylon scene constructor
@@ -108,6 +111,8 @@ var part = {
 	faceMode:babylon.Mesh.DEFAULTSIDE, //scene.babylon.Mesh.DEFAULTSIDE
 	handler:partHandler,
 	name:'unnamed',
+	poked:false,
+	pokeRestore:null,
 	position:babylon.Vector3(0,0,0),
 	radius:1,
 	segment:12,

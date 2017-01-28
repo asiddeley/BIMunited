@@ -33,14 +33,14 @@ define(
 // then do...
 function(babylon, $, Part, win){
 	
-// Construct sphere handlers, AKA list of static methods.
+// Construct sphere handler, AKA list of static methods.
 var sphereHandler = $.extend( {}, Part, {
 	
 	// override - constructs and returns a new sphere inherits from part 
-	'create':function(userData){ return $.extend( {}, Part.create(), sphere, userData ); },
+	create:function(userData){ return $.extend( {}, Part.create(), sphere, userData ); },
  	
 	// returns a new shere element (extended from part) with a random radius between 0 and 1
-	'demo':function(num){ 
+	demo:function(num){ 
 		var that=this;
 		switch(num){
 			case 1: return that.create({ 'radius':Math.random() }); break;
@@ -48,26 +48,16 @@ var sphereHandler = $.extend( {}, Part, {
 		}
 	},	
 
-	'getProperties':function(){
+	getProperties:function(){
 		var that=this;
 		return $.extend(Part.getProperties(),{
-			'radius':that.radius
+			radius:that.radius
 		});
 	},
 
 	// babylon scene constructor
-	'setScene':function(sphere){
-
-		/*
-		alert('adding sphere'+
-			'<br>name:'+sphere.name+
-			'<br>segment:'+sphere.segment+
-			'<br>rad:'+sphere.radius*2+
-			'<br>scene:'+win.BIM.scene+
-			'<br>updatable:'+sphere.updatable+
-			'<br>faceMode:'+sphere.faceMode+'<br>');
-		*/
-			
+	setScene:function(sphere){
+		
 		sphere.baby = babylon.Mesh.CreateSphere(	
 			sphere.name, 
 			sphere.segment,
@@ -77,38 +67,33 @@ var sphereHandler = $.extend( {}, Part, {
 			sphere.faceMode);
 			
 		// note two way relation between BIM part and babylon element 
-		sphere.baby.BIMP=sphere;
+		sphere.baby.bim=sphere;
 		//set position
 		sphere.baby.position=sphere.position;
 	},
 		
 
-	'radius':function(sphere, dashboard){ 
+	radius:function(sphere, uiPropBoard){ 
 		var callback=function(){
 			//update babylon element
 			//changed sphere will show with next babyoln scene render 
 			sphere.baby.width=sphere.radius*2;
 		};		
 		//shows and allows edit of real and maintains undo log
-		dashboard.real('radius', sphere.radius, callback);
-	},
-	
-	'hello':'hello'
+		uiPropBoard.label('radius', sphere.radius, callback);
+	}
 }); 
 
 
 // Construct sphere properties.
 // Used to extend part properties when Sphere.create() is called.
 // SphereHandler is defined first because it is referenced below.
-// Model may have many spheres but only one shpere handler.
+// there may have many spheres but only one shpere handler.
 var sphere={
-	'handler':sphereHandler,
-	'position':babylon.Vector3(0,0,0),
-	'radius':1
+	handler:sphereHandler,
+	position:babylon.Vector3(0,0,0),
+	radius:1
 };
-
-
-//alert('partSphere constructed:'+sphereHandlers.hello);
 
 return sphereHandler;
 

@@ -43,12 +43,15 @@ var uiBlackboard={
 	div:null,
 
 	log:function(msg){
+		//add message to the store
 		this.store.push(msg);	
 		//limit store to the last n messages
 		if (this.store.length>50){this.store.shift();}
-		var htm='', lim=10;
-		var lim=(this.store.length<lim)?this.store.length:lim;
-		for (var i=0; i<lim; i++){htm+=this.store[i]+'<br>'}
+		//show last n items of the store
+		var htm='', n=10, l=this.store.length;
+		//make sure n is smaller or equal to the number of items to print
+		n=(n>l)?l:n; 
+		for (var i=l-n; i<l; i++){htm+=this.store[i]+'<br>'}
 		//$(BIM.options.boards.blackboard).html(htm);
 		$(this.div).html(htm);
 	},
