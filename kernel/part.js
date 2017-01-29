@@ -37,25 +37,26 @@ function(babylon, $, win){
 
 //construct sphere handler, AKA bunch of static properties and methods.
 var partHandler = {
-
-	/////////////////////
-	// Must haves...
-	// returns a new part 	
+	////////////////
+	// Must Haves...
+	
+	// Constructor - returns a new part
 	create:function(userData){ return $.extend( {}, part, userData); },	 
 	
-	// returns a new part element with a random radius between 0 and 1
+	// Demonstrators - returns a new part element with a random radius between 0 and 1
 	demo:function(){ return this.create({'radius':Math.random()}); },
 
-	// return a bunch of propterty access functions
+	// Accessors - returns a hash of propterty access functions
 	getProperties:function(){
 		var that=this;
 		return {
 			name:that.name,
-			position:that.position
+			type:that.type,
+			position:that.position			
 		};
 	},
 	
-	// babylon scene constructor
+	// Babylon scene constructor
 	setScene:function(part){	
 		part.baby = babylon.Mesh.CreateSphere(	
 			part.name, 
@@ -75,30 +76,30 @@ var partHandler = {
 	// Property access functions 
 	// Include these in list that is returned by getProperties() above.
 	// Functions may just display property or provide means of editing
-	host:function(part, dashboard){  /*expose the part's parent */   },
 	
-	name:function(part, dashboard){
-		dashboard.text('name', part.name,  function(part){ 
-		/* no action required */
-		});
+	host:function(part, uiPropBrd){  /*expose the part's parent */   },
+	
+	name:function(part, uiPropBrd){
+		callback=function(result){part.name=result;}; 
+		uiPropBrd.text('name', part.name, callback);
 	},
 		
-	position:function(part, dashboard){ 
-		var callback=function(part){
+	position:function(part, uiPropBrd){ 
+		var callback=function(result){
+			//update position in babylon element, should show on next scene render 
+			//BIM.fun.log(result);
 			part.baby.position=part.position;
-			//changed part will show with next scene render 
 		};		
 		//shows and allows edit of a position
-		dashboard.point3d('position', part.position,  callback);
-		//note that editXXX should take care of undo functions and log
+		uiPropBrd.point3d('position', part.position, callback);		
 	},
 
-	type:function(part, dashboard){
-		var callback=function(part){ 
+	type:function(part, uiPropBrd){
+		var callback=function(){ 
 			//no action required since a part's type is unchanging.
 			//or is it? Some type changes possible, eg cube to sphere 
 		};
-		dashboard.label('type', 'part', callback );
+		uiPropBrd.label('type', 'part', callback );
 	}
 	
 };

@@ -47,6 +47,8 @@ $.widget ("bim.wProperty", {
 
 // option defaults
 options: {
+	callback:function(){}, //set by text, real, point3d, etc.
+	editable:false,
 	idi: 'input', //id of DOM element (field) that displays the input
 	idr: 'result', //id of field that displays the result
 	idn: 'name', //id of field that displays the name|title
@@ -67,8 +69,6 @@ _create:function() {
 	this.options.idn=id+'name';	
 	this.options.name=id;	
 	this.element.addClass('BimProp');
-	
-	
 	this._on( this.element, {
 		//dragstop:'stylingStop',
 		//resizestop:'stylingStop',
@@ -89,40 +89,43 @@ _destroy: function() {
 },
 
 _highlight:function(event) {
-	//this.element.css('background-color','silver'); 
-	//this.options.valx=$("#" + this.options.idi).val();
-	//$("#"+this.options.idn).show();
-	$("#"+this.options.idi).show().css({'position':'relative', 'z-index':10000, 'background':'silver'});
-	$("#"+this.options.idr).hide();	
+	if (this.options.editable){
+		//$("#"+this.options.idi).show().css({'position':'relative', 'z-index':10000, 'background':'silver'});
+		$("#"+this.options.idi).show();
+		$("#"+this.options.idr).hide();	
+	}
 },
 
 _highlightoff:function(event) {
-	//this.element.css('background-color','white'); 
+	if (!this.options.editable) {return;} //leave if not editable
 	var v=$("#" + this.options.idi).val();
-	//check if value|text has changed so 
+	//check if value|text has changed 
 	if( v != this.options.valu) {
 		//text changed so save it to the undo stack before updating it
 		this.options.undo.push(this.options.valu);
 		//but limit the undo to just 10 changes
 		if (this.options.undo.length > 10) {this.options.undo.shift();}
-		//update value, eliminating nulls
+		//eliminate nulls
 		v=(v=='')?'--':v;
 		this.options.valu=v;
-		//process it and update the result field
-		$("#"+this.options.idr).text(this._process(v));
-		//To do, commit to database...
+		//process ie. evaluate any expressions, and update the result field		
+		var result=this._process(v);
+		$("#"+this.options.idr).text(result);
+		//callback and return the result
+		switch (this.options.mode) {
+			case 'label':break; //do nothing
+			case 'material':break;
+			case 'point3d':this.options.callback(result);break;
+			//convert result from string to real 
+			case 'real':this.options.callback(parseFloat(result));break;
+			case 'text':this.options.callback(result.toString());break;
+		}	
+		//To do, commit to database...	
 		//soup.dataSave(this.options);
 	}
-	//$("#"+this.options.idn).hide();
 	//cursor has left the cell so just show result field
 	$("#"+this.options.idi).hide();
 	$("#"+this.options.idr).show();	
-},
-
-label:function(title, valu, callback){
-	this.options.name=title;
-	this.options.valu=valu;
-	this.render();
 },
 
 _process: function( v ) {
@@ -135,27 +138,30 @@ _process: function( v ) {
 	return v;
 },
 
-
-
 render: function() {	
 	var that=this;
-	
-	switch(this.options.mode){
-		case 'text':		
-		that.element.html(
-		"<div id='"+ that.options.idn + "' class='BimPropName' >"+ that.options.name +"</div>"+
-		"<textarea id='"+that.options.idi + "' class='BimPropInput' "+
+	var title="<div id='"+ that.options.idn + "' class='BimPropName' >"+that.options.name +"</div>";
+	var textarea="<textarea id='"+that.options.idi + "' class='BimPropInput' "+
 		"style='z-index=10001;display:none;width:100%;height:auto;'"+
 		"onclick='BIM.fun.autoHeight(this)'"+
-		"onkeyup='BIM.fun.autoHeight(this)' >"+
+		"onkeyup='BIM.fun.autoHeight(this)'>"+
 		that.options.valu.toString()+
-		"</textarea>"+
-		"<div id='"+that.options.idr+"' class='BimPropResult'>"+
-		that._process(that.options.valu)+"</div>");
-		break;
-		default:
-		that.element.html('<div class="BIMcell">unknown property type</div>');		
+		"</textarea>";		
+	var result="<div id='"+	that.options.idr+"' class='BimPropResult'>"+
+		this._process(that.options.valu)+"</div>";
+	var undev='<div class="BIMcell">property not supported</div>'
+	var unknown='<div class="BIMcell">material in development</div>'	
+	
+	switch(this.options.mode){
+		case 'label':that.element.html(title + textarea + result);break;
+		case 'material':that.element.html(undev);break;
+		case 'point3d':that.element.html(title + textarea + result);break;
+		case 'real':that.element.html(title + textarea + result);break;
+		case 'text':that.element.html(title + textarea + result);break;
+		default:that.element.html(unknown);		
 	}
+
+	
 	//this._trigger( "refreshed", null, { text: this.options.text } );
 },
 
@@ -168,9 +174,7 @@ _setOption: function( key, valu ) {
    this._super( key, valu );
 },
 
-_setOptions: function( options ) {
-	this._super( options );
-},	
+_setOptions: function( options ) {this._super( options );},	
 
 
 styleGet:function(c){
@@ -194,7 +198,45 @@ stylingStop:function(event, ui){
 	//save position
 	var c=window.getComputedStyle(this.element[0],null);
 	this.options=$.extend(this.options, this.styleGet(c));
+},
+
+// part accessor functions
+label:function(title, label, callback){
+	this.options.mode='label';
+	this.options.callback=callback;
+	this.options.editable=false;
+	this.options.name=title;
+	this.options.valu=label.toString();
+	this.render();
+},
+
+point3d:function(title, point3d, callback){
+	this.options.mode='point3d';
+	this.options.callback=callback;
+	this.options.editable=false;
+	this.options.name=title;
+	this.options.valu=point3d.toString();
+	this.render();
+},
+
+real:function(title, real, callback){
+	this.options.mode='real';
+	this.options.callback=callback;
+	this.options.editable=true;
+	this.options.name=title;
+	this.options.valu=real.toString();
+	this.render();
+},
+
+text:function(title, text, callback){
+	this.options.mode='text';
+	this.options.callback=callback;
+	this.options.editable=true;
+	this.options.name=title;
+	this.options.valu=text;
+	this.render();
 }
+
 
 }); //end of widget
 }); //end of define

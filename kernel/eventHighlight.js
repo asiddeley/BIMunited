@@ -53,9 +53,9 @@ function (evt, pickResult) {
 				var bim=pickResult.pickedMesh.bim;
 				var pp=bim.handler.getProperties();
 				board.clear();
-				BIM.fun.log('properties...');
+				//BIM.fun.log('properties...');
 				for (var k in pp){ 
-					BIM.fun.log(k);
+					//BIM.fun.log(k);
 					pp[k](bim, board); 
 				} //call each property function
 				

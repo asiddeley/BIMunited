@@ -36,10 +36,10 @@ function(babylon, $, Part, win){
 // Construct sphere handler, AKA list of static methods.
 var sphereHandler = $.extend( {}, Part, {
 	
-	// override - constructs and returns a new sphere inherits from part 
+	// Constructor - constructs and returns a new sphere inherits from part 
 	create:function(userData){ return $.extend( {}, Part.create(), sphere, userData ); },
  	
-	// returns a new shere element (extended from part) with a random radius between 0 and 1
+	// Demonstrators - returns a new shere element (extended from part) with a random radius between 0 and 1
 	demo:function(num){ 
 		var that=this;
 		switch(num){
@@ -71,16 +71,21 @@ var sphereHandler = $.extend( {}, Part, {
 		//set position
 		sphere.baby.position=sphere.position;
 	},
-		
 
-	radius:function(sphere, uiPropBoard){ 
-		var callback=function(){
-			//update babylon element
-			//changed sphere will show with next babyoln scene render 
-			sphere.baby.width=sphere.radius*2;
+	radius:function(sphere, uiPropBrd){ 
+		var callback=function(result){
+			//BIM.fun.log(result);
+			//update babylon element, should update with next render
+			//sphere.radius=result;
+			//sphere.baby.width=sphere.radius*2; <--does not update scene
+			//so insead try recreating sphere or scaling...
+			var s=result/sphere.radius;
+			sphere.baby.scaling.x=s;
+			sphere.baby.scaling.y=s;
+			sphere.baby.scaling.z=s;	
 		};		
 		//shows and allows edit of real and maintains undo log
-		uiPropBoard.label('radius', sphere.radius, callback);
+		uiPropBrd.real('radius', sphere.radius, callback);
 	}
 }); 
 
