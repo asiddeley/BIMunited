@@ -46,7 +46,7 @@
 	background:silver;
 }
 
-.BimProp{
+.BimCell{
 	font-size:12px;
 	font-family:sans-serif;
 	background:beige;
@@ -60,21 +60,21 @@
 	overflow:hidden;
 }
 
-.BimPropName{
+.BimCellName{
 	color:black;
 	width:auto;
 	float:left;
 	padding-right:10px;
 }
 
-.BimPropInput{
+.BimCellInput{
 	background:beige;
 	color:black;
 	width:auto;
 	float:left;	
 }
 
-.BimPropResult{
+.BimCellResult{
 	color:black;	
 	width:auto;
 	float:left;

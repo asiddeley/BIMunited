@@ -48,17 +48,9 @@ function (evt, pickResult) {
 				pickResult.pickedMesh.material=BIM.tcmLib.poked.baby;	
 				pickResult.pickedMesh.bim.poked=true;
 				
-				//get properties and connect them to property board
-				var board=BIM.ui.propertyboard;
-				var bim=pickResult.pickedMesh.bim;
-				var pp=bim.handler.getProperties();
-				board.clear();
-				//BIM.fun.log('properties...');
-				for (var k in pp){ 
-					//BIM.fun.log(k);
-					pp[k](bim, board); 
-				} //call each property function
-				
+				//call property board to display the bim element's properties
+				BIM.ui.propertyboard.display(pickResult.pickedMesh.bim);
+	
 				
 			} else {
 				//restore material with a copy since matRestore needs to be set to false

@@ -56,7 +56,8 @@ var BIM={
 		this.ui.blackboard=uibb.create(bb);
 		var pb=$('<div class="BIMpropboard">properties</div>');
 		$(el).append(pb);
-		this.ui.propertyboard=uipb.create(pb);
+		//this.ui.propertyboard=uipb.create(pb);
+		this.ui.propertyboard=uipb.init(pb);
 	},
 	
 	canvas:function(canvas){

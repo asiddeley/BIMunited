@@ -26,16 +26,16 @@
 define(
 // load dependencies...
 // just loading widgetPartProperty initialized the widget factory in jquery.  Passed argument wp not used.
-['jquery', 'kernel/widgetProperty'],
+['jquery', 'kernel/widgetCell'],
 
 // then do...
 function($, wp){
 
-
 var UiPropertyBoard={
 	
-	aProperty:[],	// array for various property widgets
-
+	//aProperty:[],	// array for various property widgets
+	
+	/*
 	create:function(el){
 		// create a new copy (of this template) and initialize
 		var r=$.extend({}, UiPropertyBoard);
@@ -50,38 +50,113 @@ var UiPropertyBoard={
 		}
 		return r;		
 	},
+	*/
 	
-	clear:function(){
+	//count:0,
+	
+	display:function(part){
 		//clear all values from aProperties
-		this.count=0;
-		for (i=0; i<this.aProperty.length; i++){
-			$(this.aProperty[i]).hide();
+		//this.count=0;
+		//for (i=0; i<this.aProperty.length; i++){$(this.aProperty[i]).hide();};
+		
+		//reset counters and hide cells
+		this.xCell=0;
+		this.wCell.forEach(function(item){item.hide();});
+		this.xCellinfo=0;
+		this.wCellinfo.forEach(function(item){item.hide();});
+		this.xCellreal=0;
+		this.wCellreal.forEach(function(item){item.hide();});
+		this.xCellxyz=0;
+		this.wCellxyz.forEach(function(item){item.hide();});
+
+		
+		//call each of the part's property accessor functions, each will call
+		//this propertyBoard via functions below, info, real, text, xyz, etc
+		var pp=part.handler.getProperties();
+		//BIM.fun.log('properties...');
+		for (var k in pp){ 
+			//BIM.fun.log(k);
+			pp[k](part, this); 
 		}
 	},
 	
-	count:0,
-
-	label:function(title, label, callback){
-		var p=this.aProperty[this.count++];
-		//Call widget method 'label', passing title, label & callback
-		//see jquery-ui widget factory documentation for info on working with widgets
-		$(p).wProperty('label', title, label, callback).show();
+	element:null,
+	
+	init:function(element){
+		this.element=element;
+		return this; //to allow chaining
+	},
+	
+	/////////////////
+	//API functions
+	
+	//readonly property 
+	info:function(name, valu, callback){
+		//create wCellinfo widgets as they are needed. 
+		//note that the index counter xCellinfo is reset to zero when a new bim part is picked
+		//and cells are reused, not destroyed
+		if (this.xCell>=this.wCell.length){
+			var cell=$('<div></div>');
+			$(this.element).append(cell);
+			cell.wCell().hide();
+			this.wCell.push(cell); 
+		}
+		//Call widget method 'vnc', passing valu, name & callback to set and show the cell 
+		//see jquery-ui widget factory documentation
+		$(this.wCell[this.xCell++]).wCell('vnc', valu, name, callback).show();
 	},	
 
-	point3d:function(title, point3d, callback){
-		var p=this.aProperty[this.count++];
-		$(p).wProperty('point3d', title, point3d.toString(), callback).show();
+	point3d:function(name, valu, callback){
+		//var p=this.aProperty[this.count++];
+		//$(p).wProperty('point3d', title, point3d.toString(), callback).show();
 	},
 
-	real:function(title, real, callback){
-		var p=this.aProperty[this.count++];
-		$(p).wProperty('text', title, real.toString(), callback).show();
+	real:function(name, valu, callback){
+		//var p=this.aProperty[this.count++];
+		//$(p).wProperty('text', title, real.toString(), callback).show();
+		if (this.xCell>=this.wCell.length){
+			var cell=$('<div></div>');
+			$(this.element).append(cell);
+			cell.wCell().hide();
+			this.wCell.push(cell); 
+		}
+		$(this.wCell[this.xCell++]).wCell('vnc', valu, name, callback).show();			
 	},
 		
-	text:function(title, text, callback){	
-		var p=this.aProperty[this.count++];
-		$(p).wProperty('text', title, text, callback).show();
-	}
+	text:function(name, valu, callback){	
+		//var p=this.aProperty[this.count++];
+		//$(p).wProperty('text', title, text, callback).show();
+		if (this.xCell>=this.wCell.length){
+			var cell=$('<div></div>');
+			$(this.element).append(cell);
+			cell.wCell().hide();
+			this.wCell.push(cell); 
+		}
+		//Call widget method 'vnc', passing valu, name & callback to set and show the cell 
+		//see jquery-ui widget factory documentation
+		$(this.wCell[this.xCell++]).wCell('vnc', valu, name, callback).show();			
+	},
+	
+	xyz:function(name, valu, callback){
+		//var p=this.aProperty[this.count++];
+		//$(p).wProperty('point3d', title, point3d.toString(), callback).show();
+	},
+	
+	////////////////////////
+	//widget storage
+	
+	wCell:[], //text
+	wCellinfo:[], //non editable
+	wCellreal:[], //float
+	wCellxyz:[], //x,y,z coordinate
+
+	
+	//index counters
+	xCell:0,
+	xCellinfo:0,
+	xCellreal:0,
+	xCellxyz:0 //x,y,z coordinate
+
 
 };
 

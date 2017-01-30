@@ -88,18 +88,16 @@ var partHandler = {
 		var callback=function(result){
 			//update position in babylon element, should show on next scene render 
 			//BIM.fun.log(result);
-			part.baby.position=part.position;
+			//part.baby.position=part.position;
 		};		
 		//shows and allows edit of a position
-		uiPropBrd.point3d('position', part.position, callback);		
+		uiPropBrd.xyz('position', part.position, callback);		
 	},
 
 	type:function(part, uiPropBrd){
-		var callback=function(){ 
-			//no action required since a part's type is unchanging.
-			//or is it? Some type changes possible, eg cube to sphere 
-		};
-		uiPropBrd.label('type', 'part', callback );
+		//empty callback since a part's type is unchanging.
+		var callback=function(){};
+		uiPropBrd.info('type', 'part', callback );
 	}
 	
 };
