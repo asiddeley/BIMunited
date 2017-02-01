@@ -26,10 +26,10 @@
 define(
 // load dependencies...
 // just loading widgetPartProperty initialized the widget factory in jquery.  Passed argument wp not used.
-['jquery', 'kernel/widgetCell'],
+['jquery', 'kernel/widgetCell', 'kernel/widgetCellReal'],
 
 // then do...
-function($, wp){
+function($, wp, wcr){
 
 var UiPropertyBoard={
 	
@@ -114,23 +114,23 @@ var UiPropertyBoard={
 	real:function(name, valu, callback){
 		//var p=this.aProperty[this.count++];
 		//$(p).wProperty('text', title, real.toString(), callback).show();
-		if (this.xCell>=this.wCell.length){
-			var cell=$('<div></div>');
-			$(this.element).append(cell);
-			cell.wCell().hide();
-			this.wCell.push(cell); 
+		if (this.xCellreal>=this.wCellreal.length){
+			var div=$('<div></div>');
+			$(this.element).append(div);
+			div.wCellreal().hide();
+			this.wCellreal.push(div); 
 		}
-		$(this.wCell[this.xCell++]).wCell('vnc', valu, name, callback).show();			
+		$(this.wCellreal[this.xCellreal++]).wCellreal('vnc', valu, name, callback).show();			
 	},
 		
 	text:function(name, valu, callback){	
 		//var p=this.aProperty[this.count++];
 		//$(p).wProperty('text', title, text, callback).show();
 		if (this.xCell>=this.wCell.length){
-			var cell=$('<div></div>');
-			$(this.element).append(cell);
-			cell.wCell().hide();
-			this.wCell.push(cell); 
+			var div=$('<div></div>');
+			$(this.element).append(div);
+			div.wCell().hide();
+			this.wCell.push(div); 
 		}
 		//Call widget method 'vnc', passing valu, name & callback to set and show the cell 
 		//see jquery-ui widget factory documentation
