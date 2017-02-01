@@ -45,28 +45,28 @@ function($, ui, wc) {
 // wCellReal inherits wCell
 $.widget ("bim.wCellreal", $.bim.wCell , {
 
-_create:function() {
-	this._super();
+_create:function(id) {
+	this._super(id); //calls wCell create 
+	this.render();
 },
 
-_contextmenu:function(event) {
-	return false; //cancel other context menus
-},
+//cancel other context menus
+_contextmenu:function(event) {return false;},
 
-_destroy: function() {
-	//this.element.removeClass( "savable" ).text( "" );
-},
+_destroy: function() {/*this.element.removeClass( "savable" ).text( "" );*/ },
 
 _highlight:function(event) {
-	$("#"+this.options.idi).show();
-	$("#"+this.options.idr).hide();	
-
+	this._super(event);
+//	$("#"+this.option('idi').show();
+//	$("#"+this.option('idr').hide();	
 },
 
 _highlightoff:function(event) {
-	var v=$("#" + this.options.idi).val();
+	this._super(event);
+	/*
+	var v=$("#" + this.option('idi')).val();
 	//check if value|text has changed 
-	if( v != this.options.valu) {
+	if( v != this.option('valu') {
 		//text changed so save it to the undo stack before updating it
 		this.options.undo.push(this.options.valu);
 		//but limit the undo to just 10 changes
@@ -77,38 +77,42 @@ _highlightoff:function(event) {
 		//process ie. evaluate any expressions, and update the result field		
 		var result=this._process(v);
 		$("#"+this.options.idr).text(result);
+
 		//callback and return the result
-		this.options.callback(result.toString());
+		//this.options.callback(result.toString());
 		//To do, commit to database...	
 	}
 	//cursor has left the cell so just show result field
-	$("#"+this.options.idi).hide();
+	$("#"+this.option('idi').hide();
 	$("#"+this.options.idr).show();	
+	*/
 },
 
 render: function() {	
-	var that=this;
-	var title="<div id='"+ that.options.idn + "' class='BimCellName' >"+that.options.name +"</div>";
-	var textarea="<textarea id='"+that.options.idi + "' class='BimCellInput' "+
-		"style='z-index=10001;display:none;width:100%;height:auto;color=cyan'"+
+	window.BIM.fun.log(this.option('idn'));
+	var title="<div id='"+ this.option('idn') + "' class='BimCellName' >"+this.option('name') +"</div>";
+	var input="<textarea id='"+this.option('idi') + "' class='BimCellinput' "+
+		"style='z-index=10001;display:none;width:100%;height:auto;'  "+
 		"onclick='BIM.fun.autoHeight(this)'"+
 		"onkeyup='BIM.fun.autoHeight(this)'>"+
-		that.options.valu.toString()+
+		this.option('valu').toString()+
 		"</textarea>";		
-	var result="<div id='"+	that.options.idr+"' class='BimCellResult'>"+
-		this._process(that.options.valu)+"</div>";
-	that.element.html(title + textarea + result);
+	var result="<div id='"+	this.option('idr')+"'  class='BimCellResult'>"+
+		this.option('valu')+"</div>";
+	this.element.html(title + input + result);
 	//this._trigger( "refreshed", null, { text: this.options.text } );
 },
+
+option:function(key) { return this._super(key);},
+
+options:function() { return this._super();},
 
 _setOption: function( key, valu ) { this._super( key, valu );},
 
 _setOptions: function( options ) {this._super( options );},	
 
 // API accessor functions
-vnc:function(valu, name, callback){
-	this._super(valu,name,callback);
-}
+vnc:function(valu, name, callback){	this._super(valu,name,callback); }
 
 }); //end of widget
 }); //end of define

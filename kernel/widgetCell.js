@@ -98,7 +98,7 @@ process: function( v ) {
 
 render: function() {
 	var title="<div id='"+ this.options.idn + "' class='BimCellName' >"+this.options.name +"</div>";
-	var textarea="<textarea id='"+this.options.idi + "' class='BimCellInput' "+
+	var textarea="<textarea id='"+this.options.idi + "' class='BimCellinput' "+
 		"style='z-index=10001;display:none;width:100%;height:auto;'"+
 		"onclick='BIM.fun.autoHeight(this)'"+
 		"onkeyup='BIM.fun.autoHeight(this)'>"+
