@@ -127,7 +127,8 @@ var BIM={
 			//alert( name+count.toString());
 			return name+count.toString();
 		},
-		uidstore:{ }			
+		uidstore:{ },
+		unique:function(name){return this.uid(name);}
 	},
 	
 	//shortcuts

@@ -45,6 +45,7 @@ function($, ui) {
 // define a cell widget 
 $.widget ("bim.wCell", {
 
+/* 
 // option defaults
 options: {
 	callback:function(){}, //set by text, real, point3d, etc.
@@ -56,8 +57,8 @@ options: {
 	undo: [],
 	valu: 'hello' //value
 },
-
-_create:function(uid) {
+*/
+_create:function() {
 	//this.options.name=this.element.attr("id");
 	//this.options.text=this.element.text();
 	
@@ -65,19 +66,26 @@ _create:function(uid) {
 	//this.options.idr=uid+'result';	
 	//this.options.idn=uid+'name';	
 	//this.options.name=uid;	
+	var uid=BIM.fun.unique('cell');
 	this.option({
-		'idi':uid+'input',
-		'idr':uid+'result',
-		'idn':uid+'name',
-		'name':uid
+		callback:function(){}, //set by text, real, point3d, etc.
+		id:uid,
+		idi:uid+'input',
+		idr:uid+'result',
+		idn:uid+'name',
+		name: 'unnamed',
+		undo: [],
+		valu: 'hello' //value
 	});
 	
 	this.element.addClass('BimCell');
+	$(this.element).attr('id', uid);
+	
 	this._on( this.element, {
 		mouseenter:'reveal', 
-		mouseleave:'revealDone',
+		mouseleave:'commit',
 		contextmenu:'_contextmenu'
-		//click:'_contentEdit',
+		//click:'reveal',
 		//dragstop:'stylingStop',
 		//resizestop:'stylingStop'
 	});
@@ -87,12 +95,32 @@ _create:function(uid) {
 //cancel DOM default context menu Ie. right click floating menu
 _contextmenu:function(event) {return false; },
 
-_destroy:function() {
-	//this.element.removeClass( "savable" ).text( "" );
+cancel:function(){this.revealoff();},
+
+commit:function(event) {
+	//if (!this.options.editable) {return;} //leave if not editable
+	var v=$("#" + this.options.idi).val();
+	//check if value|text has changed 
+	if(v != this.options.valu) {
+		//text changed so save it to the undo stack before updating it
+		this.options.undo.push(this.options.valu);
+		//but limit the undo to just 10 changes
+		if (this.options.undo.length > 10) {this.options.undo.shift();}
+		//eliminate nulls
+		v=(v=='')?'--':v;
+		this.options.valu=v;
+		//process ie. evaluate any expressions, and update the result field		
+		var result=this.process(v);
+		$("#"+this.options.idr).text(result);
+		//callback and return the result
+		this.options.callback(result.toString());
+		//To do, commit to database...	
+		//soup.dataSave(this.options);
+	};
+	this.revealoff();
 },
 
 option:function(arg1){ return this._super(arg1); },
-
 
 process:function( v ) {
 	//check for and evaluate any code found in cell
@@ -119,38 +147,9 @@ render: function() {
 	//this._trigger( "refreshed", null, { text: this.options.text } );
 },
 
-reveal:function(event) {
-	if (this.options.editable){
-		//$("#"+this.options.idi).show().css({'position':'relative', 'z-index':10000, 'background':'silver'});
-		$("#"+this.options.idi).show();
-		$("#"+this.options.idr).hide();	
-	}
-},
-
-revealDone:function(event) {
-	if (!this.options.editable) {return;} //leave if not editable
-	var v=$("#" + this.options.idi).val();
-	//check if value|text has changed 
-	if(v != this.options.valu) {
-		//text changed so save it to the undo stack before updating it
-		this.options.undo.push(this.options.valu);
-		//but limit the undo to just 10 changes
-		if (this.options.undo.length > 10) {this.options.undo.shift();}
-		//eliminate nulls
-		v=(v=='')?'--':v;
-		this.options.valu=v;
-		//process ie. evaluate any expressions, and update the result field		
-		var result=this.process(v);
-		$("#"+this.options.idr).text(result);
-		//callback and return the result
-		this.options.callback(result.toString());
-		//To do, commit to database...	
-		//soup.dataSave(this.options);
-	}
-	//cursor has left the cell so just show result field
-	$("#"+this.options.idi).hide();
-	$("#"+this.options.idr).show();	
-},
+//reveals the edit field and hides the result
+reveal:function(event) {	$("#"+this.options.idi).show();	$("#"+this.options.idr).hide();	},
+revealoff:function(event){	$("#"+this.options.idi).hide();	$("#"+this.options.idr).show();	},
 
 _setOption: function( key, valu ) {
    //if ( key === "valu" ) {valu = this._checkValu( valu );}
@@ -185,10 +184,7 @@ stylingStop:function(event, ui){
 
 // API function to set value, name, callback and show
 vnc:function(valu, name, callback){
-	this.options.callback=callback;
-	this.options.editable=true;
-	this.options.name=name;
-	this.options.valu=valu;
+	this.option({callback:callback, name:name,	valu:valu});
 	this.render();
 	this.element.show();
 }

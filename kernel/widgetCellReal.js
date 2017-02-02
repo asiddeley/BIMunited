@@ -42,54 +42,37 @@ define(
 // Then do...
 function($, ui, wc) {
 
-// wCellReal inherits wCell
+// wCellReal widget based on (extends, inherits from...) wCell widget
 $.widget ("bim.wCellreal", $.bim.wCell , {
 
-_create:function(id) {
-	this._super(id); //calls wCell create 
+_create:function() {
+	this._super(); //calls wCell create 
+	this._off( this.element, 'mouseenter mouseleave'); 	//remove wCell behavior
+	this._on( this.element, {contextmenu:'_contextmenu',	click:'reveal',	});
 	this.render();
 },
 
+cancel:function(){this._super();},
+commit:function(){this._super();},
+
 //cancel other context menus
-_contextmenu:function(event) {return false;},
+contextmenu:function(event) {return false;},
 
-_destroy: function() {/*this.element.removeClass( "savable" ).text( "" );*/ },
+option:function(arg1) { return this._super(arg1);},
 
-_highlight:function(event) {
-	this._super(event);
-//	$("#"+this.option('idi').show();
-//	$("#"+this.option('idr').hide();	
+//called from ok button - see render()
+ok:function() {
+	this.revealoff;
+	alert('commit');
 },
 
-_highlightoff:function(event) {
-	this._super(event);
-	/*
-	var v=$("#" + this.option('idi')).val();
-	//check if value|text has changed 
-	if( v != this.option('valu') {
-		//text changed so save it to the undo stack before updating it
-		this.options.undo.push(this.options.valu);
-		//but limit the undo to just 10 changes
-		if (this.options.undo.length > 10) {this.options.undo.shift();}
-		//eliminate nulls
-		v=(v=='')?'--':v;
-		this.options.valu=v;
-		//process ie. evaluate any expressions, and update the result field		
-		var result=this._process(v);
-		$("#"+this.options.idr).text(result);
+reveal:function(){this._super(); },
 
-		//callback and return the result
-		//this.options.callback(result.toString());
-		//To do, commit to database...	
-	}
-	//cursor has left the cell so just show result field
-	$("#"+this.option('idi').hide();
-	$("#"+this.options.idr).show();	
-	*/
-},
+revealoff:function(){this._super(); },
 
 render: function() {	
-	window.BIM.fun.log(this.option('idn'));
+	//window.BIM.fun.log(this.option('idn'));
+
 	var title="<div id='"+ this.option('idn') + "' class='BimCellName' >"+this.option('name') +"</div>";
 	var input="<textarea id='"+this.option('idi') + "' class='BimCellinput' "+
 		"style='z-index=10001;display:none;width:100%;height:auto;'  "+
@@ -97,20 +80,26 @@ render: function() {
 		"onkeyup='BIM.fun.autoHeight(this)'>"+
 		this.option('valu').toString()+
 		"</textarea>";
-	var result="<div id='"+	this.option('idr')+"'  class='BimCellResult'>"+
-		this.option('valu')+"</div>";
+	var result="<div id='"+	this.option('idr')+"'  class='BimCellResult'>"+this.option('valu')+"</div>";
 	this.element.html(title + input + result);
+
+	var that=this;
+	var btn=$('<button>ok</button>').button().on('click', function(){ that.ok();  } );
+	this.element.append(btn);
+	
 	//this._trigger( "refreshed", null, { text: this.options.text } );
 },
 
-option:function(arg1) { return this._super(arg1);},
 
 _setOption: function( key, valu ) { this._super( key, valu );},
 
 _setOptions: function( options ) {this._super( options );},	
 
 // API accessor functions
+//access methods in wCellreal widget thus: $(#uid).wCellreal('methodname', 'arg1', 'arg2')
+
 vnc:function(valu, name, callback){	this._super(valu,name,callback); }
+
 
 }); //end of widget
 }); //end of define

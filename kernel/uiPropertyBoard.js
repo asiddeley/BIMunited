@@ -99,7 +99,7 @@ var UiPropertyBoard={
 			var cell=$('<div></div>');
 			var uid=BIM.fun.uid('cellreal');
 			$(this.element).append(cell);
-			cell.wCell(uid).hide();
+			cell.wCell().hide();
 			this.wCell.push(cell); 
 		}
 		//Call widget method 'vnc', passing valu, name & callback to set and show the cell 
@@ -117,9 +117,8 @@ var UiPropertyBoard={
 		//$(p).wProperty('text', title, real.toString(), callback).show();
 		if (this.xCellreal>=this.wCellreal.length){
 			var div=$('<div></div>');
-			var uid=BIM.fun.uid('cellreal');
 			$(this.element).append(div);
-			div.wCellreal(uid).hide();
+			div.wCellreal().hide();
 			this.wCellreal.push(div); 
 		}
 		$(this.wCellreal[this.xCellreal++]).wCellreal('vnc', valu, name, callback).show();			
@@ -130,9 +129,8 @@ var UiPropertyBoard={
 		//$(p).wProperty('text', title, text, callback).show();
 		if (this.xCell>=this.wCell.length){
 			var div=$('<div></div>');
-			var uid=BIM.fun.uid('cell');
 			$(this.element).append(div);
-			div.wCell( uid ).hide();
+			div.wCell( ).hide();
 			this.wCell.push(div); 
 		}
 		//Call widget method 'vnc', passing valu, name & callback to set and show the cell 
