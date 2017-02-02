@@ -29,7 +29,7 @@ define(
 ['jquery', 'kernel/widgetCell', 'kernel/widgetCellReal'],
 
 // then do...
-function($, wp, wcr){
+function($, wc, wcr){
 
 var UiPropertyBoard={
 	
@@ -97,8 +97,9 @@ var UiPropertyBoard={
 		//and cells are reused, not destroyed
 		if (this.xCell>=this.wCell.length){
 			var cell=$('<div></div>');
+			var uid=BIM.fun.uid('cellreal');
 			$(this.element).append(cell);
-			cell.wCell().hide();
+			cell.wCell(uid).hide();
 			this.wCell.push(cell); 
 		}
 		//Call widget method 'vnc', passing valu, name & callback to set and show the cell 
@@ -116,8 +117,9 @@ var UiPropertyBoard={
 		//$(p).wProperty('text', title, real.toString(), callback).show();
 		if (this.xCellreal>=this.wCellreal.length){
 			var div=$('<div></div>');
+			var uid=BIM.fun.uid('cellreal');
 			$(this.element).append(div);
-			div.wCellreal().hide();
+			div.wCellreal(uid).hide();
 			this.wCellreal.push(div); 
 		}
 		$(this.wCellreal[this.xCellreal++]).wCellreal('vnc', valu, name, callback).show();			
@@ -128,8 +130,9 @@ var UiPropertyBoard={
 		//$(p).wProperty('text', title, text, callback).show();
 		if (this.xCell>=this.wCell.length){
 			var div=$('<div></div>');
+			var uid=BIM.fun.uid('cell');
 			$(this.element).append(div);
-			div.wCell().hide();
+			div.wCell( uid ).hide();
 			this.wCell.push(div); 
 		}
 		//Call widget method 'vnc', passing valu, name & callback to set and show the cell 

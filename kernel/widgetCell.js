@@ -58,14 +58,20 @@ options: {
 },
 
 _create:function(uid) {
-	//this.element is a reference to the DOMelement|div the widget is bound
 	//this.options.name=this.element.attr("id");
 	//this.options.text=this.element.text();
-	//var uid=win.BIM.get.uid('cell');
-	this.options.idi=uid+'input';
-	this.options.idr=uid+'result';
-	this.options.idn=uid+'name';	
-	this.options.name=uid;	
+	
+	//this.options.idi=uid+'input';
+	//this.options.idr=uid+'result';	
+	//this.options.idn=uid+'name';	
+	//this.options.name=uid;	
+	this.option({
+		'idi':uid+'input',
+		'idr':uid+'result',
+		'idn':uid+'name',
+		'name':uid
+	});
+	
 	this.element.addClass('BimCell');
 	this._on( this.element, {
 		mouseenter:'reveal', 
@@ -78,15 +84,17 @@ _create:function(uid) {
 	this.render();
 },
 
-_contextmenu:function(event) {
-	return false; //cancel other context menus
-},
+//cancel DOM default context menu Ie. right click floating menu
+_contextmenu:function(event) {return false; },
 
-_destroy: function() {
+_destroy:function() {
 	//this.element.removeClass( "savable" ).text( "" );
 },
 
-process: function( v ) {
+option:function(arg1){ return this._super(arg1); },
+
+
+process:function( v ) {
 	//check for and evaluate any code found in cell
 	v=v.toString(); //just in case v is a real
 	if (v.substr(0,1) == '=') {

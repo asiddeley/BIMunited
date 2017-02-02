@@ -96,16 +96,14 @@ render: function() {
 		"onclick='BIM.fun.autoHeight(this)'"+
 		"onkeyup='BIM.fun.autoHeight(this)'>"+
 		this.option('valu').toString()+
-		"</textarea>";		
+		"</textarea>";
 	var result="<div id='"+	this.option('idr')+"'  class='BimCellResult'>"+
 		this.option('valu')+"</div>";
 	this.element.html(title + input + result);
 	//this._trigger( "refreshed", null, { text: this.options.text } );
 },
 
-option:function(key) { return this._super(key);},
-
-options:function() { return this._super();},
+option:function(arg1) { return this._super(arg1);},
 
 _setOption: function( key, valu ) { this._super( key, valu );},
 
