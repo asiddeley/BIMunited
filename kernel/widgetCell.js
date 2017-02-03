@@ -45,111 +45,98 @@ function($, ui) {
 // define a cell widget 
 $.widget ("bim.wCell", {
 
-/* 
-// option defaults
-options: {
-	callback:function(){}, //set by text, real, point3d, etc.
-	editable:false,
-	idi: 'input', //id of DOM element (field) that displays the input
-	idn: 'name', //id of field that displays the name|title
-	idr: 'result', //id of field that displays the result
-	name: 'unnamed',
-	undo: [],
-	valu: 'hello' //value
-},
-*/
 _create:function() {
-	//this.options.name=this.element.attr("id");
-	//this.options.text=this.element.text();
-	
-	//this.options.idi=uid+'input';
-	//this.options.idr=uid+'result';	
-	//this.options.idn=uid+'name';	
-	//this.options.name=uid;	
-	var uid=BIM.fun.unique('cell');
+
 	this.option({
-		callback:function(){}, //set by text, real, point3d, etc.
-		id:uid,
-		idi:uid+'input',
-		idr:uid+'result',
-		idn:uid+'name',
+		callback:function(){}, 
 		name: 'unnamed',
-		undo: [],
-		valu: 'hello' //value
+		undo:[],
+		valu: 'hello',
 	});
+
+	var $name=$('<div></div>').addClass('BimCellName').show();
+	var $input=$('<textarea></textarea>').addClass('BimCellinput').hide();
+	var $result=$('<div></div>').addClass('BimCellResult').text(this.option('valu')).show();
+	var ah=function(el){el.css('height','auto').css('height', el.scrollHeight+5);}
+	$input.on("onkeyup", $input, ah);
 	
 	this.element.addClass('BimCell');
-	$(this.element).attr('id', uid);
+	this.element.append($name, $input, $result);
+	
+	this.option('$name', $name);
+	this.option('$input', $input);
+	this.option('$result', $result);
 	
 	this._on( this.element, {
 		mouseenter:'reveal', 
 		mouseleave:'commit',
-		contextmenu:'_contextmenu'
+		contextmenu:'contextmenu'
 		//click:'reveal',
-		//dragstop:'stylingStop',
-		//resizestop:'stylingStop'
 	});
-	this.render();
+	
+
 },
 
 //cancel DOM default context menu Ie. right click floating menu
-_contextmenu:function(event) {return false; },
+contextmenu:function(event) {return false; },
 
 cancel:function(){this.revealoff();},
 
 commit:function(event) {
-	//if (!this.options.editable) {return;} //leave if not editable
-	var v=$("#" + this.options.idi).val();
-	//check if value|text has changed 
-	if(v != this.options.valu) {
+	var v=this.option('$input').val();
+	//BIM.fun.log('commit:'+this.options.valu);
+	//check if input is different from result ie. has been edited 
+	if(v != this.option('valu')) {
 		//text changed so save it to the undo stack before updating it
-		this.options.undo.push(this.options.valu);
+		this.option('undo').push(this.option('valu'));
 		//but limit the undo to just 10 changes
-		if (this.options.undo.length > 10) {this.options.undo.shift();}
+		if (this.option('undo').length > 10) {this.option('undo').shift();}
 		//eliminate nulls
 		v=(v=='')?'--':v;
-		this.options.valu=v;
+		this.option('valu',v);
 		//process ie. evaluate any expressions, and update the result field		
 		var result=this.process(v);
-		$("#"+this.options.idr).text(result);
+		//update result field
+		this.option('$result').text(result);
+		
 		//callback and return the result
-		this.options.callback(result.toString());
+		this.option('callback')(result.toString());
 		//To do, commit to database...	
 		//soup.dataSave(this.options);
 	};
 	this.revealoff();
 },
 
-option:function(arg1){ return this._super(arg1); },
+option:function(key, valu){ 
+	if(typeof valu == 'undefined'){
+		return this._super(key); 
+	} else {
+		return this._super(key,valu);
+	}
+},
 
 process:function( v ) {
 	//check for and evaluate any code found in cell
 	v=v.toString(); //just in case v is a real
 	if (v.substr(0,1) == '=') {
-		try{valu=eval(v.substr(1));}
+		try{v=eval(v.substr(1));}
 		catch(er){v=er.toString();}
 	}
 	return v;
 },
 
-render: function() {
-	var title="<div id='"+ this.options.idn + "' class='BimCellName' >"+this.options.name +"</div>";
-	var textarea="<textarea id='"+this.options.idi + "' class='BimCellinput' "+
-		"style='z-index=10001;display:none;width:100%;height:auto;'"+
-		"onclick='BIM.fun.autoHeight(this)'"+
-		"onkeyup='BIM.fun.autoHeight(this)'>"+
-		this.options.valu.toString()+
-		"</textarea>";		
-	var result="<div id='"+	this.options.idr+"' class='BimCellResult'>"+
-		this.process(this.options.valu)+"</div>";
-		
-	this.element.html(title + textarea + result);
-	//this._trigger( "refreshed", null, { text: this.options.text } );
+reveal:function(event) {
+	this.option('$name').show();
+	this.option('$input').show();
+	this.option('$result').hide();
+},
+	
+revealoff:function(event){
+	this.option('$name').show();
+	this.option('$input').hide();
+	this.option('$result').show();
 },
 
-//reveals the edit field and hides the result
-reveal:function(event) {	$("#"+this.options.idi).show();	$("#"+this.options.idr).hide();	},
-revealoff:function(event){	$("#"+this.options.idi).hide();	$("#"+this.options.idr).show();	},
 
 _setOption: function( key, valu ) {
    //if ( key === "valu" ) {valu = this._checkValu( valu );}
@@ -159,33 +146,13 @@ _setOption: function( key, valu ) {
 _setOptions: function( options ) {this._super( options );},	
 
 
-styleGet:function(c){
-	//return an object with only drag properties from a given object
-	return	$.extend( { }, 
-		{ 'position': c['position'] },
-		{ 'left': c['left'] },
-		//{ 'right': c['right'] },
-		{ 'top': c['top'] },
-		//{ 'bottom': c['bottom'] },
-		{ 'height': c['height'] },
-		{ 'width': c['width'] }
-	);	
-},
-
-styleRestore:function(c){
-	this.element.css(this.styleGet(this.options));
-},			
-	
-stylingStop:function(event, ui){
-	//save position
-	var c=window.getComputedStyle(this.element[0],null);
-	this.options=$.extend(this.options, this.styleGet(c));
-},
-
 // API function to set value, name, callback and show
 vnc:function(valu, name, callback){
-	this.option({callback:callback, name:name,	valu:valu});
-	this.render();
+	//BIM.fun.log('valu, name:'+ valu + ',' + name);
+	this.option({'callback':callback,'name':name, 'valu':valu});
+	this.option('$name').text(name.toString()).show();
+	this.option('$input').text(valu).hide();
+	this.option('$result').text(this.process(valu)).show();	
 	this.element.show();
 }
 

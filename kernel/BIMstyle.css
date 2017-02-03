@@ -70,7 +70,8 @@
 .BimCellinput{
 	background:beige;
 	color:black;
-	width:auto;
+	width:100%;
+	height:auto;
 	float:left;	
 }
 

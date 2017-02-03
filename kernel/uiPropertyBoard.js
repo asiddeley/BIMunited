@@ -26,10 +26,10 @@
 define(
 // load dependencies...
 // just loading widgetPartProperty initialized the widget factory in jquery.  Passed argument wp not used.
-['jquery', 'kernel/widgetCell', 'kernel/widgetCellReal'],
+['jquery', 'kernel/widgetCell'],
 
 // then do...
-function($, wc, wcr){
+function($, wc){
 
 var UiPropertyBoard={
 	
@@ -97,7 +97,6 @@ var UiPropertyBoard={
 		//and cells are reused, not destroyed
 		if (this.xCell>=this.wCell.length){
 			var cell=$('<div></div>');
-			var uid=BIM.fun.uid('cellreal');
 			$(this.element).append(cell);
 			cell.wCell().hide();
 			this.wCell.push(cell); 
@@ -116,12 +115,12 @@ var UiPropertyBoard={
 		//var p=this.aProperty[this.count++];
 		//$(p).wProperty('text', title, real.toString(), callback).show();
 		if (this.xCellreal>=this.wCellreal.length){
-			var div=$('<div></div>');
-			$(this.element).append(div);
-			div.wCellreal().hide();
-			this.wCellreal.push(div); 
+			var $div=$('<div></div>');
+			$(this.element).append($div);
+			$div.wCell().hide();
+			this.wCellreal.push($div); 
 		}
-		$(this.wCellreal[this.xCellreal++]).wCellreal('vnc', valu, name, callback).show();			
+		$(this.wCellreal[this.xCellreal++]).wCell('vnc', valu, name, callback).show();			
 	},
 		
 	text:function(name, valu, callback){	
