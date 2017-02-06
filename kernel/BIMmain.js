@@ -32,6 +32,7 @@ define(
 'babylon',
 'kernel/interpreter',
 'kernel/uiBlackboard',
+'kernel/uiPicker',
 'kernel/uiPropertyBoard',
 'kernel/lightHemi',
 'kernel/viewFree',
@@ -39,7 +40,7 @@ define(
 ],
 
 // then do this...
-function (Model, $, babylon, interpreter, uibb, uipb, Light, View, TCM) {
+function (Model, $, babylon, interpreter, uibb, uiPicker, uipb, Light, View, TCM) {
 
 // construct library object for return
 var BIM={
@@ -54,10 +55,15 @@ var BIM={
 		var bb=$('<div class="BIMblackboard">blackboard</div>'); 
 		$(el).append(bb);
 		this.ui.blackboard=uibb.create(bb);
+		
 		var pb=$('<div class="BIMpropboard">properties</div>');
 		$(el).append(pb);
-		//this.ui.propertyboard=uipb.create(pb);
 		this.ui.propertyboard=uipb.init(pb);
+		
+		var pickBrd=$('<div class="BIMpicker">properties</div>');
+		$(el).append(pb);
+		this.ui.picker=uiPicker.init(pickBrd);
+	
 	},
 	
 	canvas:function(canvas){
