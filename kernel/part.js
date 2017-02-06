@@ -47,7 +47,7 @@ var partHandler = {
 	demo:function(){ return this.create({'radius':Math.random()}); },
 
 	// Accessors - returns a hash of propterty access functions
-	getProperties:function(){
+	getFeatures:function(){
 		var that=this;
 		return {
 			name:that.name,
@@ -73,14 +73,16 @@ var partHandler = {
 	},
 	
 	//////////////////////////////////////
-	// Property access functions 
+	// Feature access functions 
 	// Include these in list that is returned by getProperties() above.
 	// Functions may just display property or provide means of editing
 	
 	host:function(part, uiPropBrd){  /*expose the part's parent */   },
 	
 	name:function(part, uiPropBrd){
-		callback=function(result){part.name=result;}; 
+		callback=function(result){
+			part.name=result.toString();
+		}; 
 		uiPropBrd.text('name', part.name, callback);
 	},
 		
@@ -95,14 +97,14 @@ var partHandler = {
 	},
 
 	type:function(part, uiPropBrd){
-		//empty callback since a part's type is unchanging.
+		//empty callback since a part's type is unchanging, read-only, private.
 		var callback=function(){};
-		uiPropBrd.info('type', 'part', callback );
+		uiPropBrd.text('type', 'part', callback );
 	}
 	
 };
 
-// part properties 
+// part features 
 // partHandler is defined first because it is referenced below
 // the model may contain many part but only one set of part handlers
 var part = {

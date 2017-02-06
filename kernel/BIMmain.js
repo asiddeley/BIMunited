@@ -197,7 +197,7 @@ var BIM={
 		propertyboard:{} 
 	},
 	
-	//View library, A view is the BIM analog to babylon a camera
+	//View library, A view is the BIM analog to babylon camera
 	viewLib:{main:View.demo()},
 	
 	//Reserved

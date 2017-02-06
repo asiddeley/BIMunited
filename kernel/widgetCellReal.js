@@ -49,7 +49,6 @@ _create:function() {
 	this._super(); //calls wCell create 
 	this._off( this.element, 'mouseenter mouseleave'); 	//remove wCell behavior
 	this._on( this.element, {contextmenu:'_contextmenu',	click:'reveal',	});
-	this.render();
 },
 
 cancel:function(){this._super();},
@@ -58,7 +57,13 @@ commit:function(){this._super();},
 //cancel other context menus
 contextmenu:function(event) {return false;},
 
-option:function(arg1) { return this._super(arg1);},
+option:function(key, valu){ 
+	if(typeof valu == 'undefined'){
+		return this._super(key); 
+	} else {
+		return this._super(key,valu);
+	}
+},
 
 //called from ok button - see render()
 ok:function() {

@@ -60,22 +60,33 @@
 	overflow:hidden;
 }
 
-.BimCellName{
+.BimCellname{
 	color:black;
 	width:auto;
 	float:left;
 	padding-right:10px;
 }
 
-.BimCellinput{
+.BimCelltextarea{
 	background:beige;
 	color:black;
-	width:100%;
-	height:auto;
+	width:auto;
 	float:left;	
+	resize:none;
+	height:auto;
+	overflow:hidden;
 }
 
-.BimCellResult{
+.BimCelledit{
+	background:cyan;
+	color:black;
+	width:auto;
+	float:left;	
+	height:auto;
+	overflow:hidden;
+}
+
+.BimCellvalu{
 	color:black;	
 	width:auto;
 	float:left;

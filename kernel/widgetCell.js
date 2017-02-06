@@ -17,17 +17,14 @@
 	project:	BIM
 	desc:		
 		
-	module: 	widgetPartProperty
-	desc: 		Defines a part property widget in jquery.    
-	Load this module before creating a part property widget.  It features the following:  
-	Shows a property and allows its editing when the curser enters the edit field.
-	Processes and commits changes when cursor leaves the edit field.
-	Fields are name, edit and result.
+	module: 	widgetCell
+	desc: 		Defines a cell widget in jquery. A cell widget has 3 fields, name, input and result. 
+	Normally, the name and result fields are shown while the input is hiden. In edit mode, 
+	the result field is hidden and input or field is shown to allow text editing.
 	values in the edit field that begin with '=' are treated as expressions and processed similar
 	to a cell in a spreadsheet.
-	This work is a continuation of soup cell widget.
 	
-	usage:	$( DOMelement ).wProperty({name:'radius', valu:2.1});
+	usage:	$( DOMelement ).wCell({name:'radius', valu:2.1, onCommit:function(valuRevised){});
 	
 	
 	by: 		Andrew Siddeley 
@@ -48,63 +45,86 @@ $.widget ("bim.wCell", {
 _create:function() {
 
 	this.option({
-		callback:function(){}, 
 		name: 'unnamed',
+		onCommit:function(){}, 
+		type: 'string', //type of valu
 		undo:[],
 		valu: 'hello',
+		//jquery wrapped divs or fields initialized in create
+		$name:null, //holds the property name. Always shows
+		$edit:null, //holds any editing fields, buttons etc.  Normally hidden until revealled
+		$valu:null, //holds the valu or result of any editing.  Normally shows, hidden when editing	
+		$text:null, //
 	});
 
-	var $name=$('<div></div>').addClass('BimCellName').show();
-	var $input=$('<textarea></textarea>').addClass('BimCellinput').hide();
-	var $result=$('<div></div>').addClass('BimCellResult').text(this.option('valu')).show();
-	var ah=function(el){el.css('height','auto').css('height', el.scrollHeight+5);}
-	$input.on("onkeyup", $input, ah);
+	var $name=$('<div></div>').addClass('BimCellname').text(this.option('name'));
+	var $edit=$('<div></div>').addClass('BimCelledit');
+	var $valu=$('<div></div>').addClass('BimCellvalu').text(this.option('valu'));
+	var $text=$('<textarea></textarea>').addClass('BimCelltextarea').text(this.option('valu'));
+
+	var autoheight=function(ev){
+		//element $input is passed as ev.data
+		ev.data.css('height','auto');
+		var h=ev.data[0].scrollHeight+5;
+		ev.data.css('height', h);
+		//BIM.fun.log('autoheight'+h);
+	};
+	
+	$text.on("click keyup", $text, autoheight);
+	$edit.append($text);
 	
 	this.element.addClass('BimCell');
-	this.element.append($name, $input, $result);
+	this.element.append($name, $edit, $valu);
 	
 	this.option('$name', $name);
-	this.option('$input', $input);
-	this.option('$result', $result);
-	
+	this.option('$edit', $edit);
+	this.option('$text', $text);
+	this.option('$valu', $valu);
+
 	this._on( this.element, {
-		mouseenter:'reveal', 
-		mouseleave:'commit',
+		mouseenter:'revise', 
+		mouseleave:'ok',
 		contextmenu:'contextmenu'
 		//click:'reveal',
 	});
-	
-
 },
 
 //cancel DOM default context menu Ie. right click floating menu
 contextmenu:function(event) {return false; },
 
-cancel:function(){this.revealoff();},
+cancel:function(){this.reviseoff();},
 
 commit:function(event) {
-	var v=this.option('$input').val();
-	//BIM.fun.log('commit:'+this.options.valu);
-	//check if input is different from result ie. has been edited 
-	if(v != this.option('valu')) {
-		//text changed so save it to the undo stack before updating it
-		this.option('undo').push(this.option('valu'));
-		//but limit the undo to just 10 changes
-		if (this.option('undo').length > 10) {this.option('undo').shift();}
-		//eliminate nulls
-		v=(v=='')?'--':v;
-		this.option('valu',v);
-		//process ie. evaluate any expressions, and update the result field		
-		var result=this.process(v);
-		//update result field
-		this.option('$result').text(result);
-		
-		//callback and return the result
-		this.option('callback')(result.toString());
-		//To do, commit to database...	
-		//soup.dataSave(this.options);
+	var rv=this.revisedvalu();
+	var rt=typeof rv;
+	var valu=this.option('valu');
+	var type=this.option('type');
+	
+	if (rt != type) {
+		//return type is different from input type so try to fix
+		var er='warning, wrong type';
+		if (rt=='undefined' || rt==null){BIM.fun.log(er);return;}
+		switch(type){
+			case 'string': rv=rv.toString(); break;
+			case 'number': rv=parseFloat(rv.toString()); break;
+			case 'boolean': rv=Boolean(rv.toString()); break;		
+			default: BIM.fun.log(er);return;
+		};
+		if (isNaN(rv)){BIM.fun.log(er);return;}
 	};
-	this.revealoff();
+	
+	if(rv != valu) {
+		//has valu been revised? if so do following... 
+		this.undopush(valu); //update undo stack
+		this.option('valu', rv); //update value
+		this.option('onCommit')(rv); //execute callback to inform caller of revised value
+	};
+},
+
+ok:function(){this.commit(); this.reviseoff();},
+
+on:function(name, valu, onCommitFn){
+	this.vnc(valu, name, onCommitFn);
 },
 
 option:function(key, valu){ 
@@ -115,28 +135,32 @@ option:function(key, valu){
 	}
 },
 
-process:function( v ) {
-	//check for and evaluate any code found in cell
-	v=v.toString(); //just in case v is a real
-	if (v.substr(0,1) == '=') {
-		try{v=eval(v.substr(1));}
-		catch(er){v=er.toString();}
-	}
-	return v;
-},
-
-reveal:function(event) {
-	this.option('$name').show();
-	this.option('$input').show();
-	this.option('$result').hide();
+revise:function(event) {
+	this.option('$name').text(this.option('name')).show();
+	this.option('$edit').show();
+	this.option('$valu').text(this.option('valu')).hide();	
+	this.option('$text').text(this.option('valu'));
 },
 	
-revealoff:function(event){
-	this.option('$name').show();
-	this.option('$input').hide();
-	this.option('$result').show();
+reviseoff:function(event){	
+	this.option('$name').text(this.option('name')).show();
+	this.option('$edit').hide();
+	this.option('$valu').text(this.option('valu')).show();	
+	this.option('$text').text(this.option('valu'));
 },
 
+revisedvalu:function(){
+	var that=this;
+	var rv=this.option('$text').val();
+	if (rv.substr(0,1) == '=') {
+		try{rv=eval(rv.substr(1));}
+		catch(er){
+			BIM.fun.log('expression error: ' + er.toString());
+			rv=that.option('valu');
+		}
+	}
+	return rv;
+},
 
 _setOption: function( key, valu ) {
    //if ( key === "valu" ) {valu = this._checkValu( valu );}
@@ -145,15 +169,23 @@ _setOption: function( key, valu ) {
 
 _setOptions: function( options ) {this._super( options );},	
 
+undo:function(){
+	//reserved
+},
+
+undopush:function(valu){
+	//add value to the undo stack
+	this.option('undo').push(valu);
+	//but limit it to just 10 changes
+	if (this.option('undo').length > 10) {this.option('undo').shift();}
+},
 
 // API function to set value, name, callback and show
-vnc:function(valu, name, callback){
-	//BIM.fun.log('valu, name:'+ valu + ',' + name);
-	this.option({'callback':callback,'name':name, 'valu':valu});
-	this.option('$name').text(name.toString()).show();
-	this.option('$input').text(valu).hide();
-	this.option('$result').text(this.process(valu)).show();	
+vnc:function(valu, name, onCommitFn){
+	//BIM.fun.log('valu, type:'+ valu + ',' + typeof(valu));
+	this.option({onCommit:onCommitFn, name:name, type:typeof(valu), valu:valu});
 	this.element.show();
+	this.reviseoff();	
 }
 
 

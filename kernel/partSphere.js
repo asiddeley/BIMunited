@@ -48,9 +48,9 @@ var sphereHandler = $.extend( {}, Part, {
 		}
 	},	
 
-	getProperties:function(){
+	getFeatures:function(){
 		var that=this;
-		return $.extend(Part.getProperties(),{
+		return $.extend(Part.getFeatures(),{
 			radius:that.radius
 		});
 	},
@@ -72,8 +72,8 @@ var sphereHandler = $.extend( {}, Part, {
 		sphere.baby.position=sphere.position;
 	},
 
-	radius:function(sphere, uiPropBrd){ 
-		var callback=function(result){
+	radius:function(sphere, uiFeatureBoard){ 
+		var onCommit=function(result){
 			//BIM.fun.log(result);
 			//update babylon element, should update with next render
 			//sphere.radius=result;
@@ -85,7 +85,7 @@ var sphereHandler = $.extend( {}, Part, {
 			sphere.baby.scaling.z=s;	
 		};		
 		//shows and allows edit of real and maintains undo log
-		uiPropBrd.real('radius', sphere.radius, callback);
+		uiFeatureBoard.text('radius', sphere.radius, onCommit);
 	}
 }); 
 
@@ -97,7 +97,7 @@ var sphereHandler = $.extend( {}, Part, {
 var sphere={
 	handler:sphereHandler,
 	position:babylon.Vector3(0,0,0),
-	radius:1
+	radius:1.0
 };
 
 return sphereHandler;
