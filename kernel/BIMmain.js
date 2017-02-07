@@ -60,9 +60,9 @@ var BIM={
 		$(el).append(pb);
 		this.ui.propertyboard=uipb.init(pb);
 		
-		var pickBrd=$('<div class="BIMpicker">properties</div>');
-		$(el).append(pb);
-		this.ui.picker=uiPicker.init(pickBrd);
+		var ppb=$('<div class="BIMpicker">properties</div>');
+		$(el).append(ppb);
+		this.ui.picker=uiPicker.create(ppb);
 	
 	},
 	
@@ -200,7 +200,8 @@ var BIM={
 	//User interfaces, initialized by this.board()
 	ui:{
 		blackboard:{}, 
-		propertyboard:{} 
+		propertyboard:{},
+		picker:{}
 	},
 	
 	//View library, A view is the BIM analog to babylon camera
