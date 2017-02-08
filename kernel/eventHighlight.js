@@ -28,10 +28,10 @@
 
 define(
 // load dependencies...
-['jquery', 'babylon', 'kernel/uiPicker'],
+['jquery', 'babylon'],
 
 // then do...
-function($, babylon, uiPicker){return(
+function($, babylon){return(
 
 function (evt, pickResult) {
 	if (pickResult.hit) {
@@ -62,7 +62,7 @@ function (evt, pickResult) {
 			}
 			**/
 			
-			uiPicker.add(pickResult.pickedMesh.bim);			
+			BIM.ui.picker.add(pickResult.pickedMesh.bim);			
 		}
 	}
 }

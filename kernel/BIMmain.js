@@ -18,7 +18,8 @@ requirejs.config({
 	//"jq": "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min",
 	"sylvester": "sylvester/sylvesterXp",
 	"jq":"../javascript/jquery",
-	"babylon":"../babylon/babylonXP"
+	"babylon":"../babylon/babylon.required",
+	"babylon2D":"../babylon/babylon.canvas2d.required"
 }
 
 });

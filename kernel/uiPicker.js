@@ -25,20 +25,23 @@
 
 define(
 // load dependencies...
-['jquery', 'babylon'],
+['jquery', 'babylon', 'babylon2D' ],
 
 // then do...
-function($, babylon ){
+function($, babylon, babylon2D ){
 
 var uiPicker={
 
-	create:function(el$){
+	create:function(div$){
+		div$.css('background', 'cyan');
+		div$.html('Picker...<br>Picked parts:');
+		//BIM.fun.log('picker create '+babylon);
 		// create a new copy (of this template) and initialize
 		var uip=$.extend({}, uiPicker);
-		uip.el$=el$;
-		el$.text('Picker...<br>Picked parts:');
-		uip.pick$=$('<div></div>');
-		el$.append(uip.pick$);
+		uip.el$=div$;
+		uip.pick$=$('<div>0</div>');
+		uip.pick$.css('background', 'salmon');
+		div$.append(uip.pick$);
 		//scene unlikely to be defined when create called so defer.
 		//this.canvas2d = new BABYLON.ScreenSpaceCanvas2D(scene, { id: "ScreenCanvas"});
 		return uip;
@@ -56,7 +59,7 @@ var uiPicker={
 		}
 		//refresh
 		this.pick$.text(this.pick.length.toString()); //update board
-		this.refresh();
+		this.regen();
 	},
 	
 	canvas2D:null,
@@ -70,53 +73,63 @@ var uiPicker={
 	// element with jquery wrapping
 	el$:null,
 	
-	group2D:null,
-	
 	// pick count display field
 	pick$:null,
 	
 	// array of picked parts to track
 	pick:[],
 	
-	pickTag:[],
+	tags:[],
 	
-
-	
-	refresh:function(){
+	tagCreate:function(part, i){
+		return new babylon2D.Group2D({
+		parent: this.canvas2D, 
+		id: "GroupTag" + i, 
+		width: 80, 
+		height: 40, 
+		trackNode: part.baby,  //picked babylon object
+		origin: babylon2D.Vector2.Zero(),
+		children: [ 
+		   new BABYLON.Rectangle2D({ 
+				id: "firstRect", 
+				width: 80, 
+				height: 26, 
+				x: 0, 
+				y: 0, 
+				origin: BABYLON.Vector2.Zero(),
+				border: "#FFFFFFFF", 
+				fill: "#808080FF", 
+				children: [
+					new BABYLON.Text2D(part.name, { marginAlignment: "h: center, v:center", fontName: "bold 12px Arial" })
+				]
+			})			
+		]
+		});
+	},
+		
+	regen:function(){
 		//generate tags/flags for screen space to represent each picked part
 		var tag, part;
+		this.tags=[]; //clear tags and regenerate
 		for (var i=0; i<this.pick.length; i++){
 			part=this.pick[i];
-			tag=new babylon.Text2D(i.toString() + '-' + part.name,
-				{ marginAlignment: "h:center, v:center", fontName: "bold 10px Arial" }
-			);
+			tag=this.tagCreate(part, i);
+			this.tags.push(tag);
 		}		
 	},
 	
 	start:function(){ 
 		if (this.canvas2D==null) {
-			BIM.fun.log('picker start '+babylon.ScreenSpaceCanvas2D.toString());
-			this.canvas2D=new babylon.ScreenSpaceCanvas2d(BIM.scene,{id:"uiPickerCanvas"});
-		}
-		
-		if (this.group2D==null) {
-			this.group2D=new babylon.Group2D({
-            parent: this.canvas2d, 
-            id: "GroupTag #" + i, 
-            width: 80, 
-            height: 40, 
-            trackNode: cube, 
-            origin: babylon.Vector2.Zero(),
-            children: []
-			});
-		}
+			//BIM.fun.log('picker start, BIM.scene ' + BIM.scene);
+			this.canvas2D=new babylon2D.ScreenSpaceCanvas2D( BIM.scene, {id:"uiPickerCanvas"} );
+		};
+
 		this.el$.show();
 		this.pick$.text( '0' );  //update board
 	}
 	
 	
 };
-
 
 return uiPicker;
 
