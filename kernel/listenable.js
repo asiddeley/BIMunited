@@ -13,39 +13,35 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-	
-	project:	BIMsoup
-	desc:		Building Information Model source open utility program 
-		
-	module: 	Tool Event Administrator (TEA)
+	project:	BIM
+	module: 	listener
 	desc: 
 	usage:
-
-	author: 	Andrew Siddeley 
-	started:	28-Dec-2016
+	by: 		Andrew Siddeley 
+	started:	8-Feb-2017
 	
-*************************************************************************/
+*/
 
 
 define(
 // load dependencies...
-['jquery',
-'babylon',
-'kernel/eventClone',
-'kernel/eventProps',
-'kernel/eventHighlight',
-'kernel/uiPicker'],
+['jquery'],
 
-// Then return the interpreter hash, only one instance required...
-function($, babylon, clone, props, highlight, uiPicker){
+// then do...
+function($){
+
+var lisnenable={
+
+	create:function(el$){
+		// create a new copy (of this template) and initialize
+		return listenable;
+	},
 	
-return {
-	
-	_listenerAdd:function(eventname, callback){
+	listenerAdd:function(eventname, callback){
 		if (typeof eventname != 'string' || typeof callback != 'function') {return;}
-		var ll=this._listeners[eventname];
+		var ll=this.listeners[eventname];
 		if (typeof ll == 'undefined') {
-			this._listeners[eventname]=[callback];
+			this.listeners[eventname]=[callback];
 		} else {
 			//ensure callback is unique in list
 			//filter copies from list then append it
@@ -54,9 +50,9 @@ return {
 		}
 	},
 	
-	_listenerCall:function(eventname, data){
+	listenerCall:function(eventname, data){
 		//get list of listener interested in the event
-		var ll=this._listeners[eventname]; 
+		var ll=this.listeners[eventname]; 
 		//leave if list not found
 		if (typeof ll == 'undefined') return;
 		//execute callback functions of interested listeners
@@ -65,42 +61,10 @@ return {
 		}		
 	},
 	
-	_listeners:{},
+	listeners:{},
 
-	
-	command:function(command){
-		//this._listenerCall('newOrder', command);
-		var that=this;
-		switch (command) {
-			case 'clone':
-				BIM.scene.onPointerDown=clone;
-				return 'click to clone';
-			break;			
-			
-			case 'pick':
-				BIM.scene.onPointerDown=highlight;	
-				//uiPicker listens for newOrder event to cleanup 
-				this._listenerAdd('newOrder', uiPicker.done);
-				uiPicker.start();
-				return 'click to pick';
-			break;
-			
-			case 'props':
-				scene.onPointerDown=props;
-				return 'properties mode';
-			break;
-			default:
-				return 'unknown command';
-			break;			
-		};
-	},
-	
+};
 
-	
-}
-
-
+return listenable;
 
 });
-
-

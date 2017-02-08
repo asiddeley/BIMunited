@@ -28,10 +28,10 @@
 
 define(
 // load dependencies...
-['babylon', 'jquery'],
+['jquery', 'babylon', 'kernel/uiPicker'],
 
 // then do...
-function(babylon, $){return(
+function($, babylon, uiPicker){return(
 
 function (evt, pickResult) {
 	if (pickResult.hit) {
@@ -41,6 +41,7 @@ function (evt, pickResult) {
 			//	BIM.fun.log('material undefined'); 
 			//	pickResult.pickedMesh.material=BIM.tcmLib.maincolour.baby;
 			//}
+			/**			
 			if (pickResult.pickedMesh.bim.poked==false) {
 				//apply material from library to indicate mesh is poked
 				//BIM.fun.log('picked material '+pickResult.pickedMesh.material); 
@@ -59,6 +60,9 @@ function (evt, pickResult) {
 				pickResult.pickedMesh.material=pickResult.pickedMesh.bim.pickeRestore;
 				pickResult.pickedMesh.bim.poked=false;	
 			}
+			**/
+			
+			uiPicker.add(pickResult.pickedMesh.bim);			
 		}
 	}
 }

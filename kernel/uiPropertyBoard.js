@@ -25,7 +25,7 @@
 
 define(
 // load dependencies...
-// just loading widgetPartProperty initialized the widget factory in jquery.  Passed argument wp not used.
+// loading widgetCell defines wCell widget in jquery.
 ['jquery', 'kernel/widgetCell'],
 
 // then do...
@@ -34,7 +34,6 @@ function($, wc){
 var UiFeatureBoard={
 	
 	display:function(part){
-		
 		//reset counters and hide cells
 		this.xCell=0;
 		this.wCell.forEach(function(item){item.hide();});
@@ -49,8 +48,36 @@ var UiFeatureBoard={
 		//BIM.fun.log('properties...');
 		for (var k in pp){pp[k](part, this);}
 	},
-	
+		
 	element:null,
+	
+	featureShow:function(part){
+		//reset counters and hide widgets
+		this.wCellreset();
+		
+		//var feature={name:'n', valu:this.x, type:'t', onChange:function(part, revisedvalu){}};
+		var ff=part.handler.getFeatures();
+		var f, i;
+		for (i in ff){
+			f=ff[i];
+			
+			switch(f.type){
+				case('point3d'):
+					wCellinit(f.name, f.valu, f.onChange);
+					break;
+				case('real'):
+					wCellinit(f.name, f.valu, f.onChange);
+					break;
+				case('text'):
+					wCellinit(f.name, f.valu, f.onChange);
+					break;
+				default:
+					wCellinit(f.name, f.valu, f.onChange);
+			}		
+		}		
+	},
+	
+	wCellGet:function(){},
 	
 	init:function(element){
 		this.element=element;
@@ -65,6 +92,8 @@ var UiFeatureBoard={
 		//var p=this.aProperty[this.count++];
 		//$(p).wProperty('point3d', title, point3d.toString(), callback).show();
 	},
+	
+	
 
 	real:function(name, valu, callback){
 		//var p=this.aProperty[this.count++];
@@ -98,14 +127,32 @@ var UiFeatureBoard={
 	},
 	
 	////////////////////////
-	//widget storage
+	//widgets for feature editing
 	
-	wCell:[], //text
+	//text editor
+	wCell:[], //storage
+	wCelli:0, //index
+	wCellinit:function(name, valu, onChange){
+		if (this.wCelli>=this.wCell.length){
+			var div=$('<div></div>');
+			$(this.element).append(div);
+			div.wCell( ).hide();
+			this.wCell.push(div);
+		};
+		$(this.wCell[this.wCelli++]).wCell('vnc', valu, name, onChange).show();	
+	},
+	wCellreset:function(){
+		this.wCelli=0;
+		this.wCell.forEach(function(item){item.hide();});
+	},
+	
+	//float editor
+	
 	wCellreal:[], //float
 	wCellxyz:[], //x,y,z coordinate
 
 	
-	//index counters
+	//indexers
 	xCell:0,
 	xCellreal:0,
 	xCellxyz:0 //x,y,z coordinate
