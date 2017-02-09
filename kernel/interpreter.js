@@ -34,10 +34,10 @@ define(
 'kernel/eventClone',
 'kernel/eventProps',
 'kernel/eventHighlight',
-'kernel/uiPicker'],
+],
 
 // Then return the interpreter hash, only one instance required...
-function($, babylon, clone, props, highlight, uiPicker){
+function($, babylon, clone, props, highlight){
 	
 return {
 	
@@ -51,10 +51,13 @@ return {
 			//filter copies from list then append it
 			ll=$.grep(ll, function(n, i){return (n !== callback);});
 			ll.push(callback);
+			BIM.fun.log('listenerAdd..'+ll.length);
 		}
+
 	},
 	
 	_listenerCall:function(eventname, data){
+		//AKA trigger
 		//get list of listener interested in the event
 		var ll=this._listeners[eventname]; 
 		//leave if list not found
@@ -78,15 +81,21 @@ return {
 			break;			
 			
 			case 'pick':
-				BIM.scene.onPointerDown=highlight;	
-				//uiPicker listens for newOrder event to cleanup 
-				this._listenerAdd('newOrder', uiPicker.done);
-				uiPicker.start();
+				BIM.scene.onPointerDown=function (evt, pickResult) {
+					if (pickResult.hit) {
+						if (pickResult.pickedMesh != null) {
+							BIM.ui.picker.add(pickResult.pickedMesh.bim);			
+						}
+					}
+				}				
+				//picker listens for newOrder event to cleanup 
+				this._listenerAdd('newOrder', BIM.ui.picker.done);
+				BIM.ui.picker.start();
 				return 'click to pick';
 			break;
 			
 			case 'props':
-				scene.onPointerDown=props;
+				BIM.scene.onPointerDown=props;
 				return 'properties mode';
 			break;
 			default:

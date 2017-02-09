@@ -34,15 +34,14 @@ var uiPicker={
 
 	create:function(div$){
 		div$.css('background', 'cyan');
-		div$.html('Picker...<br>Picked parts:');
-		//BIM.fun.log('picker create '+babylon);
+		div$.html('Picker...<br>');
 		// create a new copy (of this template) and initialize
 		var uip=$.extend({}, uiPicker);
 		uip.el$=div$;
-		uip.pick$=$('<div>0</div>');
+		uip.pick$=$('<div></div>');
 		uip.pick$.css('background', 'salmon');
 		div$.append(uip.pick$);
-		//scene unlikely to be defined when create called so defer.
+		//scene unlikely to be defined when create called so do this in start().
 		//this.canvas2d = new BABYLON.ScreenSpaceCanvas2D(scene, { id: "ScreenCanvas"});
 		return uip;
 	},
@@ -79,16 +78,24 @@ var uiPicker={
 	// array of picked parts to track
 	pick:[],
 	
+	// array of tags - reused for each pick set
 	tags:[],
+	
+	// objects for tapping into name and colour of each tag
+	// tap={vis:true, name:'name', trackNode:null, fill:"#808080FF"}
+	taps:[],
+	
 	
 	tagCreate:function(part, i){
 		return new babylon2D.Group2D({
 		parent: this.canvas2D, 
 		id: "GroupTag" + i, 
+		isVisible:true,
 		width: 80, 
-		height: 40, 
-		trackNode: part.baby,  //picked babylon object
+		height: 40, 		
+		trackNode: part.baby, //picked babylon object to track
 		origin: babylon2D.Vector2.Zero(),
+		opacity:0.5,
 		children: [ 
 		   new BABYLON.Rectangle2D({ 
 				id: "firstRect", 
@@ -98,30 +105,108 @@ var uiPicker={
 				y: 0, 
 				origin: BABYLON.Vector2.Zero(),
 				border: "#FFFFFFFF", 
-				fill: "#808080FF", 
+				fill: "#808080FF",
 				children: [
-					new BABYLON.Text2D(part.name, { marginAlignment: "h: center, v:center", fontName: "bold 12px Arial" })
+					new BABYLON.Text2D(
+						tap.name, //control this value through tap
+						{marginAlignment:"h: center, v:center", fontName:"bold 12px Arial"}
+					)
 				]
 			})			
 		]
 		});
 	},
-		
+	
+	tagCreateReuse:function(tap, i){
+		return new babylon2D.Group2D({
+		parent: this.canvas2D, 
+		id: "GroupTag" + i, 
+		isVisible:tap.vis, //control this value through tap
+		width: 80, 
+		height: 40, 
+		//picked babylon object to track
+		trackNode: tap.trackNode, //control this value through tap
+		origin: babylon2D.Vector2.Zero(),
+		opacity:0.5,
+		children: [ 
+		   new BABYLON.Rectangle2D({ 
+				id: "firstRect", 
+				width: 80, 
+				height: 26, 
+				x: 0, 
+				y: 0, 
+				origin: BABYLON.Vector2.Zero(),
+				border: "#FFFFFFFF", 
+				fill: tap.fill, //control this value through tap
+				children: [
+					new BABYLON.Text2D(
+						tap.name, //control this value through tap
+						{marginAlignment:"h: center, v:center", fontName:"bold 12px Arial"}
+					)
+				]
+			})			
+		]
+		});
+	},
+	
+	tapCreate:function(){
+		return {fill:"#808080FF", name:'unnamed', trackNode:null, vis:true  };
+	},
+	
 	regen:function(){
-		//generate tags/flags for screen space to represent each picked part
-		var tag, part;
-		this.tags=[]; //clear tags and regenerate
-		for (var i=0; i<this.pick.length; i++){
-			part=this.pick[i];
-			tag=this.tagCreate(part, i);
+		//delete existing tags
+		for (i=0; i<this.tags.length; i++){
+			this.tags[this.tagCreate(this.picks[i], i)];
+		};
+		this.tags=[]; 
+		
+		//recreate tags
+		var tag;
+		for (i=0; i<this.pick.length; i++){
+			tag=this.tagCreate(this.picks[i], i);
 			this.tags.push(tag);
-		}		
+		};
+
+		
+	},
+		
+	regenReuse:function(){
+		//generate tags for screen space to represent each picked part
+		var i, tag, tap, part;
+		
+		for (i=0; i<this.taps.length; i++){
+			//hide all tags (via taps), then show as many needed
+			this.taps[i].vis=false;
+		}
+
+		for (i=0; i<this.pick.length; i++){
+			//reuse tags but create extras as needed
+			if (i==this.tags.length){
+				tap=this.tapCreate();
+				this.taps.push(tap)
+				tag=this.tagCreate(tap, i);
+				this.tags.push(tag);
+			}
+			//change tag properties through tap
+			part=this.pick[i];
+			tap=this.taps[i];
+			tap.tracknode=part.baby;
+			tap.name=part.name;
+			tap.vis=true; //show it!!!
+			//first tag to have special colour
+			if (i==0) {tap.fill="#505050FF";} else {tap.fill="#808080FF";} 
+		}
+		
 	},
 	
 	start:function(){ 
 		if (this.canvas2D==null) {
 			//BIM.fun.log('picker start, BIM.scene ' + BIM.scene);
-			this.canvas2D=new babylon2D.ScreenSpaceCanvas2D( BIM.scene, {id:"uiPickerCanvas"} );
+			this.canvas2D=new babylon2D.ScreenSpaceCanvas2D( BIM.scene, {
+				id:"uiPickerCanvas",
+				//don't cache as bitmap, keep canvas2d fresh
+				cachingStrategy:babylon2D.CACHESTRATEGY_DONTCACHE  
+			} );
 		};
 
 		this.el$.show();
