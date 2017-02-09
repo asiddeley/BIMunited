@@ -36,6 +36,17 @@
 	color:white; 
 }
 
+.BimBoard { 
+	overflow:hidden;
+	border-top:1px solid black;
+	width:100%;
+	height:auto;
+	width:100%;
+	padding:2px;
+	float:left;
+	background:silver;
+}
+
 .BIMpropboard { 
 	overflow:hidden;
 	width:100%;
@@ -91,3 +102,6 @@
 	width:auto;
 	float:left;
 }
+
+
+
