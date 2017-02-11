@@ -33,59 +33,53 @@ function($, babylon, babylon2D ){
 var uiPicker={
 
 	create:function(div$){
-		div$.css('background', 'cyan');
-		div$.html('Picker...<br>');
+		div$.text('Picker').addClass('BimBoard');
 		// create a new copy (of this template) and initialize
 		var uip=$.extend({}, uiPicker);
 		uip.el$=div$;
-		uip.pick$=$('<div></div>');
-		uip.pick$.css('background', 'salmon');
+		uip.pick$=$('<div></div>').text('picked items:0').addClass('BimCell');
 		div$.append(uip.pick$);
-		//scene unlikely to be defined when create called so do this in start().
-		//this.canvas2d = new BABYLON.ScreenSpaceCanvas2D(scene, { id: "ScreenCanvas"});
 		return uip;
 	},
 	
 	add:function( part ){ 
 		//if part not in pick list...
-		if (this.pick.indexOf(part) == -1) {
+		if (this.picks.indexOf(part) == -1) {
 			//add part to pick list
-			this.pick.push(part);	
+			this.picks.push(part);	
 		} else {
 			//remove part from pick list by filtering it out
-			this.pick=$.grep(this.pick, function(v, i){return (part !== v);});
+			this.picks=$.grep(this.picks, function(v, i){return (part !== v);});
 		}
 		//refresh
-		this.pick$.text(this.pick.length.toString()); //update board
+		this.pick$.text(this.picks.length.toString()); //update board
 		this.regen();
 	},
 	
-	canvas2D:null,
+	canvas2D:null, //initialized in start() by which time BIM.scene is initialized 
 	
 	//called by uiPicker on a newOrder event meaning another command was issued so clean-up
 	done:function(eventname, data){
-		this.pick=[]; //clear
 		this.el$.hide();
 	},
 	
-	// element with jquery wrapping
-	el$:null,
+	// DOM container element with jquery wrapping
+	el$:null, //initialized in create()
 	
-	// pick count display field
+	// pick count display field with jquery wrapping
 	pick$:null,
 	
-	// array of picked parts to track
-	pick:[],
+	// array of picked parts 
+	picks:[],
 	
 	// array of tags - reused for each pick set
 	tags:[],
 	
-	// objects for tapping into name and colour of each tag
-	// tap={vis:true, name:'name', trackNode:null, fill:"#808080FF"}
-	taps:[],
-	
-	
 	tagCreate:function(part, i){
+		//first pick blue (begin with blue or blueprint), middle picks silver, last pick red
+		//colour = # RR GG BB AA
+		var colour=(i==0)?'#0000FFFF':(i==this.picks.length-1)?'#FF0000FF':'#C0C0C0FF';
+		//BIM.fun.log('colour'+colour);
 		return new babylon2D.Group2D({
 		parent: this.canvas2D, 
 		id: "GroupTag" + i, 
@@ -104,98 +98,33 @@ var uiPicker={
 				y: 0, 
 				origin: BABYLON.Vector2.Zero(),
 				border: "#FFFFFFFF", 
-				fill: "#808080FF",
+				fill:colour, 
 				children: [
 					new BABYLON.Text2D(
-						tap.name, //control this value through tap
+						part.name, //part name
 						{marginAlignment:"h: center, v:center", fontName:"bold 12px Arial"}
 					)
 				]
 			})			
 		]
 		});
-	},
-	
-	tagCreateReuse:function(tap, i){
-		return new babylon2D.Group2D({
-		parent: this.canvas2D, 
-		id: "GroupTag" + i, 
-		isVisible:tap.vis, //control this value through tap
-		width: 80, 
-		height: 40, 
-		//picked babylon object to track
-		trackNode: tap.trackNode, //control this value through tap
-		origin: babylon2D.Vector2.Zero(),
-		opacity:0.5,
-		children: [ 
-		   new BABYLON.Rectangle2D({ 
-				id: "firstRect", 
-				width: 80, 
-				height: 26, 
-				x: 0, 
-				y: 0, 
-				origin: BABYLON.Vector2.Zero(),
-				border: "#FFFFFFFF", 
-				fill: tap.fill, //control this value through tap
-				children: [
-					new BABYLON.Text2D(
-						tap.name, //control this value through tap
-						{marginAlignment:"h: center, v:center", fontName:"bold 12px Arial"}
-					)
-				]
-			})			
-		]
-		});
-	},
-	
-	tapCreate:function(){
-		return {fill:"#808080FF", name:'unnamed', trackNode:null, vis:true  };
 	},
 	
 	regen:function(){
 		//delete existing tags
 		for (i=0; i<this.tags.length; i++){
-			this.tags[this.tagCreate(this.picks[i], i)];
+			this.tags[i].dispose();
 		};
 		this.tags=[]; 
 		
 		//recreate tags
 		var tag;
-		for (i=0; i<this.pick.length; i++){
+		for (i=0; i<this.picks.length; i++){
 			tag=this.tagCreate(this.picks[i], i);
 			this.tags.push(tag);
 		};
-
 		
-	},
-		
-	regenReuse:function(){
-		//generate tags for screen space to represent each picked part
-		var i, tag, tap, part;
-		
-		for (i=0; i<this.taps.length; i++){
-			//hide all tags (via taps), then show as many needed
-			this.taps[i].vis=false;
-		}
-
-		for (i=0; i<this.pick.length; i++){
-			//reuse tags but create extras as needed
-			if (i==this.tags.length){
-				tap=this.tapCreate();
-				this.taps.push(tap)
-				tag=this.tagCreate(tap, i);
-				this.tags.push(tag);
-			}
-			//change tag properties through tap
-			part=this.pick[i];
-			tap=this.taps[i];
-			tap.tracknode=part.baby;
-			tap.name=part.name;
-			tap.vis=true; //show it!!!
-			//first tag to have special colour
-			if (i==0) {tap.fill="#505050FF";} else {tap.fill="#808080FF";} 
-		}
-		
+		this.pick$.text('picked items:'+this.picks.length);
 	},
 	
 	start:function(){ 
@@ -207,9 +136,7 @@ var uiPicker={
 				cachingStrategy:babylon2D.CACHESTRATEGY_DONTCACHE  
 			} );
 		};
-
 		this.el$.show();
-		this.pick$.text( '0' );  //update board
 	}
 	
 	
@@ -218,68 +145,4 @@ var uiPicker={
 return uiPicker;
 
 });
-
-
-/********************
-
-var create = function (scene) {
-    var d = 50;
-    var cubes = new Array();
-    for (var i = 0; i < 360; i += 20) {
-        var r = BABYLON.Tools.ToRadians(i);
-        var b = BABYLON.Mesh.CreateBox("Box #" + i / 20, 5, scene, false);
-        b.position.x = Math.cos(r) * d;
-        b.position.z = Math.sin(r) * d;
-        cubes.push(b);
-    }
-    var canvas = new BABYLON.ScreenSpaceCanvas2D(scene, {
-        id: "ScreenCanvas"
-    });
-    i = 0;
-    for (var _i = 0, cubes_1 = cubes; _i < cubes_1.length; _i++) {
-        var cube = cubes_1[_i];
-        new BABYLON.Group2D({
-            parent: canvas, 
-            id: "GroupTag #" + i, 
-            width: 80, 
-            height: 40, 
-            trackNode: cube, 
-            origin: BABYLON.Vector2.Zero(),
-            children: [
-                new BABYLON.Rectangle2D({ 
-                    id: "firstRect", 
-                    width: 80, 
-                    height: 26, 
-                    x: 0, 
-                    y: 0, 
-                    origin: BABYLON.Vector2.Zero(),
-                    border: "#FFFFFFFF", 
-                    fill: "#808080FF", 
-                    children: [
-                        new BABYLON.Text2D(cube.name, { marginAlignment: "h: center, v:center", fontName: "bold 12px Arial" })
-                    ]
-                })
-            ]
-        });
-        ++i;
-    }
-    return canvas;
-};
-
-var createScene = function() {
-	var scene = new BABYLON.Scene(engine);
-	var hpi = Math.PI / 2;
-	var camera = new BABYLON.ArcRotateCamera("camera1", -hpi, hpi, 150, new BABYLON.Vector3(0, 0, 0), scene);
-	camera.attachControl(canvas, false);
-
-    var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-    light.intensity = .5;
-			
-	create(scene);
-
-	return scene;
-};
-
-
-*************/
 
