@@ -34,14 +34,14 @@ define(
 'kernel/interpreter',
 'kernel/uiBlackboard',
 'kernel/uiPicker',
-'kernel/uiPropertyBoard',
+'kernel/uiFeatures',
 'kernel/lightHemi',
 'kernel/viewFree',
 'kernel/tcm'
 ],
 
 // then do this...
-function (Model, $, babylon, interpreter, uibb, uiPicker, uipb, Light, View, TCM) {
+function (Model, $, babylon, interpreter, uibb, uiPicker, uiFeatures, Light, View, TCM) {
 
 // construct library object for return
 var BIM={
@@ -57,9 +57,9 @@ var BIM={
 		$(el).append(bb);
 		this.ui.blackboard=uibb.create(bb);
 		
-		var pb=$('<div class="BIMpropboard">properties</div>');
-		$(el).append(pb);
-		this.ui.propertyboard=uipb.init(pb);
+		var fb=$('<div class="BIMpropboard">properties</div>');
+		$(el).append(fb);
+		this.ui.features=uiFeatures.init(fb);
 		
 		var ppb=$('<div class="BIMpicker">properties</div>');
 		$(el).append(ppb);
@@ -152,10 +152,9 @@ var BIM={
 	
 	// control
 	input:function(input){
-		//return this.tea.command(input, this.scene, this.settings.canvas);
-		//var result=this.tea.command(input);
-		var result=interpreter.command(input);
-		this.fun.log(input); this.fun.log(result);		
+		//var result=interpreter.input(input);
+		return this.ui.blackboard.input(input);
+		//this.fun.log(input); this.fun.log(result);		
 	},
 	
 	//Reserved
@@ -201,7 +200,7 @@ var BIM={
 	//User interfaces, initialized by this.board()
 	ui:{
 		blackboard:{}, 
-		propertyboard:{},
+		features:{},
 		picker:{}
 	},
 	

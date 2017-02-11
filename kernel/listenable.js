@@ -14,7 +14,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	project:	BIM
-	module: 	listener
+	module: 	listenable
 	desc: 
 	usage:
 	by: 		Andrew Siddeley 
@@ -30,18 +30,18 @@ define(
 // then do...
 function($){
 
-var lisnenable={
+var listenable={
 
 	create:function(el$){
 		// create a new copy (of this template) and initialize
-		return listenable;
+		return $.extend({}, listenable);
 	},
 	
-	listenerAdd:function(eventname, callback){
+	add:function(eventname, callback){
 		if (typeof eventname != 'string' || typeof callback != 'function') {return;}
-		var ll=this.listeners[eventname];
+		var ll=this.store[eventname];
 		if (typeof ll == 'undefined') {
-			this.listeners[eventname]=[callback];
+			this.store[eventname]=[callback];
 		} else {
 			//ensure callback is unique in list
 			//filter copies from list then append it
@@ -50,9 +50,9 @@ var lisnenable={
 		}
 	},
 	
-	listenerCall:function(eventname, data){
+	call:function(eventname, data){
 		//get list of listener interested in the event
-		var ll=this.listeners[eventname]; 
+		var ll=this.store[eventname]; 
 		//leave if list not found
 		if (typeof ll == 'undefined') return;
 		//execute callback functions of interested listeners
@@ -61,7 +61,7 @@ var lisnenable={
 		}		
 	},
 	
-	listeners:{},
+	store:{},
 
 };
 

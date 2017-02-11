@@ -47,7 +47,6 @@ var uiPicker={
 	},
 	
 	add:function( part ){ 
-
 		//if part not in pick list...
 		if (this.pick.indexOf(part) == -1) {
 			//add part to pick list

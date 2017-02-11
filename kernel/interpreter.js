@@ -37,46 +37,24 @@ define(
 ],
 
 // Then return the interpreter hash, only one instance required...
-function($, babylon, clone, props, highlight){
+function($, audience){
 	
 return {
 	
-	_listenerAdd:function(eventname, callback){
-		if (typeof eventname != 'string' || typeof callback != 'function') {return;}
-		var ll=this._listeners[eventname];
-		if (typeof ll == 'undefined') {
-			this._listeners[eventname]=[callback];
-		} else {
-			//ensure callback is unique in list
-			//filter copies from list then append it
-			ll=$.grep(ll, function(n, i){return (n !== callback);});
-			ll.push(callback);
-			BIM.fun.log('listenerAdd..'+ll.length);
-		}
-
+	init:function(){
+		//picker listens for newOrder event to cleanup 
+		this.listeners.add('input', BIM.ui.picker.done);
 	},
 	
-	_listenerCall:function(eventname, data){
-		//AKA trigger
-		//get list of listener interested in the event
-		var ll=this._listeners[eventname]; 
-		//leave if list not found
-		if (typeof ll == 'undefined') return;
-		//execute callback functions of interested listeners
-		for (var i=0; i<ll.length;i++){
-			ll[i]({'eventname':eventname, 'data':data});
-		}		
-	},
+	listeners:[],
 	
-	_listeners:{},
-
-	
-	command:function(command){
-		//this._listenerCall('newOrder', command);
+	input:function(command){
 		var that=this;
+		this.listeners.call('input', command);
+		
 		switch (command) {
 			case 'clone':
-				BIM.scene.onPointerDown=clone;
+				//BIM.scene.onPointerDown=clone;
 				return 'click to clone';
 			break;			
 			
@@ -88,8 +66,7 @@ return {
 						}
 					}
 				}				
-				//picker listens for newOrder event to cleanup 
-				this._listenerAdd('newOrder', BIM.ui.picker.done);
+
 				BIM.ui.picker.start();
 				return 'click to pick';
 			break;
@@ -98,6 +75,7 @@ return {
 				BIM.scene.onPointerDown=props;
 				return 'properties mode';
 			break;
+			
 			default:
 				return 'unknown command';
 			break;			

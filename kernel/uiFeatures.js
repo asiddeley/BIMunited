@@ -31,7 +31,7 @@ define(
 // then do...
 function($, wc){
 
-var UiFeatureBoard={
+var UiFeatures={
 	
 	display:function(part){
 		//reset counters and hide cells
@@ -160,7 +160,7 @@ var UiFeatureBoard={
 
 };
 
-return UiFeatureBoard;
+return UiFeatures;
 
 });
 

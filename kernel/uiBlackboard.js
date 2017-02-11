@@ -25,26 +25,69 @@
 
 define(
 // load dependencies...
-['jquery'],
+['jquery', 'kernel/listenable'],
 
 // then do...
-function($){
+function($, listenable){
 
 
 var uiBlackboard={
-	
+
 	create:function(div){
 		// create a new copy (of this template) and initialize
 		this.div=div;
 		var r=$.extend({}, uiBlackboard);
-		return r;		
+		
+		//picker listens for newOrder event to cleanup 
+		r.listeners.add('input', BIM.ui.picker.done);
+
+		return r;
 	},
 	
 	div:null,
+	
+	input:function(command){
+		var that=this;
+		this.log(command);
+		this.listeners.call('input', command);
+		
+		switch (command) {
+			case 'clone':
+				//BIM.scene.onPointerDown=clone;
+				that.log('click to clone');
+				return true;
+			break;			
+			
+			case 'pick':
+				BIM.scene.onPointerDown=function (evt, pickResult) {
+					if (pickResult.hit) {
+						if (pickResult.pickedMesh != null) {
+							BIM.ui.picker.add(pickResult.pickedMesh.bim);			
+						}
+					}
+				}				
 
+				BIM.ui.picker.start();
+				return 'click to pick';
+			break;
+			
+			case 'props':
+				BIM.scene.onPointerDown=props;
+				return 'properties mode';
+			break;
+			
+			default:
+				return 'unknown command';
+			break;			
+		};
+	},	
+	
+	//make this blackboard listenable
+	listeners:listenable.create(), 
+	
 	log:function(msg){
 		//add message to the store
-		this.store.push(msg);	
+		this.store.push(msg);
 		//limit store to the last n messages
 		if (this.store.length>50){this.store.shift();}
 		//show last n items of the store
@@ -57,6 +100,7 @@ var uiBlackboard={
 	},
 	
 	store:[]
+		
 };
 
 
