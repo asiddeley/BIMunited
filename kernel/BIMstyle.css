@@ -26,7 +26,7 @@
 	started:	22-Jan-2017
 **************************************************************/
 
-.BIMblackboard {
+.bimBlackboard {
 	overflow:hidden;
 	width:100%;
 	height:220px;
@@ -36,7 +36,7 @@
 	color:white; 
 }
 
-.BimBoard { 
+.bimBoard .bimPicker { 
 	overflow:hidden;
 	border-top:1px solid black;
 	width:100%;
@@ -47,7 +47,7 @@
 	background:silver;
 }
 
-.BIMpropboard { 
+.bimFeatures { 
 	overflow:hidden;
 	width:100%;
 	height:auto;
@@ -57,7 +57,7 @@
 	background:silver;
 }
 
-.BimCell{
+.bimCell{
 	font-size:12px;
 	font-family:sans-serif;
 	background:beige;
@@ -71,14 +71,14 @@
 	overflow:hidden;
 }
 
-.BimCellname{
+.bimCellname{
 	color:black;
 	width:auto;
 	float:left;
 	padding-right:10px;
 }
 
-.BimCelltextarea{
+.bimCelltextarea{
 	background:beige;
 	color:black;
 	width:auto;
@@ -88,7 +88,7 @@
 	overflow:hidden;
 }
 
-.BimCelledit{
+.bimCelledit{
 	background:cyan;
 	color:black;
 	width:auto;
@@ -97,7 +97,7 @@
 	overflow:hidden;
 }
 
-.BimCellvalu{
+.bimCellvalu{
 	color:black;	
 	width:auto;
 	float:left;

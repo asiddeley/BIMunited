@@ -33,97 +33,59 @@ function($, wc){
 
 var UiFeatures={
 	
-	display:function(part){
-		//reset counters and hide cells
-		this.xCell=0;
-		this.wCell.forEach(function(item){item.hide();});
-		this.xCellreal=0;
-		this.wCellreal.forEach(function(item){item.hide();});
-		this.xCellxyz=0;
-		this.wCellxyz.forEach(function(item){item.hide();});
+	div$:null,
 	
-		//call each of the part's feature accessor functions, each will call
-		//this propertyBoard via functions below, info, real, text, xyz, etc
-		var pp=part.handler.getFeatures();
-		//BIM.fun.log('properties...');
-		for (var k in pp){pp[k](part, this);}
-	},
+	access:function(part){
+		if (typeof part=='undefined' || part==null){return false;}
 		
-	element:null,
-	
-	featureShow:function(part){
 		//reset counters and hide widgets
-		this.wCellreset();
+		this.reset();
 		
 		//var feature={name:'n', valu:this.x, type:'t', onChange:function(part, revisedvalu){}};
-		var ff=part.handler.getFeatures();
+		var ff=part.handler.getFeatures(part);
 		var f, i;
-		for (i in ff){
-			f=ff[i];
+		for (label in ff){
+			f=ff[label];
 			
-			switch(f.type){
+			switch(f.widget){
 				case('point3d'):
-					wCellinit(f.name, f.valu, f.onChange);
+					this.wCellinit(label, f.valu, f.onChange, part);
 					break;
 				case('real'):
-					wCellinit(f.name, f.valu, f.onChange);
+					this.wCellinit(label, f.valu, f.onChange, part);
 					break;
 				case('text'):
-					wCellinit(f.name, f.valu, f.onChange);
+					this.wCellinit(label, f.valu, f.onChange, part);
 					break;
 				default:
-					wCellinit(f.name, f.valu, f.onChange);
+					this.wCellinit(label, f.valu, f.onChange, part);
 			}		
 		}		
 	},
 	
-	wCellGet:function(){},
-	
-	init:function(element){
-		this.element=element;
+	init:function(div$){
+		this.div$=div$;
+		div$.text('features..').addClass('bimFeatures');
 		return this; //to allow chaining
 	},
 	
-	/////////////////
-	//API functions
-	
+	//funciton to respond to onPick event triggered by uiPicker
+	onInput:function(ev, data){
+		//BIM.fun.log('uiFeature.onInput '+data);
+	},
 
-	point3d:function(name, valu, callback){
-		//var p=this.aProperty[this.count++];
-		//$(p).wProperty('point3d', title, point3d.toString(), callback).show();
+	onPick:function(ev, picks){
+		//access features of the last bim part picked...
+		if (picks.length>0){
+			//To work properly as event handler, use 'BIM.ui.features' instead of 'this' 
+			BIM.ui.features.access(picks[picks.length-1]);
+		} else {
+			BIM.ui.features.wCellreset();
+		}
 	},
-	
-	
 
-	real:function(name, valu, callback){
-		//var p=this.aProperty[this.count++];
-		//$(p).wProperty('text', title, real.toString(), callback).show();
-		if (this.xCellreal>=this.wCellreal.length){
-			var $div=$('<div></div>');
-			$(this.element).append($div);
-			$div.wCell().hide();
-			this.wCellreal.push($div); 
-		}
-		$(this.wCellreal[this.xCellreal++]).wCell('vnc', valu, name, callback).show();			
-	},
-		
-	text:function(name, valu, callback){	
-		//var p=this.aProperty[this.count++];
-		//$(p).wProperty('text', title, text, callback).show();
-		if (this.xCell>=this.wCell.length){
-			var div=$('<div></div>');
-			$(this.element).append(div);
-			div.wCell( ).hide();
-			this.wCell.push(div); 
-		}
-		//Call widget method 'vnc', passing valu, name & callback to set and show the cell 
-		//see jquery-ui widget factory documentation
-		$(this.wCell[this.xCell++]).wCell('vnc', valu, name, callback).show();			
-	},
-	
-	xyz:function(name, valu, callback){
-		//var p=this.aProperty[this.count++];
-		//$(p).wProperty('point3d', title, point3d.toString(), callback).show();
+	reset:function(){
+		this.wCellreset();
 	},
 	
 	////////////////////////
@@ -132,30 +94,20 @@ var UiFeatures={
 	//text editor
 	wCell:[], //storage
 	wCelli:0, //index
-	wCellinit:function(name, valu, onChange){
-		if (this.wCelli>=this.wCell.length){
-			var div=$('<div></div>');
-			$(this.element).append(div);
-			div.wCell( ).hide();
-			this.wCell.push(div);
+	wCellinit:function(label, valu, onChange, part){
+		if (this.wCelli==this.wCell.length){
+			var div$=$('<div></div>');
+			this.div$.append(div$);
+			div$.wCell().hide();
+			this.wCell.push(div$);
 		};
-		$(this.wCell[this.wCelli++]).wCell('vnc', valu, name, onChange).show();	
+		$(this.wCell[this.wCelli++]).wCell('vlca', valu, label, onChange, part).show();	
 	},
 	wCellreset:function(){
 		this.wCelli=0;
 		this.wCell.forEach(function(item){item.hide();});
 	},
 	
-	//float editor
-	
-	wCellreal:[], //float
-	wCellxyz:[], //x,y,z coordinate
-
-	
-	//indexers
-	xCell:0,
-	xCellreal:0,
-	xCellxyz:0 //x,y,z coordinate
 
 
 };

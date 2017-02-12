@@ -45,22 +45,23 @@ $.widget ("bim.wCell", {
 _create:function() {
 
 	this.option({
-		name: 'unnamed',
+		label: 'unnamed',
 		onCommit:function(){}, 
+		onCommitArg1:null,
 		type: 'string', //type of valu
 		undo:[],
 		valu: 'hello',
 		//jquery wrapped divs or fields initialized in create
-		$name:null, //holds the property name. Always shows
+		$label:null, //holds the property name. Always shows
 		$edit:null, //holds any editing fields, buttons etc.  Normally hidden until revealled
 		$valu:null, //holds the valu or result of any editing.  Normally shows, hidden when editing	
 		$text:null, //
 	});
 
-	var $name=$('<div></div>').addClass('BimCellname').text(this.option('name'));
-	var $edit=$('<div></div>').addClass('BimCelledit');
-	var $valu=$('<div></div>').addClass('BimCellvalu').text(this.option('valu'));
-	var $text=$('<textarea></textarea>').addClass('BimCelltextarea').text(this.option('valu'));
+	var $label=$('<div></div>').addClass('bimCellname').text(this.option('label'));
+	var $edit=$('<div></div>').addClass('bimCelledit');
+	var $valu=$('<div></div>').addClass('bimCellvalu').text(this.option('valu'));
+	var $text=$('<textarea></textarea>').addClass('bimCelltextarea').text(this.option('valu'));
 
 	var autoheight=function(ev){
 		//element $input is passed as ev.data
@@ -73,10 +74,10 @@ _create:function() {
 	$text.on("click keyup", $text, autoheight);
 	$edit.append($text);
 	
-	this.element.addClass('BimCell');
-	this.element.append($name, $edit, $valu);
+	this.element.addClass('bimCell');
+	this.element.append($label, $edit, $valu);
 	
-	this.option('$name', $name);
+	this.option('$label', $label);
 	this.option('$edit', $edit);
 	this.option('$text', $text);
 	this.option('$valu', $valu);
@@ -87,6 +88,10 @@ _create:function() {
 		contextmenu:'contextmenu'
 		//click:'reveal',
 	});
+},
+
+access:function(label, valu, onChange, onChangeArg1){
+	this.vlca(valu, label, onChange, onChangeArg1);
 },
 
 //cancel DOM default context menu Ie. right click floating menu
@@ -115,17 +120,15 @@ commit:function(event) {
 	
 	if(rv != valu) {
 		//has valu been revised? if so do following... 
+		var part=this.option('onCommitArg1');
 		this.undopush(valu); //update undo stack
 		this.option('valu', rv); //update value
-		this.option('onCommit')(rv); //execute callback to inform caller of revised value
+		this.option('onCommit')(part, rv); //execute callback to inform caller of revised value
 	};
 },
 
 ok:function(){this.commit(); this.reviseoff();},
 
-on:function(name, valu, onCommitFn){
-	this.vnc(valu, name, onCommitFn);
-},
 
 option:function(key, valu){ 
 	if(typeof valu == 'undefined'){
@@ -136,14 +139,14 @@ option:function(key, valu){
 },
 
 revise:function(event) {
-	this.option('$name').text(this.option('name')).show();
+	this.option('$label').text(this.option('label')).show();
 	this.option('$edit').show();
 	this.option('$valu').text(this.option('valu')).hide();	
 	this.option('$text').text(this.option('valu'));
 },
 	
 reviseoff:function(event){	
-	this.option('$name').text(this.option('name')).show();
+	this.option('$label').text(this.option('label')).show();
 	this.option('$edit').hide();
 	this.option('$valu').text(this.option('valu')).show();	
 	this.option('$text').text(this.option('valu'));
@@ -180,12 +183,18 @@ undopush:function(valu){
 	if (this.option('undo').length > 10) {this.option('undo').shift();}
 },
 
-// API function to set value, name, callback and show
-vnc:function(valu, name, onCommitFn){
+// API function to set value, label, callback and argument1 (part)
+vlca:function(valu, label, onChange, onChangeArg1){
 	//BIM.fun.log('valu, type:'+ valu + ',' + typeof(valu));
-	this.option({onCommit:onCommitFn, name:name, type:typeof(valu), valu:valu});
+	this.option({
+		label:label, 
+		onChange:onChange,
+		onChangeArg1:onChangeArg1,
+		type:typeof(valu),
+		valu:valu
+	});
 	this.element.show();
-	this.reviseoff();	
+	this.reviseoff();
 }
 
 

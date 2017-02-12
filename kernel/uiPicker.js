@@ -33,12 +33,13 @@ function($, babylon, babylon2D ){
 var uiPicker={
 
 	create:function(div$){
-		div$.text('Picker').addClass('BimBoard');
+
 		// create a new copy (of this template) and initialize
 		var uip=$.extend({}, uiPicker);
-		uip.el$=div$;
-		uip.pick$=$('<div></div>').text('picked items:0').addClass('BimCell');
-		div$.append(uip.pick$);
+		uip.div$=div$;
+		uip.div$.text('Picker').addClass('bimPicker');
+		uip.pick$=$('<div></div>').text('picked items:0').addClass('bimCell');
+		uip.div$.append(uip.pick$);
 		return uip;
 	},
 	
@@ -58,13 +59,22 @@ var uiPicker={
 	
 	canvas2D:null, //initialized in start() by which time BIM.scene is initialized 
 	
-	//called by uiPicker on a newOrder event meaning another command was issued so clean-up
-	done:function(eventname, data){
-		this.el$.hide();
-	},
-	
 	// DOM container element with jquery wrapping
-	el$:null, //initialized in create()
+	div$:null, //initialized in create()
+	
+	first:function(){return this.picks[0];},
+	
+	last:function(){
+		if (this.picks.length==0) {return null;}
+		else { return this.picks[this.picks.length-1];}
+	},
+
+	//called by uiPicker on a newOrder event meaning another command was issued so clean-up
+	onInput:function(eventname, data){
+		//this.el$.hide();
+		//alert('picker onInput triggered '+ data );
+		//BIM.fun.log('picker onInput triggered '+ data );
+	},
 	
 	// pick count display field with jquery wrapping
 	pick$:null,
@@ -125,6 +135,10 @@ var uiPicker={
 		};
 		
 		this.pick$.text('picked items:'+this.picks.length);
+		
+		//trigger event - note that event is automatically passed as arg1
+		//$.trigger('customEvent', ['arg2', 'arg3'...])
+		BIM.ui.blackboard.div$.trigger('bimPick', [this.picks]);
 	},
 	
 	start:function(){ 
@@ -136,7 +150,7 @@ var uiPicker={
 				cachingStrategy:babylon2D.CACHESTRATEGY_DONTCACHE  
 			} );
 		};
-		this.el$.show();
+		this.div$.show();
 	}
 	
 	

@@ -28,34 +28,48 @@ define(
 ['jquery', 'kernel/listenable'],
 
 // then do...
-function($, listenable){
+function($){
 
 
 var uiBlackboard={
 
-	create:function(div){
-		// create a new copy (of this template) and initialize
-		this.div=div;
-		var r=$.extend({}, uiBlackboard);
+	create:function(div$){
+		// create a blackboard and initialize
+		var bb=$.extend({}, uiBlackboard);
+		bb.div$=div$; //jquery wrapped DOM element for blackboard
+		bb.div$.text('blackboard..').addClass('bimBlackboard');
 		
-		//picker listens for newOrder event to cleanup 
-		r.listeners.add('input', BIM.ui.picker.done);
+		//link ui controls with custom events
+		//bb.div$.css('background', 'blue');
+		bb.div$.on('bimInput', BIM.ui.picker.onInput); 
+		bb.div$.on('bimInput', BIM.ui.features.onInput); 
+		//$.on(customEvent, delegateSelector, handler)
+		bb.div$.on('bimPick', BIM.ui.features.onPick);
 
-		return r;
+		return bb;
 	},
 	
-	div:null,
+	div$:null,
 	
 	input:function(command){
 		var that=this;
 		this.log(command);
-		this.listeners.call('input', command);
+		//this.listeners.call('input', command);
+		this.div$.trigger('bimInput', 'hello');
 		
 		switch (command) {
+			case 'bb':this.div.toggle();return true; break;
+			
 			case 'clone':
 				//BIM.scene.onPointerDown=clone;
-				that.log('click to clone');
+				this.log('click to clone');
 				return true;
+			break;	
+
+			case 'ff':
+				this.log('featutes...');
+				//access features of first picked item
+				//return BIM.ui.features.access(BIM.ui.picker.last());
 			break;			
 			
 			case 'pick':
@@ -70,37 +84,31 @@ var uiBlackboard={
 				BIM.ui.picker.start();
 				return 'click to pick';
 			break;
+			case 'wipe':this.logStore=[]; this.div.html('');break;
 			
-			case 'props':
-				BIM.scene.onPointerDown=props;
-				return 'properties mode';
-			break;
-			
-			default:
-				return 'unknown command';
-			break;			
+			default: this.log('unknown command'); return false; 			
 		};
 	},	
 	
 	//make this blackboard listenable
-	listeners:listenable.create(), 
+	//listeners:listenable.create(), 
 	
 	log:function(msg){
 		//add message to the store
-		this.store.push(msg);
+		this.logStore.push(msg);
 		//limit store to the last n messages
-		if (this.store.length>50){this.store.shift();}
+		if (this.logStore.length>50){this.logStore.shift();}
 		//show last n items of the store
-		var htm='', n=10, l=this.store.length;
+		var htm='', n=10, l=this.logStore.length;
 		//make sure n is smaller or equal to the number of items to print
 		n=(n>l)?l:n; 
-		for (var i=l-n; i<l; i++){htm+=this.store[i]+'<br>'}
+		for (var i=l-n; i<l; i++){ htm+=this.logStore[i]+'<br>';}
 		//$(BIM.options.boards.blackboard).html(htm);
-		$(this.div).html(htm);
+		$(this.div$).html(htm);
 	},
 	
-	store:[]
-		
+	logStore:[],
+
 };
 
 

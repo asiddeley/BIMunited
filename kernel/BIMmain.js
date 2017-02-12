@@ -31,7 +31,6 @@ define(
 'arch/archModel',
 'jquery',
 'babylon',
-'kernel/interpreter',
 'kernel/uiBlackboard',
 'kernel/uiPicker',
 'kernel/uiFeatures',
@@ -41,7 +40,7 @@ define(
 ],
 
 // then do this...
-function (Model, $, babylon, interpreter, uibb, uiPicker, uiFeatures, Light, View, TCM) {
+function (Model, $, babylon, uiBlackboard, uiPicker, uiFeatures, Light, View, TCM) {
 
 // construct library object for return
 var BIM={
@@ -52,18 +51,21 @@ var BIM={
 	},
 		
 	board:function(el){
+		//first and main control is the blackboard
 		$.extend(this.options, {'board':el});		
-		var bb=$('<div class="BIMblackboard">blackboard</div>'); 
+		var bb=$('<div></div>'); 
 		$(el).append(bb);
-		this.ui.blackboard=uibb.create(bb);
 		
-		var fb=$('<div class="BIMpropboard">properties</div>');
-		$(el).append(fb);
-		this.ui.features=uiFeatures.init(fb);
+		var div=$('<div></div>');
+		$(el).append(div);
+		this.ui.features=uiFeatures.init(div);
 		
-		var ppb=$('<div class="BIMpicker">properties</div>');
-		$(el).append(ppb);
-		this.ui.picker=uiPicker.create(ppb);
+		div=$('<div></div>');
+		$(el).append(div);
+		this.ui.picker=uiPicker.create(div);
+		
+		//create blackboard last because it depends on above controls
+		this.ui.blackboard=uiBlackboard.create(bb);
 	
 	},
 	
@@ -150,12 +152,8 @@ var BIM={
 		this.fun.log('help on '+input);
 	},
 	
-	// control
-	input:function(input){
-		//var result=interpreter.input(input);
-		return this.ui.blackboard.input(input);
-		//this.fun.log(input); this.fun.log(result);		
-	},
+	//main method for user interaction
+	input:function(input){return this.ui.blackboard.input(input);},
 	
 	//Reserved
 	j:null,

@@ -47,12 +47,11 @@ var partHandler = {
 	demo:function(){ return this.create({'radius':Math.random()}); },
 
 	// Accessors - returns a hash of propterty access functions
-	getFeatures:function(){
-		var that=this;
+	getFeatures:function(part){
 		return {
-			name:that.name,
-			type:that.type,
-			position:that.position			
+			partName:{valu:part.name, onChange:this.ocName, widget:'text'},
+			partType:{valu:this.partType, onChange:this.ocType, widget:'text'}, 
+			position:{valu:part.position, onChange:this.ocPosition, widget:'text'}
 		};
 	},
 	
@@ -79,28 +78,23 @@ var partHandler = {
 	
 	host:function(part, uiPropBrd){  /*expose the part's parent */   },
 	
-	name:function(part, uiPropBrd){
-		callback=function(result){
-			part.name=result.toString();
-		}; 
-		uiPropBrd.text('name', part.name, callback);
+	ocName:function(part, result){ part.name=result;},
+	
+	ocPosition:function(part, result){
+		//update position in babylon element, should show on next scene render 
+		//BIM.fun.log(result);
+		//part.baby.position=part.position;
+		BIM.fun.log('warning, position is read-only at this time');
 	},
-		
-	position:function(part, uiPropBrd){ 
-		var callback=function(result){
-			//update position in babylon element, should show on next scene render 
-			//BIM.fun.log(result);
-			//part.baby.position=part.position;
-		};		
-		//shows and allows edit of a position
-		uiPropBrd.xyz('position', part.position, callback);		
-	},
-
-	type:function(part, uiPropBrd){
+	
+	ocType:function(part, result){
 		//empty callback since a part's type is unchanging, read-only, private.
-		var callback=function(){};
-		uiPropBrd.text('type', 'part', callback );
-	}
+		var callback=function(){
+			BIM.fun.log('warning, type is read-only');
+		};
+	},
+	
+	partType:'part'
 	
 };
 
