@@ -25,7 +25,7 @@
 
 define(
 // load dependencies...
-['jquery', 'kernel/listenable'],
+['jquery'],
 
 // then do...
 function($){
@@ -33,18 +33,26 @@ function($){
 
 var uiBlackboard={
 
+	addEventHandlers:function(ee){
+		for (var n in ee){
+			this.div$.on(n, ee[n].handler);
+		}
+	},
+
 	create:function(div$){
 		// create a blackboard and initialize
 		var bb=$.extend({}, uiBlackboard);
-		bb.div$=div$; //jquery wrapped DOM element for blackboard
-		bb.div$.text('blackboard..').addClass('bimBlackboard');
 		
-		//link ui controls with custom events
+		bb.div$=div$; //jquery wrapped DOM element for blackboard
+		bb.div$.text('blackboard').addClass('bimBlackboard');
+		
+		bb.log$=$('<div></div>'); //jquery wrapped DOM element for log
+		bb.div$.append(bb.log$);
+		
 		//bb.div$.css('background', 'blue');
-		bb.div$.on('bimInput', BIM.ui.picker.onInput); 
-		bb.div$.on('bimInput', BIM.ui.features.onInput); 
-		//$.on(customEvent, delegateSelector, handler)
-		bb.div$.on('bimPick', BIM.ui.features.onPick);
+		//bb.div$.on('bimInput', BIM.ui.picker.onInput); 
+		//bb.div$.on('bimInput', BIM.ui.features.onInput); 
+		//bb.div$.on('bimPick', BIM.ui.features.onPick);
 
 		return bb;
 	},
@@ -55,8 +63,8 @@ var uiBlackboard={
 		var that=this;
 		this.log(command);
 		//this.listeners.call('input', command);
-		this.div$.trigger('bimInput', 'hello');
-		
+		this.div$.trigger('bimInput', command);
+
 		switch (command) {
 			case 'bb':this.div.toggle();return true; break;
 			
@@ -66,12 +74,13 @@ var uiBlackboard={
 				return true;
 			break;	
 
-			case 'ff':
-				this.log('featutes...');
+			//case 'ff':
+				//this.log('featutes...');
 				//access features of first picked item
 				//return BIM.ui.features.access(BIM.ui.picker.last());
-			break;			
+			//break;			
 			
+			//move to picker onInput event handler
 			case 'pick':
 				BIM.scene.onPointerDown=function (evt, pickResult) {
 					if (pickResult.hit) {
@@ -84,14 +93,17 @@ var uiBlackboard={
 				BIM.ui.picker.start();
 				return 'click to pick';
 			break;
-			case 'wipe':this.logStore=[]; this.div.html('');break;
 			
-			default: this.log('unknown command'); return false; 			
+			case 'wipe':this.logStore=[]; this.log$.html('');break;
+			
+			default: this.log('unknown command'); return false; 
 		};
 	},	
 	
 	//make this blackboard listenable
 	//listeners:listenable.create(), 
+	
+	log$:null,
 	
 	log:function(msg){
 		//add message to the store
@@ -104,7 +116,7 @@ var uiBlackboard={
 		n=(n>l)?l:n; 
 		for (var i=l-n; i<l; i++){ htm+=this.logStore[i]+'<br>';}
 		//$(BIM.options.boards.blackboard).html(htm);
-		$(this.div$).html(htm);
+		$(this.log$).html(htm);
 	},
 	
 	logStore:[],

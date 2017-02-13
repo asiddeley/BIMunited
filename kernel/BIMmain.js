@@ -52,20 +52,22 @@ var BIM={
 		
 	board:function(el){
 		//first and main control is the blackboard
-		$.extend(this.options, {'board':el});		
-		var bb=$('<div></div>'); 
-		$(el).append(bb);
+		$.extend( this.options, {'board':el} );		
+		var bb$=$('<div></div>'); 
+		$(el).append(bb$);
 		
-		var div=$('<div></div>');
-		$(el).append(div);
-		this.ui.features=uiFeatures.init(div);
+		var ff$=$('<div></div>');
+		$(el).append(ff$);
+		this.ui.features=uiFeatures.create(ff$);
 		
-		div=$('<div></div>');
-		$(el).append(div);
-		this.ui.picker=uiPicker.create(div);
+		pp$=$('<div></div>');
+		$(el).append(pp$);
+		this.ui.picker=uiPicker.create(pp$);
 		
 		//create blackboard last because it depends on above controls
-		this.ui.blackboard=uiBlackboard.create(bb);
+		this.ui.blackboard=uiBlackboard.create(bb$);
+		this.ui.blackboard.addEventHandlers( this.ui.features.getEventHandlers() );
+		this.ui.blackboard.addEventHandlers( this.ui.picker.getEventHandlers()  );
 	
 	},
 	

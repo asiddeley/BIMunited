@@ -36,7 +36,7 @@
 	color:white; 
 }
 
-.bimBoard .bimPicker { 
+.bimPicker { 
 	overflow:hidden;
 	border-top:1px solid black;
 	width:100%;

@@ -63,10 +63,26 @@ var UiFeatures={
 		}		
 	},
 	
+	create:function(div$){
+		var ui=$.extend({}, UiFeatures);
+		ui.div$=div$;
+		ui.div$.text('features..').addClass('bimFeatures');
+		return ui;
+	},
+	
+	//deprecated
 	init:function(div$){
 		this.div$=div$;
 		div$.text('features..').addClass('bimFeatures');
 		return this; //to allow chaining
+	},
+	
+	getEventHandlers:function(){
+		//don't use 'this' here as it will refer to the callers context
+		return {
+			bimInput:{name:'bimInput',  handler:UiFeatures.onInput },
+			bimPick:{name:'bimPick',  handler:UiFeatures.onPick }
+		};
 	},
 	
 	//funciton to respond to onPick event triggered by uiPicker
