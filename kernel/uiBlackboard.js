@@ -35,6 +35,7 @@ var uiBlackboard={
 
 	addEventHandlers:function(ee){
 		for (var n in ee){
+			//add custom bim events to blackboard with jquery 
 			this.div$.on(n, ee[n].handler);
 		}
 	},
@@ -42,18 +43,12 @@ var uiBlackboard={
 	create:function(div$){
 		// create a blackboard and initialize
 		var bb=$.extend({}, uiBlackboard);
-		
-		bb.div$=div$; //jquery wrapped DOM element for blackboard
+		//jquery wrapped DOM element for blackboard
+		bb.div$=div$; 
 		bb.div$.text('blackboard').addClass('bimBlackboard');
-		
-		bb.log$=$('<div></div>'); //jquery wrapped DOM element for log
+		//jquery wrapped DOM element for log
+		bb.log$=$('<div></div>'); 
 		bb.div$.append(bb.log$);
-		
-		//bb.div$.css('background', 'blue');
-		//bb.div$.on('bimInput', BIM.ui.picker.onInput); 
-		//bb.div$.on('bimInput', BIM.ui.features.onInput); 
-		//bb.div$.on('bimPick', BIM.ui.features.onPick);
-
 		return bb;
 	},
 	
@@ -62,46 +57,13 @@ var uiBlackboard={
 	input:function(command){
 		var that=this;
 		this.log(command);
-		//this.listeners.call('input', command);
 		this.div$.trigger('bimInput', command);
 
 		switch (command) {
-			case 'bb':this.div.toggle();return true; break;
-			
-			case 'clone':
-				//BIM.scene.onPointerDown=clone;
-				this.log('click to clone');
-				return true;
-			break;	
-
-			//case 'ff':
-				//this.log('featutes...');
-				//access features of first picked item
-				//return BIM.ui.features.access(BIM.ui.picker.last());
-			//break;			
-			
-			//move to picker onInput event handler
-			case 'pick':
-				BIM.scene.onPointerDown=function (evt, pickResult) {
-					if (pickResult.hit) {
-						if (pickResult.pickedMesh != null) {
-							BIM.ui.picker.add(pickResult.pickedMesh.bim);			
-						}
-					}
-				}				
-
-				BIM.ui.picker.start();
-				return 'click to pick';
-			break;
-			
+			case 'bb':this.div$.toggle();return true; break;
 			case 'wipe':this.logStore=[]; this.log$.html('');break;
-			
-			default: this.log('unknown command'); return false; 
 		};
 	},	
-	
-	//make this blackboard listenable
-	//listeners:listenable.create(), 
 	
 	log$:null,
 	

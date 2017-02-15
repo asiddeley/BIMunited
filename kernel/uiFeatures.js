@@ -86,21 +86,24 @@ var UiFeatures={
 	},
 	
 	//funciton to respond to onPick event triggered by uiPicker
-	onInput:function(ev, data){
+	onInput:function(ev, input){
+		if ( input=='ff' || input=='features' ){
+			BIM.ui.features.div$.toggle();
+		}
 		//BIM.fun.log('uiFeature.onInput '+data);
 	},
 
 	onPick:function(ev, picks){
 		//access features of the last bim part picked...
 		if (picks.length>0){
-			//To work properly as event handler, use 'BIM.ui.features' instead of 'this' 
+			//To work properly as event handler, use 'BIM.ui.features' instead of keyword 'this' 
 			BIM.ui.features.access(picks[picks.length-1]);
 		} else {
-			BIM.ui.features.wCellreset();
+			BIM.ui.features.reset();
 		}
 	},
 
-	reset:function(){
+	reset:function(){	
 		this.wCellreset();
 	},
 	

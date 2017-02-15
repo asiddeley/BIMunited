@@ -65,7 +65,6 @@ var uiPicker={
 	first:function(){return this.picks[0];},
 	
 	getEventHandlers:function(){
-		//don't use 'this' here as it will refer to the callers context
 		return { 
 			bimInput:{name:'bimInput',  handler:uiPicker.onInput },
 		};
@@ -77,9 +76,21 @@ var uiPicker={
 	},
 
 	//called by uiBlackboard when new BIM input received
-	onInput:function(event, data){ 
-		
+	onInput:function(event, input){ 
+		//don't use keyword 'this' here as it will refer to the event caller's context, not uiPicker
+		if (input == 'pick' || input == 'pp'){
+			BIM.scene.onPointerDown=uiPicker.onScenePointerDown;
+			BIM.ui.picker.start();
+		}
 	},
+	
+	onScenePointerDown:function (evt, pickResult) {
+		if (pickResult.hit) {
+			if (pickResult.pickedMesh != null) {
+				BIM.ui.picker.add(pickResult.pickedMesh.bim);			
+			}
+		}
+	},	
 	
 	// pick count display field with jquery wrapping
 	pick$:null,
@@ -91,9 +102,12 @@ var uiPicker={
 	tags:[],
 	
 	tagCreate:function(part, i){
-		//first pick blue (begin with blue or blueprint), middle picks silver, last pick red
+		//first pick blue (begin with blue #0000FFFF), middle picks silver #C0C0C0FF, 
+		//last pick red #FF0000FF and tiebreaber is last pick rules (if only 1 item picked)
 		//colour = # RR GG BB AA
 		var colour=(i==0)?'#0000FFFF':(i==this.picks.length-1)?'#FF0000FF':'#C0C0C0FF';
+		var colour=(i==0 && this.picks.length==1)?'#FF0000FF':colour;  //red rules if 1 part picked
+				
 		//BIM.fun.log('colour'+colour);
 		return new babylon2D.Group2D({
 		parent: this.canvas2D, 

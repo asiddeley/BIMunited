@@ -50,7 +50,8 @@ var sphereHandler = $.extend( {}, Part, {
 
 	getFeatures:function(part){
 		return $.extend(Part.getFeatures(part),{
-			radius:{valu:part.radius, onChange:part.handler.ocRadius, widget:'text'}
+			partof:{ valu:part.partof, onChange:function(){}, widget:'text' },
+			radius:{ valu:part.radius, onChange:part.handler.ocRadius, widget:'text' }
 		});
 	},
 
@@ -92,6 +93,7 @@ var sphereHandler = $.extend( {}, Part, {
 // there may have many spheres but only one shpere handler.
 var sphere={
 	handler:sphereHandler,
+	partof:null,
 	position:babylon.Vector3(0,0,0),
 	radius:1.0
 };
