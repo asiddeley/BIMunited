@@ -68,9 +68,7 @@ var archModelHandler=$.extend( {}, Model, {
 
 // ArchModel inherits from Model
 var archModel={
-	'disc':'all',
 	'handler':archModelHandler,
-	'type':'archModel'
 };
 
 

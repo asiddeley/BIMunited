@@ -40,6 +40,8 @@ var partHandler = {
 	////////////////
 	// Must Haves...
 	
+	bimType:'part',
+	
 	// Constructor - returns a new part
 	create:function(userData){ return $.extend( {}, part, userData); },	 
 	
@@ -92,9 +94,7 @@ var partHandler = {
 		var callback=function(){
 			BIM.fun.log('warning, type is read-only');
 		};
-	},
-	
-	partType:'part'
+	}
 	
 };
 

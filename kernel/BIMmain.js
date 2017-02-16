@@ -32,15 +32,17 @@ define(
 'jquery',
 'babylon',
 'kernel/uiBlackboard',
+'kernel/uiCreater',
 'kernel/uiPicker',
 'kernel/uiFeatures',
 'kernel/lightHemi',
 'kernel/viewFree',
-'kernel/tcm'
+'kernel/tcm',
+'kernel/partSphere'
 ],
 
 // then do this...
-function (Model, $, babylon, uiBlackboard, uiPicker, uiFeatures, Light, View, TCM) {
+function (Model, $, babylon, uiBlackboard, uiCreater, uiPicker, uiFeatures, Light, View, TCM, sphere) {
 
 // construct library object for return
 var BIM={
@@ -51,23 +53,34 @@ var BIM={
 	},
 		
 	board:function(el){
-		//first and main control is the blackboard
+
 		$.extend( this.options, {'board':el} );		
+
+		//first and main control is the blackboard		
 		var bb$=$('<div></div>'); 
 		$(el).append(bb$);
+		this.ui.blackboard=uiBlackboard.create(bb$);
 		
 		var ff$=$('<div></div>');
 		$(el).append(ff$);
 		this.ui.features=uiFeatures.create(ff$);
 		
-		pp$=$('<div></div>');
+		var pp$=$('<div></div>');
 		$(el).append(pp$);
 		this.ui.picker=uiPicker.create(pp$);
 		
-		//create blackboard last because it depends on above controls
-		this.ui.blackboard=uiBlackboard.create(bb$);
+		var cc$=$('<div></div>');
+		$(el).append(cc$);
+		this.ui.creater=uiCreater.create(cc$);
+		//add bim parts to menu
+		this.ui.creater.addMenuitem(sphere);
+		
+		
+		//now ready to add events to process user input
 		this.ui.blackboard.addEventHandlers( this.ui.features.getEventHandlers() );
 		this.ui.blackboard.addEventHandlers( this.ui.picker.getEventHandlers()  );
+		this.ui.blackboard.addEventHandlers( this.ui.creater.getEventHandlers()  );
+		
 	
 	},
 	
@@ -144,7 +157,9 @@ var BIM={
 	
 	//shortcuts
 	get:{
+		bb:function(){ return BIM.ui.blackboard;},
 		canvas:function() {return BIM.options.canvas;},
+		host:function() {return BIM.model; },
 		scene: function() {return BIM.scene;},
 		uid: function(name) {return BIM.fun.uid(name);},
 		uipb:function() {return BIM.ui.propertyboard;}

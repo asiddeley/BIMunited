@@ -170,6 +170,7 @@ var uiPicker={
 			} );
 		};
 		this.div$.show();
+		return this; //for chaining
 	}
 	
 	

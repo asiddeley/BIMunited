@@ -35,6 +35,9 @@ function(babylon, $, Part, win){
 	
 // Construct sphere handler, AKA list of static methods.
 var sphereHandler = $.extend( {}, Part, {
+
+	bimSuperType:'part',
+	bimType:'sphere',
 	
 	// Constructor - constructs and returns a new sphere inherits from part 
 	create:function(userData){ return $.extend( {}, Part.create(), sphere, userData ); },

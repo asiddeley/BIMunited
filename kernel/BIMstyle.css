@@ -36,18 +36,9 @@
 	color:white; 
 }
 
-.bimPicker { 
-	overflow:hidden;
-	border-top:1px solid black;
-	width:100%;
-	height:auto;
-	width:100%;
-	padding:2px;
-	float:left;
-	background:silver;
-}
 
-.bimFeatures { 
+.bimBoard, .bimCreater, .bimFeatures, .bimPicker { 
+	border-top: solid 1px black;
 	overflow:hidden;
 	width:100%;
 	height:auto;
