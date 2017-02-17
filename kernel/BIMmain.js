@@ -54,7 +54,7 @@ var BIM={
 		
 	board:function(el){
 
-		$.extend( this.options, {'board':el} );		
+		//$.extend( this.options, {'board':el} );		
 
 		//first and main control is the blackboard		
 		var bb$=$('<div></div>'); 

@@ -33,7 +33,7 @@ function($, babylon ){
 var uiCreater={
 
 	addMenuitem:function(partHandler){
-		var onClick=function(ev){
+		var onClick=function(ev){ 
 			var v=babylon.Vector3;
 			var p=partHandler.create( {'name':'unnamed', 'radius':1, 'position':new v( Math.random(), Math.random(), Math.random())}  );
 			var m=BIM.get.host(); //could be main, active or currently picked model

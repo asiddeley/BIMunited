@@ -49,7 +49,12 @@ var sphereHandler = $.extend( {}, Part, {
 			case 1: return that.create({ 'radius':Math.random() }); break;
 			default: return that.create({ 'radius':Math.random() }); 			
 		}
-	},	
+	},
+	
+	creaters:{
+		sphere:function(){ return sphereHandler.create( { 'radius':Math.random() } ); },
+		randomPos:function(){ return sphereHandler.create( { 'radius':Math.random() } ); },
+	},
 
 	getFeatures:function(part){
 		return $.extend(Part.getFeatures(part),{
