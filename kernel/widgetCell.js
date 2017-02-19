@@ -84,7 +84,9 @@ _create:function() {
 
 	this._on( this.element, {
 		mouseenter:'revise', 
-		mouseleave:'ok',
+		//mouseleave:'ok',
+		mouseleave:'reviseoff',
+		dblclick:'ok',
 		contextmenu:'contextmenu'
 		//click:'reveal',
 	});
@@ -108,7 +110,9 @@ commit:function(event) {
 	if (rt != type) {
 		//return type is different from input type so try to fix
 		var er='warning, wrong type';
-		if (rt=='undefined' || rt==null){BIM.fun.log(er);return;}
+		if (rt=='undefined' || rt==null){
+			BIM.fun.log(er);return;
+		}
 		switch(type){
 			case 'string': rv=rv.toString(); break;
 			case 'number': rv=parseFloat(rv.toString()); break;
@@ -120,15 +124,15 @@ commit:function(event) {
 	
 	if(rv != valu) {
 		//has valu been revised? if so do following... 
-		var part=this.option('onCommitArg1');
+		var part=this.option('onChangeArg1');
 		this.undopush(valu); //update undo stack
 		this.option('valu', rv); //update value
-		this.option('onCommit')(part, rv); //execute callback to inform caller of revised value
+		//execute callback to inform caller of revised value
+		this.option('onChange')(null, part, rv); 
 	};
 },
 
 ok:function(){this.commit(); this.reviseoff();},
-
 
 option:function(key, valu){ 
 	if(typeof valu == 'undefined'){
@@ -195,6 +199,10 @@ vlca:function(valu, label, onChange, onChangeArg1){
 	});
 	this.element.show();
 	this.reviseoff();
+	
+	//to do - rewrite as an event
+	//this.on('bimFeatureChange', {property:p, newvalu:v} )
+	
 }
 
 

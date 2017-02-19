@@ -28,7 +28,7 @@ requirejs.config({
 define(
 // load dependencies...
 [
-'arch/archModel',
+'kernel/Model',
 'jquery',
 'babylon',
 'kernel/uiBlackboard',
@@ -38,11 +38,11 @@ define(
 'kernel/lightHemi',
 'kernel/viewFree',
 'kernel/tcm',
-'kernel/partSphere'
+'kernel/libParts'
 ],
 
 // then do this...
-function (Model, $, babylon, uiBlackboard, uiCreater, uiPicker, uiFeatures, Light, View, TCM, sphere) {
+function (Model, $, babylon, uiBlackboard, uiCreater, uiPicker, uiFeatures, Light, View, TCM, libParts) {
 
 // construct library object for return
 var BIM={
@@ -71,10 +71,11 @@ var BIM={
 		
 		var cc$=$('<div></div>');
 		$(el).append(cc$);
+		//create maker board and initialize
 		this.ui.creater=uiCreater.create(cc$);
-		//add bim parts to menu
-		this.ui.creater.addMenuitem(sphere);
-		
+		//add parts to it
+		this.ui.creater.onLibraryUpdate(this.partsLib);
+
 		
 		//now ready to add events to process user input
 		this.ui.blackboard.addEventHandlers( this.ui.features.getEventHandlers() );
@@ -182,7 +183,7 @@ var BIM={
 	light:Light.demo(1),
 	
 	// main model 
-	model:Model.demo(1),
+	model:Model.creaters.demo(),
 	
 	// Reserved
 	n:null,
@@ -197,7 +198,7 @@ var BIM={
 	},	
 	
 	//parts library
-	partLib:{},
+	partsLib:libParts,
 	
 	//Reserved
 	q:null,
@@ -206,10 +207,10 @@ var BIM={
 	//All items must have setScene function ie. sceneable
 	referenceLib:{},
 	
-	//Babylon scene, analog to BIM.model, initialized inside engage()
+	//Babylon scene, analog to BIM.model, initialized by engage()
 	scene:null,	
 	
-	//Texture colour material library ie. hash
+	//Texture colour material library 
 	tcmLib:TCM.stdLib(),
 	
 	//User interfaces, initialized by this.board()

@@ -13,11 +13,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-	project:	BIM
+	project:	BIM united FC
 	module: 	uiPicker
 	desc: 
-	usage:
-	by: 		Andrew Siddeley 
+	author:		Andrew Siddeley 
 	started:	6-Feb-2017
 	
 */
@@ -31,7 +30,7 @@ define(
 function($, babylon, babylon2D ){
 
 var uiPicker={
-
+	
 	add:function( part ){ 
 		//if part not in pick list...
 		if (this.picks.indexOf(part) == -1) {
@@ -78,10 +77,13 @@ var uiPicker={
 	//called by uiBlackboard when new BIM input received
 	onInput:function(event, input){ 
 		//don't use keyword 'this' here as it will refer to the event caller's context, not uiPicker
-		if (input == 'pick' || input == 'pp'){
-			BIM.scene.onPointerDown=uiPicker.onScenePointerDown;
-			BIM.ui.picker.start();
-		}
+		if (input == 'pick' || input == 'pp'){	BIM.ui.picker.start();	}
+		else if (input == 'pick wipe' || 'ppw'){ BIM.ui.picker.wipe(); }
+	},
+	
+	onFeature:function(ev, data){
+		
+		
 	},
 	
 	onScenePointerDown:function (evt, pickResult) {
@@ -161,6 +163,7 @@ var uiPicker={
 	},
 	
 	start:function(){ 
+		BIM.scene.onPointerDown=uiPicker.onScenePointerDown;
 		if (this.canvas2D==null) {
 			//BIM.fun.log('picker start, BIM.scene ' + BIM.scene);
 			this.canvas2D=new babylon2D.ScreenSpaceCanvas2D( BIM.scene, {
@@ -170,6 +173,12 @@ var uiPicker={
 			} );
 		};
 		this.div$.show();
+		return this; //for chaining
+	},
+	
+	wipe:function(){
+		this.picks=[];
+		this.regen();
 		return this; //for chaining
 	}
 	

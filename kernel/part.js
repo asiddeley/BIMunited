@@ -14,14 +14,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	
-	project:	BIMsoup
-	desc:		(B)uilding (I)nformation (M)odel (s)cript (o)riented (u)tility (p)ackage 
-		
+	project:	BIM united FC (Framework Concept)
 	module: 	part
 	desc: 
-	usage:
-
-	by: 		Andrew Siddeley 
+	author: 	Andrew Siddeley 
 	started:	27-Dec-2016
 	
 ****************************************************************/
@@ -40,20 +36,30 @@ var partHandler = {
 	////////////////
 	// Must Haves...
 	
+	bimSuperType:null,
 	bimType:'part',
 	
 	// Constructor - returns a new part
 	create:function(userData){ return $.extend( {}, part, userData); },	 
 	
+	creaters:{
+		basic:function(){ return partHandler.create({name:'basic'});},
+		randimized:function(){ return sphereHandler.create({ 
+			position:new babylon.Vector3(Math.random()*5, Math.random()*5, Math.random()*5),
+			radius:Math.random()*2
+		});}
+	},
+
 	// Demonstrators - returns a new part element with a random radius between 0 and 1
-	demo:function(){ return this.create({'radius':Math.random()}); },
+	//demo:function(){ return this.create({'radius':Math.random()}); },
 
 	// Accessors - returns a hash of propterty access functions
 	getFeatures:function(part){
+		var ph=part.handler; //same as 'this'
 		return {
-			partName:{valu:part.name, onChange:this.ocName, widget:'text'},
-			partType:{valu:this.partType, onChange:this.ocType, widget:'text'}, 
-			position:{valu:part.position, onChange:this.ocPosition, widget:'text'}
+			partName:{valu:part.name, onChange:ph.onName, widget:'text'},
+			partType:{valu:ph.bimType, onChange:ph.onType, widget:'text'}, 
+			position:{valu:part.position, onChange:ph.onPosition, widget:'text'}
 		};
 	},
 	
@@ -64,7 +70,7 @@ var partHandler = {
 			part.segment,
 			part.radius*2,
 			win.BIM.scene,
-			part.mutable,
+			part.updateable,
 			part.faceOrientation
 		);
 		// note two way reference between BIM and babylon elements
@@ -78,18 +84,18 @@ var partHandler = {
 	// Include these in list that is returned by getProperties() above.
 	// Functions may just display property or provide means of editing
 	
-	host:function(part, uiPropBrd){  /*expose the part's parent */   },
+	onHost:function(ev, part, result){  /*expose the part's parent */   },
 	
-	ocName:function(part, result){ part.name=result;},
+	onName:function(ev, part, result){ part.name=result;},
 	
-	ocPosition:function(part, result){
+	onPosition:function(ev, part, result){
 		//update position in babylon element, should show on next scene render 
 		//BIM.fun.log(result);
 		//part.baby.position=part.position;
 		BIM.fun.log('warning, position is read-only at this time');
 	},
 	
-	ocType:function(part, result){
+	onType:function(ev, part, result){
 		//empty callback since a part's type is unchanging, read-only, private.
 		var callback=function(){
 			BIM.fun.log('warning, type is read-only');
@@ -106,8 +112,6 @@ var part = {
 	faceMode:babylon.Mesh.DEFAULTSIDE, //scene.babylon.Mesh.DEFAULTSIDE
 	handler:partHandler,
 	name:'unnamed',
-	poked:false,
-	pokeRestore:null,
 	position:babylon.Vector3(0,0,0),
 	radius:1,
 	segment:12,

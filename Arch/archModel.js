@@ -1,4 +1,4 @@
-/************************************************************
+/************************************************************ license:
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -14,13 +14,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	
-	project:	BIMsoup
-	desc:		Building Information Model source open utility program 
-		
+	project:	BIM
 	module: 	archModel
-	desc: 
-	usage:
-
 	author: 	Andrew Siddeley 
 	started:	17-Dec-2016
 	
@@ -28,7 +23,7 @@
 
 define(
 //Load dependencies...
-['babylon', 'jquery', 'kernel/partModel', 'kernel/partSphere'], 
+['babylon', 'jquery', 'kernel/model', 'kernel/partSphere'], 
   
 //Then do this...
 function(babylon, $, Model, Sphere) {
@@ -38,32 +33,27 @@ function(babylon, $, Model, Sphere) {
 //archModelHandlers inherits from modelHandlers...
 var archModelHandler=$.extend( {}, Model, {
 	
-	// override
-	'create':function(){ return $.extend( Model.create(), archModel ); },
-
-	// override
-	'demo':function(num){
-		//alert('demo:'+num);
-		var that=this;
-		switch(num){
-			case 1: return that.demo1(); break;
-			default: return that.demo1();			
-		}
-	},
+	bimSuperType:'model',
+	bimType:'archModel',
 	
-	'demo1':function(){
-		//demo 1
-		//Arch model with some sphere
+	// override
+	create:function(){ return $.extend( Model.create(), archModel ); },
 
-		var m=this.create();
-		var v=babylon.Vector3;
-		m.handler.addPart(m, Sphere.create({'name':'s1', 'radius':0.5, 'position':new v(0,0,0)}));
-		m.handler.addPart(m, Sphere.create({'name':'s2', 'radius':1, 'position':new v(6,0,0)}));
-		m.handler.addPart(m, Sphere.create({'name':'s3', 'radius':1.5, 'position':new v(0,6,0)}));
-		m.handler.addPart(m, Sphere.create({'name':'s4', 'radius':2, 'position':new v(6,6,0)}));
-		//alert('model demo1');
-		return m;
+	// override
+	creaters:{
+		demo:function(){
+			//Arch model with some sphere
+			var m=archModelHandler.create();
+			var v=babylon.Vector3;
+			m.handler.addPart(m, Sphere.create({'name':'s1', 'radius':0.5, 'position':new v(0,0,0)}));
+			m.handler.addPart(m, Sphere.create({'name':'s2', 'radius':1, 'position':new v(6,0,0)}));
+			m.handler.addPart(m, Sphere.create({'name':'s3', 'radius':1.5, 'position':new v(0,6,0)}));
+			m.handler.addPart(m, Sphere.create({'name':'s4', 'radius':2, 'position':new v(6,6,0)}));
+			//alert('model demo1');
+			return m;
+		}
 	}
+	
 });
 
 // ArchModel inherits from Model

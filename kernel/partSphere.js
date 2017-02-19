@@ -14,14 +14,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	
-	project:	BIMsoup
-	desc:		(B)uilding (I)nformation (M)odel (s)cript (o)riented (u)tility (p)ackage 
-		
+	project:	BIM united FC (Framework Concept)
 	module: 	sphere
 	desc: 
-	usage:
-
-	by: 		Andrew Siddeley 
+	author: 	Andrew Siddeley 
 	started:	27-Dec-2016
 	
 ****************************************************************/
@@ -42,24 +38,20 @@ var sphereHandler = $.extend( {}, Part, {
 	// Constructor - constructs and returns a new sphere inherits from part 
 	create:function(userData){ return $.extend( {}, Part.create(), sphere, userData ); },
  	
-	// Demonstrators - returns a new shere element (extended from part) with a random radius between 0 and 1
-	demo:function(num){ 
-		var that=this;
-		switch(num){
-			case 1: return that.create({ 'radius':Math.random() }); break;
-			default: return that.create({ 'radius':Math.random() }); 			
-		}
-	},
-	
+	// Constructors with various argument pre-set ie. demonstrators
 	creaters:{
-		sphere:function(){ return sphereHandler.create( { 'radius':Math.random() } ); },
-		randomPos:function(){ return sphereHandler.create( { 'radius':Math.random() } ); },
+		basic:function(){ return sphereHandler.create();},
+		randimized:function(){ return sphereHandler.create({ 
+			position:new babylon.Vector3(Math.random()*5, Math.random()*5, Math.random()*5),
+			radius:Math.random()*2
+		});}
 	},
 
 	getFeatures:function(part){
 		return $.extend(Part.getFeatures(part),{
+			//name:{valu:refToProperty, onChange:Callback, widget:'text' }
 			partof:{ valu:part.partof, onChange:function(){}, widget:'text' },
-			radius:{ valu:part.radius, onChange:part.handler.ocRadius, widget:'text' }
+			radius:{ valu:part.radius, onChange:part.handler.onRadius, widget:'text' }
 		});
 	},
 
@@ -70,7 +62,7 @@ var sphereHandler = $.extend( {}, Part, {
 			sphere.name, 
 			sphere.segment,
 			sphere.radius*2,
-			win.BIM.scene,
+			BIM.scene,
 			sphere.updatable,
 			sphere.faceMode);
 			
@@ -80,7 +72,7 @@ var sphereHandler = $.extend( {}, Part, {
 		sphere.baby.position=sphere.position;
 	},
 
-	ocRadius:function(sphere, result){
+	onRadius:function(ev, sphere, result){
 		//BIM.fun.log(result);
 		//update babylon element, should update with next render
 		//sphere.radius=result;

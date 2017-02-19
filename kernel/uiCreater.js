@@ -32,17 +32,24 @@ function($, babylon ){
 
 var uiCreater={
 
-	addMenuitem:function(partHandler){
+	addCreaters:function(partHandler){
+		var item$=$('<div></div>').text(partHandler.bimType).addClass('bimCell');
+		this.menu$.append(item$);
+
+		var cc=partHandler.creaters;
+		for (var n in cc){	this.addButton(n, cc[n], item$);	}		
+	},
+
+	addButton:function(n, c, item$){
 		var onClick=function(ev){ 
-			var v=babylon.Vector3;
-			var p=partHandler.create( {'name':'unnamed', 'radius':1, 'position':new v( Math.random(), Math.random(), Math.random())}  );
+			var p=c();
 			var m=BIM.get.host(); //could be main, active or currently picked model
 			m.handler.addPart(m, p); 
-			BIM.ui.picker.start().add(p); 
+			BIM.ui.picker.start().wipe().add(p); 
 		};
-		var item$=$('<button></button>').text(partHandler.bimType).addClass('bimButton');
-		item$.on('click', onClick);
-		this.menu$.append(item$);
+		var b$=$('<button></button>').text(n).addClass('bimButton');
+		b$.on('click', onClick);
+		item$.append(b$);
 	},
 
 	create:function(div$){
@@ -77,6 +84,15 @@ var uiCreater={
 			BIM.ui.creater.div$.toggle();
 		}
 	},
+	
+	onLibraryUpdate:function(partsLib){
+		if (this.menu$==null) {return;} //exit early if not initialized
+		//library changed so wipe and reload parts and their creaters 
+		for (var p in partsLib){
+			this.menu$.html(''); //wipe
+			this.addCreaters(partsLib[p]);
+		}		
+	}
 	
 	
 };
