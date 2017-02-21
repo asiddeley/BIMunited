@@ -30,14 +30,14 @@ define(
 // then do...
 function($, babylon ){
 
-var uiCreater={
+var uiParts={
 
 	addCreaters:function(partHandler){
 		var item$=$('<div></div>').text(partHandler.bimType).addClass('bimCell');
-		this.menu$.append(item$);
+		BIM.ui.parts.menu$.append(item$);
 
 		var cc=partHandler.creaters;
-		for (var n in cc){	this.addButton(n, cc[n], item$);	}		
+		for (var n in cc){	BIM.ui.parts.addButton(n, cc[n], item$);	}		
 	},
 
 	addButton:function(n, c, item$){
@@ -52,15 +52,15 @@ var uiCreater={
 		item$.append(b$);
 	},
 
-	create:function(div$){
+	create:function(host){
 
 		// create a new copy of this template and initialize
-		var ui=$.extend({}, uiCreater);
-		ui.div$=div$;
-		ui.div$.text('creater').addClass('bimBoard');
+		var ui=$.extend({}, uiParts);
+		ui.div$=$('<div></div>'); 
+		$(host).append(ui.div$);
+		ui.div$.text('available parts').addClass('bimBoard');
 		ui.menu$=$('<div></div>').addClass('bimCell');
 		ui.div$.append(ui.menu$);
-		ui.self=ui;
 		return ui;
 	},
 	
@@ -69,7 +69,8 @@ var uiCreater={
 	
 	getEventHandlers:function(){
 		return { 
-			bimInput:{name:'bimInput',  handler:uiCreater.onInput },
+			bimInput:{name:'bimInput',  handler:uiParts.onInput },
+			bimRestock:{name:'bimRestock', handler:uiParts.onRestock }
 		};
 	},
 
@@ -78,26 +79,32 @@ var uiCreater={
 	//called by uiBlackboard when new BIM input received
 	onInput:function(event, input){ 
 		//don't use keyword 'this' here as it will refer to the event caller's context, not uiPicker
-		if (input == 'create' || input == 'cc'){
+		if (input == 'parts' || input == 'ap'){
 			//BIM.scene.onPointerDown=uiPicker.onScenePointerDown;
 			//BIM.ui.picker.start();
-			BIM.ui.creater.div$.toggle();
+			BIM.ui.parts.div$.toggle();
+		} else if (input == 'restock'){
+			BIM.ui.blackboard.div$.trigger('bimRestock', [BIM.partsLib]);			
 		}
+		
+		
 	},
 	
-	onLibraryUpdate:function(partsLib){
-		if (this.menu$==null) {return;} //exit early if not initialized
-		//library changed so wipe and reload parts and their creaters 
+	onRestock:function(ev, partsLib){
+		//beware of meaning of keyword 'this' inside event handlers!
+		var ui=BIM.ui.parts;
+		if (ui.menu$==null) {return;} //exit early if not initialized
+		//wipe and reload parts
+		ui.menu$.html(''); 
 		for (var p in partsLib){
-			this.menu$.html(''); //wipe
-			this.addCreaters(partsLib[p]);
+			ui.addCreaters(partsLib[p]);
 		}		
 	}
 	
 	
 };
 
-return uiCreater;
+return uiParts;
 
 });
 

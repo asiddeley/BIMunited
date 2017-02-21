@@ -94,7 +94,7 @@ var sphereHandler = $.extend( {}, Part, {
 var sphere={
 	handler:sphereHandler,
 	partof:null,
-	position:babylon.Vector3(0,0,0),
+	position:new babylon.Vector3(0,0,0),
 	radius:1.0
 };
 

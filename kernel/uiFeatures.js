@@ -26,17 +26,67 @@
 define(
 // load dependencies...
 // loading widgetCell defines wCell widget in jquery.
-['jquery', 'kernel/widgetCell'],
+['jquery', 'kernel/uiFeatureText'],
 
 // then do...
 function($, wc){
 
-var UiFeatures={
+var uiFeatures={
+
+	create:function(host){
+		var ui=$.extend({}, uiFeatures);
+		ui.div$=$('<div></div>'); 
+		$(host).append(ui.div$);		
+		//ui.div$=div$;
+		ui.div$.text('features..').addClass('bimFeatures');
+		return ui;
+	},
 	
 	div$:null,
 	
-	access:function(part){
-		if (typeof part=='undefined' || part==null){return false;}
+	//deprecated
+	init:function(div$){
+		this.div$=div$;
+		div$.text('features..').addClass('bimFeatures');
+		return this; //to allow chaining
+	},
+	
+	getEventHandlers:function(){
+		//don't use 'this' here as it will refer to the callers context
+		return {
+			bimInput:{name:'bimInput',  handler:uiFeatures.onInput },
+			bimPick:{name:'bimPick',  handler:uiFeatures.onPick }
+		};
+	},
+	
+	minimize:function(){
+		this.div$.minimize();		
+	},
+	
+	//function to respond to onPick event triggered by uiPicker
+	onInput:function(ev, input){
+		if ( input=='ff' || input=='features' ){
+			BIM.ui.features.div$.toggle();
+		} 
+		//BIM.fun.log('uiFeature.onInput '+data);
+	},
+
+	onPick:function(ev, picks){
+		//access features of the last bim part picked...
+		//Beware of keyword 'this' in event handlers, use 'BIM.ui.features' instead 
+		if (picks.length>0){
+			BIM.ui.features.start(picks[picks.length-1]);
+		} else {
+			BIM.ui.features.reset();
+		}
+	},
+
+	reset:function(){	
+		this.wCellreset();
+	},
+		
+	start:function(part){
+		if (typeof part=='undefined' || part==null){ return false; }
 		
 		//reset counters and hide widgets
 		this.reset();
@@ -63,50 +113,6 @@ var UiFeatures={
 		}		
 	},
 	
-	create:function(div$){
-		var ui=$.extend({}, UiFeatures);
-		ui.div$=div$;
-		ui.div$.text('features..').addClass('bimFeatures');
-		return ui;
-	},
-	
-	//deprecated
-	init:function(div$){
-		this.div$=div$;
-		div$.text('features..').addClass('bimFeatures');
-		return this; //to allow chaining
-	},
-	
-	getEventHandlers:function(){
-		//don't use 'this' here as it will refer to the callers context
-		return {
-			bimInput:{name:'bimInput',  handler:UiFeatures.onInput },
-			bimPick:{name:'bimPick',  handler:UiFeatures.onPick }
-		};
-	},
-	
-	//funciton to respond to onPick event triggered by uiPicker
-	onInput:function(ev, input){
-		if ( input=='ff' || input=='features' ){
-			BIM.ui.features.div$.toggle();
-		}
-		//BIM.fun.log('uiFeature.onInput '+data);
-	},
-
-	onPick:function(ev, picks){
-		//access features of the last bim part picked...
-		if (picks.length>0){
-			//To work properly as event handler, use 'BIM.ui.features' instead of keyword 'this' 
-			BIM.ui.features.access(picks[picks.length-1]);
-		} else {
-			BIM.ui.features.reset();
-		}
-	},
-
-	reset:function(){	
-		this.wCellreset();
-	},
-	
 	////////////////////////
 	//widgets for feature editing
 	
@@ -115,23 +121,31 @@ var UiFeatures={
 	wCelli:0, //index
 	wCellinit:function(label, valu, onChange, part){
 		if (this.wCelli==this.wCell.length){
-			var div$=$('<div></div>');
-			this.div$.append(div$);
-			div$.wCell().hide();
-			this.wCell.push(div$);
+			//var div$=$('<div></div>');
+			//this.div$.append(div$);
+			//div$.wCell().hide();
+			//this.wCell.push(div$);
+			this.wCell.push(wc.create(this.div$));
 		};
-		$(this.wCell[this.wCelli++]).wCell('vlca', valu, label, onChange, part).show();	
+		//widget version
+		//$(this.wCell[this.wCelli++]).wCell('vlca', valu, label, onChange, part).show();	
+		(this.wCell[this.wCelli++]).start(valu, label, onChange, part);
 	},
+	
 	wCellreset:function(){
 		this.wCelli=0;
-		this.wCell.forEach(function(item){item.hide();});
+		this.wCell.forEach(function(item){
+			//widget version
+			//item.hide();
+			item.div$.hide();
+		});
 	},
 	
 
 
 };
 
-return UiFeatures;
+return uiFeatures;
 
 });
 

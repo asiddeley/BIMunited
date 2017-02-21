@@ -27,22 +27,30 @@ requirejs.config({
 
 define(
 // load dependencies...
-[
-'kernel/Model',
+['kernel/Model',
 'jquery',
 'babylon',
 'kernel/uiBlackboard',
-'kernel/uiCreater',
+'kernel/uiParts',
 'kernel/uiPicker',
 'kernel/uiFeatures',
 'kernel/lightHemi',
 'kernel/viewFree',
 'kernel/tcm',
-'kernel/libParts'
-],
+'kernel/libParts'],
 
 // then do this...
-function (Model, $, babylon, uiBlackboard, uiCreater, uiPicker, uiFeatures, Light, View, TCM, libParts) {
+function (Model, 
+$, 
+babylon, 
+uiBlackboard, 
+uiParts, 
+uiPicker, 
+uiFeatures, 
+Light, 
+View, 
+TCM, 
+libParts) {
 
 // construct library object for return
 var BIM={
@@ -52,36 +60,23 @@ var BIM={
 		$.extend(this.options, {admin:adminData} );
 	},
 		
-	board:function(el){
+	board:function(div){
 
-		//$.extend( this.options, {'board':el} );		
+		$.extend( this.options, {'board':div} );		
 
 		//first and main control is the blackboard		
-		var bb$=$('<div></div>'); 
-		$(el).append(bb$);
-		this.ui.blackboard=uiBlackboard.create(bb$);
+		this.ui.blackboard=uiBlackboard.create(div);
+		this.ui.features=uiFeatures.create(div);
+		this.ui.picker=uiPicker.create(div);
+		this.ui.parts=uiParts.create(div);
 		
-		var ff$=$('<div></div>');
-		$(el).append(ff$);
-		this.ui.features=uiFeatures.create(ff$);
-		
-		var pp$=$('<div></div>');
-		$(el).append(pp$);
-		this.ui.picker=uiPicker.create(pp$);
-		
-		var cc$=$('<div></div>');
-		$(el).append(cc$);
-		//create maker board and initialize
-		this.ui.creater=uiCreater.create(cc$);
-		//add parts to it
-		this.ui.creater.onLibraryUpdate(this.partsLib);
-
-		
-		//now ready to add events to process user input
+		//add bim event handlers to process user input, object picking etc.
 		this.ui.blackboard.addEventHandlers( this.ui.features.getEventHandlers() );
 		this.ui.blackboard.addEventHandlers( this.ui.picker.getEventHandlers()  );
-		this.ui.blackboard.addEventHandlers( this.ui.creater.getEventHandlers()  );
+		this.ui.blackboard.addEventHandlers( this.ui.parts.getEventHandlers()  );
 		
+		//stock the parts ui with items from the parts library
+		this.ui.blackboard.trigger('bimRestock', [this.partsLib]);
 	
 	},
 	
@@ -217,6 +212,8 @@ var BIM={
 	ui:{
 		blackboard:{}, 
 		features:{},
+		log:function(msg){BIM.ui.blackboard.log(msg);},
+		parts:{},
 		picker:{}
 	},
 	

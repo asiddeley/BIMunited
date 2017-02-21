@@ -48,6 +48,11 @@
 	background:silver;
 }
 
+.bimButton {
+	
+	
+}
+
 .bimCell{
 	font-size:12px;
 	font-family:sans-serif;
@@ -69,7 +74,7 @@
 	padding-right:10px;
 }
 
-.bimCelltextarea{
+.bimCelltextarea {
 	background:beige;
 	color:black;
 	width:auto;
@@ -79,14 +84,16 @@
 	overflow:hidden;
 }
 
-.bimCelledit{
-	background:cyan;
+.bimCelledit {
+	background:beige;
 	color:black;
 	width:auto;
 	float:left;	
+	resize:none;
 	height:auto;
 	overflow:hidden;
 }
+
 
 .bimCellvalu{
 	color:black;	

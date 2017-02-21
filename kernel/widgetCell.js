@@ -62,7 +62,8 @@ _create:function() {
 	var $edit=$('<div></div>').addClass('bimCelledit');
 	var $valu=$('<div></div>').addClass('bimCellvalu').text(this.option('valu'));
 	var $text=$('<textarea></textarea>').addClass('bimCelltextarea').text(this.option('valu'));
-
+	var ok$=$('<button>ok</button>').addClass('bimButton').on('click', this, this.oktrigger); //event,arg1,
+	
 	var autoheight=function(ev){
 		//element $input is passed as ev.data
 		ev.data.css('height','auto');
@@ -72,7 +73,7 @@ _create:function() {
 	};
 	
 	$text.on("click keyup", $text, autoheight);
-	$edit.append($text);
+	$edit.append($text).append(ok$);
 	
 	this.element.addClass('bimCell');
 	this.element.append($label, $edit, $valu);
@@ -83,12 +84,12 @@ _create:function() {
 	this.option('$valu', $valu);
 
 	this._on( this.element, {
-		mouseenter:'revise', 
-		//mouseleave:'ok',
-		mouseleave:'reviseoff',
+		ok:'ok',
+		click:'revise',
 		dblclick:'ok',
-		contextmenu:'contextmenu'
-		//click:'reveal',
+		contextmenu:'contextmenu',
+		//mouseenter:'revise', 
+		//mouseleave:'reviseoff'
 	});
 },
 
@@ -101,11 +102,13 @@ contextmenu:function(event) {return false; },
 
 cancel:function(){this.reviseoff();},
 
-commit:function(event) {
-	var rv=this.revisedvalu();
+ok:function(ev) {
+	var that=this; //ev.data;
+	//BIM.ui.log('ok'+that.options.valu)
+	var rv=that.revisedvalu();
 	var rt=typeof rv;
-	var valu=this.option('valu');
-	var type=this.option('type');
+	var valu=that.option('valu');
+	var type=that.option('type');
 	
 	if (rt != type) {
 		//return type is different from input type so try to fix
@@ -124,15 +127,25 @@ commit:function(event) {
 	
 	if(rv != valu) {
 		//has valu been revised? if so do following... 
-		var part=this.option('onChangeArg1');
-		this.undopush(valu); //update undo stack
-		this.option('valu', rv); //update value
+		var part=that.option('onChangeArg1');
+		that.undopush(valu); //update undo stack
+		that.option('valu', rv); //update value
+		
 		//execute callback to inform caller of revised value
-		this.option('onChange')(null, part, rv); 
+		//this.option('onChange')(null, part, rv); 
+		that.element.trigger('bimFeature', [part, rv]);
 	};
 },
 
-ok:function(){this.commit(); this.reviseoff();},
+
+//_trigger:function(arg){return this._super(arg);},
+
+oktrigger:function(ev){
+	//keyword 'this' is passed as event data as 
+	ev.data._trigger('ok');  
+},
+
+okDEPRICTED:function(){this.commit(); this.reviseoff();},
 
 option:function(key, valu){ 
 	if(typeof valu == 'undefined'){
@@ -144,25 +157,25 @@ option:function(key, valu){
 
 revise:function(event) {
 	this.option('$label').text(this.option('label')).show();
-	this.option('$edit').show();
+	this.option('$edit').show();	
 	this.option('$valu').text(this.option('valu')).hide();	
-	this.option('$text').text(this.option('valu'));
-},
-	
-reviseoff:function(event){	
-	this.option('$label').text(this.option('label')).show();
-	this.option('$edit').hide();
-	this.option('$valu').text(this.option('valu')).show();	
-	this.option('$text').text(this.option('valu'));
+	this.option('$text').val(this.option('valu'));
 },
 
-revisedvalu:function(){
+reviseoff:function(event){
+	this.option('$label').text(this.option('label')).show();
+	this.option('$valu').text(this.option('valu')).show();
+	//this.option('$text').text(this.option('valu'));
+	this.option('$edit').hide();
+},
+
+revisedvalu:function(that){
 	var that=this;
-	var rv=this.option('$text').val();
+	var rv=that.option('$text').val();
 	if (rv.substr(0,1) == '=') {
 		try{rv=eval(rv.substr(1));}
 		catch(er){
-			BIM.fun.log('expression error: ' + er.toString());
+			BIM.ui.blackboard.log('expression error: ' + er.toString());
 			rv=that.option('valu');
 		}
 	}
@@ -188,20 +201,24 @@ undopush:function(valu){
 },
 
 // API function to set value, label, callback and argument1 (part)
+// to do - rename to start
 vlca:function(valu, label, onChange, onChangeArg1){
 	//BIM.fun.log('valu, type:'+ valu + ',' + typeof(valu));
 	this.option({
-		label:label, 
+		label:label,
 		onChange:onChange,
 		onChangeArg1:onChangeArg1,
 		type:typeof(valu),
 		valu:valu
 	});
+	//BIM.ui.log('valu '+valu);
 	this.element.show();
 	this.reviseoff();
 	
 	//to do - rewrite as an event
-	//this.on('bimFeatureChange', {property:p, newvalu:v} )
+	this.element.off('bimFeature'); //reset
+	this.element.on('bimFeature', BIM.ui.picker.onFeature );
+	this.element.on('bimFeature', onChange)
 	
 }
 

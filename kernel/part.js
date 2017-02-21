@@ -112,10 +112,10 @@ var part = {
 	faceMode:babylon.Mesh.DEFAULTSIDE, //scene.babylon.Mesh.DEFAULTSIDE
 	handler:partHandler,
 	name:'unnamed',
-	position:babylon.Vector3(0,0,0),
+	position:new babylon.Vector3(0,0,0),
 	radius:1,
 	segment:12,
-	updateable:true
+	updateable:false
 };
 
 //alert('Part constructed');

@@ -35,7 +35,9 @@ var uiPicker={
 		//if part not in pick list...
 		if (this.picks.indexOf(part) == -1) {
 			//add part to pick list
-			this.picks.push(part);	
+			this.picks.push(part);
+			//ensure number of picks does not exceed pick limit set by user
+			if (this.picks.length>this.limit) {this.picks.shift();}
 		} else {
 			//remove part from pick list by filtering it out
 			this.picks=$.grep(this.picks, function(v, i){return (part !== v);});
@@ -45,15 +47,17 @@ var uiPicker={
 		this.regen();
 	},
 
-	create:function(div$){
+	create:function(host){
 
 		// create a new copy (of this template) and initialize
-		var uip=$.extend({}, uiPicker);
-		uip.div$=div$;
-		uip.div$.text('picker').addClass('bimPicker');
-		uip.pick$=$('<div></div>').text('picked items:0').addClass('bimCell');
-		uip.div$.append(uip.pick$);
-		return uip;
+		var ui=$.extend({}, uiPicker);
+		ui.div$=$('<div></div>'); 
+		$(host).append(ui.div$);		
+		//ui.div$=div$;
+		ui.div$.text('picker').addClass('bimPicker');
+		ui.pick$=$('<div></div>').text('picked items:0').addClass('bimCell');
+		ui.div$.append(ui.pick$);
+		return ui;
 	},
 	
 	canvas2D:null, //initialized in start() by which time BIM.scene is initialized 
@@ -73,17 +77,29 @@ var uiPicker={
 		if (this.picks.length==0) {return null;}
 		else { return this.picks[this.picks.length-1];}
 	},
+	
+	limit:1,
 
 	//called by uiBlackboard when new BIM input received
-	onInput:function(event, input){ 
+	onInput:function(ev, input){ 
 		//don't use keyword 'this' here as it will refer to the event caller's context, not uiPicker
-		if (input == 'pick' || input == 'pp'){	BIM.ui.picker.start();	}
-		else if (input == 'pick wipe' || 'ppw'){ BIM.ui.picker.wipe(); }
+		if (input == 'pick' || input == 'pp'){
+			BIM.ui.picker.start();	
+		} else if (input == 'pick wipe' || input == 'ppw'){ 
+			BIM.ui.picker.wipe(); 
+		} else if (input == 'pick off' || input == 'ppx'){ 
+			//BIM.fun.log('bingo');
+			if (BIM.scene.onPointerDown==uiPicker.onScenePointerDown){
+				BIM.ui.picker.wipe();
+				BIM.scene.onPointerDown=null;
+				BIM.ui.picker.div$.hide();
+			}
+		}
 	},
 	
-	onFeature:function(ev, data){
-		
-		
+	onFeature:function(ev, part, valu){
+		//BIM.fun.log('picker onFeature '+ part + '-' + valu);
+		BIM.ui.picker.regen();		
 	},
 	
 	onScenePointerDown:function (evt, pickResult) {

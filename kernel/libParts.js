@@ -32,7 +32,8 @@ function(s){
 	
 // hash of parts for this library
 return {
-	sphere:s
+	sphere:s,
+	skybox:s
 	//insert:i (instance, modelRef, ref, xref)
 	//model:m (block, blueprint, definition, prototype)
 	//ground:g

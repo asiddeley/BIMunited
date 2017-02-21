@@ -40,16 +40,17 @@ var uiBlackboard={
 		}
 	},
 
-	create:function(div$){
+	create:function(host){
 		// create a blackboard and initialize
-		var bb=$.extend({}, uiBlackboard);
+		var ui=$.extend({}, uiBlackboard);
 		//jquery wrapped DOM element for blackboard
-		bb.div$=div$; 
-		bb.div$.text('blackboard').addClass('bimBlackboard');
-		//jquery wrapped DOM element for log
-		bb.log$=$('<div></div>'); 
-		bb.div$.append(bb.log$);
-		return bb;
+		ui.div$=$('<div></div>');
+		$(host).append(ui.div$);
+		ui.div$.text('blackboard').addClass('bimBlackboard');
+		//jquery wrapped DOM element for displaying messages
+		ui.log$=$('<div></div>');
+		ui.div$.append(ui.log$);
+		return ui;
 	},
 	
 	div$:null,
@@ -57,11 +58,11 @@ var uiBlackboard={
 	input:function(command){
 		var that=this;
 		this.log(command);
-		this.div$.trigger('bimInput', command);
+		this.div$.trigger('bimInput', [command]);
 
 		switch (command) {
 			case 'bb':this.div$.toggle();return true; break;
-			case 'wipe':this.logStore=[]; this.log$.html('');break;
+			case 'bbw':this.logStore=[]; this.log$.html('');break;
 		};
 	},	
 	
@@ -82,6 +83,16 @@ var uiBlackboard={
 	},
 	
 	logStore:[],
+	
+	trigger:function(bimEvent, argArray){
+		if (typeof argArray=='undefined'){
+			switch (bimEvent) {
+				case 'bimInput':this.div$.trigger(bimEvent, ['nothing']); break;
+				case 'bimRestock':this.div$.trigger(bimEvent, [BIM.ui.partsLib]); break;
+				
+			}			
+		} else { this.div$.trigger(bimEvent, argArray);}
+	}
 
 };
 
