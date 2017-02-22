@@ -1,4 +1,4 @@
-/************************************************************ licence:
+/************************************************************ license:
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -40,7 +40,10 @@ var modelHandler=$.extend( {}, {
 	bimSuperType:null,
 	bimType:'model',
 
-	create:function(userData){ return $.extend({}, Part.create, model, userData); },
+	//create:function(userData){ return $.extend({}, Part.create, model, userData); },	
+	//model not extended from part anymore
+	create:function(userHash){ return $.extend({}, model, userHash); },
+	
 	
 	creaters:{
 		demo:function(){
@@ -48,24 +51,24 @@ var modelHandler=$.extend( {}, {
 			var m=modelHandler.create(); 
 			var v=babylon.Vector3;
 			//and add some parts
-			m.handler.addPart(m, Sphere.create({'name':'s1', 'radius':0.5, 'position':new v(0,0,0)}));
-			m.handler.addPart(m, Sphere.create({'name':'s2', 'radius':1, 'position':new v(6,0,0)}));
-			m.handler.addPart(m, Sphere.create({'name':'s3', 'radius':1.5, 'position':new v(0,6,0)}));
-			m.handler.addPart(m, Sphere.create({'name':'s4', 'radius':2, 'position':new v(6,6,0)}));
+			m.handler.addPart(m, Sphere.create({'name':'s1', 'radius':1, 'position':new v(0,0,0)}));
+			//m.handler.addPart(m, Sphere.create({'name':'s2', 'radius':1, 'position':new v(6,0,0)}));
+			//m.handler.addPart(m, Sphere.create({'name':'s3', 'radius':1.5, 'position':new v(0,6,0)}));
+			//m.handler.addPart(m, Sphere.create({'name':'s4', 'radius':2, 'position':new v(6,6,0)}));
 			return m;
 		}
 	},
 	
 	
-	getFeatures:function(model){
-		var M=model.handler;
-		var readonly=function(){}; //do nothing
+	getFeatures:function( m ){
+		//mm could be a model (or decendant type)
 		// construct and return a hash of features
 		// name:{valu:refToProperty, onChange:Callback, widget:'text' }
+		var mh=m.handler;
 		return $.extend({},{
-			bimType:{valu:M.bimType, onChange:readonly, widget:'text'}, 
-			name:{valu:model.name, onChange:this.ocName, widget:'text'},
-			tags:{valu:model.tags, onChange:model.onTag, widget:'text'}
+			bimType:{ valu:mh.bimType, onChange:function(){}, widget:'text'}, 
+			name:{ valu:m.name, onChange:mh.onName, widget:'text'},
+			categories:{ valu:m.categories, onChange:mh.onCategory, widget:'list'}
 			}
 		);
 	},
@@ -89,12 +92,17 @@ var modelHandler=$.extend( {}, {
 		}
 	},
 	
+	addRef:function(model, ref){
+		//ref must have unique name
+	
+	},	
+	
 	onName:function(ev, model, result){ 
 		model.name=result;
 	},
 
 	
-	onTag:function(ev, model, tag){
+	onCategories:function(ev, model, result){
 		//to do 
 	},
 	
@@ -107,11 +115,17 @@ var modelHandler=$.extend( {}, {
 
 // Construct model data.  Used to extend part later in Model.Create()
 var model={
-	'name':'unnamed',
-	'handler':modelHandler,
-	'parts':[],
-	'tags':[],
-	'visible':true
+	categories:[],
+	handler:modelHandler,
+	host:null,
+	id:null,
+	//lightRefs:{},
+	//modelRefs:{},
+	name:'unnamed',
+	parts:[],
+	references:{},
+	//textureRefs:{},
+	//viewRefs:{},
 };
 
 //alert('Model constructed:'+modelHandlers);

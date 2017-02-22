@@ -52,12 +52,12 @@ var uiParts={
 		item$.append(b$);
 	},
 
-	create:function(host){
-
+	create:function(board){
+		// board is the container div for all user-interactors
 		// create a new copy of this template and initialize
 		var ui=$.extend({}, uiParts);
 		ui.div$=$('<div></div>'); 
-		$(host).append(ui.div$);
+		$(board).append(ui.div$);
 		ui.div$.text('available parts').addClass('bimBoard');
 		ui.menu$=$('<div></div>').addClass('bimCell');
 		ui.div$.append(ui.menu$);

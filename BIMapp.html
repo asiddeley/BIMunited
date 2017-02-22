@@ -20,6 +20,7 @@
  
 <script type="text/javascript">
 //$(document).ready(function(){
+$(document).on('contextmenu', false);
 
 function handleInput(ev){
 	ev.preventDefault(); //disable normal form submit behavior
@@ -39,6 +40,8 @@ requirejs(['BIMmain'], function(BIM){
 	BIM.database("database connection API");
 	BIM.engage();
 });
+
+
 </script>
 
 </head>

@@ -221,7 +221,16 @@ var BIM={
 	viewLib:{main:View.demo()},
 	
 	//Reserved
-	wxyz:null
+	w:null,
+
+	//Reserved
+	x:null, 
+	
+	//skybox
+	yonderLib:{},
+	
+	//Reserved
+	z:null
 	
 }; 		
 

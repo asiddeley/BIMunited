@@ -1,4 +1,4 @@
-/************************************************************
+/************************************************************ license:
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -15,19 +15,14 @@
 
 	
 	project:	BIMsoup
-	desc:		(B)uilding (I)nformation (M)odel (s)cript (o)riented (u)tility (p)ackage 
-		
-	module: 	stage
-	desc: 
-	usage:
-
-	by: 		Andrew Siddeley 
+	module: 	lightHemi
+	author:	Andrew Siddeley 
 	started:	27-Jan-2017
 	
 ****************************************************************/
 define(
 // load dependencies...
-['babylon','jquery'],
+['babylon', 'jquery'],
 
 // then do this...
 function(BABYLON, $){
@@ -48,7 +43,7 @@ var Light={
 	},
 
 	setScene:function(light){
-		light.baby=new BABYLON.HemisphericLight('hemi', light.position, window.BIM.scene);
+		light.baby=new BABYLON.HemisphericLight('hemi', light.position, BIM.scene);
 		light.baby.bim=light;
 	},
 	

@@ -14,14 +14,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	
-	project:	BIMsoup
-	desc:		(B)uilding (I)nformation (M)odel (s)cript (o)riented (u)tility (p)ackage 
-		
+	project:	BIMunited
 	module: 	stage
-	desc: 
-	usage:
-
-	by: 		Andrew Siddeley 
+	author:	Andrew Siddeley 
 	started:	27-Jan-2017
 	
 ****************************************************************/
