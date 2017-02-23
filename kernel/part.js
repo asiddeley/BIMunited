@@ -114,7 +114,7 @@ var part = {
 	name:'unnamed',
 	position:new babylon.Vector3(0,0,0),
 	radius:1,
-	segment:12,
+	segment:3,
 	updateable:false
 };
 

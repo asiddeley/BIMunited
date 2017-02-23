@@ -38,6 +38,35 @@ var TCM={
 	//creater - returns a single tcm element
 	create:function(udata){return $.extend({}, tcm, udata);},
 	
+	creaters:{		
+	
+	},
+	
+	colour:{
+		black:{nameColour:'black', cr:0, cg:0, cb:0},
+		white:{nameColour:'white', cr:255, cg:255, cb:255},
+		red:{nameColour:'red', cr:255, cg:0, cb:0},
+		lime:{nameColour:'lime', cr:0, cg:255, cb:0},
+		blue:{nameColour:'blue', cr:0, cg:0, cb:255},
+		yellow:{nameColour:'yellow', cr:255, cg:255, cb:0},
+		cyan:{nameColour:'cyan', cr:0, cg:255, cb:255},
+		magenta:{nameColour:'magenta', cr:255, cg:0, cb:255},
+		sivler:{nameColour:'silver', cr:192, cg:192, cb:192},
+		gray:{nameColour:'gray', cr:128, cg:128, cb:128},
+		maroon:{nameColour:'maroon', cr:128, cg:0, cb:0},
+		olive:{nameColour:'olive', cr:128, cg:128, cb:0},
+		green:{nameColour:'green', cr:0, cg:128, cb:0},
+		purple:{nameColour:'purple', cr:128, cg:0, cb:128},
+		teal:{nameColour:'teal', cr:0, cg:128, cb:128},
+		//// fancy rgb colours
+		darkRed:{nameColour:'darkRed', cr:139, cg:0, cb:0},
+		brown:{nameColour:'brown', cr:165, cg:42, cb:42},
+		fireBrick:{nameColour:'fireBrick', cr:178, cg:34, cb:34},
+		crimson:{nameColour:'crimson', cr:220, cg:20, cb:60},
+		tomato:{nameColour:'tomato', cr:255, cg:99, cb:71},	
+		coral:{nameColour:'coral', cr:255, cg:127, cb:80}	
+	},
+	
 	//demonstrators
 	demo:function(num){
 		var that=this;
@@ -56,7 +85,8 @@ var TCM={
 		
 	//babylon scene setter
 	setScene:function(tcm){
-		tcm.baby=new BABYLON.StandardMaterial(tcm.name, BIM.scene);
+		var name=(tcm.name==null)?tcm.nameofColour+nameofTexture:tcm.name;
+		tcm.baby=new BABYLON.StandardMaterial(name, BIM.scene);
 		tcm.baby.diffuseColor=new BABYLON.Color3(tcm.cr, tcm.cg, tcm.cb);
 	},
 	
@@ -103,7 +133,9 @@ var tcm={
 	cg:0,
 	cr:0,
 	handler:TCM,
-	name:'unnamed',
+	name:null, //if null then the material name is the sum of colour + texture
+	nameColour:'uncoloured',
+	nameTexture:'untextured',
 	texturefile:'',
 	type:'material'	
 };

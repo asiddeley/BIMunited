@@ -177,7 +177,7 @@ var BIM={
 	// main light
 	light:Light.demo(1),
 	
-	// main model 
+	// main model - this is the entry point for the scene 
 	model:Model.creaters.demo(),
 	
 	// Reserved
@@ -192,14 +192,18 @@ var BIM={
 		engine:null 
 	},	
 	
-	//parts library
+	/*****
+	For things below, Lib appendix means library or hash of vailable items for importatrion into the model.  
+	Each library has a correspoding ui to control imporation into the model.  
+	All items must have setScene function ie. sceneable with the babylon engine
+	******/
+	//parts library 
 	partsLib:libParts,
 	
 	//Reserved
 	q:null,
 
-	//Libaray of models not rendered unless called/referenced from model
-	//All items must have setScene function ie. sceneable
+	//Libaray of models not rendered unless called/referenced from model	
 	referenceLib:{},
 	
 	//Babylon scene, analog to BIM.model, initialized by engage()
@@ -220,17 +224,12 @@ var BIM={
 	//View library, A view is the BIM analog to babylon camera
 	viewLib:{main:View.demo()},
 	
-	//Reserved
-	w:null,
+	//Worldbox Library.  
+	//A worldbox contains information about a model's bounds, units, and yonder ie sky box and ground
+	worldBoxLib:{},
 
 	//Reserved
-	x:null, 
-	
-	//skybox
-	yonderLib:{},
-	
-	//Reserved
-	z:null
+	x:null, y:null, z:null 
 	
 }; 		
 

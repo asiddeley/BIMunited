@@ -23,10 +23,10 @@
 
 define(
 // load dependencies...
-['jquery', 'kernel/part', 'babylon', 'kernel/partSphere'],
+['jquery', 'kernel/part', 'babylon', 'kernel/partSphere', 'kernel/worldBox'],
 
 // then do...
-function($, Part, babylon, Sphere) {
+function($, Part, babylon, Sphere, WB) {
 	
 // Note Part vs part (Capital P vs lower case p)
 // Part - part handlersm, one handler collection
@@ -42,7 +42,12 @@ var modelHandler=$.extend( {}, {
 
 	//create:function(userData){ return $.extend({}, Part.create, model, userData); },	
 	//model not extended from part anymore
-	create:function(userHash){ return $.extend({}, model, userHash); },
+	create:function(userHash){ 
+		//might need to do some inits 
+		//eg m.worldBox.model=m;
+		return $.extend({}, model, userHash);
+
+	},
 	
 	
 	creaters:{
@@ -55,6 +60,8 @@ var modelHandler=$.extend( {}, {
 			//m.handler.addPart(m, Sphere.create({'name':'s2', 'radius':1, 'position':new v(6,0,0)}));
 			//m.handler.addPart(m, Sphere.create({'name':'s3', 'radius':1.5, 'position':new v(0,6,0)}));
 			//m.handler.addPart(m, Sphere.create({'name':'s4', 'radius':2, 'position':new v(6,6,0)}));
+		
+			
 			return m;
 		}
 	},
@@ -74,16 +81,25 @@ var modelHandler=$.extend( {}, {
 	},
 	
 	// override - babylon scene constructor
-	setScene:function(model){
+	setScene:function( model ){
+		model.worldBox.handler.setScene( model.worldBox );
 		for (var i=0; i<model.parts.length; i++){
 			model.parts[i].handler.setScene( model.parts[i] );
 		}
 	},
 	
+	setWorldBox:function(model, wb){
+		model.worldBox=wb;
+		wb.model=model;
+		//to do recalculate extent of parts
+	},
+	
 	////////////////////
 	// specific to model
 	addPart:function(model, part){
-		// part.parent=this;
+		part.host=model;
+		//to do set part.baby element so position changes of model translated also to parts
+		
 		model.parts.push(part);
 		// check scene because setScene may be called before scene is initialized 
 		// i.e	when decendent (archModel) model is constructed
@@ -124,6 +140,7 @@ var model={
 	name:'unnamed',
 	parts:[],
 	references:{},
+	worldBox:WB.create(),
 	//textureRefs:{},
 	//viewRefs:{},
 };
