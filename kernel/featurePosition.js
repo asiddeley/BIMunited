@@ -59,12 +59,12 @@ var POSITION = {
 };
 
 var position = {
-	handler:POSITION, //this will get overrided
+	handler:POSITION, //this will get overriden
 	position:new babylon.Vector3(0,0,0),
 };
 
 
-return NAME;
+return POSITION;
 });
 
 

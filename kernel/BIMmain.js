@@ -136,6 +136,11 @@ var BIM={
 			$(el).css('height','auto').css('height', el.scrollHeight+5);		
 		},
 		log:function(message) {BIM.ui.blackboard.log(message);},
+		randomPosition:function() {
+			var s=BIM.model.worldBox.size;
+			var v=new babylon.Vector3(Math.random()*s,  Math.random()*s, Math.random()*s); 
+			return v;
+		},
 		uid:function(name){
 			//Returns a simple unique id string based on a given name and
 			//how many time that name is called.  If no name given then 'id' is the default name.
