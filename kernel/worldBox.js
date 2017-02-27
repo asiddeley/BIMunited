@@ -55,7 +55,7 @@ var WORLDBOX=$.extend( {}, {
 			//new object  
 			{}, 
 			//superType's (model) features - like calling super 
-			worldBox.handler.getFeatures(worldBox), 
+			//worldBox.handler.getFeatures(worldBox), 
 			//space's features - overriding some things set by model such as bimType
 			{ 
 				bimType:{ valu:worldBox.handler.bimType, onFeature:function(){}, widget:'text'}, 

@@ -1,5 +1,6 @@
 /************************************************************
-
+	license:
+	
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
@@ -14,44 +15,42 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	
-	project:	BIMsoup
-	desc:		(B)uilding(I)nformation(M)odel(s)ource(o)pen(u)tility(p)rogram 
-		
-	module: 	onpick module
+	project:	BIM united FC (Framework Concept)
+	module: 	part
 	desc: 
-	usage:
-
-	by: 		Andrew Siddeley 
-	started:	30-Dec-2016
+	author: 	Andrew Siddeley 
+	started:	26-Feb-2017
 	
-*/
+****************************************************************/
 
 define(
 // load dependencies...
-['jquery'],
+['babylon', 'jquery', 'kernel/window'],
 
-// then do...
-function($){
-	
-// return basic part
-return (
+// then construct part object...
+function(babylon, $, win){
 
-function (evt, pickResult) {
-	if (pickResult.hit) {
-		if (pickResult.pickedMesh != null) {
-			var pm=pickResult.pickedMesh;
-			var sd=pm.soupData();
-			
-			//alert(pickResult.pickedMesh);
-			//var t=JSON.stringify(pickResult.pickedMesh, replacer);
-			$('#myConsole').text(pickResult.pickedMesh.toString());
-			
-		}
+//construct handler. static functions require part as input
+var NAME = {
+	bimSuperType:null,
+	bimType:'moduleProperty',
+
+	create:function(){return $.extend({}, name); },
+	onName:function(ev, part, result){ part.name=result;},
+	feature:function(part){ return name:{
+		valu:part.name, 
+		onChange:NAME.onName,
+		widget:'text',
+		onEdit:uiText, //instead of widget
+		onEditOK:NAME.onName //instead of onChange
+		};
 	}
-}
+};
 
-); //return
+var name = {name:'unnamed' };
 
-}); //define
+
+return NAME;
+});
 
 

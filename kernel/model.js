@@ -45,6 +45,8 @@ var modelHandler=$.extend( {}, {
 	create:function(userHash){ 
 		//might need to do some inits 
 		//eg m.worldBox.model=m;
+		
+		
 		return $.extend({}, model, userHash);
 
 	},
@@ -72,6 +74,18 @@ var modelHandler=$.extend( {}, {
 		// construct and return a hash of features
 		// name:{valu:refToProperty, onChange:Callback, widget:'text' }
 		var mh=m.handler;
+		
+		/*
+		//mix together various properties/features (if each is defined in a module) 
+		return $.extend({}, 
+			bimType:{valu:MODEL.bimType, onChange:function(){}, widget:'text'},
+			fName.feature(m), 
+			//fPosition.feature(m), //model has no position, only instance of model does
+			fWorldBox.feature(m), 
+			fCategories.feature(m)
+			)
+		*/
+		
 		return $.extend({},{
 			bimType:{ valu:mh.bimType, onChange:function(){}, widget:'text'}, 
 			name:{ valu:m.name, onChange:mh.onName, widget:'text'},
@@ -106,6 +120,8 @@ var modelHandler=$.extend( {}, {
 		if (typeof BIM !='undefined') {
 			if(BIM.scene) { model.handler.setScene(model);}
 		}
+		
+		//model.worldBox.onAddPart(part);
 	},
 	
 	addRef:function(model, ref){
@@ -144,6 +160,16 @@ var model={
 	//textureRefs:{},
 	//viewRefs:{},
 };
+//do like this instead
+//mix together various properties/features (if each is defined in a module) 
+/*
+var model=$.extend({},
+	fName.name, 
+	fWorldBox
+);
+
+*/
+
 
 //alert('Model constructed:'+modelHandlers);
 return modelHandler;
