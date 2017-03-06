@@ -34,11 +34,11 @@ function(babylon, $, POS, TEX){
 // cube has position and material features.
 var CUBE = $.extend( {}, NAM, POS, TEX, {
 
-	bimSuperType:'part', //although features added individually, not inherited from part
+	bimSuperType:'part', //features added individually, not inherited from part
 	bimType:'cube',
 	
 	// Constructor
-	create:function(userData){ return $.extend( {}, cube, userData ); },
+	create:function(userData){ return $.extend( {}, Cube, userData ); },
  	
 	// Constructors with various argument presets - demonstrators
 	creaters:{
@@ -84,7 +84,7 @@ var CUBE = $.extend( {}, NAM, POS, TEX, {
 }); 
 
 // construct CUBE data template from various hashes - one CUBE, many cubes
-var cube=$.extend( 
+var Cube=$.extend( 
 	NAM.create(),
 	POS.create(),
 	TEX.create(),

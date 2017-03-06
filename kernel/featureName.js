@@ -35,19 +35,20 @@ var NAME = {
 	bimSuperType:null,
 	bimType:'moduleProperty',
 
-	create:function(){return $.extend({}, name); },
-	onName:function(ev, part, result){ part.name=result;},
-	feature:function(part){ return name:{
-		valu:part.name, 
-		onChange:NAME.onName,
-		widget:'text',
-		onEdit:uiText, //instead of widget
-		onEditOK:NAME.onName //instead of onChange
-		};
+	create:function(){return $.extend({}, Name); },
+	onNameChange:function(ev, part, result){ part.name=result;},
+	feature:function(part){ 
+		return { name:{
+			valu:part.name, 
+			onChange:NAME.onNameChange,
+			widget:'text',
+			onEdit:uiText, //instead of widget
+			onEditOK:NAME.onNameChange //instead of onChange
+		}};
 	}
 };
 
-var name = {name:'unnamed' };
+var Name = {name:'unnamed' };
 
 
 return NAME;

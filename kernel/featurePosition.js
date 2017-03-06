@@ -38,7 +38,7 @@ var POSITION = {
 
 	create:function(host){
 		//return a new position hash
-		return $.extend({}, position);
+		return $.extend({}, Position);
 	},
 	
 	onPosition:function(ev, host, result){
@@ -48,18 +48,18 @@ var POSITION = {
 	},
 
 	feature:function(host){ 
-		return position:{
+		return {position:{
 			valu:host.position, 
 			onChange:POSITION.onPosition,
 			widget:'position', //replace with module ref
 			//onEdit:uiPosition, //instead of widget
 			//onEditOK:POSITION.onPosition //instead of onChange
-		};
+		}};
 	}
 };
 
-var position = {
-	handler:POSITION, //this will get overriden
+var Position = {
+	//handler:POSITION, //this will get overriden
 	position:new babylon.Vector3(0,0,0),
 };
 
