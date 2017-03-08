@@ -25,10 +25,12 @@
 define(
 
 // load dependencies...
-['babylon', 'jquery', 'kernel/featureName', 'kernel/featurePosition', 'kernel/featureTexture'],
+['babylon', 'jquery', 'kernel/featureName', 'kernel/featurePosition'],
 
 // then do...
-function(babylon, $, POS, TEX){
+function(babylon, $, NAM, POS){
+	
+var TEX={};
 	
 // Construct CUBE handler or hash of static methods - each method requires cube data as arguement except create().
 // cube has position and material features.
@@ -43,53 +45,49 @@ var CUBE = $.extend( {}, NAM, POS, TEX, {
 	// Constructors with various argument presets - demonstrators
 	creaters:{
 		basic:function(){ return CUBE.create();},
-		randomized:function(){ return CUBE.create({ 
+		random:function(){ return CUBE.create( { 
 			position:BIM.fun.randomPosition(),  //   new babylon.Vector3(Math.random()*5, Math.random()*5, Math.random()*5),
-			side:Math.random()*2
+			size:Math.random()*10
 		});}
 	},
 
 	getFeatures:function(part){
-		return $.extend( NAM.feature(part), POS.feature(part), TEX.feature(part), SIDE.feature(part) );
+		return $.extend( {}, 
+		NAM.feature(part), 
+		POS.feature(part)
+		//TEX.feature(part), 
+		//SIDE.feature(part) 
+		);
 	},
 
 	// babylon scene constructor
 	setScene:function(part){
-		/*
-		size (number) size of each box side 1 
-		height (number) height size, overwrites size property size 
-		width (number) width size, overwrites size property size 
-		depth (number) depth size, overwrites size property size 
-		faceColors (Color4[]) array of 6 Color4, one per box face Color4(1, 1, 1, 1) for each side 
-		faceUV (Vector4[]) array of 6 Vector4, one per box face UVs(0, 0, 1, 1) for each side 
-		updatable (boolean) true if the mesh is updatable false 
-		sideOrientation (number) side orientation DEFAULTSIDE 
-		*/
 		
 		part.baby = babylon.Mesh.CreateBox(	
 			part.name, 
-			{
-				size:part.size,
-				updatable:part.updatable,
-				//sideOrientation:part.faceMode
-			},
+			part.size,
 			BIM.scene
 		);
 
-		part.baby.bim=part; //to access BIM information about babylon shape when picked
+		part.baby.bim=part; 
 		part.baby.position=part.position; 
 	}
 
 	
 }); 
 
-// construct CUBE data template from various hashes - one CUBE, many cubes
-var Cube=$.extend( 
-	NAM.create(),
-	POS.create(),
-	TEX.create(),
-	SIDE.create(),
-	{ handler:CUBE } 	//last so it overrides handlers if accidentally defined in features
+// Cube template
+var Cube=$.extend( {}, 
+	NAM.getTemplate(),
+	POS.getTemplate(),
+	{ 
+		updatable:true,
+		size:1,
+		faceMode:babylon.Mesh.DEFAULTSIDE,	//scene.babylon.Mesh.DEFAULTSIDE},
+		//TEX.create(),
+		//SIDE.create(),
+		handler:CUBE //last so it overrides handlers if accidentally defined in features
+	} 	
 );
 
 return CUBE;

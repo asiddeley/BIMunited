@@ -58,7 +58,7 @@ var modelHandler=$.extend( {}, {
 			var m=modelHandler.create(); 
 			var v=babylon.Vector3;
 			//and add some parts
-			m.handler.addPart(m, Sphere.create({'name':'s1', 'radius':1, 'position':new v(0,0,0)}));
+			//m.handler.addPart(m, Sphere.create({'name':'s1', 'radius':1, 'position':new v(0,0,0)}));
 			//m.handler.addPart(m, Sphere.create({'name':'s2', 'radius':1, 'position':new v(6,0,0)}));
 			//m.handler.addPart(m, Sphere.create({'name':'s3', 'radius':1.5, 'position':new v(0,6,0)}));
 			//m.handler.addPart(m, Sphere.create({'name':'s4', 'radius':2, 'position':new v(6,6,0)}));

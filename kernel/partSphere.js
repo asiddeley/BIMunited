@@ -41,7 +41,7 @@ var sphereHandler = $.extend( {}, Part, {
 	// Constructors with various argument pre-set ie. demonstrators
 	creaters:{
 		basic:function(){ return sphereHandler.create();},
-		randimized:function(){ return sphereHandler.create({ 
+		random:function(){ return sphereHandler.create({ 
 			position:new babylon.Vector3(Math.random()*5, Math.random()*5, Math.random()*5),
 			radius:Math.random()*2
 		});}

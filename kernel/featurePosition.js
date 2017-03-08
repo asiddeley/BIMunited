@@ -40,7 +40,8 @@ var POSITION = {
 		//return a new position hash
 		return $.extend({}, Position);
 	},
-	
+	getTemplate:function(){ return Position; },
+
 	onPosition:function(ev, host, result){
 		//update position in babylon element, should show on next scene render 
 		//host.baby.position=host.position;
@@ -60,7 +61,7 @@ var POSITION = {
 
 var Position = {
 	//handler:POSITION, //this will get overriden
-	position:new babylon.Vector3(0,0,0),
+	position:new babylon.Vector3(0,0,0)
 };
 
 

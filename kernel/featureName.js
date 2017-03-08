@@ -36,13 +36,14 @@ var NAME = {
 	bimType:'moduleProperty',
 
 	create:function(){return $.extend({}, Name); },
+	getTemplate:function(){ return Name; },
 	onNameChange:function(ev, part, result){ part.name=result;},
 	feature:function(part){ 
 		return { name:{
 			valu:part.name, 
 			onChange:NAME.onNameChange,
 			widget:'text',
-			onEdit:uiText, //instead of widget
+			//onEdit:uiText, //instead of widget
 			onEditOK:NAME.onNameChange //instead of onChange
 		}};
 	}

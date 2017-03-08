@@ -25,15 +25,16 @@
 
 define(
 // load dependencies...
-['kernel/partSphere'],
+['kernel/partSphere', 'kernel/cube'],
 
 // then do...
-function(s){
+function(s, c){
 	
 // hash of parts for this library
 return {
-	sphere:s,
-	skybox:s
+	cube:c,
+	sphere:s
+
 	//insert:i (instance, modelRef, ref, xref)
 	//model:m (block, blueprint, definition, prototype)
 	//ground:g
