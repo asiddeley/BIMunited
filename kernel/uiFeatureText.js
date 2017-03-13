@@ -150,7 +150,7 @@ var uiFeatureText={
 	labl$:null, //set by create
 	
 	// API function to set value, label, callback and argument1 (part)
-	start:function(valu, labl, onFeature, onFeatureArg1){
+	start:function(valu, labl, onFeatureChange, onFeatureArg1){
 		//BIM.fun.log('valu, type:'+ valu + ',' + typeof(valu));
 		
 		//change text of following jquery wrapped DOM elements
@@ -166,9 +166,9 @@ var uiFeatureText={
 		this.div$.trigger('bimEditOff');
 		
 		//reset and configure events to be triggered when feature editing done
-		this.div$.off('bimFeature');
-		this.div$.on('bimFeature', BIM.ui.picker.onFeature );
-		this.div$.on('bimFeature', onFeature)
+		this.div$.off('bimFeatureChange');
+		this.div$.on('bimFeatureChange', BIM.ui.picker.onFeatureChange );
+		this.div$.on('bimFeatureChange', onFeatureChange)
 		
 	},	
 

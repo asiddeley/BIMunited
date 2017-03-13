@@ -41,10 +41,13 @@ var uiParts={
 	},
 
 	addButton:function(n, c, item$){
+		//n - name of part
+		//c - creater function of part
 		var onClick=function(ev){ 
-			var p=c();
-			var m=BIM.get.host(); //could be main, active or currently picked model
+			var p=c(); //new part created
+			var m=BIM.get.activeModel(); //model to put part
 			m.handler.addPart(m, p); 
+			//pick new part and show its features for convenience
 			BIM.ui.picker.start().wipe().add(p); 
 		};
 		var b$=$('<button></button>').text(n).addClass('bimButton');

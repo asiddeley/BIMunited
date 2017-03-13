@@ -36,7 +36,7 @@ var TEX={};
 // cube has position and material features.
 var CUBE = $.extend( {}, NAM, POS, TEX, {
 
-	bimSuperType:'part', //features added individually, not inherited from part
+	bimSuperType:null, 
 	bimType:'cube',
 	
 	// Constructor
@@ -46,31 +46,29 @@ var CUBE = $.extend( {}, NAM, POS, TEX, {
 	creaters:{
 		basic:function(){ return CUBE.create();},
 		random:function(){ return CUBE.create( { 
-			position:BIM.fun.randomPosition(),  //   new babylon.Vector3(Math.random()*5, Math.random()*5, Math.random()*5),
+			position:BIM.fun.randomPosition(),  
 			size:Math.random()*10
 		});}
 	},
 
-	getFeatures:function(part){
-		return $.extend( {}, 
+	getFeatures:function(part){ return $.extend( 
 		NAM.feature(part), 
 		POS.feature(part)
 		//TEX.feature(part), 
 		//SIDE.feature(part) 
-		);
-	},
+	);},
 
 	// babylon scene constructor
-	setScene:function(part){
+	setScene:function(cube){
 		
-		part.baby = babylon.Mesh.CreateBox(	
-			part.name, 
-			part.size,
+		cube.baby = babylon.Mesh.CreateBox(	
+			cube.name, 
+			cube.size,
 			BIM.scene
 		);
 
-		part.baby.bim=part; 
-		part.baby.position=part.position; 
+		cube.baby.bim=cube;
+		cube.baby.position=cube.position; 
 	}
 
 	

@@ -35,7 +35,7 @@ function($, Part, babylon, Sphere, WB) {
 //alert('model...');
 
 // modelHandlers inherits from partHandlers
-var modelHandler=$.extend( {}, {
+var MODEL=$.extend( {}, {
 
 	bimSuperType:null,
 	bimType:'model',
@@ -45,46 +45,29 @@ var modelHandler=$.extend( {}, {
 	create:function(userHash){ 
 		//might need to do some inits 
 		//eg m.worldBox.model=m;
-		
-		
-		return $.extend({}, model, userHash);
-
+		return $.extend({}, Model, userHash);
 	},
 	
 	
 	creaters:{
 		demo:function(){
 			//create a model
-			var m=modelHandler.create(); 
+			var m=MODEL.create(); 
 			var v=babylon.Vector3;
 			//and add some parts
 			//m.handler.addPart(m, Sphere.create({'name':'s1', 'radius':1, 'position':new v(0,0,0)}));
 			//m.handler.addPart(m, Sphere.create({'name':'s2', 'radius':1, 'position':new v(6,0,0)}));
 			//m.handler.addPart(m, Sphere.create({'name':'s3', 'radius':1.5, 'position':new v(0,6,0)}));
 			//m.handler.addPart(m, Sphere.create({'name':'s4', 'radius':2, 'position':new v(6,6,0)}));
-		
-			
 			return m;
 		}
 	},
-	
-	
+		
 	getFeatures:function( m ){
 		//mm could be a model (or decendant type)
-		// construct and return a hash of features
-		// name:{valu:refToProperty, onChange:Callback, widget:'text' }
+		//construct and return a hash of features
+		//name:{valu:refToProperty, onChange:Callback, widget:'text' }
 		var mh=m.handler;
-		
-		/*
-		//mix together various properties/features (if each is defined in a module) 
-		return $.extend({}, 
-			bimType:{valu:MODEL.bimType, onChange:function(){}, widget:'text'},
-			fName.feature(m), 
-			//fPosition.feature(m), //model has no position, only instance of model does
-			fWorldBox.feature(m), 
-			fCategories.feature(m)
-			)
-		*/
 		
 		return $.extend({},{
 			bimType:{ valu:mh.bimType, onChange:function(){}, widget:'text'}, 
@@ -115,10 +98,14 @@ var modelHandler=$.extend( {}, {
 		//to do set part.baby element so position changes of model translated also to parts
 		
 		model.parts.push(part);
-		// check scene because setScene may be called before scene is initialized 
-		// i.e	when decendent (archModel) model is constructed
+		// check just in case this function called before BIM is fully constructed 
 		if (typeof BIM !='undefined') {
-			if(BIM.scene) { model.handler.setScene(model);}
+			//???When called multiple times (ie each time part added) does this overwrite
+			//existing meshes or create duplicates meshes in the scene
+			//This causes scene to grow exponentially so fix!!!
+			//if(BIM.scene) { model.handler.setScene(model);}
+			
+			if(BIM.scene != 'undefined'){ part.handler.setScene(part);}
 		}
 		
 		//model.worldBox.onAddPart(part);
@@ -146,9 +133,9 @@ var modelHandler=$.extend( {}, {
 
 
 // Construct model data.  Used to extend part later in Model.Create()
-var model={
+var Model={
 	categories:[],
-	handler:modelHandler,
+	handler:MODEL,
 	host:null,
 	id:null,
 	//lightRefs:{},
@@ -172,7 +159,7 @@ var model=$.extend({},
 
 
 //alert('Model constructed:'+modelHandlers);
-return modelHandler;
+return MODEL;
 
 });
 

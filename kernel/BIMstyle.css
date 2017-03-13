@@ -101,5 +101,18 @@
 	float:left;
 }
 
+.bimDump {	
+	position: fixed;
+	z-index: 15;
+	top: 50px;
+	left: 50px;
+	padding:10px;
+	margin:10px;	
+	overflow:auto;
+	width:800px;
+	height:400px;
+	background:silver;
+	color:black; 
+}
 
 

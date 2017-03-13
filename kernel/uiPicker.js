@@ -32,19 +32,23 @@ function($, babylon, babylon2D ){
 var uiPicker={
 	
 	add:function( part ){ 
+		if (this.pickMode=="many|ONE"){this.picks=[];}
 		//if part not in pick list...
 		if (this.picks.indexOf(part) == -1) {
 			//add part to pick list
 			this.picks.push(part);
 			//ensure number of picks does not exceed pick limit set by user
-			if (this.picks.length>this.limit) {this.picks.shift();}
+			if (this.picks.length>this.pickLimit) {this.picks.shift();}
 		} else {
 			//remove part from pick list by filtering it out
 			this.picks=$.grep(this.picks, function(v, i){return (part !== v);});
 		}
 		//refresh
 		this.pick$.text(this.picks.length.toString()); //update board
-		this.regen();
+		this.tagRegen();
+		//trigger event - note that event is automatically passed as arg1
+		//$.trigger('customEvent', ['arg2', 'arg3'...])
+		BIM.ui.blackboard.trigger('bimPick', [this.picks]);
 	},
 
 	create:function(host){
@@ -65,11 +69,13 @@ var uiPicker={
 	// DOM container element with jquery wrapping
 	div$:null, //initialized in create()
 	
+	//deprecated
 	first:function(){return this.picks[0];},
 	
 	getEventHandlers:function(){
 		return { 
-			bimInput:{name:'bimInput',  handler:uiPicker.onInput },
+			bimFeatureChange:{name:'bimFeatureChange',  handler:uiPicker.onFeatureChange },
+			bimInput:{name:'bimInput',  handler:uiPicker.onInput }
 		};
 	},
 	
@@ -77,8 +83,6 @@ var uiPicker={
 		if (this.picks.length==0) {return null;}
 		else { return this.picks[this.picks.length-1];}
 	},
-	
-	limit:1,
 
 	//called by uiBlackboard when new BIM input received
 	onInput:function(ev, input){ 
@@ -88,24 +92,28 @@ var uiPicker={
 		} else if (input == 'pick wipe' || input == 'ppw'){ 
 			BIM.ui.picker.wipe(); 
 		} else if (input == 'pick off' || input == 'ppx'){ 
-			//BIM.fun.log('bingo');
-			if (BIM.scene.onPointerDown==uiPicker.onScenePointerDown){
+			//check if this picker callback is currently active for the scene
+			//if (BIM.scene.onPointerDown==uiPicker.onPointerDown){
 				BIM.ui.picker.wipe();
 				BIM.scene.onPointerDown=null;
 				BIM.ui.picker.div$.hide();
-			}
+			//}
 		}
 	},
 	
-	onFeature:function(ev, part, valu){
+	onFeatureChange:function(ev, part, valu){
 		//BIM.fun.log('picker onFeature '+ part + '-' + valu);
-		BIM.ui.picker.regen();		
+		BIM.ui.picker.tagRegen();		
 	},
 	
-	onScenePointerDown:function (evt, pickResult) {
+	onPointerDown:function (evt, pickResult) {
 		if (pickResult.hit) {
 			if (pickResult.pickedMesh != null) {
-				BIM.ui.picker.add(pickResult.pickedMesh.bim);			
+				if (typeof pickResult.pickedMesh.bim == "undefined"){
+					BIM.fun.log("Mesh has no BIM features");
+				} else {
+					BIM.ui.picker.add(pickResult.pickedMesh.bim);
+				}				
 			}
 		}
 	},	
@@ -113,9 +121,29 @@ var uiPicker={
 	// pick count display field with jquery wrapping
 	pick$:null,
 	
+	//max number of picks to track
+	pickLimit:3,
+	
+	pickMode:"many|ONE", 
+
 	// array of picked parts 
 	picks:[],
 	
+	//UI standard function
+	start:function(){ 
+		BIM.scene.onPointerDown=uiPicker.onPointerDown;
+		if (this.canvas2D==null) {
+			//BIM.fun.log('picker start, BIM.scene ' + BIM.scene);
+			this.canvas2D=new babylon2D.ScreenSpaceCanvas2D( BIM.scene, {
+				id:"uiPickerCanvas",
+				//don't cache as bitmap, keep canvas2d fresh
+				cachingStrategy:babylon2D.CACHESTRATEGY_DONTCACHE  
+			} );
+		};
+		this.div$.show();
+		return this; //for chaining
+	},
+
 	// array of tags - reused for each pick set
 	tags:[],
 	
@@ -157,7 +185,7 @@ var uiPicker={
 		});
 	},
 	
-	regen:function(){
+	tagRegen:function(){
 		//delete existing tags
 		for (i=0; i<this.tags.length; i++){
 			this.tags[i].dispose();
@@ -175,26 +203,13 @@ var uiPicker={
 		
 		//trigger event - note that event is automatically passed as arg1
 		//$.trigger('customEvent', ['arg2', 'arg3'...])
-		BIM.ui.blackboard.div$.trigger('bimPick', [this.picks]);
+		//BIM.ui.blackboard.div$.trigger('bimPick', [this.picks]);
 	},
 	
-	start:function(){ 
-		BIM.scene.onPointerDown=uiPicker.onScenePointerDown;
-		if (this.canvas2D==null) {
-			//BIM.fun.log('picker start, BIM.scene ' + BIM.scene);
-			this.canvas2D=new babylon2D.ScreenSpaceCanvas2D( BIM.scene, {
-				id:"uiPickerCanvas",
-				//don't cache as bitmap, keep canvas2d fresh
-				cachingStrategy:babylon2D.CACHESTRATEGY_DONTCACHE  
-			} );
-		};
-		this.div$.show();
-		return this; //for chaining
-	},
 	
 	wipe:function(){
 		this.picks=[];
-		this.regen();
+		this.tagRegen();
 		return this; //for chaining
 	}
 	

@@ -35,7 +35,7 @@ var WORLDBOX=$.extend( {}, {
 	bimType:'worldBox',
 	desc:'wrapper with skybox, ground, units, lights and views',
 	
-	create:function(userHash) { return $.extend( {}, world, userHash); },
+	create:function(userHash) { return $.extend( {}, Worldbox, userHash); },
 
 	creaters:{
 		sky:function(){
@@ -50,7 +50,7 @@ var WORLDBOX=$.extend( {}, {
 		}
 	},
 		
-	getFeatures:function(worldBox){
+	getFeatures:function(worldbox){
 		return $.extend(
 			//new object  
 			{}, 
@@ -58,39 +58,39 @@ var WORLDBOX=$.extend( {}, {
 			//worldBox.handler.getFeatures(worldBox), 
 			//space's features - overriding some things set by model such as bimType
 			{ 
-				bimType:{ valu:worldBox.handler.bimType, onFeature:function(){}, widget:'text'}, 
+				bimType:{ valu:worldbox.handler.bimType, onFeature:function(){}, widget:'text'}, 
 			}
 		);
 	},
 	
-	setScene:function(worldBox){
+	setScene:function(worldbox){
 
-		worldBox.baby=BABYLON.Mesh.CreateBox(
-			worldBox.name, 
-			worldBox.size, 
+		worldbox.baby=BABYLON.Mesh.CreateBox(
+			worldbox.name, 
+			worldbox.size, 
 			BIM.scene, 
 			false, 
 			babylon.Mesh.DEFAULTSIDE);
 		// note two way relation between BIM part and babylon element 
-		worldBox.baby.bim=worldBox;
+		worldbox.baby.bim=worldbox;
 		
 		var m=new babylon.StandardMaterial("skyBox", BIM.scene);
-		worldBox.baby.material = m;
-		worldBox.baby.infiniteDistance = true;
+		worldbox.baby.material = m;
+		worldbox.baby.infiniteDistance = true;
 		
 		m.backFaceCulling = false;
 		m.disableLighting = true;
 		m.diffuseColor = new babylon.Color3(0, 0, 0);
 		m.specularColor = new babylon.Color3(0, 0, 0);
-		m.reflectionTexture = new babylon.CubeTexture("textures/worldBoxes/snow", BIM.scene);
+		m.reflectionTexture = new babylon.CubeTexture("textures/worldBoxes/brownBlue", BIM.scene);
 		m.reflectionTexture.coordinatesMode = babylon.Texture.SKYBOX_MODE;
 	},
 	
 });
 
 
-// Construct model data.  Used to extend part later in Model.Create()
-var world={
+// Construct model data.  
+var Worldbox={
 	handler:WORLDBOX,
 	lights:{},
 	model:null,

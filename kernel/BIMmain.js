@@ -71,13 +71,12 @@ var BIM={
 		this.ui.parts=uiParts.create(div);
 		
 		//add bim event handlers to process user input, object picking etc.
-		this.ui.blackboard.addEventHandlers( this.ui.features.getEventHandlers() );
-		this.ui.blackboard.addEventHandlers( this.ui.picker.getEventHandlers()  );
-		this.ui.blackboard.addEventHandlers( this.ui.parts.getEventHandlers()  );
+		this.ui.blackboard.addEventHandlers(this.ui.features.getEventHandlers());
+		this.ui.blackboard.addEventHandlers(this.ui.picker.getEventHandlers());
+		this.ui.blackboard.addEventHandlers(this.ui.parts.getEventHandlers());
 		
 		//stock the parts ui with items from the parts library
 		this.ui.blackboard.trigger('bimRestock', [this.partsLib]);
-	
 	},
 	
 	canvas:function(canvas){
@@ -101,7 +100,7 @@ var BIM={
 		// this.engine.setViewport(new babylon.Viewport(0,0,700,500));
 		
 		// initialize the scene
-		this.scene = new babylon.Scene(engine);
+		this.scene=new babylon.Scene(engine);
 		var s=this.scene;
 		
 		// set light in scene
@@ -122,7 +121,7 @@ var BIM={
 		this.viewLib.main.handler.setScene(this.viewLib.main);
 		
 		// This is a cool Babylon feature
-		// s.debugLayer.show();
+		//s.debugLayer.show();
 		
 		// engage the engine!
 		engine.runRenderLoop(function(){ s.render();} );	
@@ -158,9 +157,14 @@ var BIM={
 	
 	//shortcuts
 	get:{
+		activeModel:function(am) {
+			if(typeof am!='undefined') {this.activeModelObj=am;}
+			if(this.activeModelObj==null) {this.activeModelObj=BIM.model;}
+			return this.activeModelObj;	
+		},
+		activeModelObj:null,
 		bb:function(){ return BIM.ui.blackboard;},
-		canvas:function() {return BIM.options.canvas;},
-		host:function() {return BIM.model; },
+		canvas:function() {return BIM.options.canvas;},	
 		scene: function() {return BIM.scene;},
 		uid: function(name) {return BIM.fun.uid(name);},
 		uipb:function() {return BIM.ui.propertyboard;}

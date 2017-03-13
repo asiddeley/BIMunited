@@ -31,13 +31,12 @@ define(
 // then do...
 function($, wc){
 
-var uiFeatures={
+var UIfeatures={
 
-	create:function(host){
-		var ui=$.extend({}, uiFeatures);
+	create:function(board){
+		var ui=$.extend({}, UIfeatures);
 		ui.div$=$('<div></div>'); 
-		$(host).append(ui.div$);		
-		//ui.div$=div$;
+		$(board).append(ui.div$);		
 		ui.div$.text('features..').addClass('bimFeatures');
 		return ui;
 	},
@@ -54,8 +53,8 @@ var uiFeatures={
 	getEventHandlers:function(){
 		//don't use 'this' here as it will refer to the callers context
 		return {
-			bimInput:{name:'bimInput',  handler:uiFeatures.onInput },
-			bimPick:{name:'bimPick',  handler:uiFeatures.onPick }
+			bimInput:{name:'bimInput',  handler:UIfeatures.onInput },
+			bimPick:{name:'bimPick',  handler:UIfeatures.onPick }
 		};
 	},
 	
@@ -145,7 +144,7 @@ var uiFeatures={
 
 };
 
-return uiFeatures;
+return UIfeatures;
 
 });
 

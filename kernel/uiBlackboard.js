@@ -25,10 +25,10 @@
 
 define(
 // load dependencies...
-['jquery'],
+['jquery', 'babylon'],
 
 // then do...
-function($){
+function($, BJS){
 
 
 var uiBlackboard={
@@ -39,30 +39,63 @@ var uiBlackboard={
 			this.div$.on(n, ee[n].handler);
 		}
 	},
-
-	create:function(host){
+	
+	create:function(board){
 		// create a blackboard and initialize
 		var ui=$.extend({}, uiBlackboard);
+		ui.board$=$(board);
 		//jquery wrapped DOM element for blackboard
 		ui.div$=$('<div></div>');
-		$(host).append(ui.div$);
+		ui.board$.append(ui.div$);
 		ui.div$.text('blackboard').addClass('bimBlackboard');
 		//jquery wrapped DOM element for displaying messages
 		ui.log$=$('<div></div>');
 		ui.div$.append(ui.log$);
+		
+		//jquery wrapped DOM element for scene dumps
+		ui.dump$=$('<div></div>');
+		ui.div$.append(ui.dump$);
+		ui.dump$.text('DUMP:').addClass('bimDump');
+		ui.dump$.hide();
+		
 		return ui;
 	},
 	
-	div$:null,
+	board$:null, //DOM element with jquery wrapper, provided via API and holds all UI
+	div$:null, //DOM element for blackboard, logging user input etc
+	dump$:null, //DOM element for big text dumps
 	
 	input:function(command){
-		var that=this;
 		this.log(command);
+		//call others to process input 
 		this.div$.trigger('bimInput', [command]);
-
+		
+		//blackboard responsible for following input 
 		switch (command) {
-			case 'bb':this.div$.toggle();return true; break;
+			case 'bb':this.board$.toggle();return true; break;
 			case 'bbw':this.logStore=[]; this.log$.html('');break;
+			
+			case 'debug':BIM.scene.debugLayer.show();break;
+			case 'debugx':BIM.scene.debugLayer.hide();break;
+			
+			//dump scene
+			case 'dump':
+				var s=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene) );
+				this.dump$.show().text(s);
+				break;
+			//dump scene Geometry
+			case 'dumpg':
+				var g=BJS.SceneSerializer.Serialize(BIM.scene).geometries;
+				this.dump$.show().text(JSON.stringify(g));
+				break;
+			//dump scene Meshes
+			case 'dumpm':
+				var m=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene).meshes);
+				this.dump$.show().text(m);
+				break;
+			//Close dump dialog
+			case 'dumpx':this.dump$.hide();break;
+		
 		};
 	},	
 	
