@@ -75,7 +75,11 @@ var uiBlackboard={
 			case 'bb':this.board$.toggle();return true; break;
 			case 'bbw':this.logStore=[]; this.log$.html('');break;
 			
-			case 'debug':BIM.scene.debugLayer.show();break;
+			case 'debug':
+				BIM.scene.debugLayer.shouldDisplayLabel=function(node){return true;}
+				BIM.scene.debugLayer.shouldDisplayAxis=function(mesh){return true;}
+				BIM.scene.debugLayer.show();
+				break;
 			case 'debugx':BIM.scene.debugLayer.hide();break;
 			
 			//dump scene

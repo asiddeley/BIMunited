@@ -64,13 +64,15 @@ var BIM={
 
 		$.extend( this.options, {'board':div} );		
 
-		//first and main control is the blackboard		
+		//prime ui is the blackboard		
 		this.ui.blackboard=uiBlackboard.create(div);
+		//rest of them
 		this.ui.features=uiFeatures.create(div);
 		this.ui.picker=uiPicker.create(div);
 		this.ui.parts=uiParts.create(div);
 		
-		//add bim event handlers to process user input, object picking etc.
+		//blackboard manages bim events so get and register handlers
+		//to process user input, object picking, part library restocking etc.
 		this.ui.blackboard.addEventHandlers(this.ui.features.getEventHandlers());
 		this.ui.blackboard.addEventHandlers(this.ui.picker.getEventHandlers());
 		this.ui.blackboard.addEventHandlers(this.ui.parts.getEventHandlers());
@@ -180,8 +182,8 @@ var BIM={
 	//Reserved
 	j:null,
 	
-	//callbacks, 
-	kickbacks:{},
+	//list of commands, 
+	keywords:{},
 	
 	// main light
 	light:Light.demo(1),

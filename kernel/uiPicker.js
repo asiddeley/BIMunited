@@ -24,10 +24,10 @@
 
 define(
 // load dependencies...
-['jquery', 'babylon', 'babylon2D' ],
+['jquery', 'jquery-ui', 'babylon', 'babylon2D' ],
 
 // then do...
-function($, babylon, babylon2D ){
+function($, $$, babylon, babylon2D ){
 
 var uiPicker={
 	
@@ -44,34 +44,37 @@ var uiPicker={
 			this.picks=$.grep(this.picks, function(v, i){return (part !== v);});
 		}
 		//refresh
-		this.pick$.text(this.picks.length.toString()); //update board
+		this.divPick$.text(this.picks.length.toString()); //update board
 		this.tagRegen();
 		//trigger event - note that event is automatically passed as arg1
 		//$.trigger('customEvent', ['arg2', 'arg3'...])
 		BIM.ui.blackboard.trigger('bimPick', [this.picks]);
 	},
 
-	create:function(host){
-
-		// create a new copy (of this template) and initialize
+	create:function(board){
+		// create a new copy (of uiPicker template) and initialize
 		var ui=$.extend({}, uiPicker);
-		ui.div$=$('<div></div>'); 
-		$(host).append(ui.div$);		
-		//ui.div$=div$;
-		ui.div$.text('picker').addClass('bimPicker');
-		ui.pick$=$('<div></div>').text('picked items:0').addClass('bimCell');
-		ui.div$.append(ui.pick$);
+		ui.div$=$('<div></div>');
+		$(board).append(ui.div$);		
+
+		ui.divPick$=$('<div></div>').text('picked items:0');
+		ui.divMode$=$('<div></div>').text('pick mode:many');//.addClass('bimCell');
+		ui.div$.append(ui.divPick$, ui.divMode$);		
+		ui.div$.dialog({draggable:true, title:'picker', autoOpen:false});
 		return ui;
 	},
 	
 	canvas2D:null, //initialized in start() by which time BIM.scene is initialized 
 	
-	// DOM container element with jquery wrapping
-	div$:null, //initialized in create()
+	// DOM container elements with jquery wrapping, set by create()
+	div$:null, 
+	divMode$:null,
+	divPick$:null,
 	
 	//deprecated
 	first:function(){return this.picks[0];},
 	
+	//called by BIM.board when ui's created to register events and callbacks
 	getEventHandlers:function(){
 		return { 
 			bimFeatureChange:{name:'bimFeatureChange',  handler:uiPicker.onFeatureChange },
@@ -79,6 +82,24 @@ var uiPicker={
 		};
 	},
 	
+	//called by BIM.board when ui's created for use with input autocomplete
+	//called by onInput() below
+	getKeywords:function(){
+		//this.keywords defined here because it can't be defined until BIM.ui.picker is
+		this.keywords=(this.keywords!=null)?this.keywords:[
+			{keywords:['pp'], fn:BIM.ui.picker.toggle, help:'open the picker dialog'}, 
+			{keywords:['wipe','ppw'], fn:BIM.ui.picker.wipe, help:'clear selection'}, 
+			{keywords:['close','ppx'], 
+				fn:function(){BIM.ui.picker.div$.dialog('close');},
+				help:'close the picker dialog'
+			}
+		];
+		return this.keywords;
+	},
+	
+	keywords:null,
+	
+	//deprecated
 	last:function(){
 		if (this.picks.length==0) {return null;}
 		else { return this.picks[this.picks.length-1];}
@@ -86,19 +107,15 @@ var uiPicker={
 
 	//called by uiBlackboard when new BIM input received
 	onInput:function(ev, input){ 
-		//don't use keyword 'this' here as it will refer to the event caller's context, not uiPicker
-		if (input == 'pick' || input == 'pp'){
-			BIM.ui.picker.start();	
-		} else if (input == 'pick wipe' || input == 'ppw'){ 
-			BIM.ui.picker.wipe(); 
-		} else if (input == 'pick off' || input == 'ppx'){ 
-			//check if this picker callback is currently active for the scene
-			//if (BIM.scene.onPointerDown==uiPicker.onPointerDown){
-				BIM.ui.picker.wipe();
-				BIM.scene.onPointerDown=null;
-				BIM.ui.picker.div$.hide();
-			//}
-		}
+		//beware of using 'this' inside an eventhandler function!
+		//because 'this' will refer to the event caller's context, not uiPicker
+		switch (input) {
+			case 'pick':
+			case 'pp': BIM.ui.picker.toggle(); break;
+			case 'ppw': BIM.ui.picker.wipe(); break;
+			case 'ppx':	BIM.ui.picker.div$.dialog('close');
+		};
+		
 	},
 	
 	onFeatureChange:function(ev, part, valu){
@@ -117,9 +134,6 @@ var uiPicker={
 			}
 		}
 	},	
-	
-	// pick count display field with jquery wrapping
-	pick$:null,
 	
 	//max number of picks to track
 	pickLimit:3,
@@ -140,7 +154,7 @@ var uiPicker={
 				cachingStrategy:babylon2D.CACHESTRATEGY_DONTCACHE  
 			} );
 		};
-		this.div$.show();
+		//this.div$.dialog('open');
 		return this; //for chaining
 	},
 
@@ -199,13 +213,21 @@ var uiPicker={
 			this.tags.push(tag);
 		};
 		
-		this.pick$.text('picked items:'+this.picks.length);
+		this.divPick$.text('picked items:'+this.picks.length);
 		
 		//trigger event - note that event is automatically passed as arg1
 		//$.trigger('customEvent', ['arg2', 'arg3'...])
 		//BIM.ui.blackboard.div$.trigger('bimPick', [this.picks]);
 	},
 	
+	toggle:function(){
+		if (this.div$.dialog("isOpen")) {
+			this.div$.dialog("close");
+		} else {
+			//div$.dialog("open") is done inside start()
+			this.start();
+		};
+	},
 	
 	wipe:function(){
 		this.picks=[];
