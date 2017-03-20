@@ -47,15 +47,20 @@ var uiBlackboard={
 		//jquery wrapped DOM element for blackboard
 		ui.div$=$('<div></div>');
 		ui.board$.append(ui.div$);
-		ui.div$.text('blackboard').addClass('bimBlackboard');
+		//use jquery-ui to turn div$ into a floating dialog box
+		ui.div$.dialog({draggable:true, title:'Blackboard', autoOpen:true});
+		
+		
+		//ui.div$.text('blackboard'); //.addClass('bimBlackboard');
 		//jquery wrapped DOM element for displaying messages
 		ui.log$=$('<div></div>');
 		ui.div$.append(ui.log$);
 		
 		//jquery wrapped DOM element for scene dumps
-		ui.dump$=$('<div></div>');
+		ui.dump$=$('<div></div>').css('max-height', '300px');
 		ui.div$.append(ui.dump$);
-		ui.dump$.text('DUMP:').addClass('bimDump');
+	
+		ui.dump$.text('DUMP:');//.addClass('bimDump');
 		ui.dump$.hide();
 		
 		return ui;
@@ -64,8 +69,10 @@ var uiBlackboard={
 	board$:null, //DOM element with jquery wrapper, provided via API and holds all UI
 	div$:null, //DOM element for blackboard, logging user input etc
 	dump$:null, //DOM element for big text dumps
+	
 	getKeywordHandlers:function(){
-		//this.keywords defined here because it can't be defined until BIM.ui.picker is
+		//this.keywords defined here (in a function) because
+		//it can't be defined until uiBlackboard is intanciated
 		if (this.keywordHandlers==null){ this.keywordHandlers=[
 			{keywords:['bb'], 
 				handler:BIM.ui.blackboard.toggle, 
@@ -74,17 +81,22 @@ var uiBlackboard={
 		return this.keywordHandlers;
 	},
 	
+	getEventHandlers:function(){
+		//beware of using 'this' in event handlers as it will refer to the callers context
+		return { bimInput: {name:'bimInput',  handler:uiBlackboard.onInput } };
+	},
+	
 	keywordHandlers:null,
 	
-	input:function(command){
-		this.log(command);
+	onInput:function(ev, input){
+		BIM.ui.blackboard.log(input);
 		//call others to process input 
-		this.div$.trigger('bimInput', [command]);
+		//this.div$.trigger('bimInput', [command]);
 		
 		//blackboard responsible for following input 
-		switch (command) {
-			case 'bb':this.div$.show();break;
-			case 'bbw':this.logStore=[]; this.log$.html('');break;
+		switch (input) {
+			case 'bb':BIM.ui.blackboard.toggle();break;
+			case 'bbw':BIM.ui.blackboard.logStore=[]; this.log$.html('');break;
 			
 			case 'debug':
 				BIM.scene.debugLayer.shouldDisplayLabel=function(node){return true;}
@@ -96,20 +108,20 @@ var uiBlackboard={
 			//dump scene
 			case 'dump':
 				var s=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene) );
-				this.dump$.show().text(s);
+				BIM.ui.blackboard.dump$.show().text(s);
 				break;
 			//dump scene Geometry
 			case 'dumpg':
 				var g=BJS.SceneSerializer.Serialize(BIM.scene).geometries;
-				this.dump$.show().text(JSON.stringify(g));
+				BIM.ui.blackboard.dump$.show().text(JSON.stringify(g));
 				break;
 			//dump scene Meshes
 			case 'dumpm':
 				var m=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene).meshes);
-				this.dump$.show().text(m);
+				BIM.ui.blackboard.dump$.show().text(m);
 				break;
 			//Close dump dialog
-			case 'dumpx':this.dump$.hide();break;
+			case 'dumpx':BIM.ui.blackboard.dump$.hide();break;
 		
 		};
 	},	

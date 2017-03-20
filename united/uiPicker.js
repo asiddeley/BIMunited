@@ -115,7 +115,7 @@ var uiPicker={
 		//because 'this' will refer to the event caller's context, not uiPicker
 		switch (input) {
 			case 'pick':
-			case 'pp': BIM.ui.picker.toggle(); break;
+			case 'pp':  BIM.ui.picker.toggle(); break;
 			case 'ppw': BIM.ui.picker.wipe(); break;
 			case 'ppx':	BIM.ui.picker.div$.dialog('close');
 		};
@@ -225,11 +225,10 @@ var uiPicker={
 	},
 	
 	toggle:function(){
-		if (this.div$.dialog("isOpen")) {
-			this.div$.dialog("close");
-		} else {
+		if (this.div$.dialog("isOpen")) {	this.div$.dialog("close");	} 
+		else {
 			//div$.dialog("open") is done inside start()
-			this.start();
+			this.div$.dialog('open');
 		};
 	},
 	

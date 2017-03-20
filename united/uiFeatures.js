@@ -61,10 +61,6 @@ var UIfeatures={
 		};
 	},
 	
-	minimize:function(){
-		this.div$.minimize();		
-	},
-	
 	//function to respond to onPick event triggered by uiPicker
 	onInput:function(ev, input){
 		switch (input){

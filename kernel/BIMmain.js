@@ -14,6 +14,7 @@ requirejs.config({
 "paths": {
 	"arch": "../Arch",
 	"kernel": "../kernel",
+	"united":"../united",
 	//"jq": "jquery",
 	//"jq": "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min",
 	"sylvester": "sylvester/sylvesterXp",
@@ -30,10 +31,10 @@ define(
 ['kernel/Model',
 'jquery',
 'babylon',
-'kernel/uiBlackboard',
-'kernel/uiParts',
-'kernel/uiPicker',
-'kernel/uiFeatures',
+'united/uiBlackboard',
+'united/uiParts',
+'united/uiPicker',
+'united/uiFeatures',
 'kernel/lightHemi',
 'kernel/viewFree',
 'kernel/tcm',
@@ -78,6 +79,7 @@ var BIM={
 		
 		//blackboard manages bim events so get and register handlers
 		//that process user input, object picking, part library restocking etc.
+		this.ui.blackboard.addEventHandlers(this.ui.blackboard.getEventHandlers());
 		this.ui.blackboard.addEventHandlers(this.ui.features.getEventHandlers());
 		this.ui.blackboard.addEventHandlers(this.ui.picker.getEventHandlers());
 		this.ui.blackboard.addEventHandlers(this.ui.parts.getEventHandlers());
@@ -183,7 +185,7 @@ var BIM={
 	},
 	
 	//main method for user interaction
-	input:function(input){return this.ui.blackboard.input(input);},
+	input:function(input){return this.ui.blackboard.trigger('bimInput', input);},
 	
 	//Reserved
 	j:null,
