@@ -13,8 +13,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-	project:	BIM
-	module: 	uiCreater
+	project:	BIM united FC
+	module: 	uiParts
 	initiator: 	Andrew Siddeley 
 	initiated:	16-Feb-2017
 	
@@ -30,49 +30,51 @@ function($, $$, babylon ){
 
 var uiParts={
 
-	addCreaters:function(partHandler){
-		var item$=$('<div></div>').text(partHandler.bimType+':'); //.addClass('bimCell');
-		BIM.ui.parts.menu$.append(item$);
-
-		var cc=partHandler.creaters;
-		for (var n in cc){BIM.ui.parts.addButton(item$, n, cc[n]);	}		
+	addControlgroup:function(partHandler){
+		var cg$=$('<div></div>');
+		this.div$.append(cg$);
+		
+		cg$.append($('<button></button>').text(partHandler.bimType+':'));	
+		cg$.addClass('ui-widget-content');
+		
+		for (var n in partHandler.creaters){
+			this.addPartCreaterButton(cg$, n, partHandler.creaters[n]);
+		};
+		//wigetize cg$, google jquery-ui controlgroup for documentation
+		//items indicates what widgets to apply. 
+		cg$.controlgroup({items:{button:'button'}});
 	},
-
-	addButton:function(item$, n, c){
+	
+	addPartCreaterButton:function(cg$, n, fn){
 		//n - name of part
-		//c - creater function of part
-		//item$ - jquery wrapped element to contain buttons
+		//fn - creater function of part
+		//cg$ - jquery wrapped element to contain buttons
 		var onClick=function(ev){ 
-			var p=c(); //new part created
+			var p=fn(); //call creater to make new part p
 			var m=BIM.get.activeModel(); //model to put part
-			m.handler.addPart(m, p); 
+			m.handler.addPart(m, p); //add new part to model
 			//pick new part and show its features for convenience
 			BIM.ui.picker.start().wipe().add(p); 
 		};
-		var b$=$('<button></button>').text(n).addClass('bimButton');
+		var b$=$('<button></button>').text(n); //.addClass('bimButton');
 		b$.on('click', onClick);
-		item$.append(b$);
+		cg$.append(b$);
 	},
+	
 
 	create:function(board){
-		// board is the container div for all uis
-		// create a new ui of available parts
+		// board is the container div for all ui's
 		var ui=$.extend({}, uiParts);
 		ui.div$=$('<div></div>');
 		$(board).append(ui.div$);
-		//ui.div$.text('available parts').addClass('bimBoard');
-		ui.menu$=$('<div></div>'); //.addClass('bimCell');
-		ui.div$.append(ui.menu$);
-		ui.divCreater$=$('<div></div>');
-		ui.div$.append(ui.divCreater$);
-		//Using jquery-ui turn div$ into a dialog
+		//use jquery-ui to turn div$ into a floating dialog box
 		ui.div$.dialog({draggable:true, title:'Parts', autoOpen:false});
+		//return the new and initialized uiParts
 		return ui;
 	},
 	
-	// DOM container element with jquery wrapping
-	div$:null, //initialized in create()
-	divCreater$:null,
+	// DOM container elements with jquery wrapping initialized in create()
+	div$:null, //for dialog
 	
 	getEventHandlers:function(){
 		return { 
@@ -81,8 +83,6 @@ var uiParts={
 		};
 	},
 
-	menu$:null,
-	
 	//called by uiBlackboard when new BIM user input received
 	onInput:function(event, input){ 
 		//don't use keyword 'this' here as it will refer to the event caller's context, not uiPicker
@@ -104,15 +104,12 @@ var uiParts={
 		}		
 	},	
 	
-	onRestock:function(ev, partsLib){
+	onRestock:function(ev, lib){
 		//beware of meaning of keyword 'this' inside event handlers!
-		var ui=BIM.ui.parts;
-		if (ui.divCreater$==null) {return;} //exit early if not initialized
-		//wipe and reload parts
-		ui.menu$.html(''); 
-		for (var p in partsLib){
-			ui.addCreaters(partsLib[p]);
-		}		
+		//TODO - remove any existing controlgroup from divs
+
+		
+		for (var i in lib){BIM.ui.parts.addControlgroup(lib[i]);}		
 	},
 				
 	toggle:function(){

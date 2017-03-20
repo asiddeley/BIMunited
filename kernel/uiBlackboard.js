@@ -64,6 +64,17 @@ var uiBlackboard={
 	board$:null, //DOM element with jquery wrapper, provided via API and holds all UI
 	div$:null, //DOM element for blackboard, logging user input etc
 	dump$:null, //DOM element for big text dumps
+	getKeywordHandlers:function(){
+		//this.keywords defined here because it can't be defined until BIM.ui.picker is
+		if (this.keywordHandlers==null){ this.keywordHandlers=[
+			{keywords:['bb'], 
+				handler:BIM.ui.blackboard.toggle, 
+				help:'open/close the blackboard'}
+		];}
+		return this.keywordHandlers;
+	},
+	
+	keywordHandlers:null,
 	
 	input:function(command){
 		this.log(command);
@@ -72,7 +83,7 @@ var uiBlackboard={
 		
 		//blackboard responsible for following input 
 		switch (command) {
-			case 'bb':this.board$.toggle();return true; break;
+			case 'bb':this.div$.show();break;
 			case 'bbw':this.logStore=[]; this.log$.html('');break;
 			
 			case 'debug':
@@ -120,6 +131,12 @@ var uiBlackboard={
 	},
 	
 	logStore:[],
+	
+	
+	toggle:function(){
+		if (this.div$.dialog("isOpen")) {this.div$.dialog("close");} 
+		else {this.div$.dialog("open");}
+	},
 	
 	trigger:function(bimEvent, argArray){
 		if (typeof argArray=='undefined'){

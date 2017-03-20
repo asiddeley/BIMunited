@@ -37,7 +37,10 @@ var UIfeatures={
 		var ui=$.extend({}, UIfeatures);
 		ui.div$=$('<div></div>'); 
 		$(board).append(ui.div$);		
-		ui.div$.text('features..').addClass('bimFeatures');
+
+		//use jquery-ui to turn div$ into a floating dialog box
+		ui.div$.dialog({draggable:true, title:'Features', autoOpen:false});
+
 		return ui;
 	},
 	
@@ -64,8 +67,9 @@ var UIfeatures={
 	
 	//function to respond to onPick event triggered by uiPicker
 	onInput:function(ev, input){
-		if ( input=='ff' || input=='features' ){
-			BIM.ui.features.div$.toggle();
+		switch (input){
+			case 'ff':
+			case 'features':BIM.ui.features.toggle();break;
 		} 
 		//BIM.fun.log('uiFeature.onInput '+data);
 	},
@@ -110,6 +114,11 @@ var UIfeatures={
 					this.wCellinit(label, f.valu, f.onChange, part);
 			}		
 		}		
+	},
+	
+	toggle:function(){
+		if (this.div$.dialog("isOpen")) {this.div$.dialog("close");} 
+		else {this.div$.dialog("open");}
 	},
 	
 	////////////////////////

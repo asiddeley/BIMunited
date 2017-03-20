@@ -54,6 +54,13 @@
 	
 }
 
+.bimBorder {
+	border-color:black;
+	border-style:solid;
+	border-width:1px;
+	border-radius:3px;
+}
+
 .bimCell{
 	font-size:12px;
 	font-family:sans-serif;
@@ -127,6 +134,10 @@
 	height:400px;
 	background:silver;
 	color:black; 
+}
+
+.bimFloatleft{
+	float:left;
 }
 
 .ui-dialog {	

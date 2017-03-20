@@ -45,7 +45,7 @@ var uiPicker={
 		}
 		//refresh
 		this.divPick$.text(this.picks.length.toString()); //update board
-		this.tagRegen();
+		//this.tagRegen();
 		//trigger event - note that event is automatically passed as arg1
 		//$.trigger('customEvent', ['arg2', 'arg3'...])
 		BIM.ui.blackboard.trigger('bimPick', [this.picks]);
@@ -84,20 +84,24 @@ var uiPicker={
 	
 	//called by BIM.board when ui's created for use with input autocomplete
 	//called by onInput() below
-	getKeywords:function(){
+	getKeywordHandlers:function(){
 		//this.keywords defined here because it can't be defined until BIM.ui.picker is
-		this.keywords=(this.keywords!=null)?this.keywords:[
-			{keywords:['pp'], fn:BIM.ui.picker.toggle, help:'open the picker dialog'}, 
-			{keywords:['wipe','ppw'], fn:BIM.ui.picker.wipe, help:'clear selection'}, 
+		if (this.keywordHandlers==null){ this.keywordHandlers=[
+			{keywords:['pp'], 
+				handler:BIM.ui.picker.toggle, 
+				help:'open the picker dialog'}, 
+			{keywords:['wipe','ppw'], 
+				handler:BIM.ui.picker.wipe, 
+				help:'clear selection'}, 
 			{keywords:['close','ppx'], 
-				fn:function(){BIM.ui.picker.div$.dialog('close');},
+				handler:function(){BIM.ui.picker.div$.dialog('close');},
 				help:'close the picker dialog'
 			}
-		];
-		return this.keywords;
+		];}
+		return this.keywordHandlers;
 	},
 	
-	keywords:null,
+	keywordHandlers:null,
 	
 	//deprecated
 	last:function(){
@@ -120,7 +124,7 @@ var uiPicker={
 	
 	onFeatureChange:function(ev, part, valu){
 		//BIM.fun.log('picker onFeature '+ part + '-' + valu);
-		BIM.ui.picker.tagRegen();		
+		//BIM.ui.picker.tagRegen();		
 	},
 	
 	onPointerDown:function (evt, pickResult) {

@@ -79,7 +79,7 @@ var MODEL=$.extend( {}, {
 	
 	// override - babylon scene constructor
 	setScene:function( model ){
-		model.worldBox.handler.setScene( model.worldBox );
+		//model.worldBox.handler.setScene( model.worldBox );
 		for (var i=0; i<model.parts.length; i++){
 			model.parts[i].handler.setScene( model.parts[i] );
 		}

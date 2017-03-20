@@ -56,15 +56,20 @@ libParts) {
 var BIM={
 	
 	// The a, b, c, d & e main API methods...
-	admin:function(adminData){
-		$.extend(this.options, {admin:adminData} );
+	admin:function(user, options){
+		user=(typeof user=='undefined')?'admin':user;
+		options=(typeof options == 'undefined')?{}:options;
+		
+		$.extend(this.options, {admin:user}, options);
 	},
 		
-	board:function(div){
+	board:function(div, options){
+		if (typeof div == 'undefined'){div=$('<div></div>').appendTo(window.document.body);}
+		if (typeof options == 'undefined'){options={};}
+		
+		$.extend( this.options, {board:div}, options );		
 
-		$.extend( this.options, {'board':div} );		
-
-		//prime ui is the blackboard		
+		//main ui is the blackboard		
 		this.ui.blackboard=uiBlackboard.create(div);
 		//rest of them
 		this.ui.features=uiFeatures.create(div);
@@ -72,7 +77,7 @@ var BIM={
 		this.ui.parts=uiParts.create(div);
 		
 		//blackboard manages bim events so get and register handlers
-		//to process user input, object picking, part library restocking etc.
+		//that process user input, object picking, part library restocking etc.
 		this.ui.blackboard.addEventHandlers(this.ui.features.getEventHandlers());
 		this.ui.blackboard.addEventHandlers(this.ui.picker.getEventHandlers());
 		this.ui.blackboard.addEventHandlers(this.ui.parts.getEventHandlers());
@@ -82,6 +87,7 @@ var BIM={
 	},
 	
 	canvas:function(canvas){
+		
 		$.extend(this.options, {'canvas':canvas});
 	},
 
@@ -138,7 +144,7 @@ var BIM={
 		},
 		log:function(message) {BIM.ui.blackboard.log(message);},
 		randomPosition:function() {
-			var s=10;//BIM.model.worldBox.size;
+			var s=1000;//BIM.model.worldBox.size;
 			var v=new babylon.Vector3(Math.random()*s,  Math.random()*s, Math.random()*s); 
 			return v;
 		},
@@ -200,7 +206,8 @@ var BIM={
 		board:null,
 		canvas:null,
 		database:null,
-		engine:null 
+		engine:null,
+		
 	},	
 	
 	/*****
