@@ -75,14 +75,15 @@ var BIM={
 		//rest of them
 		this.ui.features=uiFeatures.create(div);
 		this.ui.picker=uiPicker.create(div);
-		this.ui.parts=uiParts.create(div);
+		//this.ui.parts=uiParts.create(div);
+		uiParts.create(div, BIM.ui);
 		
 		//blackboard manages bim events so get and register handlers
 		//that process user input, object picking, part library restocking etc.
 		this.ui.blackboard.addEventHandlers(this.ui.blackboard.getEventHandlers());
 		this.ui.blackboard.addEventHandlers(this.ui.features.getEventHandlers());
 		this.ui.blackboard.addEventHandlers(this.ui.picker.getEventHandlers());
-		this.ui.blackboard.addEventHandlers(this.ui.parts.getEventHandlers());
+		//this.ui.blackboard.addEventHandlers(this.ui.parts.getEventHandlers());
 		
 		//stock the parts ui with items from the parts library
 		this.ui.blackboard.trigger('bimRestock', [this.partsLib]);

@@ -28,20 +28,38 @@ define(
 // then do...
 function($, $$, babylon ){
 
-var uiParts={
+//static 
+var UIPARTS={
+
+	create:function(board, uiStore){
+		// create only one instance of uiPatrs - static
+		// board - the DOM container all ui DOM elements
+		// uiStore - BIM.ui hash to store ui references
+		// var ui=$.extend({}, uiParts);
+		this.div$=$('<div></div>');
+		$(board).append(this.div$);
+		//use jquery-ui to turn div$ into a floating dialog box
+		this.div$.dialog({draggable:true, title:'Parts', autoOpen:false});
+		
+		//return the new and initialized uiParts
+		//return this;
+		BIM.ui.blackboard.addEventHandlers(this.getEventHandlers());
+		uiStore.uiParts=this;	
+	},
 
 	addControlgroup:function(partHandler){
-		var cg$=$('<div></div>');
+		var cg$=$('<div></div>').addClass('ui-widget-content');
 		this.div$.append(cg$);
 		
-		cg$.append($('<button></button>').text(partHandler.bimType+':'));	
-		cg$.addClass('ui-widget-content');
+		//main creater
+		this.addPartCreaterButton(cg$, partHandler.bimType, partHandler.create);
 		
+		//alternate creaters
 		for (var n in partHandler.creaters){
 			this.addPartCreaterButton(cg$, n, partHandler.creaters[n]);
 		};
-		//wigetize cg$, google jquery-ui controlgroup for documentation
-		//items indicates what widgets to apply. 
+
+		//wigetize cg$, google jquery-ui controlgroup for documentation, items indicates what widgets to apply. 
 		cg$.controlgroup({items:{button:'button'}});
 	},
 	
@@ -61,25 +79,13 @@ var uiParts={
 		cg$.append(b$);
 	},
 	
-
-	create:function(board){
-		// board is the container div for all ui's
-		var ui=$.extend({}, uiParts);
-		ui.div$=$('<div></div>');
-		$(board).append(ui.div$);
-		//use jquery-ui to turn div$ into a floating dialog box
-		ui.div$.dialog({draggable:true, title:'Parts', autoOpen:false});
-		//return the new and initialized uiParts
-		return ui;
-	},
-	
 	// DOM container elements with jquery wrapping initialized in create()
 	div$:null, //for dialog
 	
 	getEventHandlers:function(){
 		return { 
-			bimInput:{name:'bimInput',  handler:uiParts.onInput },
-			bimRestock:{name:'bimRestock', handler:uiParts.onRestock }
+			bimInput:{name:'bimInput',  handler:UIPARTS.onInput },
+			bimRestock:{name:'bimRestock', handler:UIPARTS.onRestock }
 		};
 	},
 
@@ -88,39 +94,25 @@ var uiParts={
 		//don't use keyword 'this' here as it will refer to the event caller's context, not uiPicker
 		switch(input){
 		case 'ap':
-		case 'parts': BIM.ui.parts.toggle(); break;
+		case 'parts': UIPARTS.toggle(); break;
 		case 'restock':	BIM.ui.blackboard.trigger('bimRestock', [BIM.partsLib]); break;
 		}		
 	},
 	
-	onRestockOld:function(ev, partsLib){
-		//beware of meaning of keyword 'this' inside event handlers!
-		var ui=BIM.ui.parts;
-		if (ui.menu$==null) {return;} //exit early if not initialized
-		//wipe and reload parts
-		ui.menu$.html(''); 
-		for (var p in partsLib){
-			ui.addCreaters(partsLib[p]);
-		}		
-	},	
-	
 	onRestock:function(ev, lib){
 		//beware of meaning of keyword 'this' inside event handlers!
 		//TODO - remove any existing controlgroup from divs
-
-		
-		for (var i in lib){BIM.ui.parts.addControlgroup(lib[i]);}		
+		for (var i in lib){UIPARTS.addControlgroup(lib[i]);}		
 	},
 				
 	toggle:function(){
 		if (this.div$.dialog("isOpen")) {this.div$.dialog("close");} 
 		else {this.div$.dialog("open");}
 	}
-
 	
 };
 
-return uiParts;
+return UIPARTS;
 
 });
 

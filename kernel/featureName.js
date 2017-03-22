@@ -36,6 +36,7 @@ var NAME = {
 	bimType:'moduleProperty',
 
 	create:function(){return $.extend({}, Name); },
+	
 	getTemplate:function(){ return Name; },
 	onNameChange:function(ev, part, result){ part.name=result;},
 	feature:function(part){ 
