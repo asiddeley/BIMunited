@@ -38,7 +38,7 @@ define(
 'kernel/lightHemi',
 'kernel/viewFree',
 'kernel/tcm',
-'kernel/libParts'],
+'united/uiPartsLibrary'],
 
 // then do this...
 function (Model, 
@@ -147,7 +147,7 @@ var BIM={
 		},
 		log:function(message) {BIM.ui.blackboard.log(message);},
 		randomPosition:function() {
-			var s=1000;//BIM.model.worldBox.size;
+			var s=100;//BIM.model.worldBox.size;
 			var v=new babylon.Vector3(Math.random()*s,  Math.random()*s, Math.random()*s); 
 			return v;
 		},

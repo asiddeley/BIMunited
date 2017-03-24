@@ -26,7 +26,7 @@ define(
 ['jquery', 'jquery-ui','babylon' ],
 
 // then do...
-function($, $$, babylon ){
+function($, $$, babylon, lib ){
 
 //static 
 var UIPARTS={
@@ -45,6 +45,7 @@ var UIPARTS={
 		//return this;
 		BIM.ui.blackboard.addEventHandlers(this.getEventHandlers());
 		uiStore.uiParts=this;	
+		//BIM.ui.blackboard.trigger('bimRestock', [ BIM.partsLib ]);
 	},
 
 	addControlgroup:function(partHandler){

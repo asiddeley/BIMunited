@@ -44,7 +44,9 @@ var View={
 		
 	setScene:function(view){
 		// bim view - babylon camera
-		view.baby=new BABYLON.FreeCamera('free', view.position , window.BIM.scene);
+		//view.baby=new BABYLON.FreeCamera('free', view.position , window.BIM.scene);
+		view.baby = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(0, 0, 0), BIM.scene);
+
         view.baby.setTarget(view.target);
         view.baby.attachControl(canvas, false);	
 		view.baby.bim=view;

@@ -43,8 +43,9 @@ var Light={
 	},
 
 	setScene:function(light){
-		light.baby=new BABYLON.HemisphericLight('hemi', light.position, BIM.scene);
+		light.baby=new BABYLON.HemisphericLight('hemiTop', light.position, BIM.scene);
 		light.baby.bim=light;
+		new BABYLON.HemisphericLight('hemiBottom', new BABYLON.Vector3(10,10,10), BIM.scene);
 	},
 	
 	type:'lightHemi'	
@@ -54,7 +55,7 @@ var Light={
 var light = {
 	baby:null, //babylon entity
 	handler:Light,
-	position:new BABYLON.Vector3(0,1,0)
+	position:new BABYLON.Vector3(0,0,0)
 };
 
 return Light;

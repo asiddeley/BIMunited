@@ -15,11 +15,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	
-	project:	BIM united FC (Framework Concept)
-	module: 	cube
+	project:	BIM united FC (Function Collection)
+	module: 	voxel
 	desc: 
 	author: 	Andrew Siddeley 
-	started:	27-Feb-2017
+	started:	24-Mar-2017
 	
 ****************************************************************/
 define(
@@ -34,60 +34,65 @@ var TEX={};
 	
 // Construct CUBE handler or hash of static methods - each method requires cube data as arguement except create().
 // cube has position and material features.
-var CUBE = $.extend( {}, NAM, POS, TEX, {
+var VOXEL = $.extend( {}, NAM, POS, TEX, {
 
 	bimSuperType:null, 
-	bimType:'cube',
+	bimType:'voxel',
 	
 	// Constructor
-	create:function(userData){ return $.extend( {}, Cube, userData ); },
- 	
-	// Constructors with various argument presets - demonstrators
-	creaters:{
-		basic:function(){ return CUBE.create();},
-		random:function(){ return CUBE.create( { 
-			position:BIM.fun.randomPosition(),  
-			size:Math.random()*10
-		});}
+	create:function(userData){ 
+
+		var m=new babylon.StandardMaterial("voxelTexture", BIM.scene);
+		m.diffuseTexture = new babylon.Texture("textures/voxelTextures.png", BIM.scene);
+		
+		//rotate faces as required to make good -- tricky with sprites as whole atlas rotates
+		//m.diffuseTexture.uAng=Math.PI;
+		//m.diffuseTexture.vAng=0;
+		//m.diffuseTexture.wAng=Math.PI*2;
+
+		m.uScale=1.0;
+		m.vScale=1.0;
+		m.backFaceCulling=true;
+
+		var options={
+			width:10,
+			height:10,
+			depth:10,
+			faceUV:[
+				//face order: z+, z-, x+. x-, y+, y-
+				//BABYLON.Vector4(uLL, vLL, uUR, vUR)
+				new BABYLON.Vector4(9/16, 3/16, 8/16, 2/16), 
+				new BABYLON.Vector4(8/16, 2/16, 9/16, 3/16), //note flip uUR, vUR, uLL, vLL
+				
+				new BABYLON.Vector4(9/16, 2/16, 10/16, 3/16),
+				new BABYLON.Vector4(9/16, 2/16, 10/16, 3/16),
+
+				new BABYLON.Vector4(11/16, 2/16, 12/16, 3/16), //grass top		
+				new BABYLON.Vector4(10/16, 2/16, 11/16, 3/16), //dirt bottom		
+			]
+		};		
+		var v=BABYLON.MeshBuilder.CreateBox('voxel', options, BIM.scene);
+		var s=10;
+		v.position=new babylon.Vector3(
+			10*Math.floor(Math.random()*s), 
+			10*Math.floor(Math.random()*s), 
+			10*Math.floor(Math.random()*s)); 
+		v.material=m;	
 	},
 
-	getFeatures:function(part){ return $.extend( 
-		NAM.feature(part), 
-		POS.feature(part)
+	creaters:{},
+
+	getFeatures:function(mesh){ return $.extend( 
+		NAM.feature(mesh), 
+		POS.feature(mesh)
 		//TEX.feature(part), 
 		//SIDE.feature(part) 
 	);},
 
-	// babylon scene constructor
-	setScene:function(cube){
-		
-		cube.baby = babylon.Mesh.CreateBox(	
-			cube.name, 
-			cube.size,
-			BIM.scene
-		);
 
-		cube.baby.bim=cube;
-		cube.baby.position=cube.position; 
-	}
-
-	
 }); 
 
-// Cube template
-var Cube=$.extend( {}, 
-	NAM.getTemplate(),
-	POS.getTemplate(),
-	{ 
-		updatable:true,
-		size:1,
-		faceMode:babylon.Mesh.DEFAULTSIDE,	//scene.babylon.Mesh.DEFAULTSIDE},
-		//TEX.create(),
-		//SIDE.create(),
-		handler:CUBE //last so it overrides handlers if accidentally defined in features
-	} 	
-);
 
-return CUBE;
+return VOXEL;
 
 });
