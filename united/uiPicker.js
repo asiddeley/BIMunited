@@ -31,6 +31,22 @@ function($, $$, babylon, babylon2D ){
 
 var uiPicker={
 	
+	create:function(board, uiStore){
+		// create only one instance of this ui - static
+		// board - the DOM container all ui DOM elements
+		// uiStore - BIM.ui hash to store ui references
+		this.div$=$('<div></div>');
+		$(board).append(this.div$);		
+
+		this.divPick$=$('<div></div>').text('picked items:0');
+		this.divMode$=$('<div></div>').text('pick mode:many');
+		this.div$.append(this.divPick$, this.divMode$);		
+		this.div$.dialog({draggable:true, title:'picker', autoOpen:true});
+
+		BIM.ui.uiBlackboard.addEventHandlers(this.getEventHandlers());
+		uiStore.uiPicker=this;
+	},
+	
 	add:function( part ){ 
 		if (this.pickMode=="many|ONE"){this.picks=[];}
 		//if part not in pick list...
@@ -48,21 +64,10 @@ var uiPicker={
 		//this.tagRegen();
 		//trigger event - note that event is automatically passed as arg1
 		//$.trigger('customEvent', ['arg2', 'arg3'...])
-		BIM.ui.blackboard.trigger('bimPick', [this.picks]);
+		BIM.ui.uiBlackboard.trigger('bimPick', [this.picks]);
 	},
 
-	create:function(board){
-		// create a new copy (of uiPicker template) and initialize
-		var ui=$.extend({}, uiPicker);
-		ui.div$=$('<div></div>');
-		$(board).append(ui.div$);		
 
-		ui.divPick$=$('<div></div>').text('picked items:0');
-		ui.divMode$=$('<div></div>').text('pick mode:many');//.addClass('bimCell');
-		ui.div$.append(ui.divPick$, ui.divMode$);		
-		ui.div$.dialog({draggable:true, title:'picker', autoOpen:false});
-		return ui;
-	},
 	
 	canvas2D:null, //initialized in start() by which time BIM.scene is initialized 
 	
@@ -78,7 +83,8 @@ var uiPicker={
 	getEventHandlers:function(){
 		return { 
 			bimFeatureChange:{name:'bimFeatureChange',  handler:uiPicker.onFeatureChange },
-			bimInput:{name:'bimInput',  handler:uiPicker.onInput }
+			bimInput:{name:'bimInput',  handler:uiPicker.onInput },
+			bimPick:{}
 		};
 	},
 	
@@ -88,13 +94,13 @@ var uiPicker={
 		//this.keywords defined here because it can't be defined until BIM.ui.picker is
 		if (this.keywordHandlers==null){ this.keywordHandlers=[
 			{keywords:['pp'], 
-				handler:BIM.ui.picker.toggle, 
+				handler:BIM.ui.uiPicker.toggle, 
 				help:'open the picker dialog'}, 
 			{keywords:['wipe','ppw'], 
-				handler:BIM.ui.picker.wipe, 
+				handler:BIM.ui.uiPicker.wipe, 
 				help:'clear selection'}, 
 			{keywords:['close','ppx'], 
-				handler:function(){BIM.ui.picker.div$.dialog('close');},
+				handler:function(){BIM.ui.uiPicker.div$.dialog('close');},
 				help:'close the picker dialog'
 			}
 		];}
@@ -115,9 +121,9 @@ var uiPicker={
 		//because 'this' will refer to the event caller's context, not uiPicker
 		switch (input) {
 			case 'pick':
-			case 'pp':  BIM.ui.picker.toggle(); break;
-			case 'ppw': BIM.ui.picker.wipe(); break;
-			case 'ppx':	BIM.ui.picker.div$.dialog('close');
+			case 'pp':  BIM.ui.uiPicker.toggle(); break;
+			case 'ppw': BIM.ui.uiPicker.wipe(); break;
+			case 'ppx':	BIM.ui.uiPicker.div$.dialog('close');
 		};
 		
 	},
@@ -130,10 +136,12 @@ var uiPicker={
 	onPointerDown:function (evt, pickResult) {
 		if (pickResult.hit) {
 			if (pickResult.pickedMesh != null) {
-				if (typeof pickResult.pickedMesh.bim == "undefined"){
+				if (typeof pickResult.pickedMesh.bimHandler == "undefined"){
 					BIM.fun.log("Mesh has no BIM features");
 				} else {
-					BIM.ui.picker.add(pickResult.pickedMesh.bim);
+					BIM.get.cMesh(pickResult.pickedMesh); //set cMech to pick
+					BIM.input("_meshPicked"); //announce it to all uis
+					//BIM.ui.picker.add(pickResult.pickedMesh.bimHandler);
 				}				
 			}
 		}
@@ -225,10 +233,14 @@ var uiPicker={
 	},
 	
 	toggle:function(){
-		if (this.div$.dialog("isOpen")) {	this.div$.dialog("close");	} 
+		if (this.div$.dialog("isOpen")) {	
+			this.div$.dialog("close");	
+			//this.stop();
+		} 
 		else {
 			//div$.dialog("open") is done inside start()
 			this.div$.dialog('open');
+			this.start();
 		};
 	},
 	

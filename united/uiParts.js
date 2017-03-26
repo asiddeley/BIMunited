@@ -32,20 +32,16 @@ function($, $$, babylon, lib ){
 var UIPARTS={
 
 	create:function(board, uiStore){
-		// create only one instance of uiPatrs - static
+		// create only one instance of this ui - static
 		// board - the DOM container all ui DOM elements
 		// uiStore - BIM.ui hash to store ui references
-		// var ui=$.extend({}, uiParts);
 		this.div$=$('<div></div>');
 		$(board).append(this.div$);
 		//use jquery-ui to turn div$ into a floating dialog box
-		this.div$.dialog({draggable:true, title:'Parts', autoOpen:false});
-		
-		//return the new and initialized uiParts
-		//return this;
-		BIM.ui.blackboard.addEventHandlers(this.getEventHandlers());
+		this.div$.dialog({draggable:true, title:'Parts', autoOpen:true});
+		BIM.ui.uiBlackboard.addEventHandlers(this.getEventHandlers());
 		uiStore.uiParts=this;	
-		//BIM.ui.blackboard.trigger('bimRestock', [ BIM.partsLib ]);
+		BIM.input('restock'); //this.onRestock(null, BIM.partsLib);
 	},
 
 	addControlgroup:function(partHandler){
@@ -69,11 +65,10 @@ var UIPARTS={
 		//fn - creater function of part
 		//cg$ - jquery wrapped element to contain buttons
 		var onClick=function(ev){ 
-			var p=fn(); //call creater to make new part p
-			var m=BIM.get.activeModel(); //model to put part
-			m.handler.addPart(m, p); //add new part to model
-			//pick new part and show its features for convenience
-			BIM.ui.picker.start().wipe().add(p); 
+			//eval creater function fn, and set cMesh to is (current Mesh).
+			BIM.get.cMesh(fn()); 
+			//message to uiFeatures to expose new mesh features
+			BIM.input('_meshAdded'); 		
 		};
 		var b$=$('<button></button>').text(n); //.addClass('bimButton');
 		b$.on('click', onClick);
@@ -96,7 +91,7 @@ var UIPARTS={
 		switch(input){
 		case 'ap':
 		case 'parts': UIPARTS.toggle(); break;
-		case 'restock':	BIM.ui.blackboard.trigger('bimRestock', [BIM.partsLib]); break;
+		case 'restock':	BIM.ui.uiBlackboard.trigger('bimRestock', [BIM.partsLib]); break;
 		}		
 	},
 	

@@ -28,40 +28,26 @@ define(
 function(BABYLON, $){
 
 // view handler methods...
-var View={
+var ArcRotateCamera={
 	
 	create:function(udata){
-		return $.extend({}, view, udata);
-		},
-
-	demo:function(num){
-		var that=this;
-		switch(num){
-			case 1: return that.create({name:'free'}); break;
-			default: return that.create({name:'free'});					
-		}
-	},
-		
-	setScene:function(view){
-		// bim view - babylon camera
+		//return $.extend({}, view, udata);
 		//view.baby=new BABYLON.FreeCamera('free', view.position , window.BIM.scene);
-		view.baby = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(0, 0, 0), BIM.scene);
-
-        view.baby.setTarget(view.target);
-        view.baby.attachControl(canvas, false);	
-		view.baby.bim=view;
+		//new ArcRotateCamera(name, alpha, beta, radius, target, scene)
+		var cam = new BABYLON.ArcRotateCamera(
+			"ArcRotateCamera", //name
+			1, //alpha
+			0.8, //beta
+			100, //radius
+			new BABYLON.Vector3(0, 0, 0), //target
+			BIM.scene
+		);
+		
+        //cam.setTarget(new BABYLON.Vector3.Zero());
+        cam.attachControl(BIM.options.canvas, false);	
+		cam.bimHandler=ArcRotateCamera;
+		return cam;
 	},
-	
-	type:'viewFree'	
 }
-
-// view properties
-var view = {
-	baby:null, //babylon entity
-	handler:View,
-	position:new BABYLON.Vector3(10, 50,-50),
-	target:new BABYLON.Vector3.Zero()
-};
-
-return View;
+return ArcRotateCamera;
 });

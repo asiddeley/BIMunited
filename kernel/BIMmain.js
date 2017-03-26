@@ -12,8 +12,11 @@ requirejs.config({
 "baseUrl": "javascript/",
 
 "paths": {
-	"arch": "../Arch",
+	"arch":"../Arch",
+	"cameras": "../cameras",
+	"handlers":"../handlers",
 	"kernel": "../kernel",
+	"lights": "../lights",
 	"united":"../united",
 	//"jq": "jquery",
 	//"jq": "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min",
@@ -35,8 +38,8 @@ define(
 'united/uiParts',
 'united/uiPicker',
 'united/uiFeatures',
-'kernel/lightHemi',
-'kernel/viewFree',
+'lights/hemi',
+'cameras/arcRotateCamera',
 'kernel/tcm',
 'united/uiPartsLibrary'],
 
@@ -49,9 +52,9 @@ uiParts,
 uiPicker, 
 uiFeatures, 
 Light, 
-View, 
+arcRotateCamera, 
 TCM, 
-libParts) {
+partsLibrary) {
 
 // construct library object for return
 var BIM={
@@ -71,22 +74,10 @@ var BIM={
 		$.extend( this.options, {board:div}, options );		
 
 		//main ui is the blackboard		
-		this.ui.blackboard=uiBlackboard.create(div);
-		//rest of them
-		this.ui.features=uiFeatures.create(div);
-		this.ui.picker=uiPicker.create(div);
-		//this.ui.parts=uiParts.create(div);
+		uiBlackboard.create(div, BIM.ui);
+		uiFeatures.create(div, BIM.ui);		
+		uiPicker.create(div, BIM.ui);
 		uiParts.create(div, BIM.ui);
-		
-		//blackboard manages bim events so get and register handlers
-		//that process user input, object picking, part library restocking etc.
-		this.ui.blackboard.addEventHandlers(this.ui.blackboard.getEventHandlers());
-		this.ui.blackboard.addEventHandlers(this.ui.features.getEventHandlers());
-		this.ui.blackboard.addEventHandlers(this.ui.picker.getEventHandlers());
-		//this.ui.blackboard.addEventHandlers(this.ui.parts.getEventHandlers());
-		
-		//stock the parts ui with items from the parts library
-		this.ui.blackboard.trigger('bimRestock', [this.partsLib]);
 	},
 	
 	canvas:function(canvas){
@@ -129,7 +120,8 @@ var BIM={
 		}
 		
 		// initialize view-camera in scene
-		this.viewLib.main.handler.setScene(this.viewLib.main);
+		//this.viewLib.main.handler.setScene(this.viewLib.main);
+		this.views.main.create();
 		
 		// This is a cool Babylon feature
 		//s.debugLayer.show();
@@ -141,15 +133,21 @@ var BIM={
 	
 	// function store 
 	fun:{
+		addEventHandlers:function(eh){
+			BIM.ui.uiBlackboard.addEventHandlers(eh);			
+		},
 		autoHeight:function(el){
 			// grows textarea fit text - useful for typing in a small textarea 
 			$(el).css('height','auto').css('height', el.scrollHeight+5);		
 		},
-		log:function(message) {BIM.ui.blackboard.log(message);},
+		log:function(message) {BIM.ui.uiBlackboard.log(message);},
 		randomPosition:function() {
 			var s=100;//BIM.model.worldBox.size;
 			var v=new babylon.Vector3(Math.random()*s,  Math.random()*s, Math.random()*s); 
 			return v;
+		},
+		trigger:function(ev, data){
+			BIM.ui.uiBlackboard.div$.trigger(ev, data);
 		},
 		uid:function(name){
 			//Returns a simple unique id string based on a given name and
@@ -174,11 +172,18 @@ var BIM={
 			return this.activeModelObj;	
 		},
 		activeModelObj:null,
+		
+		//gets or sets current mesh - newly created or picked
+		cMesh:function(cm){
+			if(typeof cm!='undefined') {this.cMeshObj=cm;}
+			else {return this.cMeshObj};	
+		},
+		cMeshObj:null,
+		
 		bb:function(){ return BIM.ui.blackboard;},
 		canvas:function() {return BIM.options.canvas;},	
 		scene: function() {return BIM.scene;},
-		uid: function(name) {return BIM.fun.uid(name);},
-		uipb:function() {return BIM.ui.propertyboard;}
+		uid: function(name) {return BIM.fun.uid(name);}
 	},
 
 	help:function(input){
@@ -186,7 +191,7 @@ var BIM={
 	},
 	
 	//main method for user interaction
-	input:function(input){return this.ui.blackboard.trigger('bimInput', input);},
+	input:function(input){return this.ui.uiBlackboard.trigger('bimInput', input);},
 	
 	//Reserved
 	j:null,
@@ -197,6 +202,7 @@ var BIM={
 	// main light
 	light:Light.demo(1),
 	
+	// DEPRICATED, use scene instead
 	// main model - this is the entry point for the scene 
 	model:Model.creaters.demo(),
 	
@@ -219,7 +225,7 @@ var BIM={
 	All items must have setScene function ie. sceneable with the babylon engine
 	******/
 	//parts library 
-	partsLib:libParts,
+	partsLib:partsLibrary,
 	
 	//Reserved
 	q:null,
@@ -234,16 +240,10 @@ var BIM={
 	tcmLib:TCM.stdLib(),
 	
 	//User interfaces, initialized by this.board()
-	ui:{
-		blackboard:{}, 
-		features:{},
-		log:function(msg){BIM.ui.blackboard.log(msg);},
-		parts:{},
-		picker:{}
-	},
+	ui:{},
 	
 	//View library, A view is the BIM analog to babylon camera
-	viewLib:{main:View.demo()},
+	views:{main:arcRotateCamera},
 	
 	//Worldbox Library.  
 	//A worldbox contains information about a model's bounds, units, and yonder ie sky box and ground

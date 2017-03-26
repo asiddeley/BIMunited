@@ -33,38 +33,34 @@ function($, BJS){
 
 var uiBlackboard={
 
+	create:function(board, uiStore){
+		// create a blackboard and initialize
+		//var ui=$.extend({}, uiBlackboard);
+		this.board$=$(board, uiStore);
+		//jquery wrapped DOM element for blackboard
+		this.div$=$('<div></div>');
+		this.board$.append(this.div$);
+		//use jquery-ui to turn div$ into a floating dialog box
+		this.div$.dialog({draggable:true, title:'Blackboard', autoOpen:true});
+		//jquery wrapped DOM element for displaying messages
+		this.log$=$('<div></div>');
+		this.div$.append(this.log$);
+		
+		//jquery wrapped DOM element for scene dumps
+		this.dump$=$('<div></div>').css('max-height', '300px');
+		this.div$.append(this.dump$);
+		this.dump$.hide();	
+		
+		uiStore.uiBlackboard=this;
+		this.addEventHandlers(this.getEventHandlers());
+	},
+	
 	addEventHandlers:function(ee){
 		for (var n in ee){
 			//add custom bim events to blackboard with jquery 
 			this.div$.on(n, ee[n].handler);
 		}
-	},
-	
-	create:function(board){
-		// create a blackboard and initialize
-		var ui=$.extend({}, uiBlackboard);
-		ui.board$=$(board);
-		//jquery wrapped DOM element for blackboard
-		ui.div$=$('<div></div>');
-		ui.board$.append(ui.div$);
-		//use jquery-ui to turn div$ into a floating dialog box
-		ui.div$.dialog({draggable:true, title:'Blackboard', autoOpen:true});
-		
-		
-		//ui.div$.text('blackboard'); //.addClass('bimBlackboard');
-		//jquery wrapped DOM element for displaying messages
-		ui.log$=$('<div></div>');
-		ui.div$.append(ui.log$);
-		
-		//jquery wrapped DOM element for scene dumps
-		ui.dump$=$('<div></div>').css('max-height', '300px');
-		ui.div$.append(ui.dump$);
-	
-		ui.dump$.text('DUMP:');//.addClass('bimDump');
-		ui.dump$.hide();
-		
-		return ui;
-	},
+	},	
 	
 	board$:null, //DOM element with jquery wrapper, provided via API and holds all UI
 	div$:null, //DOM element for blackboard, logging user input etc
@@ -75,7 +71,7 @@ var uiBlackboard={
 		//it can't be defined until uiBlackboard is intanciated
 		if (this.keywordHandlers==null){ this.keywordHandlers=[
 			{keywords:['bb'], 
-				handler:BIM.ui.blackboard.toggle, 
+				handler:BIM.ui.uiBlackboard.toggle, 
 				help:'open/close the blackboard'}
 		];}
 		return this.keywordHandlers;
@@ -89,39 +85,32 @@ var uiBlackboard={
 	keywordHandlers:null,
 	
 	onInput:function(ev, input){
-		BIM.ui.blackboard.log(input);
+		BIM.ui.uiBlackboard.log(input);
 		//call others to process input 
 		//this.div$.trigger('bimInput', [command]);
 		
 		//blackboard responsible for following input 
 		switch (input) {
-			case 'bb':BIM.ui.blackboard.toggle();break;
-			case 'bbw':BIM.ui.blackboard.logStore=[]; this.log$.html('');break;
-			
-			case 'debug':
-				BIM.scene.debugLayer.shouldDisplayLabel=function(node){return true;}
-				BIM.scene.debugLayer.shouldDisplayAxis=function(mesh){return true;}
-				BIM.scene.debugLayer.show();
-				break;
-			case 'debugx':BIM.scene.debugLayer.hide();break;
-			
+			case 'bb':BIM.ui.uiBlackboard.toggle();break;
+			case 'bbw':BIM.ui.uiBlackboard.logStore=[]; this.log$.html('');break;
+			case 'debug':BIM.ui.uiBlackboard.toggleDebug();break;
 			//dump scene
 			case 'dump':
 				var s=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene) );
-				BIM.ui.blackboard.dump$.show().text(s);
+				BIM.ui.uiBlackboard.dump$.show().text(s);
 				break;
 			//dump scene Geometry
 			case 'dumpg':
 				var g=BJS.SceneSerializer.Serialize(BIM.scene).geometries;
-				BIM.ui.blackboard.dump$.show().text(JSON.stringify(g));
+				BIM.ui.uiBlackboard.dump$.show().text(JSON.stringify(g));
 				break;
 			//dump scene Meshes
 			case 'dumpm':
 				var m=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene).meshes);
-				BIM.ui.blackboard.dump$.show().text(m);
+				BIM.ui.uiBlackboard.dump$.show().text(m);
 				break;
 			//Close dump dialog
-			case 'dumpx':BIM.ui.blackboard.dump$.hide();break;
+			case 'dumpx':BIM.ui.uiBlackboard.dump$.hide();break;
 		
 		};
 	},	
@@ -149,6 +138,19 @@ var uiBlackboard={
 		if (this.div$.dialog("isOpen")) {this.div$.dialog("close");} 
 		else {this.div$.dialog("open");}
 	},
+	
+	toggleDebug:function(){
+		if (!this.toggleDebugB) {
+			BIM.scene.debugLayer.shouldDisplayLabel=function(node){return true;}
+			BIM.scene.debugLayer.shouldDisplayAxis=function(mesh){return true;}
+			BIM.scene.debugLayer.show();			
+			this.toggleDebugB=true;
+		} else {
+			BIM.scene.debugLayer.hide();			
+			this.toggleDebugB=false;
+		};
+	},
+	toggleDebugB:false,
 	
 	trigger:function(bimEvent, argArray){
 		if (typeof argArray=='undefined'){

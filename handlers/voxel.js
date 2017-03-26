@@ -28,69 +28,68 @@ define(
 ['babylon', 'jquery', 'kernel/featureName', 'kernel/featurePosition'],
 
 // then do...
-function(babylon, $, NAM, POS){
-	
-var TEX={};
-	
-// Construct CUBE handler or hash of static methods - each method requires cube data as arguement except create().
-// cube has position and material features.
-var VOXEL = $.extend( {}, NAM, POS, TEX, {
+function(babylon, $, name, position){
+
+var VOXEL = {
 
 	bimSuperType:null, 
-	bimType:'voxel',
+	bimType:'Voxel',
 	
 	// Constructor
 	create:function(userData){ 
 
 		var m=new babylon.StandardMaterial("voxelTexture", BIM.scene);
 		m.diffuseTexture = new babylon.Texture("textures/voxelTextures.png", BIM.scene);
-		
-		//rotate faces as required to make good -- tricky with sprites as whole atlas rotates
-		//m.diffuseTexture.uAng=Math.PI;
-		//m.diffuseTexture.vAng=0;
-		//m.diffuseTexture.wAng=Math.PI*2;
-
 		m.uScale=1.0;
 		m.vScale=1.0;
-		m.backFaceCulling=true;
+		//m.backFaceCulling=true;
 
 		var options={
 			width:10,
 			height:10,
 			depth:10,
 			faceUV:[
-				//face order: z+, z-, x+. x-, y+, y-
+				//faceUV order is: z+, z-, x+. x-, y+, y-
 				//BABYLON.Vector4(uLL, vLL, uUR, vUR)
-				new BABYLON.Vector4(9/16, 3/16, 8/16, 2/16), 
+				new BABYLON.Vector4(9/16, 3/16, 8/16, 2/16), //sides
 				new BABYLON.Vector4(8/16, 2/16, 9/16, 3/16), //note flip uUR, vUR, uLL, vLL
-				
 				new BABYLON.Vector4(9/16, 2/16, 10/16, 3/16),
 				new BABYLON.Vector4(9/16, 2/16, 10/16, 3/16),
-
 				new BABYLON.Vector4(11/16, 2/16, 12/16, 3/16), //grass top		
 				new BABYLON.Vector4(10/16, 2/16, 11/16, 3/16), //dirt bottom		
 			]
 		};		
-		var v=BABYLON.MeshBuilder.CreateBox('voxel', options, BIM.scene);
-		var s=10;
+		var v=BABYLON.MeshBuilder.CreateBox('Voxel', options, BIM.scene);
 		v.position=new babylon.Vector3(
-			10*Math.floor(Math.random()*s), 
-			10*Math.floor(Math.random()*s), 
-			10*Math.floor(Math.random()*s)); 
+			10*Math.floor(Math.random()*10), 
+			10*Math.floor(Math.random()*10), 
+			10*Math.floor(Math.random()*10)); 
 		v.material=m;	
+		
+		//add bim features to babylon mesh object
+		v.bimHandler=VOXEL;
+		
+		//return new mesh added to scene
+		return v;
 	},
 
 	creaters:{},
 
-	getFeatures:function(mesh){ return $.extend( 
-		NAM.feature(mesh), 
-		POS.feature(mesh)
-		//TEX.feature(part), 
-		//SIDE.feature(part) 
-	);},
+	getFeatures:function(mesh){
+		//Returns a fresh hash of features:
+		//{name:{feature}, position:{feature}...}
+		//A feature is a hash scoped to a particular mesh like this:
+		//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
+		return $.extend(
+			{},
+			name.getFeature(mesh), 
+			//position.getFeature(mesh),
+			//material.getFeatures(mesh),
+		);
+	}
 
 
-}); 
+}; 
 
 
 return VOXEL;

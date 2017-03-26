@@ -25,14 +25,13 @@
 
 define(
 // load dependencies...
-['kernel/partSphere', 'kernel/cube', 'kernel/voxel'],
+['kernel/partSphere', 'handlers/voxel'],
 
 // then do...
-function(s, c, v){
+function(s, v){
 	
 // hash of parts for this library
 return {
-	Cube:c,
 	Sphere:s,
 	Voxel:v
 

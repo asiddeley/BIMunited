@@ -6,9 +6,9 @@ Andrew Siddeley
 16-Mar-2017
 
 ## BIM United FC is
-* Designed for use in Architecture, Buildings, Construction, Design and Engineering
-* Provides means for administrating, browsing, creating, databasing (locally or externally) and editing a babylon scene 
-* Written in javascript and built around the Babylon JS library
+* Building Informarion Modelling, designed for use in Architecture, Building, Construction, Design and Engineering
+* Provides for administrating, browsing, creating, databasing (locally or externally) and editing a babylon scene 
+* Written in javascript and built on the excellent Babylon 3D gaming engine.
 * Extends scene and mesh objects with a rich variety of powerful functions
 * Project is versioned with Git and on maintained on GitHub
 
@@ -23,9 +23,9 @@ mongodb|non SQL database for local storage
 require|module management of project
 
 ## Analogues
-<table><tr><td>BIM</td><td>Babylon</td></tr> |
+<table><tr><td>BIM</td><td>Babylon</td></tr></table>
 --- | ---
-model| scene
+| model | scene |
 part | mesh (with added bim handler)
 tool | actionManager
 ui   | debug layer

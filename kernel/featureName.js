@@ -25,35 +25,32 @@
 
 define(
 // load dependencies...
-['babylon', 'jquery', 'kernel/window'],
+['united/uiFeatureText'],
 
 // then construct part object...
-function(babylon, $, win){
-
-//construct handler. static functions require part as input
-var NAME = {
-	bimSuperType:null,
-	bimType:'moduleProperty',
-
-	create:function(){return $.extend({}, Name); },
+function(uiFeatureText){
 	
-	getTemplate:function(){ return Name; },
-	onNameChange:function(ev, part, result){ part.name=result;},
-	feature:function(part){ 
-		return { name:{
-			valu:part.name, 
-			onChange:NAME.onNameChange,
-			widget:'text',
-			//onEdit:uiText, //instead of widget
-			onEditOK:NAME.onNameChange //instead of onChange
-		}};
+return {
+	
+	//Returns a name feature, scoped to a particular mesh
+	//A feature is a hash used by uiFeatures to edit and update babylon mesh properties
+	//and looks like this...
+	//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
+	getFeature:function(mesh){ 
+		return { 
+			name:{
+				label:'Name',
+				valu:mesh.name, 
+				onFeatureChange:function(result){ 
+					mesh.name=result;
+				},
+				//editor:uiFeatureTextarea
+				editor:uiFeatureText
+			}
+		};
 	}
-};
+}
 
-var Name = {name:'unnamed' };
-
-
-return NAME;
 });
 
 
