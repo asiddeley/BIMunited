@@ -32,7 +32,7 @@ function(s, v){
 	
 // hash of parts for this library
 return {
-	Sphere:s,
+	//Sphere:s,
 	Voxel:v
 
 	//insert:i (instance, modelRef, ref, xref)

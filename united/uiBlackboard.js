@@ -32,6 +32,8 @@ function($, BJS){
 
 
 var uiBlackboard={
+	
+	bimType:'Blackboard',
 
 	create:function(board, uiStore){
 		// create a blackboard and initialize
@@ -40,19 +42,21 @@ var uiBlackboard={
 		//jquery wrapped DOM element for blackboard
 		this.div$=$('<div></div>');
 		this.board$.append(this.div$);
-		//use jquery-ui to turn div$ into a floating dialog box
-		this.div$.dialog({draggable:true, title:'Blackboard', autoOpen:true});
 		//jquery wrapped DOM element for displaying messages
 		this.log$=$('<div></div>');
 		this.div$.append(this.log$);
 		
 		//jquery wrapped DOM element for scene dumps
-		this.dump$=$('<div></div>').css('max-height', '300px');
+		this.dump$=$('<div></div>').css('max-height', '200px');
 		this.div$.append(this.dump$);
 		this.dump$.hide();	
 		
+		//use jquery-ui to turn div$ into a floating dialog box
+		//this.div$.dialog({draggable:true, title:this.bimType, autoOpen:true});
+
 		uiStore.uiBlackboard=this;
 		this.addEventHandlers(this.getEventHandlers());
+		return this;
 	},
 	
 	addEventHandlers:function(ee){
@@ -92,7 +96,10 @@ var uiBlackboard={
 		//blackboard responsible for following input 
 		switch (input) {
 			case 'bb':BIM.ui.uiBlackboard.toggle();break;
-			case 'bbw':BIM.ui.uiBlackboard.logStore=[]; this.log$.html('');break;
+			case 'bbw':
+				BIM.ui.uiBlackboard.logStore=[];
+				BIM.ui.uiBlackboard.log$.html('');
+				break;
 			case 'debug':BIM.ui.uiBlackboard.toggleDebug();break;
 			//dump scene
 			case 'dump':

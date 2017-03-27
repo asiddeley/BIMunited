@@ -40,7 +40,7 @@ var uiFeatureText={
 		
 		ui.divLabel$=$('<span></span>').addClass('ui-widget-content');
 		ui.divText$=$('<input type="text"></input>').addClass('ui-widget-content');
-		ui.divOK$=$('<button></button>').addClass('ui-icon ui-icon-check');
+		ui.divOK$=$('<span>ok</span>').button();//.addClass('ui-icon ui-icon-check');
 		ui.divOK$.on('click', ui, function(ev){
 			//note how ui (or keyword 'this') is passed to event handler via ev.data...
 			//trigger event and pass revised text as argument

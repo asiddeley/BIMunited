@@ -31,17 +31,22 @@ function($, $$, babylon, lib ){
 //static 
 var UIPARTS={
 
+	bimType:'Parts',
+	
 	create:function(board, uiStore){
 		// create only one instance of this ui - static
 		// board - the DOM container all ui DOM elements
 		// uiStore - BIM.ui hash to store ui references
 		this.div$=$('<div></div>');
 		$(board).append(this.div$);
+		
 		//use jquery-ui to turn div$ into a floating dialog box
-		this.div$.dialog({draggable:true, title:'Parts', autoOpen:true});
+		//this.div$.dialog({draggable:true, title:this.bimType, autoOpen:true});
+		
 		BIM.ui.uiBlackboard.addEventHandlers(this.getEventHandlers());
 		uiStore.uiParts=this;	
 		BIM.input('restock'); //this.onRestock(null, BIM.partsLib);
+		return this;
 	},
 
 	addControlgroup:function(partHandler){
@@ -70,7 +75,7 @@ var UIPARTS={
 			//message to uiFeatures to expose new mesh features
 			BIM.input('_meshAdded'); 		
 		};
-		var b$=$('<button></button>').text(n); //.addClass('bimButton');
+		var b$=$('<button></button>').addClass('ui-widget-content').text(n); 
 		b$.on('click', onClick);
 		cg$.append(b$);
 	},

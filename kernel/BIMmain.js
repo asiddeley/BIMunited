@@ -38,6 +38,7 @@ define(
 'united/uiParts',
 'united/uiPicker',
 'united/uiFeatures',
+'united/uiDashboard',
 'lights/hemi',
 'cameras/arcRotateCamera',
 'kernel/tcm',
@@ -51,6 +52,7 @@ uiBlackboard,
 uiParts, 
 uiPicker, 
 uiFeatures, 
+uiDashboard,
 Light, 
 arcRotateCamera, 
 TCM, 
@@ -71,13 +73,14 @@ var BIM={
 		if (typeof div == 'undefined'){div=$('<div></div>').appendTo(window.document.body);}
 		if (typeof options == 'undefined'){options={};}
 		
-		$.extend( this.options, {board:div}, options );		
-
-		//main ui is the blackboard		
-		uiBlackboard.create(div, BIM.ui);
-		uiFeatures.create(div, BIM.ui);		
-		uiPicker.create(div, BIM.ui);
-		uiParts.create(div, BIM.ui);
+		$.extend( this.options, {board:div}, options );	
+		
+		uiDashboard.create(div, [
+			uiBlackboard.create(div, BIM.ui), //needs to be created first
+			uiParts.create(div, BIM.ui),			
+			uiFeatures.create(div, BIM.ui),	
+			uiPicker.create(div, BIM.ui)						
+		]);
 	},
 	
 	canvas:function(canvas){

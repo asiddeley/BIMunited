@@ -31,6 +31,8 @@ function($, $$, babylon, babylon2D ){
 
 var uiPicker={
 	
+	bimType:'Picker',
+	
 	create:function(board, uiStore){
 		// create only one instance of this ui - static
 		// board - the DOM container all ui DOM elements
@@ -40,11 +42,14 @@ var uiPicker={
 
 		this.divPick$=$('<div></div>').text('picked items:0');
 		this.divMode$=$('<div></div>').text('pick mode:many');
-		this.div$.append(this.divPick$, this.divMode$);		
-		this.div$.dialog({draggable:true, title:'picker', autoOpen:true});
+		this.div$.append(this.divPick$, this.divMode$);	
+		
+		//use jquery-ui to turn div$ into a floating dialog box
+		//this.div$.dialog({draggable:true, title:this.bimType, autoOpen:true});
 
-		BIM.ui.uiBlackboard.addEventHandlers(this.getEventHandlers());
+		BIM.fun.addEventHandlers(this.getEventHandlers());
 		uiStore.uiPicker=this;
+		return this;
 	},
 	
 	add:function( part ){ 
@@ -121,7 +126,10 @@ var uiPicker={
 		//because 'this' will refer to the event caller's context, not uiPicker
 		switch (input) {
 			case 'pick':
-			case 'pp':  BIM.ui.uiPicker.toggle(); break;
+			case 'pp':  
+				//BIM.ui.uiPicker.toggle(); 
+				BIM.ui.uiPicker.start();
+				break;
 			case 'ppw': BIM.ui.uiPicker.wipe(); break;
 			case 'ppx':	BIM.ui.uiPicker.div$.dialog('close');
 		};

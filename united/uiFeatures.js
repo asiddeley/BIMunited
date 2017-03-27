@@ -30,17 +30,21 @@ function($, wc){
 
 var uiFeatures={
 
+	bimType:'Features',
+	
 	create:function(board, uiStore){
 		// create only one instance of this ui - static
 		// board - the DOM container all ui DOM elements
 		// uiStore - BIM.ui hash to store ui references
 		this.div$=$('<div></div>').addClass('ui-widget-content'); 
-		$(board).append(this.div$);		
+		$(board).append(this.div$);	
+		
 		//use jquery-ui to turn div$ into a floating dialog box
-		this.div$.dialog({draggable:true, title:'Features', autoOpen:true});
+		//this.div$.dialog({draggable:true, title:this.bimType, autoOpen:true});
 		
 		BIM.fun.addEventHandlers(this.getEventHandlers());
 		uiStore.uiFeatures=this;
+		return this;
 	},
 	
 	div$:null,
