@@ -59,11 +59,57 @@ var uiBlackboard={
 		return this;
 	},
 	
+	createTabs:function(uis){
+		this.divTab$=$('<div></div>');
+		this.div$.append(this.divTab$);
+		
+		this.divUl$=$('<ul></ul>');
+		this.divTab$.append(this.divUl$);
+		
+		for (var i=0; i<uis.length; i++){this.addTab(i, uis[i]);}
+		//use jquery-ui to turn tab$ into a tab widget
+		this.divTab$.tabs();
+		
+		//use jquery-ui to turn div$ into a floating dialog box
+		this.div$.dialog({draggable:true, title:'BIM United', autoOpen:true});
+	},
+		
+	/*************************
+	For DOM structure of tabs, see example at https://api.jqueryui.com/tabs/
+	<div id="tabs">
+		<ul>
+			<li><a href="#tab-1"><span>One</span></a></li>
+			<li><a href="#tab-2"><span>Two</span></a></li>
+			<li><a href="#tab-3"><span>Three</span></a></li>
+		</ul>
+		<div id="tab-1">
+		<p>First tab is active by default:</p>
+		<pre><code>$( "#tabs" ).tabs(); </code></pre>
+		</div>
+		<div id="tab-2">...
+	</div>
+	*******************************/
+	
+	createTab:function(i, ui){
+		//check and remove any dialog functionality, keeping structure
+		var id='tab'+i.toString();
+		//if (ui.div$.hasClass('ui-dialog')){ui.div$.destroy();}
+		var l$=$('<li></li>');
+		var a$=$('<a></a>').attr('href', "#"+id).text(ui.bimType);
+		var d$=$('<div></div>').attr('id', id).append(ui.div$);
+		//BIM.fun.log('id:'+d$.attr('id'));
+		l$.append(a$);
+		this.divUl$.append(l$);
+		this.divTab$.append(d$);		
+	},
+	////////////////////////////////////////////
+	
 	addEventHandlers:function(ee){
 		for (var n in ee){
 			//add custom bim events to blackboard with jquery 
 			this.div$.on(n, ee[n].handler);
 		}
+		
 	},	
 	
 	board$:null, //DOM element with jquery wrapper, provided via API and holds all UI
