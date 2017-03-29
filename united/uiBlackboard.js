@@ -43,13 +43,14 @@ var uiBlackboard={
 		this.div$=$('<div></div>');
 		this.board$.append(this.div$);
 		//jquery wrapped DOM element for displaying messages
-		this.log$=$('<div></div>');
-		this.div$.append(this.log$);
+		this.divLog$=$('<xmp></xmp>').addClass('ui-dialog-content');
+		this.div$.append(this.divLog$);
 		
 		//jquery wrapped DOM element for scene dumps
-		this.dump$=$('<div></div>').css('max-height', '200px');
-		this.div$.append(this.dump$);
-		this.dump$.hide();	
+		this.divDump$=$('<xmp></xmp>').addClass('ui-dialog-content');
+		this.divDump$.css('max-height', '300px', 'max-width', '300px');
+		this.div$.append(this.divDump$);
+		this.divDump$.hide();	
 		
 		//use jquery-ui to turn div$ into a floating dialog box
 		//this.div$.dialog({draggable:true, title:this.bimType, autoOpen:true});
@@ -114,7 +115,8 @@ var uiBlackboard={
 	
 	board$:null, //DOM element with jquery wrapper, provided via API and holds all UI
 	div$:null, //DOM element for blackboard, logging user input etc
-	dump$:null, //DOM element for big text dumps
+	divDump$:null, //DOM element for big text dumps
+	divLog$:null,
 	
 	getKeywordHandlers:function(){
 		//this.keywords defined here (in a function) because
@@ -149,26 +151,29 @@ var uiBlackboard={
 			case 'debug':BIM.ui.uiBlackboard.toggleDebug();break;
 			//dump scene
 			case 'dump':
-				var s=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene) );
-				BIM.ui.uiBlackboard.dump$.show().text(s);
+				if (BIM.ui.uiBlackboard.divDump$.is('visible')){
+					BIM.ui.uiBlackboard.divDump$.hide();
+				} else {
+					var s=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene) );
+					BIM.ui.uiBlackboard.divDump$.show().text(s);
+				}
 				break;
 			//dump scene Geometry
 			case 'dumpg':
 				var g=BJS.SceneSerializer.Serialize(BIM.scene).geometries;
-				BIM.ui.uiBlackboard.dump$.show().text(JSON.stringify(g));
+				BIM.ui.uiBlackboard.divDump$.show().text(JSON.stringify(g));
 				break;
 			//dump scene Meshes
 			case 'dumpm':
 				var m=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene).meshes);
-				BIM.ui.uiBlackboard.dump$.show().text(m);
+				BIM.ui.uiBlackboard.divDump$.show().text(m);
 				break;
 			//Close dump dialog
-			case 'dumpx':BIM.ui.uiBlackboard.dump$.hide();break;
+			//case 'dumpx':BIM.ui.uiBlackboard.divDump$.hide();break;
 		
 		};
 	},	
-	
-	log$:null,
+
 	
 	log:function(msg){
 		//add message to the store
@@ -181,7 +186,7 @@ var uiBlackboard={
 		n=(n>l)?l:n; 
 		for (var i=l-n; i<l; i++){ htm+=this.logStore[i]+'<br>';}
 		//$(BIM.options.boards.blackboard).html(htm);
-		$(this.log$).html(htm);
+		$(this.divLog$).html(htm);
 	},
 	
 	logStore:[],
