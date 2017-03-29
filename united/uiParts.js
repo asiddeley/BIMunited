@@ -31,7 +31,7 @@ function($, $$, babylon, lib ){
 //static 
 var UIPARTS={
 
-	bimType:'Parts',
+	alias:'Parts',
 	
 	create:function(board, uiStore){
 		// create only one instance of this ui - static
@@ -43,9 +43,9 @@ var UIPARTS={
 		//use jquery-ui to turn div$ into a floating dialog box
 		//this.div$.dialog({draggable:true, title:this.bimType, autoOpen:true});
 		
-		BIM.ui.uiBlackboard.addEventHandlers(this.getEventHandlers());
-		uiStore.uiParts=this;	
-		BIM.input('restock'); //this.onRestock(null, BIM.partsLib);
+		//BIM.ui.uiBlackboard.addEventHandlers(this.getEventHandlers());
+		//uiStore.uiParts=this;	
+		//BIM.input('_restock'); //this.onRestock(null, BIM.partsLib);
 		return this;
 	},
 
@@ -96,7 +96,7 @@ var UIPARTS={
 		switch(input){
 		case 'ap':
 		case 'parts': UIPARTS.toggle(); break;
-		case 'restock':	BIM.ui.uiBlackboard.trigger('bimRestock', [BIM.partsLib]); break;
+		case '_restock':	BIM.ui.uiBlackboard.trigger('bimRestock', [BIM.partsLib]); break;
 		}		
 	},
 	

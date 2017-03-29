@@ -31,7 +31,7 @@ function($, $$, babylon, babylon2D ){
 
 var uiPicker={
 	
-	bimType:'Picker',
+	alias:'Picker',
 	
 	create:function(board, uiStore){
 		// create only one instance of this ui - static

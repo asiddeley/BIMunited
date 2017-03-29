@@ -75,12 +75,14 @@ var BIM={
 		
 		$.extend( this.options, {board:div}, options );	
 		
-		uiDashboard.create(div, [
-			uiBlackboard.create(div, BIM.ui), //needs to be created first
-			uiParts.create(div, BIM.ui),			
-			uiFeatures.create(div, BIM.ui),	
-			uiPicker.create(div, BIM.ui)						
+		uiBlackboard.create(div, BIM.ui, [
+			//note that the create functions below are not called ie. no brackets(),
+			//uiBlackboard will call them only after uiBlackboard is created
+			uiParts.create,			
+			uiFeatures.create,	
+			uiPicker.create						
 		]);
+		
 	},
 	
 	canvas:function(canvas){

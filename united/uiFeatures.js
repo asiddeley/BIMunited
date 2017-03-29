@@ -30,7 +30,7 @@ function($, wc){
 
 var uiFeatures={
 
-	bimType:'Features',
+	alias:'Features',
 	
 	create:function(board, uiStore){
 		// create only one instance of this ui - static

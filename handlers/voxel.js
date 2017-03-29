@@ -82,7 +82,7 @@ var VOXEL = {
 		//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
 		return $.extend(
 			{},
-			name.getFeature(mesh), 
+			name.getFeature(mesh) 
 			//position.getFeature(mesh),
 			//material.getFeatures(mesh),
 		);

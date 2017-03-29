@@ -33,50 +33,66 @@ function($, BJS){
 
 var uiBlackboard={
 	
-	bimType:'Blackboard',
+	alias:'Blackboard',
 
 	create:function(board, uiStore){
-		// create a blackboard and initialize
+		//create a blackboard and initialize - static
 		//var ui=$.extend({}, uiBlackboard);
-		this.board$=$(board, uiStore);
+		this.board$=$(board);
 		//jquery wrapped DOM element for blackboard
 		this.div$=$('<div></div>');
 		this.board$.append(this.div$);
+		uiStore.uiBlackboard=this;
+		this.addEventHandlers(this.getEventHandlers());		
+		
+		//create Log/Dump for displaying input and small messages/large texts. Treat as a ui so it gets its own tab
+		var log=this.createLogDump(); 
+		this.createTabStruct(log); 
+		
+		//use jquery-ui to turn div$ into a floating dialog box
+		this.div$.dialog({draggable:true, title:this.alias, autoOpen:true});
+
+		return this;
+	},
+	
+	createLogDump:function(){
+
 		//jquery wrapped DOM element for displaying messages
+		//using <xmp> to escape any html code that may be input, such as "<button>...</button>"
 		this.divLog$=$('<xmp></xmp>').addClass('ui-dialog-content');
 		this.div$.append(this.divLog$);
 		
 		//jquery wrapped DOM element for scene dumps
 		this.divDump$=$('<xmp></xmp>').addClass('ui-dialog-content');
-		this.divDump$.css('max-height', '300px', 'max-width', '300px');
+		this.divDump$.css('max-height', '300px');
 		this.div$.append(this.divDump$);
 		this.divDump$.hide();	
 		
-		//use jquery-ui to turn div$ into a floating dialog box
-		//this.div$.dialog({draggable:true, title:this.bimType, autoOpen:true});
-
-		uiStore.uiBlackboard=this;
-		this.addEventHandlers(this.getEventHandlers());
-		return this;
+		// wrap with minimum ui requirements
+		var uiLog={alias:'Msg', create:function(){return uiLog;}, div$:this.div$};
+		return uiLog;
 	},
 	
-	createTabs:function(uis){
+	createTabStruct:function(uis){
 		this.divTab$=$('<div></div>');
 		this.div$.append(this.divTab$);
 		
-		this.divUl$=$('<ul></ul>');
-		this.divTab$.append(this.divUl$);
+		this.divUi$=$('<ul></ul>');
+		this.divTab$.append(this.divUi$);
 		
-		for (var i=0; i<uis.length; i++){this.addTab(i, uis[i]);}
+		for (var i=0; i<uis.length; i++){
+			//note that each ui's create function is called before it is passed
+			this.createTab(i, uis[i].create( this.board$, BIM.ui)   );
+		}
 		//use jquery-ui to turn tab$ into a tab widget
 		this.divTab$.tabs();
 		
 		//use jquery-ui to turn div$ into a floating dialog box
-		this.div$.dialog({draggable:true, title:'BIM United', autoOpen:true});
+		//this.div$.dialog({draggable:true, title:'BIM United', autoOpen:true});
 	},
 		
 	/*************************
-	For DOM structure of tabs, see example at https://api.jqueryui.com/tabs/
+	For DOM structure for jquery tabs, see example at https://api.jqueryui.com/tabs/
 	<div id="tabs">
 		<ul>
 			<li><a href="#tab-1"><span>One</span></a></li>
@@ -96,11 +112,11 @@ var uiBlackboard={
 		var id='tab'+i.toString();
 		//if (ui.div$.hasClass('ui-dialog')){ui.div$.destroy();}
 		var l$=$('<li></li>');
-		var a$=$('<a></a>').attr('href', "#"+id).text(ui.bimType);
+		var a$=$('<a></a>').attr('href', "#"+id).text(ui.alias);
 		var d$=$('<div></div>').attr('id', id).append(ui.div$);
 		//BIM.fun.log('id:'+d$.attr('id'));
 		l$.append(a$);
-		this.divUl$.append(l$);
+		this.divUi$.append(l$);
 		this.divTab$.append(d$);		
 	},
 	////////////////////////////////////////////
@@ -117,6 +133,8 @@ var uiBlackboard={
 	div$:null, //DOM element for blackboard, logging user input etc
 	divDump$:null, //DOM element for big text dumps
 	divLog$:null,
+	divTab$:null,
+	divUi$:null,
 	
 	getKeywordHandlers:function(){
 		//this.keywords defined here (in a function) because
@@ -151,21 +169,25 @@ var uiBlackboard={
 			case 'debug':BIM.ui.uiBlackboard.toggleDebug();break;
 			//dump scene
 			case 'dump':
-				if (BIM.ui.uiBlackboard.divDump$.is('visible')){
+				//BIM.fun.log('visible '+BIM.ui.uiBlackboard.divDump$.is(':visible'));
+				if (BIM.ui.uiBlackboard.divDump$.is(':visible')==true){
 					BIM.ui.uiBlackboard.divDump$.hide();
 				} else {
 					var s=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene) );
-					BIM.ui.uiBlackboard.divDump$.show().text(s);
+					s=s.replace(/(.{100})/g, "$1\n");
+					BIM.ui.uiBlackboard.divDump$.show().html(s);
 				}
 				break;
 			//dump scene Geometry
 			case 'dumpg':
-				var g=BJS.SceneSerializer.Serialize(BIM.scene).geometries;
-				BIM.ui.uiBlackboard.divDump$.show().text(JSON.stringify(g));
+				var g=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene).geometries);
+				g=g.replace(/(.{100})/g, "$1\n");
+				BIM.ui.uiBlackboard.divDump$.show().text(g);
 				break;
 			//dump scene Meshes
 			case 'dumpm':
 				var m=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene).meshes);
+				m=m.replace(/(.{100})/g, "$1\n");
 				BIM.ui.uiBlackboard.divDump$.show().text(m);
 				break;
 			//Close dump dialog
@@ -176,6 +198,9 @@ var uiBlackboard={
 
 	
 	log:function(msg){
+		//insert returns every 100 characters
+		msg=msg.replace(/(.{100})/g, "$1\n");
+		
 		//add message to the store
 		this.logStore.push(msg);
 		//limit store to the last n messages
@@ -184,14 +209,13 @@ var uiBlackboard={
 		var htm='', n=10, l=this.logStore.length;
 		//make sure n is smaller or equal to the number of items to print
 		n=(n>l)?l:n; 
-		for (var i=l-n; i<l; i++){ htm+=this.logStore[i]+'<br>';}
-		//$(BIM.options.boards.blackboard).html(htm);
+		//for (var i=l-n; i<l; i++){ htm+=this.logStore[i]+'<br>';}
+		for (var i=l-n; i<l; i++){ htm+=this.logStore[i]+'\n';}
 		$(this.divLog$).html(htm);
 	},
 	
 	logStore:[],
-	
-	
+		
 	toggle:function(){
 		if (this.div$.dialog("isOpen")) {this.div$.dialog("close");} 
 		else {this.div$.dialog("open");}
