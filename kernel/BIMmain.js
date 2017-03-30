@@ -78,9 +78,9 @@ var BIM={
 		uiBlackboard.create(div, BIM.ui, [
 			//note that the create functions below are not called ie. no brackets(),
 			//uiBlackboard will call them only after uiBlackboard is created
-			uiParts.create,			
-			uiFeatures.create,	
-			uiPicker.create						
+			uiParts,			
+			uiFeatures,	
+			uiPicker						
 		]);
 		
 	},

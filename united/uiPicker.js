@@ -33,22 +33,20 @@ var uiPicker={
 	
 	alias:'Picker',
 	
-	create:function(board, uiStore){
+	create:function(board, uiStore, evManager){
 		// create only one instance of this ui - static
 		// board - the DOM container all ui DOM elements
 		// uiStore - BIM.ui hash to store ui references
 		this.div$=$('<div></div>');
-		$(board).append(this.div$);		
+		if (board != null) { $(board).append(this.div$);}
 
 		this.divPick$=$('<div></div>').text('picked items:0');
 		this.divMode$=$('<div></div>').text('pick mode:many');
 		this.div$.append(this.divPick$, this.divMode$);	
 		
-		//use jquery-ui to turn div$ into a floating dialog box
-		//this.div$.dialog({draggable:true, title:this.bimType, autoOpen:true});
 
-		BIM.fun.addEventHandlers(this.getEventHandlers());
-		uiStore.uiPicker=this;
+		if (evManager != null) {evManager.addEventHandlers(this.getEventHandlers());}
+		if (uiStore != null) {uiStore.uiPicker=this;	}
 		return this;
 	},
 	

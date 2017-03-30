@@ -30,24 +30,24 @@ define(
 // then do...
 function($, BJS){
 
-
 var uiBlackboard={
 	
 	alias:'Blackboard',
 
-	create:function(board, uiStore){
+	create:function(board, uiStore, uis){
 		//create a blackboard and initialize - static
 		//var ui=$.extend({}, uiBlackboard);
 		this.board$=$(board);
 		//jquery wrapped DOM element for blackboard
 		this.div$=$('<div></div>');
-		this.board$.append(this.div$);
+		
+		this.board$.append(this.div$);		
 		uiStore.uiBlackboard=this;
 		this.addEventHandlers(this.getEventHandlers());		
 		
-		//create Log/Dump for displaying input and small messages/large texts. Treat as a ui so it gets its own tab
-		var log=this.createLogDump(); 
-		this.createTabStruct(log); 
+		//create Log/Dump for displaying input and small messages/large texts.
+		//note how array with [uiLog] is concat with other uis provided
+		this.createTabgroup( board, uiStore, [  this.createLog() ] .concat(uis)  ); 
 		
 		//use jquery-ui to turn div$ into a floating dialog box
 		this.div$.dialog({draggable:true, title:this.alias, autoOpen:true});
@@ -55,45 +55,29 @@ var uiBlackboard={
 		return this;
 	},
 	
-	createLogDump:function(){
+	createLog:function(){
 
 		//jquery wrapped DOM element for displaying messages
 		//using <xmp> to escape any html code that may be input, such as "<button>...</button>"
 		this.divLog$=$('<xmp></xmp>').addClass('ui-dialog-content');
-		this.div$.append(this.divLog$);
+		//this.div$.append(this.divLog$);
 		
 		//jquery wrapped DOM element for scene dumps
-		this.divDump$=$('<xmp></xmp>').addClass('ui-dialog-content');
-		this.divDump$.css('max-height', '300px');
-		this.div$.append(this.divDump$);
+		this.divDump$=$('<xmp></xmp>').addClass('ui-dialog-content').css('max-height', '300px');
+		this.divLog$.append(this.divDump$);
 		this.divDump$.hide();	
 		
+		//important - define local var for inclusion in uiLog below, since 'this.divLog$' won't work inside uiLog below.
+		var divLog$=this.divLog$;
+		
 		// wrap with minimum ui requirements
-		var uiLog={alias:'Msg', create:function(){return uiLog;}, div$:this.div$};
+		var uiLog={alias:'Msg', create:function(){return uiLog;}, div$:divLog$};
 		return uiLog;
 	},
 	
-	createTabStruct:function(uis){
-		this.divTab$=$('<div></div>');
-		this.div$.append(this.divTab$);
-		
-		this.divUi$=$('<ul></ul>');
-		this.divTab$.append(this.divUi$);
-		
-		for (var i=0; i<uis.length; i++){
-			//note that each ui's create function is called before it is passed
-			this.createTab(i, uis[i].create( this.board$, BIM.ui)   );
-		}
-		//use jquery-ui to turn tab$ into a tab widget
-		this.divTab$.tabs();
-		
-		//use jquery-ui to turn div$ into a floating dialog box
-		//this.div$.dialog({draggable:true, title:'BIM United', autoOpen:true});
-	},
-		
 	/*************************
 	For DOM structure for jquery tabs, see example at https://api.jqueryui.com/tabs/
-	<div id="tabs">
+	<div id="tabs" > This is a group of tabs...
 		<ul>
 			<li><a href="#tab-1"><span>One</span></a></li>
 			<li><a href="#tab-2"><span>Two</span></a></li>
@@ -106,20 +90,27 @@ var uiBlackboard={
 		<div id="tab-2">...
 	</div>
 	*******************************/
-	
-	createTab:function(i, ui){
-		//check and remove any dialog functionality, keeping structure
-		var id='tab'+i.toString();
-		//if (ui.div$.hasClass('ui-dialog')){ui.div$.destroy();}
-		var l$=$('<li></li>');
-		var a$=$('<a></a>').attr('href', "#"+id).text(ui.alias);
-		var d$=$('<div></div>').attr('id', id).append(ui.div$);
-		//BIM.fun.log('id:'+d$.attr('id'));
-		l$.append(a$);
-		this.divUi$.append(l$);
-		this.divTab$.append(d$);		
+	createTabgroup:function(board, uiStore, uis){
+		//uis - array of ui objects eg. [ {alias:'...', create:function(){...}, $div:{jquery wrapped DOM element} }...]
+		var li$, id, ui;
+		this.divTabgroup$=$('<div></div>');
+		this.div$.append(this.divTabgroup$);
+		
+		this.divUL$=$('<ul></ul>');
+		this.divTabgroup$.append(this.divUL$);
+		
+		for (var i=0; i<uis.length; i++){	
+			//this.addTab(tab$, ul$, i, uis[i] .create(board, uiStore)   );
+			ui=uis[i].create(board, uiStore);
+			id='tab'+i.toString();
+			li$=$('<li></li>').append( $('<a></a>').attr('href', "#"+id).text(ui.alias) );
+			tab$=$('<div></div>').attr('id', id).append(ui.div$);
+			this.divUL$.append(li$);
+			this.divTabgroup$.append(tab$);		
+		}
+		//use jquery-ui to turn it into a tab widget
+		this.divTabgroup$.tabs();
 	},
-	////////////////////////////////////////////
 	
 	addEventHandlers:function(ee){
 		for (var n in ee){
@@ -133,8 +124,8 @@ var uiBlackboard={
 	div$:null, //DOM element for blackboard, logging user input etc
 	divDump$:null, //DOM element for big text dumps
 	divLog$:null,
-	divTab$:null,
-	divUi$:null,
+	divTabgroup$:null,
+	divUL$:null,
 	
 	getKeywordHandlers:function(){
 		//this.keywords defined here (in a function) because
@@ -169,6 +160,7 @@ var uiBlackboard={
 			case 'debug':BIM.ui.uiBlackboard.toggleDebug();break;
 			//dump scene
 			case 'dump':
+				//alert ('dump');
 				//BIM.fun.log('visible '+BIM.ui.uiBlackboard.divDump$.is(':visible'));
 				if (BIM.ui.uiBlackboard.divDump$.is(':visible')==true){
 					BIM.ui.uiBlackboard.divDump$.hide();

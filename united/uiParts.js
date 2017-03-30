@@ -33,18 +33,15 @@ var UIPARTS={
 
 	alias:'Parts',
 	
-	create:function(board, uiStore){
+	create:function(board, uiStore, evManager){
 		// create only one instance of this ui - static
-		// board - the DOM container all ui DOM elements
+		// board - the DOM container 
 		// uiStore - BIM.ui hash to store ui references
+		// eRegistrar - Object that registers events or null
 		this.div$=$('<div></div>');
-		$(board).append(this.div$);
-		
-		//use jquery-ui to turn div$ into a floating dialog box
-		//this.div$.dialog({draggable:true, title:this.bimType, autoOpen:true});
-		
-		//BIM.ui.uiBlackboard.addEventHandlers(this.getEventHandlers());
-		//uiStore.uiParts=this;	
+		if (board != null) { $(board).append(this.div$);}
+		if (evManager != null) {evManager.addEventHandlers(this.getEventHandlers());}
+		if (uiStore != null) {uiStore.uiParts=this;	}
 		//BIM.input('_restock'); //this.onRestock(null, BIM.partsLib);
 		return this;
 	},
@@ -81,7 +78,9 @@ var UIPARTS={
 	},
 	
 	// DOM container elements with jquery wrapping initialized in create()
-	div$:null, //for dialog
+	div$:null, 
+	
+	getDiv$:function(){return this.div$;},
 	
 	getEventHandlers:function(){
 		return { 
