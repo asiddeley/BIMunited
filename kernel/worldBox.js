@@ -23,7 +23,7 @@
 
 define(
 // load dependencies...
-['jquery', 'babylon',  'kernel/tcm'],
+['jquery', 'babylon',  'textures/TMCstdLib'],
 
 // then do...
 function($, babylon,  tcm) {

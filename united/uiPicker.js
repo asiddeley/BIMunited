@@ -43,7 +43,6 @@ var uiPicker={
 		this.divPick$=$('<div></div>').text('picked items:0');
 		this.divMode$=$('<div></div>').text('pick mode:many');
 		this.div$.append(this.divPick$, this.divMode$);	
-		
 
 		if (evManager != null) {evManager.addEventHandlers(this.getEventHandlers());}
 		if (uiStore != null) {uiStore.uiPicker=this;	}
@@ -64,14 +63,12 @@ var uiPicker={
 		}
 		//refresh
 		this.divPick$.text(this.picks.length.toString()); //update board
-		//this.tagRegen();
+		this.stickersRegen();
 		//trigger event - note that event is automatically passed as arg1
 		//$.trigger('customEvent', ['arg2', 'arg3'...])
 		BIM.ui.uiBlackboard.trigger('bimPick', [this.picks]);
 	},
 
-
-	
 	canvas2D:null, //initialized in start() by which time BIM.scene is initialized 
 	
 	// DOM container elements with jquery wrapping, set by create()
@@ -85,7 +82,7 @@ var uiPicker={
 	//called by BIM.board when ui's created to register events and callbacks
 	getEventHandlers:function(){
 		return { 
-			bimFeatureChange:{name:'bimFeatureChange',  handler:uiPicker.onFeatureChange },
+			bimFeatureOK:{name:'bimFeatureOK',  handler:uiPicker.onFeatureOK },
 			bimInput:{name:'bimInput',  handler:uiPicker.onInput },
 			bimPick:{}
 		};
@@ -130,13 +127,12 @@ var uiPicker={
 				break;
 			case 'ppw': BIM.ui.uiPicker.wipe(); break;
 			case 'ppx':	BIM.ui.uiPicker.div$.dialog('close');
-		};
-		
+		};		
 	},
 	
-	onFeatureChange:function(ev, part, valu){
+	onFeatureOK:function(ev, part, valu){
 		//BIM.fun.log('picker onFeature '+ part + '-' + valu);
-		//BIM.ui.picker.tagRegen();		
+		BIM.ui.uiPicker.stickersRegen();		
 	},
 	
 	onPointerDown:function (evt, pickResult) {
@@ -147,7 +143,8 @@ var uiPicker={
 				} else {
 					BIM.get.cMesh(pickResult.pickedMesh); //set cMech to pick
 					BIM.input("_meshPicked"); //announce it to all uis
-					//BIM.ui.picker.add(pickResult.pickedMesh.bimHandler);
+					//BIM.ui.uiPicker.add(pickResult.pickedMesh.bimHandler);
+					BIM.ui.uiPicker.add(pickResult.pickedMesh);
 				}				
 			}
 		}
@@ -156,7 +153,7 @@ var uiPicker={
 	//max number of picks to track
 	pickLimit:3,
 	
-	pickMode:"many|ONE", 
+	pickMode:"MANY|one", 
 
 	// array of picked parts 
 	picks:[],
@@ -173,90 +170,71 @@ var uiPicker={
 			} );
 		};
 		//this.div$.dialog('open');
-		return this; //for chaining
+		//for chaining
+		return this; 
 	},
 
 	// array of tags - reused for each pick set
-	tags:[],
+	stickers:[],
 	
-	tagCreate:function(part, i){
+	stickersCreate:function(mesh, i){
 		//first pick blue (begin with blue #0000FFFF), middle picks silver #C0C0C0FF, 
 		//last pick red #FF0000FF and tiebreaber is last pick rules (if only 1 item picked)
 		//colour = # RR GG BB AA
 		var colour=(i==0)?'#0000FFFF':(i==this.picks.length-1)?'#FF0000FF':'#C0C0C0FF';
 		var colour=(i==0 && this.picks.length==1)?'#FF0000FF':colour;  //red rules if 1 part picked
-				
-		//BIM.fun.log('colour'+colour);
-		return new babylon2D.Group2D({
-		parent: this.canvas2D, 
-		id: "GroupTag" + i, 
-		isVisible:true,
-		width: 80, 
-		height: 40, 		
-		trackNode: part.baby, //picked babylon object to track
-		origin: babylon2D.Vector2.Zero(),
-		opacity:0.5,
-		children: [ 
-		   new BABYLON.Rectangle2D({ 
-				id: "firstRect", 
-				width: 80, 
-				height: 26, 
-				x: 0, 
-				y: 0, 
-				origin: BABYLON.Vector2.Zero(),
-				border: "#FFFFFFFF", 
-				fill:colour, 
-				children: [
-					new BABYLON.Text2D(
-						part.name, //part name
-						{marginAlignment:"h: center, v:center", fontName:"bold 12px Arial"}
-					)
+		
+		// thanks http://www.html5gamedevs.com/topic/7228-get-visible-meshes-octree/
+		if (BIM.scene.isActiveMesh(mesh) == true ) { 
+			//BIM.fun.log('colour'+colour);
+			return new babylon2D.Group2D( {
+				parent: this.canvas2D, 
+				id: "GroupTag" + i, 
+				isVisible:true,
+				width: 60, 
+				height: 30, 		
+				trackNode: mesh, //picked babylon object to track
+				origin: babylon2D.Vector2.Zero(),
+				opacity:0.5,
+				children: [ new BABYLON.Rectangle2D({ 
+						id: "firstRect", 
+						width: 80, 
+						height: 26, 
+						x: 0, 
+						y: 0, 
+						origin: BABYLON.Vector2.Zero(),
+						border: "#FFFFFFFF", 
+						fill:colour, 
+						children: [new BABYLON.Text2D(
+							mesh.name, 
+							{marginAlignment:"h:center, v:center", fontName:"bold 10px Arial"}
+						)]
+					})			
 				]
-			})			
-		]
-		});
+			});
+		}
 	},
 	
-	tagRegen:function(){
-		//delete existing tags
-		for (i=0; i<this.tags.length; i++){
-			this.tags[i].dispose();
-		};
-		this.tags=[]; 
-		
-		//recreate tags
-		var tag;
+	stickersRegen:function(){
+		//delete and remake stickers
+		for (i=0; i<this.stickers.length; i++){	this.stickers[i].dispose();};
+		this.stickers=[]; 
+		var sticker;
 		for (i=0; i<this.picks.length; i++){
-			tag=this.tagCreate(this.picks[i], i);
-			this.tags.push(tag);
+			//tag=this.tagCreate(this.picks[i], i);
+			sticker=this.stickersCreate(this.picks[i], i);
+			this.stickers.push(sticker);
 		};
 		
 		this.divPick$.text('picked items:'+this.picks.length);
-		
-		//trigger event - note that event is automatically passed as arg1
-		//$.trigger('customEvent', ['arg2', 'arg3'...])
-		//BIM.ui.blackboard.div$.trigger('bimPick', [this.picks]);
-	},
-	
-	toggle:function(){
-		if (this.div$.dialog("isOpen")) {	
-			this.div$.dialog("close");	
-			//this.stop();
-		} 
-		else {
-			//div$.dialog("open") is done inside start()
-			this.div$.dialog('open');
-			this.start();
-		};
 	},
 	
 	wipe:function(){
 		this.picks=[];
-		this.tagRegen();
-		return this; //for chaining
-	}
-	
-	
+		this.stickerRegen();
+		//for chaining
+		return this; 
+	}	
 };
 
 return uiPicker;

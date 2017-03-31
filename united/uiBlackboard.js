@@ -47,7 +47,7 @@ var uiBlackboard={
 		
 		//create Log/Dump for displaying input and small messages/large texts.
 		//note how array with [uiLog] is concat with other uis provided
-		this.createTabgroup( board, uiStore, [  this.createLog() ] .concat(uis)  ); 
+		this.createTabgroup(null, uiStore, [  this.createMsg() ] .concat(uis)  ); 
 		
 		//use jquery-ui to turn div$ into a floating dialog box
 		this.div$.dialog({draggable:true, title:this.alias, autoOpen:true});
@@ -55,24 +55,26 @@ var uiBlackboard={
 		return this;
 	},
 	
-	createLog:function(){
+	createMsg:function(){
 
-		//jquery wrapped DOM element for displaying messages
+		//jquery wrapped DOM element to contain log and dump
+		this.divMsg$=$('<div></div>');
+
 		//using <xmp> to escape any html code that may be input, such as "<button>...</button>"
 		this.divLog$=$('<xmp></xmp>').addClass('ui-dialog-content');
-		//this.div$.append(this.divLog$);
+		this.divMsg$.append(this.divLog$);
 		
 		//jquery wrapped DOM element for scene dumps
-		this.divDump$=$('<xmp></xmp>').addClass('ui-dialog-content').css('max-height', '300px');
-		this.divLog$.append(this.divDump$);
-		this.divDump$.hide();	
+		this.divDump$=$('<xmp></xmp>');
+		this.divMsg$.append(this.divDump$);
+		this.divDump$.addClass('ui-dialog-content').css('height', '300px').hide();
 		
-		//important - define local var for inclusion in uiLog below, since 'this.divLog$' won't work inside uiLog below.
-		var divLog$=this.divLog$;
+		//important - define local var for inclusion in {..} below, since 'this' will have a different meaning in another context.
+		var divMsg$=this.divMsg$;
 		
 		// wrap with minimum ui requirements
-		var uiLog={alias:'Msg', create:function(){return uiLog;}, div$:divLog$};
-		return uiLog;
+		var uiMsg={alias:'Msg', create:function(){return uiMsg;}, div$:divMsg$};
+		return uiMsg;
 	},
 	
 	/*************************
@@ -101,7 +103,7 @@ var uiBlackboard={
 		
 		for (var i=0; i<uis.length; i++){	
 			//this.addTab(tab$, ul$, i, uis[i] .create(board, uiStore)   );
-			ui=uis[i].create(board, uiStore);
+			ui=uis[i].create(board, uiStore, this);
 			id='tab'+i.toString();
 			li$=$('<li></li>').append( $('<a></a>').attr('href', "#"+id).text(ui.alias) );
 			tab$=$('<div></div>').attr('id', id).append(ui.div$);
@@ -116,15 +118,17 @@ var uiBlackboard={
 		for (var n in ee){
 			//add custom bim events to blackboard with jquery 
 			this.div$.on(n, ee[n].handler);
-		}
-		
+		}		
 	},	
 	
 	board$:null, //DOM element with jquery wrapper, provided via API and holds all UI
 	div$:null, //DOM element for blackboard, logging user input etc
+	
+	divMsh$:null, //DOM container for both divDump$ & divLog$ below
 	divDump$:null, //DOM element for big text dumps
 	divLog$:null,
-	divTabgroup$:null,
+	
+	divTabgroup$:null, 
 	divUL$:null,
 	
 	getKeywordHandlers:function(){

@@ -17,7 +17,8 @@ requirejs.config({
 	"handlers":"../handlers",
 	"kernel": "../kernel",
 	"lights": "../lights",
-	"united":"../united",
+	"textures": "../textures",
+	"united": "../united",
 	//"jq": "jquery",
 	//"jq": "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min",
 	"sylvester": "sylvester/sylvesterXp",
@@ -41,7 +42,7 @@ define(
 'united/uiDashboard',
 'lights/hemi',
 'cameras/arcRotateCamera',
-'kernel/tcm',
+'textures/TMCstdLib',
 'united/uiPartsLibrary'],
 
 // then do this...
@@ -55,7 +56,7 @@ uiFeatures,
 uiDashboard,
 Light, 
 arcRotateCamera, 
-TCM, 
+TMC, 
 partsLibrary) {
 
 // construct library object for return
@@ -242,7 +243,7 @@ var BIM={
 	scene:null,	
 	
 	//Texture colour material library 
-	tcmLib:TCM.stdLib(),
+	textures:TMC.stdLib(),
 	
 	//User interfaces, initialized by this.board()
 	ui:{},

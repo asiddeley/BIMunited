@@ -42,7 +42,7 @@ var UIPARTS={
 		if (board != null) { $(board).append(this.div$);}
 		if (evManager != null) {evManager.addEventHandlers(this.getEventHandlers());}
 		if (uiStore != null) {uiStore.uiParts=this;	}
-		//BIM.input('_restock'); //this.onRestock(null, BIM.partsLib);
+		BIM.input('_restock'); //this.onRestock(null, BIM.partsLib);
 		return this;
 	},
 

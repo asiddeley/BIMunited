@@ -33,14 +33,14 @@ define(
 function(BABYLON, $){
 
 // handlers...
-var TCM={
+var TMC={
+	
+	BIMtype:'TMC',
 	
 	//creater - returns a single tcm element
-	create:function(udata){return $.extend({}, tcm, udata);},
+	create:function(udata){return $.extend({}, tmc, udata);},
 	
-	creaters:{		
-	
-	},
+	creaters:{ },
 	
 	colour:{
 		black:{nameColour:'black', cr:0, cg:0, cb:0},
@@ -84,10 +84,10 @@ var TCM={
 	},
 		
 	//babylon scene setter
-	setScene:function(tcm){
-		var name=(tcm.name==null)?tcm.nameofColour+nameofTexture:tcm.name;
-		tcm.baby=new BABYLON.StandardMaterial(name, BIM.scene);
-		tcm.baby.diffuseColor=new BABYLON.Color3(tcm.cr, tcm.cg, tcm.cb);
+	setScene:function(tmc){
+		var name=(tmc.name==null)?tmc.nameofColour+nameofTexture:tmc.name;
+		tmc.baby=new BABYLON.StandardMaterial(name, BIM.scene);
+		tmc.baby.diffuseColor=new BABYLON.Color3(tmc.cr, tmc.cg, tmc.cb);
 	},
 	
 	//standard library
@@ -123,16 +123,16 @@ var TCM={
 		coral:that.create({name:'coral', cr:255, cg:127, cb:80})	
 	};},
 	
-	type:'tcm'
+	type:'tmc'
 }
 
 // properties...
-var tcm={
+var tmc={
 	baby:null,
 	cb:0,
 	cg:0,
 	cr:0,
-	handler:TCM,
+	handler:TMC,
 	name:null, //if null then the material name is the sum of colour + texture
 	nameColour:'uncoloured',
 	nameTexture:'untextured',
@@ -140,5 +140,5 @@ var tcm={
 	type:'material'	
 };
 
-return TCM;
+return TMC;
 });
