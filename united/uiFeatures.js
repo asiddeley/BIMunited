@@ -33,14 +33,16 @@ var uiFeatures={
 	alias:'Features',
 	
 	create:function(board, uiStore, evManager){
-		// create only one instance of this ui - static
+		// DEP create only one instance of this ui - static
+		// create a new uiFeature ui - extended by uiPick and uiMake
 		// board - the DOM container all ui DOM elements
 		// uiStore - BIM.ui hash to store ui references
-		this.div$=$('<div></div>').addClass('ui-widget-content'); 
-		if (board != null) { $(board).append(this.div$);}
-		if (evManager != null) {evManager.addEventHandlers(this.getEventHandlers());}
-		if (uiStore != null) {uiStore.uiFeatures=this;	}
-		return this;
+		var ui=$.extend({}, uiFeatures);
+		ui.div$=$('<div></div>').addClass('ui-widget-content'); 
+		if (typeof board == 'undefined' && board != null) { $(board).append(ui.div$);}
+		if (typeof evManager == 'undefined' && evManager != null) {evManager.addEventHandlers(ui.getEventHandlers());}
+		if (typeof uiStore == 'undefined' && uiStore != null) {uiStore.uiFeatures=ui;	}
+		return ui;
 	},
 	
 	div$:null,

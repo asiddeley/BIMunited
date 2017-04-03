@@ -35,7 +35,7 @@ return {
 	//Returns a name feature, scoped to a particular mesh
 	//A feature is a hash used by uiFeatures to edit and update babylon mesh properties
 	//and looks like this...
-	//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
+	//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
 	getFeature:function(mesh){ 
 		return { 
 			name:{

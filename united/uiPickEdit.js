@@ -29,16 +29,17 @@ define(
 // then do...
 function($, $$, babylon, babylon2D, uiFeatures ){
 
-var uiPicker={
+var uiPickEdit={
 	
-	alias:'Picker',
+	alias:'Pick-edit',
 	
 	create:function(board, uiStore, evManager){
-		// create only one instance of this ui - static
 		// board - the DOM container all ui DOM elements
 		// uiStore - BIM.ui hash to store ui references
-		this.div$=$('<div></div>');
-		if (board != null) { $(board).append(this.div$);}
+		// PickEdit extends uiFeatures by extending each of it's properties & methods
+		var ui=$.extend({}, uiPickEdit);
+		ui.div$=$('<div></div>');
+		if (typeof board != 'undefined' && board != null) {$(board).append(ui.div$);}
 
 		this.divPick$=$('<div></div>').text('picked items:0');
 		this.divMode$=$('<div></div>').text('pick mode:many');
@@ -109,12 +110,6 @@ var uiPicker={
 	
 	keywordHandlers:null,
 	
-	//deprecated
-	last:function(){
-		if (this.picks.length==0) {return null;}
-		else { return this.picks[this.picks.length-1];}
-	},
-
 	//called by uiBlackboard when new BIM input received
 	onInput:function(ev, input){ 
 		//beware of using 'this' inside an eventhandler function!
@@ -159,7 +154,8 @@ var uiPicker={
 	picks:[],
 	
 	//UI standard function
-	start:function(){ 
+	start:function(mesh){ 
+		uiFeatures.start(mesh);
 		BIM.scene.onPointerDown=uiPicker.onPointerDown;
 		if (this.canvas2D==null) {
 			//BIM.fun.log('picker start, BIM.scene ' + BIM.scene);
