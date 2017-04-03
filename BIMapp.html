@@ -7,33 +7,59 @@
 
 <!--script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script-->
 <script src="javascript/jquery.js"></script>
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"-->
-<link rel="stylesheet" type="text/css" href="javascript/bootstrap/bootstrap.min.css">
-<!--script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script-->
-<script src="javascript/bootstrap/bootstrap.min.js"></script>
+<script src="javascript/jquery-ui.js"></script>
 
 <script data-main="kernel/BIMmain.js" src="javascript/require/require.js"></script>
 <link rel="stylesheet" type="text/css" href="javascript/jquery-ui.theme.css">
 <link rel="stylesheet" type="text/css" href="javascript/jquery-ui.structure.css">
+<!--link rel="stylesheet" type="text/css" href="kernel/BIMstyle.css"-->
 
-
-<link rel="stylesheet" type="text/css" href="kernel/BIMstyle.css">
-
- 
 <script type="text/javascript">
-//$(document).ready(function(){
+
+function inputHandler(ev){
+	ev.preventDefault(); //disable normal form submit behavior
+	var i=$("#myInput").val(); //get text from form and pass it to BIM
+	BIM.input(i); 
+	return false; //prevent further bubbling of event
+};
+
+function initMenus(ids, menuExt){
+	var ida=ids.split(" "), js;
+	for (var i in ida){
+		js='$(".menu").hide(); $("#'+ ida[i] + menuExt +
+		'").show().position({my:"left top", at:"left bottom", of:"#'+ida[i]+'"});';
+		//alert(js);
+		//create mouseenter function for each menu that positions menu to related nav button
+		$("#"+ida[i]).mouseenter(new Function('event', js ));
+	};
+};
+
+$(document).ready(function(){
+
+//setup Navbar using jquery-ui controlgroup widget
+$("#navbar").controlgroup({
+	//widgetToApply:selector
+	"button": "a, button, input[type=text], input[type=button], input[type=submit]",
+	"controlgroupLabel": ".ui-controlgroup-label",
+	"checkboxradio": "input[type='checkbox'], input[type='radio']",
+	"selectmenu": "select",
+	//"menu":".dropdown-items",
+	"spinner": ".ui-spinner-input"
+});
+
+//set behaviour of dropdown menus... 
+$(".menu").menu().css("position","absolute", "width", "200px").hide();
+
+//cleanup any open dropdown menus
+$(".menu").on('mouseleave',function(){$(".menu").hide();});
+
+//initialize drop-down menus with homemade functions by providing DOM tag ids...
+initMenus("file tool part help", "-menu");
+
+//inhibit the browser's right-click context menu
 $(document).on('contextmenu', false);
 
-function handleInput(ev){
-	ev.preventDefault(); //disable normal form submit behavior
-	var i=$("#myInput").val();
-	var r=BIM.input(i);//get text from form and pass it to BIM
-	return false; //prevent further bubbling of event
-}
-
-
+//Load and launch BIM United FC
 requirejs(['BIMmain'], function(BIM){
 	var canvas=window.document.getElementById('canvas');
 	var sideboard=window.document.getElementById('sideboard');
@@ -46,140 +72,96 @@ requirejs(['BIMmain'], function(BIM){
 });
 
 
+}); //document ready
+
 </script>
 
 </head>
 <body>
-<div class="container-fluid">
-<nav class="navbar navbar-sm">
 
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-	<span class="sr-only">Toggle navigation</span>
-	<span class="icon-bar"></span>
-	<span class="icon-bar"></span>
-	<span class="icon-bar"></span>
-	</button>
-	<a class="navbar-brand" href="#">BIM United FC</a>
-    </div>
-    <!-- Rest of Navbar -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-	<ul class="nav navbar-nav">
-	
-	<!-- DROPDOWN User -->		
-	<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-	User<span class="caret"></span></a>
-	<ul class="dropdown-menu">
-	<li><a href="#">Project</a></li>
-	<li role="separator" class="divider"></li>
-	<li><a href="#">Add</a></li>
-	<li><a href="#">Edit</a></li>
-	<li><a href="#">Delete</a></li>
-	<li role="separator" class="divider"></li>
-	<li><a href="#">Settings</a></li>
-	</ul>
-	</li>	
-	
-	
-	
-	<!-- DROPDOWN -->		
-	<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-	Project<span class="caret"></span></a>
-	<ul class="dropdown-menu">
-	<li><a href="#">Project</a></li>
-	<li role="separator" class="divider"></li>
-	<li><a href="#">New</a></li>
-	<li><a href="#">Open</a></li>
-	<li><a href="#">Print</a></li>
-	<li><a href="#">Save</a></li>
-	<li><a href="#">Save as</a></li>
-	<li role="separator" class="divider"></li>
-	<li><a href="#">Settings</a></li>
-	</ul>
-	</li>
-	
-	<!-- DROPDOWN -->	
-	<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-	Tools<span class="caret"></span></a>
-	<ul class="dropdown-menu">
-	<li><a href="#">Filer</a></li>
-	<li><a href="#">Finder</a></li>
-	<li><a href="#">Grapher</a></li>			
-	<li><a href="#">Picker</a></li>
-	<li><a href="#">Protractor</a></li>		
-	<li><a href="#">Ruler</a></li>
-	<li><a href="#">Selecter</a></li>
-	<li><a href="#">Spline</a></li>			
-	<li><a href="#">T-Square</a></li>			
-	<li><a href="#">Zoomer</a></li>
-	</ul>
-	</li>
-	
-	<!-- DROPDOWN Elements -->	
-	<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-	Parts<span class="caret"></span></a>
-	<ul class="dropdown-menu">
-	<li><a title="A line." href="#">
-	line</a></li>
-	<li role="separator" class="divider"></li>
-	<li><a title="An arc, arch, chord like element."   onclick="alert('bend');" href="#">
-	bend</a></li>
-	<li><a title="A rectangle." href="#">
-	boxx</a></li>
-	<li><a title="An instance of a lair or other compound, like an insert in other CAD apps." href="#">
-	link</a></li>
-	<li><a title="A bitmap, jpeg, png etc"  href="#">
-	mapp</a></li>			
-	<li><a title="A basic coordinate or point"  href="#">
-	node</a></li>
-	<li><a title="A circle, oval or pie like element" href="#">
-	oval</a></li>	
-	<li><a title="An open or closed group of arc and line segements, like a polyline in other CAD apps."  href="#">
-	path</a></li>
-	<li><a title="A text."   href="#">
-	text</a></li>
-	</ul>
-	</li>
-		
+<div id="board" class="container-fluid">
 
-	</ul>
-
-		
-	<form class="navbar-form navbar-left" role="search" onSubmit="return handleInput(event)">
-	<div class="form-group">
-	<input id="myInput" type="text" class="form-control" placeholder="Command" >
-	</div>
-	<button type="submit" class="btn btn-default" >Go</button>
+<div id="navbar" class="controlgroup ui-widget-header" style="padding:4px; width:792px;">
+	<button>BIM United FC</button>
+	<button id="file">Files</button>
+	<button id="tool">Tools</button>
+	<button id="part">Parts</button>	
+	<button id="help">Help</button>	
+	
+	<form onSubmit="return inputHandler(event)">
+	<input id="myInput" type="text" placeholder="Command" >
+	<input type="submit" value="Go">
 	</form>
-		
-	<ul class="nav navbar-nav navbar-right">
-	<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-	Help<span class="caret"></span></a>
-	<ul class="dropdown-menu">
-	<li><a href="#">About</a></li>
-	<li><a href="#">item</a></li>
-	<li><a href="#">item</a></li>
-	<li role="separator" class="divider"></li>
-	<li><a href="#">item</a></li>
-	</ul>
+	
+</div><!-- navbar   -->
+
+<canvas id="canvas" style="width:800px; height:400px;"></canvas>
+
+<ul id="file-menu" class="menu">
+	<li><div>Database</div>
+	<ul>
+		<li><div>Admin</div></li>
+		<li><div>Models</div></li>
+	</ul>		
 	</li>
-	</ul>
-	</div><!-- /.navbar-collapse -->
-	
-	
+	<li>--</li>
+	<li><div>New</div></li>
+	<li><div>Open</div></li>
+	<li><div>Open Read-Only</div></li>
+	<li><div>Save</div></li>
+	<li><div>Save as</div></li>
+	<li>--</li>
+	<li><div>Exit</div></li>
+</ul>
 
-</nav>
+<ul id="tool-menu" class="menu">
+	<li onclick="BIM.input('bb')"><div>Blackboard</div></li>
+	<li onclick="BIM.input('creater')"><div>Creater</div></li>
+	<li><div>Explorer</div></li>
+	<li><div>Selecter</div></li>
+	<li><div>Tagger</div></li>
+	<li><div>Viewer</div></li>
+</ul>
 
-<div id="sideboard" ></div>
-<canvas id="canvas" style="width:800px;height:600px;"></canvas>
+<ul id="part-menu" class="menu">
+	<li><div>Voxelite</div></li>
+	<li><div>Parcela</div></li>
+	<li><div>Floor</div></li>
+	<li><div>Wall</div></li>
+	<li><div>Opening</div></li>
+	<li><div>Skybox</div></li>
+</ul>
 
-</div><!-- /.container-fluid -->
+<ul id="help-menu" class="menu">
+	<li><div>About</div></li>
+	<li><div>User</div>
+		<ul>
+		<li><div>Overview</div></li>
+		<li><div>Command list</div></li>
+		<li><div>Documentation</div></li>
+		<li><div>Tutorials</div></li>
+		</ul>
+	</li>
+	<li><div>Develper</div>
+		<ul>
+		<li><div>Dev Overview</div></li>
+		<li><div>System events</div></li>
+		</ul>		
+	</li>
+	<li><div>GNU License</div></li>
+</ul>
+
+<!--select>
+	<option selected disabled>Parts</option>
+	<option>voxelite</option>
+	<option>slab</option>
+	<option>wall</option>
+	<option>stair</option>
+	<option>opening</option>
+	<option>land</option>
+	<option>sky</option>
+</select-->
+</div><!-- board -->
 
 
 
