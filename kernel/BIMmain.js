@@ -38,7 +38,7 @@ define(
 'united/uiBlackboard',
 'united/uiParts',
 'united/uiPicker',
-'united/uiFeatures',
+'united/FeaturesUI',
 'united/uiDashboard',
 'lights/hemi',
 'cameras/arcRotateCamera',

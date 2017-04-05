@@ -103,7 +103,9 @@ var uiBlackboard={
 		
 		for (var i=0; i<uis.length; i++){	
 			//this.addTab(tab$, ul$, i, uis[i] .create(board, uiStore)   );
-			ui=uis[i].create(board, uiStore, this);
+			ui=uis[i];
+			if (typeof ui == 'function'){ ui=new ui(board, uiStore, this); }
+			else if (typeof ui == 'object') {ui=ui.create(board, uiStore, this); }
 			id='tab'+i.toString();
 			li$=$('<li></li>').append( $('<a></a>').attr('href', "#"+id).text(ui.alias) );
 			tab$=$('<div></div>').attr('id', id).append(ui.div$);
