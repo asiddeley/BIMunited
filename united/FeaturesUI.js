@@ -30,10 +30,11 @@ var Features=function(board, uiStore, evManager, isDialog){
 		// board - the DOM container all ui DOM elements
 		// uiStore - BIM.ui hash to store ui references
 		// evManager - ui that sets up and triggers events
-		// dilogTF - if True, will turn this ui into it's own dialog box
+		// isDialog - if True, will turn this ui into it's own dialog box
 
 		this.div$=$('<div></div>').addClass('ui-widget-content'); 
-		if (typeof board != 'undefined' && board != null) { $(board).append(this.div$);}
+		if (typeof board != 'undefined' && board instanceof window.Element) { $(board).append(this.div$);}
+		else if (typeof board != 'undefined' && board instanceof $) { board.append(this.div$);}
 		if (typeof evManager != 'undefined' && evManager != null) {evManager.addEventHandlers(this.getEventHandlers());}
 		if (typeof uiStore != 'undefined' && uiStore != null) {uiStore.FeaturesUI=this;	}
 		if (typeof idDialog !='undefined' && isDialog==true) {this.isDialog=true; this.div$.dialog();}
