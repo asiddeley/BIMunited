@@ -108,6 +108,13 @@ Features.prototype.widgetInit=function(mesh, feature){
 };
 
 
+/*
+usage:
+myFeaturesUI=new Features(board, uiStore, evManager, isDialog);
+To create a feature editor UI that stands alone:
+myFeaturesUI=new Features($("#myNavbar"), BIM.ui, BIM.ui.uiBlackboard, true);
+
+*/
 return Features;
 
 });

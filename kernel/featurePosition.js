@@ -19,7 +19,7 @@
 	module: 	featurePosition
 	desc: 
 	author: 	Andrew Siddeley 
-	started:	26-Feb-2017
+	started:	6-Apr-2017
 	
 ****************************************************************/
 
@@ -29,43 +29,32 @@ define(
 
 // then construct part object...
 function(babylon, $){
-
-// This module allows for a bim feature or property to be added to a host.
-
-// Construct handler or static functions. 
-// Each static function requires host as input
-var POSITION = {
-
-	create:function(host){
-		//return a new position hash
-		return $.extend({}, Position);
-	},
-	getTemplate:function(){ return Position; },
-
-	onPosition:function(ev, host, result){
-		//update position in babylon element, should show on next scene render 
-		//host.baby.position=host.position;
-		BIM.fun.log('warning, position is read-only at this time');
-	},
-
-	feature:function(host){ 
-		return {position:{
-			valu:host.position, 
-			onChange:POSITION.onPosition,
-			widget:'position', //replace with module ref
-			//onEdit:uiPosition, //instead of widget
-			//onEditOK:POSITION.onPosition //instead of onChange
-		}};
+/***********
+Returns a name feature getter (static method) wrapped in an object. 
+A feature {} used by uiFeatures to edit and update babylon mesh properties.
+The Feature getter is wrapped in an object so many features can be easily combined for each BIM entity / mesh
+Feature structure...
+	{label:'name', 
+	valu:mesh.variable, 
+	onFeatureChange:fn(ev,mesh,res){...}, 
+	editor:featureEditor}
+*/
+return {
+	getFeature:function(mesh){ 
+		return { 
+			positionR10:{
+				label:'PositionR10',
+				desc:'A 3d vector rounded to the nearest 10 units'
+				valu:mesh.position, 
+				onFeatureChange:function(result){ 
+					mesh.position=result;
+				},
+				editor:positionR10UI
+			}
+		};
 	}
 };
-
-var Position = {
-	//handler:POSITION, //this will get overriden
-	position:new babylon.Vector3(0,0,0)
-};
-
-
-return POSITION;
+	
 });
 
 

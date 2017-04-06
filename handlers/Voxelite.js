@@ -33,9 +33,13 @@ function(babylon, $, name, position){
 //DEP, use: var bimType=instanceOf (new Voxelite());
 //	bimType:'Voxel', 
 	
-// Constructor - Used only once below to create the Voxelite handler, voxelite object
-// Like static methods, most voxelite methods take voxelite mesh as an argument eg. voxelite.getFeatures(mesh)
-var Voxelite=function(){ 
+// Constructor - Used only once below  
+// Voxelite() => voxelite {obj}, the handler with Static methods
+var Voxelite=function(){};
+
+
+// Most voxelite methods are static and take a voxelite mesh as an argument eg. voxelite.getFeatures(mesh)
+Voxelite.prototype.create=function(){ 
 
 	var m=new babylon.StandardMaterial("voxelTexture", BIM.scene);
 	m.diffuseTexture = new babylon.Texture("textures/voxelTextures.png", BIM.scene);
@@ -66,7 +70,7 @@ var Voxelite=function(){
 		10*Math.floor(Math.random()*10)); 
 	v.material=m;	
 		
-	//add bim features to babylon mesh object
+	//add bim handler to babylon mesh object
 	v.bimHandler=voxelite;
 		
 	//return the new mesh that was added to the scene
@@ -83,11 +87,11 @@ Voxelite.prototype.getFeatures=function(mesh) {
 		return $.extend(
 			{},
 			name.getFeature(mesh) 
-			//position.getFeature(mesh),
+			positionVR10.getFeature(mesh),
 			//material.getFeatures(mesh),
 	);
 }
 
 var voxelite=new Voxelite();
-
+return voxelite;
 });
