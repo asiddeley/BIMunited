@@ -37,8 +37,8 @@ define(
 'babylon',
 'united/TabbedUI',
 'united/BlackboardUI',
-'united/uiParts',
-'united/uiPicker',
+'united/PartsUI',
+//'united/uiPicker',
 'united/FeaturesUI',
 'lights/hemi',
 'cameras/arcRotateCamera',
@@ -51,8 +51,8 @@ $,
 babylon, 
 TabbedUI,
 BlackboardUI, 
-uiParts, 
-uiPicker, 
+PartsUI, 
+//uiPicker, 
 FeaturesUI, 
 Light, 
 arcRotateCamera, 
@@ -80,18 +80,12 @@ var BIM={
 		
 		var tui=new TabbedUI(div, "Main");
 		this.ui.blackboard=new BlackboardUI(null, "Log");
-		tui.addTab(this.ui.blackboard); 
-		tui.addTab(new FeaturesUI(null, 'Features') );
-		tui.tabs();
-		
-		//uiBlackboard.create(div, BIM.ui, [
-			//note that the create functions below are not called ie. no brackets(),
-			//uiBlackboard will call them only after uiBlackboard is created
-			//uiParts,			
-			//uiFeatures,	
-			//uiPicker						
-		//]);
-		
+		tui.addTab( 
+			this.ui.blackboard, 
+			new FeaturesUI(null, 'Features'),
+			new PartsUI(null, 'Parts')
+		); 
+	
 	},
 	
 	canvas:function(canvas){
@@ -154,6 +148,10 @@ var BIM={
 			// grows textarea fit text - useful for typing in a small textarea 
 			$(el).css('height','auto').css('height', el.scrollHeight+5);		
 		},
+		
+		dump:function(txt){
+			BIM.ui.blackboard.divDump$.show().text(txt);
+		},		
 
 		log:function(message) {
 			//this.trigger('bimMsg', message);

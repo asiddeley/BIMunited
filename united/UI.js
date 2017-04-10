@@ -30,86 +30,25 @@ define(
 // then do...
 function($, BJS){
 
-var TabbedUI=function(board, title){
+var UI=function(board, title){
+
 	// board - DOM element container for user intefaces (UI) 
-	this.div$=$('<div></div>');		
-	this.tabcount=0;
-	
+	this.div$=$('<div></div>');
 	if (typeof title != 'undefined' && title != null) {this.alias=title;}
-	else {this.alias='Tabby';} 
-	
+	else {this.alias='UI';} 
+	// If board is provided, then the intention is to make this UI its own dialog otherwise
+	// it's assumed this will be a ui contianed in and managed by another UI 
 	if (typeof board != 'undefined' && board != null){ 
-		// board is a DOM element
-		if (board instanceof window.Element){this.board$=$(board);}
-		// board is a DOM element wrapped with jquery
-		if (board instanceof $){this.board$=board;}	
-		this.board$.append(this.div$);
+		this.board$=$(board).append(this.div$);
+		//use jquery-ui to turn div$ into a floating dialog box
+		this.div$.dialog({draggable:true, title:this.alias, autoOpen:true});
 	}
 	
 	BIM.fun.on(this.getEvents());	
-
-	//create empty tab group, add tabs child-uis later with addTabb
-	this.createTabgroup(); 
-	
-	//use jquery-ui to turn div$ into a floating dialog box
-	this.div$.dialog({draggable:true, title:this.alias, autoOpen:true});
-
 	return this;
 };
-
-TabbedUI.prototype.alias='Main';
-
-TabbedUI.prototype.addTab=function(ui){ 
-	//var rest=null;
-	//if (ui instanceof Array){rest=ui.clone().shift(); ui=ui.shift;}
-	//ui - Object eg. {alias:'...', create:function(){...}, $div:{$(jquery)} }
-	var li$, tab$, id, i=this.tabcount++;
-	id='tab'+ i.toString();
-	li$=$('<li></li>').append( $('<a></a>').attr('href', "#"+id).text(ui.alias) );
-	tab$=$('<div></div>').attr('id', id).append(ui.div$);
-	this.divUL$.append(li$);
-	this.divTabgroup$.append(tab$);	
-	//if (rest instanceof Array) {this.addTab(rest);}
-};
 	
-TabbedUI.prototype.createTabgroup=function(){
-
-	/*************************
-	For DOM structure for jquery tabs, see example at https://api.jqueryui.com/tabs/
-	<div id="tabs" > This is a group of tabs...
-		<ul>
-			<li><a href="#tab-1"><span>One</span></a></li>
-			<li><a href="#tab-2"><span>Two</span></a></li>
-			<li><a href="#tab-3"><span>Three</span></a></li>
-		</ul>
-		<div id="tab-1">
-		<p>First tab is active by default:</p>
-		<pre><code>$( "#tabs" ).tabs(); </code></pre>
-		</div>
-		<div id="tab-2">...
-	</div>
-	*******************************/
-
-	this.divTabgroup$=$('<div></div>');
-	this.div$.append(this.divTabgroup$);
-	
-	this.divUL$=$('<ul></ul>');
-	this.divTabgroup$.append(this.divUL$);
-
-	//use jquery-ui to turn it into a tab widget
-	this.divTabgroup$.tabs();
-};
-
-//DOM element with jquery wrapper, provided via API and holds all UI
-TabbedUI.prototype.board$=null;
-
-//DOM element for blackboard, logging user input etc
-TabbedUI.prototype.div$=null;
-	
-TabbedUI.prototype.divTabgroup$=null;
-TabbedUI.prototype.divUL$=null;
-	
-TabbedUI.prototype.getKeywords=function(keywords){
+UI.prototype.getKeywords=function(keywords){
 	//get or set keyword-handlers
 	if (typeof keywords==Array){this.keywords=keywords}
 	else if (this.keywords==null){ this.keywords=[{
@@ -121,7 +60,7 @@ TabbedUI.prototype.getKeywords=function(keywords){
 	return this.keywords;
 };
 
-TabbedUI.prototype.getEvents=function(){
+UI.prototype.getEvents=function(){
 	// Beware of using 'this' in event handlers as it will refer to the callers context
 	// Instead assume 'this' is passed in event data thus... handler(ev){ev.data.toggle();}
 	return { 
@@ -129,9 +68,9 @@ TabbedUI.prototype.getEvents=function(){
 	};
 };
 
-TabbedUI.prototype.keywords=null;
+UI.prototype.keywords=null;
 	
-TabbedUI.prototype.onInput=function(ev, input){
+UI.prototype.onInput=function(ev, input){
 	//BIM.fun.log(input);
 	//call others to process input 
 	//this.div$.trigger('bimInput', [command]);
@@ -143,23 +82,14 @@ TabbedUI.prototype.onInput=function(ev, input){
 	};
 };
 			
-TabbedUI.prototype.toggle=function(){
+UI.prototype.toggle=function(){
 	if (this.div$.is(':ui-dialog')){
 		if (this.div$.dialog("isOpen")) {this.div$.dialog("close");} 
 		else {this.div$.dialog("open");}
 	}
 };
 
-//TabbedUI.prototype.trigger=function(bimEvent, argArray){
-//	if (typeof argArray=='undefined'){
-//		switch (bimEvent) {
-//			case 'bimInput':this.div$.trigger(bimEvent, ['nothing']); break;
-//			case 'bimRestock':this.div$.trigger(bimEvent, [BIM.ui.partsLib]); break;
-//		}			
-//	} else { this.div$.trigger(bimEvent, argArray);}
-//}
-
-return TabbedUI;
+return UI;
 
 });
 

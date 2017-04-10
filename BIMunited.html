@@ -9,7 +9,7 @@
 <script src="javascript/jquery.js"></script>
 <script src="javascript/jquery-ui.js"></script>
 
-<script data-main="kernel/BIMmain.js" src="javascript/require/require.js"></script>
+<script data-main="kernel/BIMunited.js" src="javascript/require/require.js"></script>
 <link rel="stylesheet" type="text/css" href="javascript/jquery-ui.theme.css">
 <link rel="stylesheet" type="text/css" href="javascript/jquery-ui.structure.css">
 <!--link rel="stylesheet" type="text/css" href="kernel/BIMstyle.css"-->
@@ -26,16 +26,16 @@ function inputHandler(ev){
 function initMenus(ids, menuExt){
 	var ida=ids.split(" "), js;
 	for (var i in ida){
-		// Create function for each navbutton that 
-		// positions menu to related nav button.
+		// Create callback function for each navbutton that 
+		// positions it's dropdown menu at it's location.
 		// Construct it as a string ...
-		// hide all menus
+		// first, hide all menus
 		js='$(".menu").hide();'+
-		// show and position menu of interest
+		// Show and position menu of interest
 		'$("#'+ ida[i] + menuExt + '").show().position('+
 		'{my:"left top", at:"left bottom", of:"#'+ida[i]+'"}); '+
-		// Dropdown autohide in case a dd is left hanging, but diabled when dd is entered
-		'document.DDAH=setTimeout(function(){$("#'+ ida[i] + menuExt +'").hide();},1000);';
+		// Dropdown autohide in case a dd is left hanging.  Disabled when dd is entered
+		'document.DDAH=setTimeout(function(){$("#'+ ida[i] + menuExt +'").hide();}, 2000);';
 		// console.log(js);
 		// Register function so triggered by nav button mouseenter event...
 		$("#"+ida[i]).mouseenter(new Function('event', js ));
@@ -72,11 +72,11 @@ initMenus("file tool part help", "-menu");
 $(document).on('contextmenu', false);
 
 //Load and launch BIM United FC
-requirejs(['BIMmain'], function(BIM){
+requirejs(['BIMunited'], function(BIM){
 	var canvas=window.document.getElementById('canvas');
 	var board=window.document.getElementById('board');
 	// the BIM a.b.c.d.e starter functions...
-	BIM.admin({user:'andrew'}); 
+	BIM.admin({users:['admin','asiddeley','guest']}); 
 	BIM.board(board);
 	BIM.canvas(canvas);
 	BIM.database("database connection API");
@@ -101,8 +101,7 @@ requirejs(['BIMmain'], function(BIM){
 	<button id="help">Help</button>	
 	
 	<form onSubmit="return inputHandler(event)">
-	<input id="myInput" type="text" placeholder="Command" >
-	<input type="submit" value="Go">
+	<input id="myInput" type="text" placeholder="Command" ><input type="submit" value="Go">
 	</form>
 	
 </div><!-- navbar   -->

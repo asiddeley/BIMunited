@@ -25,57 +25,49 @@
 
 define(
 // load dependencies...
-['jquery', 'babylon'],
+['jquery', 'babylon', 'united/UI'],
 
 // then do...
-function($, BJS){
+function($, BJS, UI){
 
 var TabbedUI=function(board, title){
-	// board - DOM element container for user intefaces (UI) 
-	this.div$=$('<div></div>');		
-	this.tabcount=0;
-	
-	if (typeof title != 'undefined' && title != null) {this.alias=title;}
-	else {this.alias='Tabby';} 
-	
-	if (typeof board != 'undefined' && board != null){ 
-		// board is a DOM element
-		if (board instanceof window.Element){this.board$=$(board);}
-		// board is a DOM element wrapped with jquery
-		if (board instanceof $){this.board$=board;}	
-		this.board$.append(this.div$);
-	}
-	
-	BIM.fun.on(this.getEvents());	
 
+	// This class extends UI, call super constructor
+	UI.call(this, board, title); 
+	
+	this.tabcount=0;
 	//create empty tab group, add tabs child-uis later with addTabb
 	this.createTabgroup(); 
-	
 	//use jquery-ui to turn div$ into a floating dialog box
 	this.div$.dialog({draggable:true, title:this.alias, autoOpen:true});
 
 	return this;
 };
 
-TabbedUI.prototype.alias='Main';
+// https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/create
+// Inherit prototype from UI
+TabbedUI.prototype=Object.create(UI.prototype);
+TabbedUI.prototype.constructor=TabbedUI;
 
-TabbedUI.prototype.addTab=function(ui){ 
-	//var rest=null;
-	//if (ui instanceof Array){rest=ui.clone().shift(); ui=ui.shift;}
-	//ui - Object eg. {alias:'...', create:function(){...}, $div:{$(jquery)} }
-	
+TabbedUI.prototype.addTab=function(){ 
+
+	var c, index, li$, tab$, ui;
 	this.divTabgroup$.tabs('destroy');
-	
-	var li$, tab$, id, i=this.tabcount++;
-	id='tab'+ i.toString();
-	li$=$('<li></li>').append( $('<a></a>').attr('href', "#"+id).text(ui.alias) );
-	tab$=$('<div></div>').attr('id', id).append(ui.div$);
-	this.divUL$.append(li$);
-	this.divTabgroup$.append(tab$);	
+
+	for (index in arguments){
+		ui=arguments[index];
+		c=this.tabcount++;
+		id='tab'+ c.toString();
+		li$=$('<li></li>').append( $('<a></a>').attr('href', "#"+id).text(ui.alias) );
+		tab$=$('<div></div>').attr('id', id).append(ui.div$);
+		this.divUL$.append(li$);
+		this.divTabgroup$.append(tab$);	
+	}
 	
 	//use jquery-ui to turn it into a tab widget
 	this.divTabgroup$.tabs();
 	//if (rest instanceof Array) {this.addTab(rest);}
+	return this;
 };
 
 TabbedUI.prototype.tabs=function(){
@@ -112,7 +104,7 @@ TabbedUI.prototype.createTabgroup=function(){
 };
 
 //DOM element with jquery wrapper, provided via API and holds all UI
-TabbedUI.prototype.board$=null;
+//TabbedUI.prototype.board$=null;
 
 //DOM element for blackboard, logging user input etc
 TabbedUI.prototype.div$=null;
@@ -153,29 +145,11 @@ TabbedUI.prototype.onInput=function(ev, input){
 		case 'mm':ev.data.toggle();break;
 		case 'mmdump':
 			var h=ev.data.divTabgroup$.html();
-			h=h.replace(/(.{65})/g, "$1\n");
-			BIM.ui.blackboard.divDump$.show().text(h);
+			BIM.fun.dump( h.replace(/(.{65})/g, "$1\n") );
 		break;
-		
 		
 	};
 };
-			
-TabbedUI.prototype.toggle=function(){
-	if (this.div$.is(':ui-dialog')){
-		if (this.div$.dialog("isOpen")) {this.div$.dialog("close");} 
-		else {this.div$.dialog("open");}
-	}
-};
-
-//TabbedUI.prototype.trigger=function(bimEvent, argArray){
-//	if (typeof argArray=='undefined'){
-//		switch (bimEvent) {
-//			case 'bimInput':this.div$.trigger(bimEvent, ['nothing']); break;
-//			case 'bimRestock':this.div$.trigger(bimEvent, [BIM.ui.partsLib]); break;
-//		}			
-//	} else { this.div$.trigger(bimEvent, argArray);}
-//}
 
 return TabbedUI;
 

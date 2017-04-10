@@ -26,26 +26,15 @@
 define(
 
 // load dependencies...
-['jquery', 'babylon'],
+['jquery', 'babylon', 'united/UI'],
 
 // then do...
-function($, BJS){
+function($, BJS, UI){
 
 var BlackboardUI = function(board, title){
-	
-	this.div$=$('<div></div>');	
-	if (typeof title != 'undefined' && title != null) {this.alias=title;}
-	else  {this.alias='Log';}
-		
-	if (typeof board != 'undefined' && board != null){ 
-		if (board instanceof window.Element){this.board$=$(board);}
-		//board is jquery wrapped DOM element
-		if (board instanceof $){this.board$=board;}	
-		this.board$.append(this.div$);
-	}
-	
-	//register events that this UI responds to
-	BIM.fun.on(this.getEvents());
+
+	// This class extends UI, call super constructor
+	UI.call(this, board, title); 
 	
 	//using <xmp> to escape any html code that may be input, such as "<button>...</button>"
 	this.divLog$=$('<xmp></xmp>').addClass('ui-dialog-content');
@@ -63,15 +52,11 @@ var BlackboardUI = function(board, title){
 	return this;
 };
 
-var DEF=BlackboardUI.prototype;
 
-BlackboardUI.prototype.alias='Log';
-
-//DOM element with jquery wrapper, provided via API and holds all UI
-BlackboardUI.prototype.board$=null;
-
-//DOM element for blackboard, logging user input etc
-BlackboardUI.prototype.div$=null;
+// https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/create
+// Inherit prototype from UI
+BlackboardUI.prototype=Object.create(UI.prototype);
+BlackboardUI.prototype.constructor=BlackboardUI;
 			
 //DOM element for big text dumps	
 BlackboardUI.prototype.divDump$=null;
@@ -95,7 +80,8 @@ BlackboardUI.prototype.getEvents=function(){
 };
 	
 BlackboardUI.prototype.keywords=null;
-	
+
+// Inherited but overriden	
 BlackboardUI.prototype.onInput=function(ev, input){
 	//BIM.ui.uiBlackboard.log(input);
 	ev.data.log("> "+input);
@@ -106,7 +92,7 @@ BlackboardUI.prototype.onInput=function(ev, input){
 	//blackboard responsible for following input 
 	//note how 'this' is passed in event data.  See getEvents()
 	switch (input) {
-		case 'bb':ev.data.toggle();break;
+		case 'bb':ev.data.toggle(ev.data);break;
 		case 'bbw':
 			ev.data.logStore=[];
 			ev.data.log$.html('');
@@ -136,21 +122,20 @@ BlackboardUI.prototype.onInput=function(ev, input){
 			m=m.replace(/(.{100})/g, "$1\n");
 			ev.data.divDump$.show().text(m);
 			break;
-			
-		case 'keywords':
-			var keys=['bb', 'bbw', 'keywords', 'events'];
-			ev.data.log('// Blackboard UI\n' + keys.join("\n"));
-			break;		
-			
+		
 		case 'events':
 			var keys=Object.keys(ev.data.getEvents()); //keys - Array of event names
 			ev.data.log('// Blackboard UI\n' + keys.join("\n"));
 			break;				
-	
+
+		case 'keywords':
+			var keys=['bb', 'bbw', 'keywords', 'events'];
+			ev.data.log('// Blackboard UI\n' + keys.join("\n"));
+			break;			
 	};
 };
-
 	
+
 BlackboardUI.prototype.log=function(msg){
 	//insert returns every 100 characters
 	msg=msg.replace(/(.{100})/g, "$1\n");
@@ -169,15 +154,6 @@ BlackboardUI.prototype.log=function(msg){
 };
 	
 BlackboardUI.prototype.logStore=[];
-		
-BlackboardUI.prototype.toggle=function(){
-	// Toggle only if this ui was initialized as a dialog otherwise
-	// it can be assumed it is a tab in a tabbed dialog box.
-	if (this.div$.is(':ui-dialog')){
-		if (this.div$.dialog("isOpen")) {this.div$.dialog("close");} 
-		else {this.div$.dialog("open");}
-	}
-};
 	
 BlackboardUI.prototype.toggleDebug=function(){
 	if (!this.toggleDebugB) {
