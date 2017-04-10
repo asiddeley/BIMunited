@@ -40,7 +40,7 @@ var uiBlackboard={
 		this.board$=$(board);
 		//jquery wrapped DOM element for blackboard
 		this.div$=$('<div></div>');
-		
+		this.self=this;
 		this.board$.append(this.div$);		
 		uiStore.uiBlackboard=this;
 		this.addEventHandlers(this.getEventHandlers());		
@@ -119,7 +119,8 @@ var uiBlackboard={
 	addEventHandlers:function(ee){
 		for (var n in ee){
 			//add custom bim events to blackboard with jquery 
-			this.div$.on(n, ee[n].handler);
+			//on(custom_event_string, selector|null, event_data, event_handler)
+			this.div$.on(n, null, ee[n].data, ee[n].handler);
 		}		
 	},	
 	
@@ -146,7 +147,7 @@ var uiBlackboard={
 	
 	getEventHandlers:function(){
 		//beware of using 'this' in event handlers as it will refer to the callers context
-		return { bimInput: {name:'bimInput',  handler:uiBlackboard.onInput } };
+		return { bimInput: {name:'bimInput',  handler:uiBlackboard.onInput, data:this } };
 	},
 	
 	keywordHandlers:null,
@@ -158,10 +159,11 @@ var uiBlackboard={
 		
 		//blackboard responsible for following input 
 		switch (input) {
-			case 'bb':BIM.ui.uiBlackboard.toggle();break;
+			//ev.data = 'this' as set in getEventHandlers()
+			case 'bb':ev.data.toggle();break;
 			case 'bbw':
-				BIM.ui.uiBlackboard.logStore=[];
-				BIM.ui.uiBlackboard.log$.html('');
+				ev.data.logStore=[];
+				ev.data.log$.html('');
 				break;
 			case 'debug':BIM.ui.uiBlackboard.toggleDebug();break;
 			//dump scene

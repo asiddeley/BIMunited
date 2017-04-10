@@ -17,19 +17,27 @@
 <script type="text/javascript">
 
 function inputHandler(ev){
-	ev.preventDefault(); //disable normal form submit behavior
-	var i=$("#myInput").val(); //get text from form and pass it to BIM
-	BIM.input(i); 
+	ev.preventDefault(); //disable normal form submit behavior that refreshes page
+	var i=$("#myInput").val(); //get text from form 
+	BIM.input(i); //and pass it to BIM for processing
 	return false; //prevent further bubbling of event
 };
 
 function initMenus(ids, menuExt){
 	var ida=ids.split(" "), js;
 	for (var i in ida){
-		js='$(".menu").hide(); $("#'+ ida[i] + menuExt +
-		'").show().position({my:"left top", at:"left bottom", of:"#'+ida[i]+'"});';
-		//alert(js);
-		//create mouseenter function for each menu that positions menu to related nav button
+		// Create function for each navbutton that 
+		// positions menu to related nav button.
+		// Construct it as a string ...
+		// hide all menus
+		js='$(".menu").hide();'+
+		// show and position menu of interest
+		'$("#'+ ida[i] + menuExt + '").show().position('+
+		'{my:"left top", at:"left bottom", of:"#'+ida[i]+'"}); '+
+		// Dropdown autohide in case a dd is left hanging, but diabled when dd is entered
+		'document.DDAH=setTimeout(function(){$("#'+ ida[i] + menuExt +'").hide();},1000);';
+		// console.log(js);
+		// Register function so triggered by nav button mouseenter event...
 		$("#"+ida[i]).mouseenter(new Function('event', js ));
 	};
 };
@@ -52,8 +60,12 @@ $(".menu").menu().css("position","absolute", "width", "200px").hide();
 
 //cleanup any open dropdown menus
 $(".menu").on('mouseleave',function(){$(".menu").hide();});
+//clear DDAH dropdown autohide
+$(".menu").on('mouseenter',function(){clearTimeout(document.DDAH);});
 
-//initialize drop-down menus with homemade functions by providing DOM tag ids...
+//initialize drop-down menus with homemade functions by providing DOM tag ids:
+//"file tool..." and extension "-menu" for corresponding drop-downs
+//"file-menu tool-menu..."
 initMenus("file tool part help", "-menu");
 
 //inhibit the browser's right-click context menu
@@ -62,10 +74,10 @@ $(document).on('contextmenu', false);
 //Load and launch BIM United FC
 requirejs(['BIMmain'], function(BIM){
 	var canvas=window.document.getElementById('canvas');
-	var sideboard=window.document.getElementById('sideboard');
+	var board=window.document.getElementById('board');
 	// the BIM a.b.c.d.e starter functions...
 	BIM.admin({user:'andrew'}); 
-	BIM.board(sideboard);
+	BIM.board(board);
 	BIM.canvas(canvas);
 	BIM.database("database connection API");
 	BIM.engage();

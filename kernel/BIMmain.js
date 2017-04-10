@@ -35,11 +35,11 @@ define(
 ['kernel/Model',
 'jquery',
 'babylon',
-'united/uiBlackboard',
+'united/TabbedUI',
+'united/BlackboardUI',
 'united/uiParts',
 'united/uiPicker',
 'united/FeaturesUI',
-'united/uiDashboard',
 'lights/hemi',
 'cameras/arcRotateCamera',
 'textures/TMCstdLib',
@@ -49,11 +49,11 @@ define(
 function (Model, 
 $, 
 babylon, 
-uiBlackboard, 
+TabbedUI,
+BlackboardUI, 
 uiParts, 
 uiPicker, 
-uiFeatures, 
-uiDashboard,
+FeaturesUI, 
 Light, 
 arcRotateCamera, 
 TMC, 
@@ -73,16 +73,24 @@ var BIM={
 	board:function(div, options){
 		if (typeof div == 'undefined'){div=$('<div></div>').appendTo(window.document.body);}
 		if (typeof options == 'undefined'){options={};}
+		//wrap div with jquery if not already
+		if (div instanceof window.Element){div=$(div);}
 		
-		$.extend( this.options, {board:div}, options );	
+		$.extend( this.options, {board$:div}, options );	
 		
-		uiBlackboard.create(div, BIM.ui, [
+		var tui=new TabbedUI(div, "Main");
+		this.ui.blackboard=new BlackboardUI(null, "Log");
+		tui.addTab(this.ui.blackboard); 
+		tui.addTab(new FeaturesUI(null, 'Features') );
+		tui.tabs();
+		
+		//uiBlackboard.create(div, BIM.ui, [
 			//note that the create functions below are not called ie. no brackets(),
 			//uiBlackboard will call them only after uiBlackboard is created
-			uiParts,			
-			uiFeatures,	
-			uiPicker						
-		]);
+			//uiParts,			
+			//uiFeatures,	
+			//uiPicker						
+		//]);
 		
 	},
 	
@@ -146,15 +154,36 @@ var BIM={
 			// grows textarea fit text - useful for typing in a small textarea 
 			$(el).css('height','auto').css('height', el.scrollHeight+5);		
 		},
-		log:function(message) {BIM.ui.uiBlackboard.log(message);},
+
+		log:function(message) {
+			//this.trigger('bimMsg', message);
+			BIM.ui.blackboard.log(message);
+		},
+		
+		on:function(eventHandlers){
+			var ee=eventHandlers, n, b$=BIM.options.board$;
+			//add event handlers to board, the acting event manager
+			for (n in ee){b$.on(n, ee[n].data, ee[n].handler);}	
+		},
+		
+		off:function(eventHandlers){
+			var ee=eventHandlers;
+			//add event handlers to board, the acting event manager
+			var n, b$=$(this.options.board);
+			for (n in ee){b$.of(n, ee[n].data, ee[n].handler);}	
+		},
+		
 		randomPosition:function() {
 			var s=100;//BIM.model.worldBox.size;
 			var v=new babylon.Vector3(Math.random()*s,  Math.random()*s, Math.random()*s); 
 			return v;
 		},
-		trigger:function(ev, data){
-			BIM.ui.uiBlackboard.div$.trigger(ev, data);
+		
+		trigger:function(ev, arg1){
+			//BIM.ui.uiBlackboard.div$.trigger(ev, arg1);
+			BIM.options.board$.trigger(ev, arg1);
 		},
+				
 		uid:function(name){
 			//Returns a simple unique id string based on a given name and
 			//how many time that name is called.  If no name given then 'id' is the default name.
@@ -197,7 +226,7 @@ var BIM={
 	},
 	
 	//main method for user interaction
-	input:function(input){return this.ui.uiBlackboard.trigger('bimInput', input);},
+	input:function(input){return this.fun.trigger('bimInput', input);},
 	
 	//Reserved
 	j:null,

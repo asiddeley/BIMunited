@@ -44,7 +44,7 @@ return {
 		return { 
 			positionR10:{
 				label:'PositionR10',
-				desc:'A 3d vector rounded to the nearest 10 units'
+				desc:'A 3d vector rounded to the nearest 10 units',
 				valu:mesh.position, 
 				onFeatureChange:function(result){ 
 					mesh.position=result;

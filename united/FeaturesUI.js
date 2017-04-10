@@ -26,44 +26,60 @@ define(
 // then do...
 function($, wc){
 
-var Features=function(board, uiStore, evManager, isDialog){
-		// board - the DOM container all ui DOM elements
-		// uiStore - BIM.ui hash to store ui references
-		// evManager - ui that sets up and triggers events
-		// isDialog - if True, will turn this ui into it's own dialog box
-
-		this.div$=$('<div></div>').addClass('ui-widget-content'); 
-		if (typeof board != 'undefined' && board instanceof window.Element) { $(board).append(this.div$);}
-		else if (typeof board != 'undefined' && board instanceof $) { board.append(this.div$);}
-		if (typeof evManager != 'undefined' && evManager != null) {evManager.addEventHandlers(this.getEventHandlers());}
-		if (typeof uiStore != 'undefined' && uiStore != null) {uiStore.FeaturesUI=this;	}
-		if (typeof idDialog !='undefined' && isDialog==true) {this.isDialog=true; this.div$.dialog();}
-		// return constructed ui object for chaining.
-		return this;
+var FeaturesUI=function(board, title){
+	
+	// board - the DOM container all ui DOM elements
+	this.div$=$('<div></div>');	
+	if (typeof title != 'undefined' && title != null) {this.alias=title;}
+	else  {this.alias='Log';}
+		
+	if (typeof board != 'undefined' && board != null){ 
+		if (board instanceof window.Element){this.board$=$(board);}
+		//board is jquery wrapped DOM element
+		if (board instanceof $){this.board$=board;}	
+		this.board$.append(this.div$);
+	}
+	
+	//register events that this UI responds to
+	BIM.fun.on(this.getEvents());
+	
+	// return constructed ui object for chaining.
+	return this;
 };
 
-Features.prototype.alias='Features';
+var FP=FeaturesUI.prototype;
+
+FP.alias='Features';
+FP.div$=null;
 	
-Features.prototype.div$=null;
-	
-Features.prototype.getEventHandlers=function(){
-		//don't use keywork 'this' here as it will refer to the callers context
-		return {
-			bimInput:{name:'bimInput',  handler:Features.prototype.onInput },
-			bimPick:{name:'bimPick',  handler:Features.prototype.onPick }
-		};
+FP.getEvents=function(){
+	//For events, keyword 'this' refers to the event callers context
+	//The 'this' that refers to the FeaturesUI instance, is passed in ev.data 
+	return {
+	bimInput:{name:'bimInput', data:this, handler:this.onInput},
+	bimPick:{name:'bimPick', data:this, handler:this.onPick}
+	};
 };
 	
-Features.prototype.onInput=function(ev, input){
-		switch (input){
-			case 'ff':
-			case 'features':BIM.ui.FeaturesUI.toggle();break;
-			case '_meshAdded':BIM.ui.FeaturesUI.start(BIM.get.cMesh());break;
-			case '_meshPicked':BIM.ui.FeaturesUI.start(BIM.get.cMesh());break;
+FP.onInput=function(ev, input){
+	switch (input){
+		case 'ff':
+		case 'features':ev.data.toggle();break;
+		case '_meshAdded':ev.data.start(BIM.get.cMesh());break;
+		case '_meshPicked':ev.data.start(BIM.get.cMesh());break;
+		case 'keywords':
+			var keys=['ff', 'features', 'keywords', 'events'];
+			BIM.fun.log('// Features UI\n'+keys.join("\n"));
+			break;			
+		case 'events':
+			//keys - Array of event names
+			var keys=Object.keys(ev.data.getEvents()); 
+			BIM.fun.log('// Features UI\n'+keys.join("\n"));
+			break;	
 	} 
 };
 
-Features.prototype.onPick=function(ev, picks){
+FP.onPick=function(ev, picks){
 		//access features of the last bim part picked...
 		//Beware of keyword 'this' in event handlers, use 'BIM.ui.features' instead 
 		if (picks.length>0){
@@ -73,13 +89,13 @@ Features.prototype.onPick=function(ev, picks){
 		}
 };
 
-Features.prototype.reset=function(){	
+FP.reset=function(){	
 		this.widgeta.forEach(function(item){item.remove();});	
 		this.widgeta=[];
 		this.widgeti=0;	
-	};
+};
 		
-Features.prototype.start=function(mesh){
+FP.start=function(mesh){
 		if (typeof mesh=='undefined' || mesh==null){ return false; }
 		this.reset();
 		var ff=mesh.bimHandler.getFeatures(mesh);
@@ -89,23 +105,25 @@ Features.prototype.start=function(mesh){
 			if (typeof f.editor == 'object') { this.widgetInit(mesh, f); }
 			else { BIM.fun.log('Feature not editable'); }
 		}
-	};
+};
 	
-Features.prototype.toggle=function(){
-	if (this.isDialog && this.div$.dialog("isOpen")) {
+FP.toggle=function(){
+	if (this.div$.is(':ui-dialog')){
 		this.div$.dialog("close");
 	} else if (this.isDialog) {this.div$.dialog("open");}
 };
 	
-Features.prototype.widgeta=[]; //array
-Features.prototype.widgeti=0; //index for array
-Features.prototype.widgetInit=function(mesh, feature){
-		if (this.widgeti==this.widgeta.length){
-			this.widgeta.push(feature.editor.create(this.div$));
-		};
-		//if using jquery-ui widget then
-		//$(this.wCell[this.wCelli++]).wCell('vlca', valu, label, onChange, part).show();	
-		(this.widgeta[this.widgeti++]).start(mesh, feature);
+FP.widgeta=[]; //array
+
+FP.widgeti=0; //index for array
+
+FP.widgetInit=function(mesh, feature){
+	if (this.widgeti==this.widgeta.length){
+		this.widgeta.push(feature.editor.create(this.div$));
+	};
+	//if using jquery-ui widget then
+	//$(this.wCell[this.wCelli++]).wCell('vlca', valu, label, onChange, part).show();	
+	(this.widgeta[this.widgeti++]).start(mesh, feature);
 };
 
 
@@ -116,7 +134,7 @@ To create a feature editor UI that stands alone:
 myFeaturesUI=new Features($("#myNavbar"), BIM.ui, BIM.ui.uiBlackboard, true);
 
 */
-return Features;
+return FeaturesUI;
 
 });
 
