@@ -35,12 +35,15 @@ function(babylon, $, name, position){
 	
 // Constructor - Used only once below  
 // Voxelite() => voxelite {obj}, the handler with Static methods
-var Voxelite=function(){};
+var Voxelite=function(){
+	this.bimType='Voxelite';
+	
+};
 
 
 // Most voxelite methods are static and take a voxelite mesh as an argument eg. voxelite.getFeatures(mesh)
 Voxelite.prototype.create=function(){ 
-
+	
 	var m=new babylon.StandardMaterial("voxelTexture", BIM.scene);
 	m.diffuseTexture = new babylon.Texture("textures/voxelTextures.png", BIM.scene);
 	m.uScale=1.0;
@@ -63,7 +66,7 @@ Voxelite.prototype.create=function(){
 		]
 	};		
 	
-	var v=BABYLON.MeshBuilder.CreateBox('Voxel', options, BIM.scene);
+	var v=BABYLON.MeshBuilder.CreateBox('Voxelite', options, BIM.scene);
 	v.position=new babylon.Vector3(
 		10*Math.floor(Math.random()*10), 
 		10*Math.floor(Math.random()*10), 
@@ -80,15 +83,15 @@ Voxelite.prototype.create=function(){
 Voxelite.prototype.creaters={};
 
 Voxelite.prototype.getFeatures=function(mesh) {
-		// Returns a fresh hash of features:
-		// {name:{feature}, position:{feature}...}
-		// A feature is a hash scoped to a particular mesh like this:
-		// {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
-		return $.extend(
-			{},
-			name.getFeature(mesh) 
-			positionVR10.getFeature(mesh),
-			//material.getFeatures(mesh),
+	// Returns a fresh hash of features:
+	// {name:{feature}, position:{feature}...}
+	// A feature is a hash scoped to a particular mesh like this:
+	// {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
+	return $.extend(
+		{},
+		name.getFeature(mesh) 
+		//positionR10.getFeature(mesh)
+		//material.getFeatures(mesh),
 	);
 }
 

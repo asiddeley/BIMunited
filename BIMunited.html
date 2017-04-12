@@ -9,7 +9,7 @@
 <script src="javascript/jquery.js"></script>
 <script src="javascript/jquery-ui.js"></script>
 
-<script data-main="kernel/BIMunited.js" src="javascript/require/require.js"></script>
+<script data-main="united/BIMunited.js" src="javascript/require/require.js"></script>
 <link rel="stylesheet" type="text/css" href="javascript/jquery-ui.theme.css">
 <link rel="stylesheet" type="text/css" href="javascript/jquery-ui.structure.css">
 <!--link rel="stylesheet" type="text/css" href="kernel/BIMstyle.css"-->
@@ -45,7 +45,7 @@ function initMenus(ids, menuExt){
 $(document).ready(function(){
 
 //setup Navbar using jquery-ui controlgroup widget
-$("#navbar").controlgroup({
+$("#navbar").controlgroup({items:{
 	//widgetToApply:selector
 	"button": "a, button, input[type=text], input[type=button], input[type=submit]",
 	"controlgroupLabel": ".ui-controlgroup-label",
@@ -53,7 +53,7 @@ $("#navbar").controlgroup({
 	"selectmenu": "select",
 	//"menu":".dropdown-items",
 	"spinner": ".ui-spinner-input"
-});
+}});
 
 //set behaviour of dropdown menus... 
 $(".menu").menu().css("position","absolute", "width", "200px").hide();
@@ -101,7 +101,7 @@ requirejs(['BIMunited'], function(BIM){
 	<button id="help">Help</button>	
 	
 	<form onSubmit="return inputHandler(event)">
-	<input id="myInput" type="text" placeholder="Command" ><input type="submit" value="Go">
+	<input id="myInput" type="text" placeholder="Command"><input type="submit" value="Ok">
 	</form>
 	
 </div><!-- navbar   -->

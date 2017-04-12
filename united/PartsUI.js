@@ -29,12 +29,13 @@ define(
 function($, $$, babylon, UI ){
 
 var PartsUI=function(board, title){
-	// This class extends UI, call super constructor
+	// Inherit from UI, call super constructor
 	UI.call(this, board, title); 
 	BIM.input('_restock'); 
 	return this;
 };
 
+// Inherit the UI prototype
 PartsUI.prototype=Object.create(UI.prototype);
 PartsUI.prototype.constructor=PartsUI;
 
@@ -52,7 +53,8 @@ PP.addControlgroup=function(partHandler){
 		this.addPartCreaterButton(cg$, n, partHandler.creaters[n]);
 	};
 
-	//wigetize cg$, google jquery-ui controlgroup for documentation, items indicates what widgets to apply. 
+	//wigetize cg$, google jquery-ui controlgroup for documentation
+	//items indicates what widgets to apply
 	cg$.controlgroup({items:{button:'button'}});
 };
 	

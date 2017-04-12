@@ -40,11 +40,21 @@ var BlackboardUI = function(board, title){
 	this.divLog$=$('<xmp></xmp>').addClass('ui-dialog-content');
 	this.div$.append(this.divLog$);
 	
-	this.divInput$=$('<form></form>').addClass('ui-dialog-content');
-	this.divInput$.append($('<input type="text" placeholder="Command">'));
-	this.divInput$.append($('<input type="submit" value="Return">'));
+	this.divForm$=$('<form></form>').submit(function(ev){
+		ev.preventDefault(); //inhibit page reload
+		//get text and pass it to BIM for processing
+		BIM.input($(this).find('input:text').val()); 
+		return false; //prevent further bubbling of event
+	});
+	this.divInput$=$('<input type="text" placeholder="Command">');
+	this.divOk$=$('<input type="submit" value="Ok">');
+	this.divForm$.append(this.divInput$, this.divOk$);
+	this.divForm$.controlgroup({items:{
+		"button":"button, input[type=text], input[type=submit]"
+	}});
+	this.div$.append(this.divForm$);
 
-	//jquery wrapped DOM element for scene dumps
+	//jquery wrapped DOM element for big text dumps such as serialized scene
 	this.divDump$=$('<xmp></xmp>');
 	this.div$.append(this.divDump$);
 	this.divDump$.addClass('ui-dialog-content').css('height', '300px').hide();

@@ -25,7 +25,7 @@
 
 define(
 // load dependencies...
-['kernel/partSphere', 'handlers/voxel'],
+['kernel/partSphere', 'handlers/voxelite'],
 
 // then do...
 function(s, v){
@@ -33,8 +33,8 @@ function(s, v){
 // hash of parts for this library
 return {
 	//Sphere:s,
-	Voxel:v
-
+	Voxelite:v,
+	Voxelite:v
 	//insert:i (instance, modelRef, ref, xref)
 	//model:m (block, blueprint, definition, prototype)
 	//ground:g
