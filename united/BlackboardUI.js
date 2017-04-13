@@ -135,12 +135,12 @@ BlackboardUI.prototype.onInput=function(ev, input){
 		
 		case 'events':
 			var keys=Object.keys(ev.data.getEvents()); //keys - Array of event names
-			ev.data.log('// Blackboard UI\n' + keys.join("\n"));
+			ev.data.log(ev.data.alias.toUpperCase()+'\n' + keys.join("\n"));
 			break;				
 
 		case 'keywords':
 			var keys=['bb', 'bbw', 'keywords', 'events'];
-			ev.data.log('// Blackboard UI\n' + keys.join("\n"));
+			ev.data.log(ev.data.alias.toUpperCase()+'\n' + keys.join("\n"));
 			break;			
 	};
 };

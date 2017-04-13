@@ -128,7 +128,7 @@ TabbedUI.prototype.getEvents=function(){
 	// Beware of using 'this' in event handlers as it will refer to the callers context
 	// Instead assume 'this' is passed in event data thus... handler(ev){ev.data.toggle();}
 	return { 
-		bimInput: {name:'bimInput',	handler:this.onInput, data:this }
+		bimInput: {name:'bimInput',	data:this, handler:this.onInput, data:this }
 	};
 };
 
@@ -147,7 +147,15 @@ TabbedUI.prototype.onInput=function(ev, input){
 			var h=ev.data.divTabgroup$.html();
 			BIM.fun.dump( h.replace(/(.{65})/g, "$1\n") );
 		break;
-		
+			case 'events':
+			//keys - Array of event names
+			var keys=Object.keys(ev.data.getEvents()); 
+			BIM.fun.log(ev.data.alias.toUpperCase()+'\n' + keys.join("\n"));
+			break;	
+		case 'keywords':
+			var keys=['bb', 'bbw', 'keywords', 'events'];
+			BIM.fun.log(ev.data.alias.toUpperCase()+'\n' + keys.join("\n"));
+			break;		
 	};
 };
 

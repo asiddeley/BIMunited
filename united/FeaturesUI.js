@@ -30,9 +30,6 @@ var FeaturesUI=function(board, title){
 	//inherit constructor from UI
 	UI.call(this, board, title); 
 	
-	//register events that this UI responds to
-	BIM.fun.on(this.getEvents());
-	
 	// return constructed ui object for chaining.
 	return this;
 };
@@ -59,15 +56,15 @@ FP.onInput=function(ev, input){
 		case 'features':ev.data.toggle();break;
 		case '_meshAdded':ev.data.start(BIM.get.cMesh());break;
 		case '_meshPicked':ev.data.start(BIM.get.cMesh());break;
-		case 'keywords':
-			var keys=['ff', 'features', 'keywords', 'events'];
-			BIM.fun.log('// Features UI\n'+keys.join("\n"));
-			break;			
 		case 'events':
 			//keys - Array of event names
 			var keys=Object.keys(ev.data.getEvents()); 
-			BIM.fun.log('// Features UI\n'+keys.join("\n"));
+			BIM.fun.log(ev.data.alias.toUpperCase()+'\n'+keys.join("\n"));
 			break;	
+		case 'keywords':
+			var keys=['ff', 'features', 'keywords', 'events'];
+			BIM.fun.log(ev.data.alias.toUpperCase()+'\n'+keys.join("\n"));
+			break;			
 	} 
 };
 

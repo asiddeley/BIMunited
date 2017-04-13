@@ -34,7 +34,8 @@ function(s, v){
 return {
 	//Sphere:s,
 	Voxelite:v,
-	Voxelite:v
+	Voxelite1:v,
+	Voxelite2:v
 	//insert:i (instance, modelRef, ref, xref)
 	//model:m (block, blueprint, definition, prototype)
 	//ground:g

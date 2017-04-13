@@ -37,7 +37,7 @@ define(
 'babylon',
 'united/TabbedUI',
 'united/BlackboardUI',
-'united/PartsUI',
+'united/MakerUI',
 //'united/uiPicker',
 'united/FeaturesUI',
 'lights/hemi',
@@ -51,7 +51,7 @@ $,
 babylon, 
 TabbedUI,
 BlackboardUI, 
-PartsUI, 
+MakerUI, 
 //uiPicker, 
 FeaturesUI, 
 Light, 
@@ -83,7 +83,7 @@ var BIM={
 		tui.addTab( 
 			this.ui.blackboard, 
 			new FeaturesUI(null, 'Features'),
-			new PartsUI(null, 'Parts')
+			new MakerUI(null, 'Make')
 		); 
 	
 	},
