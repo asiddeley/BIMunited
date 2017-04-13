@@ -248,7 +248,7 @@ var BIM={
 		board:null,
 		canvas:null,
 		database:null,
-		engine:null,
+		engine:null
 		
 	},	
 	

@@ -21,24 +21,14 @@
 
 define(
 // load dependencies...
-['jquery', 'united/uiFeatureText'],
+['jquery', 'united/uiFeatureText', 'united/UI'],
 
 // then do...
-function($, wc){
+function($, wc, UI){
 
 var FeaturesUI=function(board, title){
-	
-	// board - the DOM container all ui DOM elements
-	this.div$=$('<div></div>');	
-	if (typeof title != 'undefined' && title != null) {this.alias=title;}
-	else  {this.alias='Log';}
-		
-	if (typeof board != 'undefined' && board != null){ 
-		if (board instanceof window.Element){this.board$=$(board);}
-		//board is jquery wrapped DOM element
-		if (board instanceof $){this.board$=board;}	
-		this.board$.append(this.div$);
-	}
+	//inherit constructor from UI
+	UI.call(this, board, title); 
 	
 	//register events that this UI responds to
 	BIM.fun.on(this.getEvents());
@@ -47,17 +37,19 @@ var FeaturesUI=function(board, title){
 	return this;
 };
 
-var FP=FeaturesUI.prototype;
+//inherit prototype from UI
+FeaturesUI.prototype=Object.create(UI.prototype);
+FeaturesUI.prototype.constructor=FeaturesUI;
 
+var FP=FeaturesUI.prototype;
 FP.alias='Features';
-FP.div$=null;
 	
 FP.getEvents=function(){
 	//For events, keyword 'this' refers to the event callers context
 	//The 'this' that refers to the FeaturesUI instance, is passed in ev.data 
 	return {
-	bimInput:{name:'bimInput', data:this, handler:this.onInput},
-	bimPick:{name:'bimPick', data:this, handler:this.onPick}
+		bimInput:{name:'bimInput', data:this, handler:this.onInput},
+		bimPick:{name:'bimPick', data:this, handler:this.onPick}
 	};
 };
 	
@@ -80,31 +72,31 @@ FP.onInput=function(ev, input){
 };
 
 FP.onPick=function(ev, picks){
-		//access features of the last bim part picked...
-		//Beware of keyword 'this' in event handlers, use 'BIM.ui.features' instead 
-		if (picks.length>0){
-			//BIM.ui.uiFeatures.start(picks[picks.length-1]);
-		} else {
-			BIM.ui.FeaturesUI.reset();
-		}
+	//Beware of keyword 'this' in event handlers, use ev.data instead 
+	if (picks.length>0){
+		//access features of the last picked mesh
+		ev.data.start(picks[picks.length-1]);
+	} else {
+		ev.data.reset();
+	}
 };
 
 FP.reset=function(){	
-		this.widgeta.forEach(function(item){item.remove();});	
-		this.widgeta=[];
-		this.widgeti=0;	
+	this.widgeta.forEach(function(item){item.remove();});	
+	this.widgeta=[];
+	this.widgeti=0;	
 };
 		
 FP.start=function(mesh){
-		if (typeof mesh=='undefined' || mesh==null){ return false; }
-		this.reset();
-		var ff=mesh.bimHandler.getFeatures(mesh);
-		var f;
-		for (label in ff){
-			f=ff[label];
-			if (typeof f.editor == 'object') { this.widgetInit(mesh, f); }
-			else { BIM.fun.log('Feature not editable'); }
-		}
+	if (typeof mesh=='undefined' || mesh==null){ return false; }
+	this.reset();
+	var ff=mesh.bimHandler.getFeatures(mesh);
+	var f;
+	for (label in ff){
+		f=ff[label];
+		if (typeof f.editor == 'object') { this.widgetInit(mesh, f); }
+		else { BIM.fun.log('Feature not editable'); }
+	}
 };
 	
 FP.toggle=function(){

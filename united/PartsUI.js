@@ -14,29 +14,29 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	project:	BIM united FC
-	module: 	uiParts
-	initiator: 	Andrew Siddeley 
-	initiated:	16-Feb-2017
+	module: 	PartsUI
+	by: 		Andrew Siddeley 
+	started:	16-Feb-2017
 	
 */
 
 
 define(
 // load dependencies...
-['jquery', 'jquery-ui', 'babylon', 'united/UI' ],
+['jquery', 'jquery-ui', 'babylon', 'united/FeaturesUI' ],
 
 // then do...
-function($, $$, babylon, UI ){
+function($, $$, babylon, FeaturesUI ){
 
 var PartsUI=function(board, title){
 	// Inherit from UI, call super constructor
-	UI.call(this, board, title); 
+	FeaturesUI.call(this, board, title); 
 	BIM.input('_restock'); 
 	return this;
 };
 
 // Inherit the UI prototype
-PartsUI.prototype=Object.create(UI.prototype);
+PartsUI.prototype=Object.create(FeaturesUI.prototype);
 PartsUI.prototype.constructor=PartsUI;
 
 var PP=PartsUI.prototype;
@@ -64,14 +64,17 @@ PP.addPartCreaterButton=function(cg$, n, fn){
 	//cg$ - jquery wrapped element to contain buttons
 	var onClick=function(ev){ 
 		//eval creater function fn, and set cMesh to is (current Mesh).
-		BIM.get.cMesh(fn()); 
+		BIM.get.cMesh(fn());
 		//message to uiFeatures to expose new mesh features
-		BIM.input('_meshAdded'); 		
+		BIM.input('_meshAdded');
 	};
-	var b$=$('<button></button>').addClass('ui-widget-content').text(n); 
+	var b$=$('<button></button>').addClass('ui-widget-content').text(n);
 	b$.on('click', onClick);
-	cg$.append(b$);
+	cg$.prepend(b$);
 };
+
+	
+	
 	
 // override UI
 PP.getEvents=function(){
