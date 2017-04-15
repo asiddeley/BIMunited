@@ -91,7 +91,10 @@ FP.start=function(mesh){
 	var f;
 	for (label in ff){
 		f=ff[label];
-		if (typeof f.editor == 'object') { this.widgetInit(mesh, f); }
+		BIM.fun.log(JSON.stringify(f));
+		if (typeof f.editor == 'object') {
+			this.widgetInit(mesh, f);
+		}
 		else { BIM.fun.log('Feature not editable'); }
 	}
 };

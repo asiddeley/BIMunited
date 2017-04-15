@@ -39,7 +39,7 @@ var TabbedUI=function(board, title){
 	//create empty tab group, add tabs child-uis later with addTabb
 	this.createTabgroup(); 
 	//use jquery-ui to turn div$ into a floating dialog box
-	this.div$.dialog({draggable:true, title:this.alias, autoOpen:true});
+	this.div$.dialog({draggable:true, title:this.alias, autoOpen:true, width:400});
 
 	return this;
 };
@@ -51,22 +51,29 @@ TabbedUI.prototype.constructor=TabbedUI;
 
 TabbedUI.prototype.addTab=function(){ 
 
-	var c, index, li$, tab$, ui;
+	var c, index, tab$, panel$, ui;
 	this.divTabgroup$.tabs('destroy');
 
 	for (index in arguments){
 		ui=arguments[index];
 		c=this.tabcount++;
 		id='tab'+ c.toString();
-		li$=$('<li></li>').append( $('<a></a>').attr('href', "#"+id).text(ui.alias) );
-		tab$=$('<div></div>').attr('id', id).append(ui.div$);
-		this.divUL$.append(li$);
-		this.divTabgroup$.append(tab$);	
+		tab$=$('<li></li>').append( $('<a></a>').attr('href', "#"+id).text(ui.alias) );
+		panel$=$('<div></div>').attr('id', id).append(ui.div$);
+		this.divUL$.append(tab$);
+		this.divTabgroup$.append(panel$);	
 	}
 	
 	//use jquery-ui to turn it into a tab widget
-	this.divTabgroup$.tabs();
-	//if (rest instanceof Array) {this.addTab(rest);}
+	this.divTabgroup$.tabs({
+		// jquery-ui tabs activate event is triggered when tab in focus.
+		// Get bim to broadcast it. 
+		// listened by makerUI to initialize mini scene to display sample
+		// per jquery-ui docs, ui={newTab:{}, oldTab:{}, newPanel:{}, oldPanel:{}}
+		activate: function( event, ui ) {
+			BIM.fun.trigger('tabsactivate', ui);
+		}
+	});
 	return this;
 };
 

@@ -31,40 +31,50 @@ function($, $$, babylon, UI, FeaturesUI ){
 var MakerUI=function(board, title){
 	// Inherit from UI, call super constructor
 	UI.call(this, board, title); 
-	this.radioo={
+
+	//options for controlgroup() jquery-ui widget 
+	this.cg$options={		
 		'items':{
 		"button":"button, input[type=text], input[type=submit]",
 		"controlgroupLabel": ".ui-controlgroup-label",
 		"checkboxradio": "input[type='checkbox'], input[type='radio']",
-		"selectmenu": "select",
+		//"selectmenu": "select",
 		"menu":".dropdown-items",
 		"spinner": ".ui-spinner-input"},
 		'direction':'vertical'		
 	};
+
+	//options for selectmenu() jquery-ui widget
+	var that=this;
+	this.sm$options={
+		width:'150px',
+		//callback function for when sample chosen.  Note how 'this' is passed in that
+		select:function(ev, ui) {that.onSelectPart(ev, ui, that);},
+	}};
+	
+	this.scene=null;
 	
 	this.fui=new FeaturesUI(null, 'Features of New Part', false);
-	this.head$=$('<div></div>');
-	this.canvas$=$('<canvas></canvas>').css({'width':'150px', 'height':'100px', 'float':'right'});
-	this.make$=$('<button>Add to model</button>').on('click', function(ev){
-		BIM.fun.log('_Part made and added to scene');
+	//this.head$=$('<div></div>');
+	this.canvas$=$('<canvas></canvas>').css({'width':'100px', 'height':'100px', 'float':'right'});
+	this.ok$=$('<button>Ok</button>').on('click', function(ev){
+		BIM.fun.log('Part to be made and added to scene');
 		//get chosen part handler
 		//eval creater function fn, and set cMesh to is (current Mesh).
 		////BIM.get.cMesh(fn());
 		//message to uiFeatures to expose new mesh features
 		////BIM.input('_meshAdded');
 	});
-	this.radio$=$('<div></div>');
-	this.radio$.append(this.make$);
-	this.radio$.controlgroup(this.radioo);
-	this.head$.append(this.radio$, this.canvas$);
-	this.div$.append(this.head$, this.fui.div$);
+	this.cg$=$('<div></div>');
+	this.sm$=$('<select></select>').css({'width':'150px'});
+	this.sm$.selectmenu(this.sm$options);
+	this.desc$=$('<div></div>').addClass('ui-controlgroup-label');
+	this.cg$.append(this.ok$, this.sm$, this.desc$);
+	this.cg$.controlgroup(this.cg$options).css({'width':'150px'});
+	//this.head$.append(this.cg$, this.canvas$);
+	this.div$.append(this.cg$, this.canvas$, this.fui.div$);
 
-	//set up mini scene for making new part
-	this.engine=new babylon.Engine(this.canvas$[0],  true);
-	this.scene=new babylon.Scene(this.engine);
-	this.setScene(this.scene);	
-	this.engine.runRenderLoop(function(){ this.scene.render();} );	
-	
+	//For setup of sample canvas/scene, see onTabsactivate below.
 	
 	//BIM.input('_restock'); 
 	BIM.fun.trigger('bimRestock', [BIM.partsLib]);
@@ -75,71 +85,17 @@ var MakerUI=function(board, title){
 // Inherit the UI prototype
 MakerUI.prototype=Object.create(UI.prototype);
 MakerUI.prototype.constructor=MakerUI;
-
-var PP=MakerUI.prototype;
-/*
-PP.addControlgroup=function(partHandler){
-	var cg$=$('<div></div>').addClass('ui-widget-content');
-	this.div$.append(cg$);
-	//main creater
-	this.addPartCreaterButton(cg$, partHandler.bimType, partHandler.create);
-	//alternate creaters
-	for (var n in partHandler.creaters){this.addPartCreaterButton(cg$, n, partHandler.creaters[n]);};
-	//wigetize cg$, google jquery-ui controlgroup for documentation
-	//items indicates what widgets to apply
-	cg$.controlgroup({items:{button:'button'}});
-};
 	
-PP.addPartCreaterButton=function(cg$, n, fn){
-	//n - name of part
-	//fn - creater function of part
-	//cg$ - jquery wrapped element to contain buttons
-	var onClick=function(ev){ 
-		//eval creater function fn, and set cMesh to is (current Mesh).
-		BIM.get.cMesh(fn());
-		//message to uiFeatures to expose new mesh features
-		BIM.input('_meshAdded');
-	};
-	var b$=$('<button></button>').addClass('ui-widget-content').text(n);
-	b$.on('click', onClick);
-	cg$.prepend(b$);
-};
-*/
-
-PP.addRadioButton=function( key, partHandler ){
-/*
-<div class="controlgroup">
-	<label for="transmission-standard">Standard</label>
-	<input type="radio" name="transmission" id="transmission-standard">
-	...
-*/
-	var that=this;
-	//var n=partHandler.bimType;	
-	var n=key;
-	var lab$=$('<label></label>').attr({'for':key}).text(n);
-	var inp$=$('<input type="radio">').attr({'name':n, 'id':key});
-	inp$.on('click', this, function(ev){ 
-		//BIM.fun.log( 'radio clicked - '+$(this).attr('id') );
-		//refresh canvas and feature
-		//makerUI.scene();
-		//eval creater function fn, and set cMesh to is (current Mesh).
-		////BIM.get.cMesh(fn());
-		//message to uiFeatures to expose new mesh features
-		////BIM.input('_meshAdded');
-	});
-	this.radio$.append(lab$, inp$);
-};
-	
-// override UI
-PP.getEvents=function(){
-	return { 
-		bimInput:{name:'bimInput',  data:this, handler:this.onInput },
-		bimRestock:{name:'bimRestock', data:this, handler:this.onRestock }
+MakerUI.prototype.getEvents=function(){
+	return {
+		bimInput:{name:'bimInput', data:this, handler:this.onInput },
+		bimRestock:{name:'bimRestock', data:this, handler:this.onRestock },
+		tabsactivate:{name:'tabsactivate', data:this, handler:this.onTabsactivate }
 	};
 };
 
 //inherited from UI but overriden
-PP.onInput=function(ev, input){ 
+MakerUI.prototype.onInput=function(ev, input){ 
 	//don't use keyword 'this' here as it will refer to the event caller's context, not uiPicker
 	switch(input){
 	case 'ap':
@@ -150,35 +106,89 @@ PP.onInput=function(ev, input){
 		BIM.fun.log(ev.data.alias.toUpperCase()+'\n' + keys.join("\n"));
 		break;	
 	case 'keywords':
-		var keys=['ap', 'parts', 'events', 'keywords', '_restock'];
+		var keys=['ap', 'parts', 'events', 'keywords', 'restock'];
 		BIM.fun.log(ev.data.alias.toUpperCase()+'\n' + keys.join("\n"));
 		break;		
-	case '_restock':	BIM.fun.trigger('bimRestock', [BIM.partsLib]); break;
+	case 'restock':BIM.fun.trigger('bimRestock', [BIM.partsLib]); break;
+
 	}		
 };
 	
-PP.onRestock=function(ev, lib){
-	//for (var i in lib){ev.data.addControlgroup(lib[i]);}		
-	ev.data.radio$.controlgroup('destroy');
-	for (var key in lib){ ev.data.addRadioButton( key, lib[key] );}		
-	ev.data.radio$.controlgroup(ev.data.radioo);
+MakerUI.prototype.onRestock=function(ev, lib){
+	var op$;
+	ev.data.partsLib=lib;
+	ev.data.sm$.selectmenu('destroy');
+	ev.data.sm$.empty();
+	
+	for (var key in lib){ 
+		//ev.data.addItem( key, lib[key] );
+		op$=$('<option></option>').text(key).val(key);
+		ev.data.sm$.append(op$);
+	}		
+	ev.data.sm$.selectmenu(ev.data.sm$options);
+};
+
+MakerUI.prototype.onSelectPart=function(ev, ui, that){
+	//that - makerUI
+	//this - <select></select> 
+	//ev - event
+	//ui - selected item or one of <option></option> tags, see jauery-ui docs
+	//ui.item - {element:{value:'somestring', label:'somestring', }}
+	//BIM.fun.log(JSON.stringify(ui.item));
+	//BIM.fun.log('To make:'+ui.item.label);
+	that.sample.dispose(); //remake sample
+	var bimHandler=that.partsLib[ui.item.label];
+	that.sample=bimHandler.setScene(that.scene);	
+	
+	//BIM.fun.log('sample.bimHandler:'+that.sample.bimHandler.bimType);
+	that.desc$.text(bimHandler.description);
+	//connect and show features of sample
+	that.fui.start(that.sample);
+}
+
+MakerUI.prototype.onTabsactivate=function(ev, ui){
+	// ev - event
+	// ev.data - 'this' passed from MakerUI
+	// ui - div of tab that was just activated (got focus) in the jquery-ui tabs widget
+	// ui - {}
+	var myTabsGotFocus=(ui.newPanel.find('div')[0]==ev.data.div$[0]);
+	//BIM.fun.log('myTabsGotFocus '+ myTabsGotFocus.toString());
+
+	// Cannot seem to initialize babylon engine and scene without canvas visible
+	// So,if MakerUI tab in focus and scene not yet initialized then do it...
+	if (myTabsGotFocus && ev.data.scene==null){
+		//set up mini scene for making new part
+		var mui=ev.data;
+		mui.engine=new babylon.Engine(mui.canvas$[0],  true);
+		mui.scene=new babylon.Scene(mui.engine);
+		mui.setScene(mui.scene, mui.canvas$[0]);
+		mui.engine.runRenderLoop(function(){
+			//give camera a little spin
+			mui.scene.activeCamera.alpha += .01;
+			mui.scene.render();
+		});	
+		//this.scene.debugLayer.show();
+	}
 };
 	
-PP.setScene=function(scene){
-	var light=new BABYLON.HemisphericLight('hemiTop', new BABYLON.Vector3(0,0,0), scene);
-	var cam = new BABYLON.ArcRotateCamera(
+MakerUI.prototype.setScene=function(scene, canvas){
+
+	var light = new babylon.HemisphericLight(
+		'hemiTop', 
+		new babylon.Vector3(10,10,10),
+		this.scene);
+	var cam = new babylon.ArcRotateCamera(
 		"ArcRotateCamera", //name
 		1, //alpha
 		0.8, //beta
-		100, //radius
-		new BABYLON.Vector3(0, 0, 0), //target
-		scene
-	);
-	
-	
-}	
-	
-	
+		10, //radius
+		new babylon.Vector3(0, 0, 0), //target
+		this.scene);
+	//cam.setTarget(new BABYLON.Vector3.Zero());
+    cam.attachControl(this.canvas$[0], false);
+	this.sample=babylon.Mesh.CreateBox('sample', 5, this.scene);
+	//this.sample.position=new babylon.Vector3(5,5,5);
+};
 	
 return MakerUI;
 

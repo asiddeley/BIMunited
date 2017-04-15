@@ -30,26 +30,21 @@ define(
 // then construct part object...
 function(uiFeatureText){
 	
-return {
-	
-	//Returns a name feature, scoped to a particular mesh
+var nameFeature=function(mesh){ 
+	//Static function that returns a fresh name feature {}, scoped to a particular mesh
 	//A feature is a hash used by uiFeatures to edit and update babylon mesh properties
 	//and looks like this...
 	//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
-	getFeature:function(mesh){ 
-		return { 
-			name:{
-				label:'Name',
-				valu:mesh.name, 
-				onFeatureChange:function(result){ 
-					mesh.name=result;
-				},
-				//editor:uiFeatureTextarea
-				editor:uiFeatureText
-			}
-		};
-	}
-}
+	return { 
+		name:'Name',
+		valu:mesh.name, 
+		onFeatureChange:function(result){mesh.name=result;},
+		//editor:uiFeatureTextarea
+		editor:uiFeatureText
+	};
+};
+
+return nameFeature;
 
 });
 

@@ -14,6 +14,7 @@ requirejs.config({
 "paths": {
 	"arch":"../Arch",
 	"cameras": "../cameras",
+	"features":"../features",
 	"handlers":"../handlers",
 	"kernel": "../kernel",
 	"lights": "../lights",
@@ -82,8 +83,8 @@ var BIM={
 		this.ui.blackboard=new BlackboardUI(null, "Log");
 		tui.addTab( 
 			this.ui.blackboard, 
-			new FeaturesUI(null, 'Features'),
-			new MakerUI(null, 'Make')
+			new MakerUI(null, 'Make'),
+			//new FeaturesUI(null, 'Features')
 		); 
 	
 	},
@@ -132,11 +133,13 @@ var BIM={
 		this.views.main.create();
 		
 		// This is a cool Babylon feature
-		//s.debugLayer.show();
+		// s.debugLayer.show();
 		
 		// engage the engine!
-		engine.runRenderLoop(function(){ s.render();} );	
-
+		engine.runRenderLoop(function(){ s.render();} );
+		
+		// announce it
+		this.options.board$.trigger('bimEngage');
 	},
 	
 	// function store 
