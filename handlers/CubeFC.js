@@ -25,10 +25,10 @@
 define(
 
 // load dependencies...
-['babylon', 'jquery', 'features/nameFeature'],
+['babylon', 'jquery', 'features/nameFeature', 'kernel/featurePosition'],
 
 // then do...
-function(babylon, $, nameFeature){
+function(babylon, $, nameFeature, position){
 
 //DEP, use: var bimType=instanceOf (new Voxelite());
 //	bimType:'Voxel', 
@@ -37,7 +37,7 @@ function(babylon, $, nameFeature){
 // Voxelite() => voxelite {obj}, the handler with Static methods
 var Voxelite=function(){
 	this.bimType='Voxelite';
-	this.desc='A unit cube, that can be placed at integer coordinates.';
+	this.description='A unit cube, locatable at integer coordinates';
 	this.setScene=function(scene){ 
 	
 	var m=new babylon.StandardMaterial("voxelTexture", scene);
@@ -84,7 +84,7 @@ var Voxelite=function(){
 		// {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
 		// return $.extend({},name.getFeature(mesh) );
 		return {
-			name:nameFeature(mesh)
+			name:nameFeature(mesh),
 		}
 
 	}

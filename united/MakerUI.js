@@ -48,16 +48,16 @@ var MakerUI=function(board, title){
 	var that=this;
 	this.sm$options={
 		width:'150px',
-		//callback function for when sample chosen.  Note how 'this' is passed in that
-		select:function(ev, ui) {that.onSelectPart(ev, ui, that);},
-	}};
+		//callback function for when sample chosen.  Note how 'this' is passed with 'that'
+		select:function(ev, ui) {that.onChoosePart(ev, ui, that);}
+	};
 	
 	this.scene=null;
 	
 	this.fui=new FeaturesUI(null, 'Features of New Part', false);
 	//this.head$=$('<div></div>');
-	this.canvas$=$('<canvas></canvas>').css({'width':'100px', 'height':'100px', 'float':'right'});
-	this.ok$=$('<button>Ok</button>').on('click', function(ev){
+	this.canvas$=$('<canvas></canvas>').css({'width':'100px', 'height':'100px'});
+	this.ok$=$('<button>Add to model</button>').on('click', function(ev){
 		BIM.fun.log('Part to be made and added to scene');
 		//get chosen part handler
 		//eval creater function fn, and set cMesh to is (current Mesh).
@@ -65,14 +65,15 @@ var MakerUI=function(board, title){
 		//message to uiFeatures to expose new mesh features
 		////BIM.input('_meshAdded');
 	});
-	this.cg$=$('<div></div>');
-	this.sm$=$('<select></select>').css({'width':'150px'});
+	this.cg$=$('<div></div>').css({'display':'inline-block', 'vertical-align':'top'});
+	this.desc$=$('<div></div>').addClass('ui-controlgroup-label').css({'width':'200px'});
+	this.sm$=$('<select></select>').css({'width':'200px'});
 	this.sm$.selectmenu(this.sm$options);
-	this.desc$=$('<div></div>').addClass('ui-controlgroup-label');
-	this.cg$.append(this.ok$, this.sm$, this.desc$);
-	this.cg$.controlgroup(this.cg$options).css({'width':'150px'});
+	this.cg$.append(this.sm$, this.desc$, this.ok$);
+	this.cg$.controlgroup(this.cg$options).css({'width':'200px'});
+	this.desc$.text('Choose a part, edit and add to model.');
 	//this.head$.append(this.cg$, this.canvas$);
-	this.div$.append(this.cg$, this.canvas$, this.fui.div$);
+	this.div$.append(this.canvas$, this.cg$,  this.fui.div$);
 
 	//For setup of sample canvas/scene, see onTabsactivate below.
 	
@@ -92,6 +93,23 @@ MakerUI.prototype.getEvents=function(){
 		bimRestock:{name:'bimRestock', data:this, handler:this.onRestock },
 		tabsactivate:{name:'tabsactivate', data:this, handler:this.onTabsactivate }
 	};
+};
+
+MakerUI.prototype.onChoosePart=function(ev, ui, that){
+	//that - makerUI
+	//this - <select></select> 
+	//ev - event
+	//ui - selected item or one of <option></option> tags, see jauery-ui docs
+	//ui.item - {element:{value:'somestring', label:'somestring', }}
+
+	//BIM.fun.log(JSON.stringify(ui.item));
+	//BIM.fun.log('To make:'+ui.item.label);
+	that.sample.dispose(); //remake sample
+	var bimHandler=that.partsLib[ui.item.label];
+	that.sample=bimHandler.setScene(that.scene);	
+	that.desc$.text(that.sample.bimHandler.desc);	
+	//connect and show features of sample
+	that.fui.start(that.sample);
 };
 
 //inherited from UI but overriden
@@ -127,24 +145,6 @@ MakerUI.prototype.onRestock=function(ev, lib){
 	}		
 	ev.data.sm$.selectmenu(ev.data.sm$options);
 };
-
-MakerUI.prototype.onSelectPart=function(ev, ui, that){
-	//that - makerUI
-	//this - <select></select> 
-	//ev - event
-	//ui - selected item or one of <option></option> tags, see jauery-ui docs
-	//ui.item - {element:{value:'somestring', label:'somestring', }}
-	//BIM.fun.log(JSON.stringify(ui.item));
-	//BIM.fun.log('To make:'+ui.item.label);
-	that.sample.dispose(); //remake sample
-	var bimHandler=that.partsLib[ui.item.label];
-	that.sample=bimHandler.setScene(that.scene);	
-	
-	//BIM.fun.log('sample.bimHandler:'+that.sample.bimHandler.bimType);
-	that.desc$.text(bimHandler.description);
-	//connect and show features of sample
-	that.fui.start(that.sample);
-}
 
 MakerUI.prototype.onTabsactivate=function(ev, ui){
 	// ev - event

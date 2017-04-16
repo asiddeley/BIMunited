@@ -25,10 +25,10 @@
 
 define(
 // load dependencies...
-['united/uiFeatureText'],
+['united/FeaturesUItext'],
 
 // then construct part object...
-function(uiFeatureText){
+function(FeaturesUItext){
 	
 var nameFeature=function(mesh){ 
 	//Static function that returns a fresh name feature {}, scoped to a particular mesh
@@ -36,11 +36,12 @@ var nameFeature=function(mesh){
 	//and looks like this...
 	//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
 	return { 
-		name:'Name',
-		valu:mesh.name, 
+		label:'Name',
+		valu:mesh.name,
+		onFC:function(result){mesh.name=result;},
+		edit:FeaturesUItext,
 		onFeatureChange:function(result){mesh.name=result;},
-		//editor:uiFeatureTextarea
-		editor:uiFeatureText
+		editor:FeaturesUItext
 	};
 };
 

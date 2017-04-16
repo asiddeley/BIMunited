@@ -21,10 +21,10 @@
 
 define(
 // load dependencies...
-['jquery', 'united/uiFeatureText', 'united/UI'],
+['jquery', 'united/UI', 'united/FeatureEditor'],
 
 // then do...
-function($, wc, UI){
+function($, UI, FeatureEditor){
 
 var FeaturesUI=function(board, title){
 	//inherit constructor from UI
@@ -87,14 +87,12 @@ FP.reset=function(){
 FP.start=function(mesh){
 	if (typeof mesh=='undefined' || mesh==null){ return false; }
 	this.reset();
-	var ff=mesh.bimHandler.getFeatures(mesh);
+	var fc=mesh.bimHandler.getFeatures(mesh);
 	var f;
-	for (label in ff){
-		f=ff[label];
-		BIM.fun.log(JSON.stringify(f));
-		if (typeof f.editor == 'object') {
-			this.widgetInit(mesh, f);
-		}
+	for (label in fc){
+		f=fc[label];
+		//BIM.fun.log(JSON.stringify(f));
+		if (f.editor.prototype instanceof FeatureEditor) {this.widgetInit(mesh, f);}
 		else { BIM.fun.log('Feature not editable'); }
 	}
 };
@@ -111,21 +109,20 @@ FP.widgeti=0; //index for array
 
 FP.widgetInit=function(mesh, feature){
 	if (this.widgeti==this.widgeta.length){
-		this.widgeta.push(feature.editor.create(this.div$));
+		this.widgeta.push(new feature.editor(this.div$));
 	};
 	//if using jquery-ui widget then
 	//$(this.wCell[this.wCelli++]).wCell('vlca', valu, label, onChange, part).show();	
 	(this.widgeta[this.widgeti++]).start(mesh, feature);
 };
 
-
 /*
 usage:
 myFeaturesUI=new Features(board, uiStore, evManager, isDialog);
 To create a feature editor UI that stands alone:
 myFeaturesUI=new Features($("#myNavbar"), BIM.ui, BIM.ui.uiBlackboard, true);
-
 */
+
 return FeaturesUI;
 
 });

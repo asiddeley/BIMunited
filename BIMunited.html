@@ -19,6 +19,7 @@
 function inputHandler(ev){
 	ev.preventDefault(); //disable normal form submit behavior that refreshes page
 	var i=$("#myInput").val(); //get text from form 
+	$("#myInput").val('');
 	BIM.input(i); //and pass it to BIM for processing
 	return false; //prevent further bubbling of event
 };
@@ -60,7 +61,7 @@ $(".menu").menu().css("position","absolute", "width", "200px").hide();
 
 //cleanup any open dropdown menus
 $(".menu").on('mouseleave',function(){$(".menu").hide();});
-//clear DDAH dropdown autohide
+//clear dropdown autohide (DDAH)
 $(".menu").on('mouseenter',function(){clearTimeout(document.DDAH);});
 
 //initialize drop-down menus with homemade functions by providing DOM tag ids:

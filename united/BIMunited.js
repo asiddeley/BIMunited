@@ -142,7 +142,7 @@ var BIM={
 		this.options.board$.trigger('bimEngage');
 	},
 	
-	// function store 
+	// function collection 
 	fun:{
 		addEventHandlers:function(eh){
 			BIM.ui.uiBlackboard.addEventHandlers(eh);			
