@@ -38,24 +38,16 @@ var MakerUI=function(board, title){
 		"button":"button, input[type=text], input[type=submit]",
 		"controlgroupLabel": ".ui-controlgroup-label",
 		"checkboxradio": "input[type='checkbox'], input[type='radio']",
-		//"selectmenu": "select",
+		"selectmenu": "select",
 		"menu":".dropdown-items",
 		"spinner": ".ui-spinner-input"},
 		'direction':'vertical'		
 	};
 
 	//options for selectmenu() jquery-ui widget
-	var that=this;
-	this.sm$options={
-		width:'150px',
-		//callback function for when sample chosen.  Note how 'this' is passed with 'that'
-		select:function(ev, ui) {that.onChoosePart(ev, ui, that);}
-	};
-	
+
 	this.scene=null;
-	
 	this.fui=new FeaturesUI(null, 'Features of New Part', false);
-	//this.head$=$('<div></div>');
 	this.canvas$=$('<canvas></canvas>').css({'width':'100px', 'height':'100px'});
 	this.ok$=$('<button>Add to model</button>').on('click', function(ev){
 		BIM.fun.log('Part to be made and added to scene');
@@ -65,19 +57,22 @@ var MakerUI=function(board, title){
 		//message to uiFeatures to expose new mesh features
 		////BIM.input('_meshAdded');
 	});
-	this.cg$=$('<div></div>').css({'display':'inline-block', 'vertical-align':'top'});
-	this.desc$=$('<div></div>').addClass('ui-controlgroup-label').css({'width':'200px'});
-	this.sm$=$('<select></select>').css({'width':'200px'});
-	this.sm$.selectmenu(this.sm$options);
+	this.cg$=$('<div></div>').css({'display':'inline-block', 'vertical-align':'top', 'width':'200px'});
+	this.desc$=$('<div></div>').addClass('ui-controlgroup-label'); 
+	
+	//var that=this;
+	this.sm$=$('<select></select>'); 
+	//this.sm$.on('select', function(ev, ui) { this.onChoosePart(ev, ui, that);} );
 	this.cg$.append(this.sm$, this.desc$, this.ok$);
-	this.cg$.controlgroup(this.cg$options).css({'width':'200px'});
+	this.cg$.controlgroup(this.cg$options);
+
+	this.sm$.selectmenu({'select':function(ev, ui) { this.onChoosePart(ev, ui, that);}});
+
 	this.desc$.text('Choose a part, edit and add to model.');
-	//this.head$.append(this.cg$, this.canvas$);
 	this.div$.append(this.canvas$, this.cg$,  this.fui.div$);
 
 	//For setup of sample canvas/scene, see onTabsactivate below.
 	
-	//BIM.input('_restock'); 
 	BIM.fun.trigger('bimRestock', [BIM.partsLib]);
 
 	return this;
@@ -103,7 +98,7 @@ MakerUI.prototype.onChoosePart=function(ev, ui, that){
 	//ui.item - {element:{value:'somestring', label:'somestring', }}
 
 	//BIM.fun.log(JSON.stringify(ui.item));
-	//BIM.fun.log('To make:'+ui.item.label);
+	BIM.fun.log('To make:'+ui.item.label);
 	that.sample.dispose(); //remake sample
 	var bimHandler=that.partsLib[ui.item.label];
 	that.sample=bimHandler.setScene(that.scene);	
@@ -134,7 +129,8 @@ MakerUI.prototype.onInput=function(ev, input){
 	
 MakerUI.prototype.onRestock=function(ev, lib){
 	var op$;
-	ev.data.partsLib=lib;
+	var that=ev.data; // AKA this
+	that.partsLib=lib;
 	ev.data.sm$.selectmenu('destroy');
 	ev.data.sm$.empty();
 	
@@ -143,7 +139,7 @@ MakerUI.prototype.onRestock=function(ev, lib){
 		op$=$('<option></option>').text(key).val(key);
 		ev.data.sm$.append(op$);
 	}		
-	ev.data.sm$.selectmenu(ev.data.sm$options);
+	ev.data.sm$.selectmenu(	{'direction':'vertical', 'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}	});
 };
 
 MakerUI.prototype.onTabsactivate=function(ev, ui){

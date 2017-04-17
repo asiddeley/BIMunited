@@ -94,18 +94,15 @@ requirejs(['BIMunited'], function(BIM){
 
 <div id="board" class="container-fluid">
 
-<div id="navbar" class="controlgroup ui-widget-header" style="padding:4px; width:792px;">
+<form id="navbar" class="controlgroup ui-widget-header" style="padding:4px; width:790px;" onSubmit="return inputHandler(event)">
 	<button>BIM United FC</button>
 	<button id="file">Files</button>
 	<button id="tool">Tools</button>
 	<button id="part">Parts</button>	
 	<button id="help">Help</button>	
-	
-	<form onSubmit="return inputHandler(event)">
-	<input id="myInput" type="text" placeholder="Command"><input type="submit" value="Ok">
-	</form>
-	
-</div><!-- navbar   -->
+	<input id="myInput" type="text" placeholder="Command">
+	<input type="submit" value="Ok">	
+</form>
 
 <canvas id="canvas" style="width:800px; height:400px;"></canvas>
 

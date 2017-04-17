@@ -83,7 +83,7 @@ var BIM={
 		this.ui.blackboard=new BlackboardUI(null, "Log");
 		tui.addTab( 
 			this.ui.blackboard, 
-			new MakerUI(null, 'Make'),
+			new MakerUI(null, 'Make')
 			//new FeaturesUI(null, 'Features')
 		); 
 	

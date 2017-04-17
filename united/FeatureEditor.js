@@ -30,57 +30,44 @@ define(
 function($) {
 
 var FeatureEditor=function(place) {
-
-	this.div$=$('<form></form>');	
-	//Important - prevent page from refreshing when form submitted
-	this.div$.on('submit', function(ev){ev.preventDefault();});
-	
-	this.divLabel$=$('<span></span>').addClass('ui-controlgroup-label');
-	this.divText$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
-	this.divOK$=$('<span>ok</span>').button();//.addClass('ui-icon ui-icon-check');
-	this.divOK$.on('click', this, function(ev){
-		//note how 'this' is passed to event handler via ev.data...
-		//trigger event and pass revised text as argument
-		ev.data.div$.trigger('bimFeatureOK',[ev.data.divText$.val()]);
-	});
-	
-	this.div$.append(this.divLabel$, this.divText$, this.divOK$);
-
 	//Note to inheritors, don't forget to this.wigetize() after calling this constructor.
-	$(place).append(this.div$);
+	this.form$=$('<form></form>');	
+	this.label$=$('<label></label>').addClass('ui-controlgroup-label');
+	this.form$.append(this.label$);
+	$(place).append(this.form$);
 	return this;
 };
 
 
 var __=FeatureEditor.prototype;
 
-__.div$=null;
-__.divLabel$=null;
-__.divText$=null;
-__.divOK$=null;	
+__.form$=null;
+__.label$=null;
+//__.divText$=null;
+//__.divOK$=null;	
+
 __.remove=function(){
-	this.divLabel$.remove();
-	this.divText$.remove();
-	this.divOK$.remove();
-	this.div$.remove();
+	this.label$.remove();
+	this.form$.remove();
 };
 
-__.wigetize=function(){
-	var options={
-	'direction':'horizontal',
-	'items':{
-		"button":"button, input[type=text], input[type=submit]",
-		"controlgroupLabel": ".ui-controlgroup-label",
-		"checkboxradio": "input[type='checkbox'], input[type='radio']",
-		"selectmenu": "select",
-		"menu":".dropdown-items",
-		"spinner": ".ui-spinner-input"}
-	};
-	this.div$.controlgroup(options);
+__.start=function(mesh, feature){
+
+	this.label$.text(feature.label); 
+	//this.text$.val(feature.valu);
+
+	// reset and configure events to be triggered when OK pressed
+	//this.div$.off('bimFeatureOK');
+	
+	// respond to bimFeatureOK event (triggered by OK button)...
+	//this.form$.on('bimFeatureOK', function(ev, result){
+		//BIM.fun.log('OK triggered, revised text is:'+result);
+		//call the provided callback function
+		//feature.onFeatureChange(result);
+		//BIM.fun.trigger('bimFeatureChanged', [feature]);
+	//});
 };
 
-
-// TODO - undo funcitonality for inheritors of this class
 __.undo=function(){	};	
 __.undolog=[];
 __.undopush=function(that, valu){
@@ -89,26 +76,16 @@ __.undopush=function(that, valu){
 	if (that.undolog.length > 10) {that.undolog.shift();}
 };
 
-
-// API function to set value, label, callback and argument1 (part)
-__.start=function(mesh, feature){
-		
-	this.divLabel$.text(feature.label); 
-	this.divText$.val(feature.valu);
-
-	// reset and configure events to be triggered when OK pressed
-	this.div$.off('bimFeatureOK');
-	
-	// respond to bimFeatureOK event (triggered by OK button)...
-	this.div$.on('bimFeatureOK', function(ev, result){
-		BIM.fun.log('OK triggered, revised text is:'+result);
-		feature.onFeatureChange(result);
-	});
-	// then trigger bimFeatureChanged.
-	this.div$.on('bimFeatureOK', function(ev){ 
-		//trigger(event, [arg1, arg2...]) 
-		//event handler like: function(ev, arg1, arg2){...}
-		BIM.fun.trigger('bimFeatureChanged', [feature]);
+__.wigetize=function(){
+	this.form$.controlgroup({
+		'direction':'horizontal',
+		'items':{
+			"button":"button, input[type=text], input[type=submit]",
+			"controlgroupLabel": ".ui-controlgroup-label",
+			"checkboxradio": "input[type='checkbox'], input[type='radio']",
+			"selectmenu": "select",
+			"menu":".dropdown-items",
+			"spinner": ".ui-spinner-input"}
 	});
 };
 

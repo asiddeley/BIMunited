@@ -30,21 +30,47 @@ define(
 function($, FeatureEditor) {
 
 var FeaturesUItext=function(place) {
-	// inherits FeatureEditor - initialize fields
+	// Inherits from FeatureEditor, so call super function (the constructor in this case) to initialize fields
 	FeatureEditor.call(this, place);
 	
 	// TODO - add,change inherited fields as required here
-	
-	
-	// wigetize fields
+	//Important - prevent page from refreshing when form submitted
+	this.form$.on('submit', this, function(ev){ ev.preventDefault();	});
+	this.text$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
+	this.ok$=$('<input type="submit" value="ok">');
+	this.form$.append(this.text$, this.ok$);
 	this.wigetize();
 	return this;
 };
 
-
 // inherit prototype...
 FeaturesUItext.prototype=Object.create(FeatureEditor.prototype);
 FeaturesUItext.prototype.constructor=FeaturesUItext;
+
+var __=FeaturesUItext.prototype;
+
+// override start function
+__.start=function(mesh, feature){
+	
+	// call super function - takes care of <form>, <label>, undo functionality etc.
+	FeatureEditor.prototype.start.call(this, mesh, feature);
+
+	this.text$.val(feature.valu);
+
+	// reset and configure event since it's a new feature
+	this.form$.off('submit');
+	
+	// respond to bimFeatureOK event (triggered by OK button)...
+	this.form$.on('submit', this, function(ev){
+		ev.preventDefault();
+		//ev.data = 'this' as passed above
+		var result=ev.data.text$.val();
+		BIM.fun.log('submit triggered, revised text is:'+result);
+		feature.onFeatureChange(result);
+		BIM.fun.trigger('bimFeatureChanged', [feature]);
+	});
+
+};
 
 
 return FeaturesUItext;
