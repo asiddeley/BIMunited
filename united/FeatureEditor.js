@@ -43,8 +43,6 @@ var __=FeatureEditor.prototype;
 
 __.form$=null;
 __.label$=null;
-//__.divText$=null;
-//__.divOK$=null;	
 
 __.remove=function(){
 	this.label$.remove();
@@ -54,18 +52,6 @@ __.remove=function(){
 __.start=function(mesh, feature){
 
 	this.label$.text(feature.label); 
-	//this.text$.val(feature.valu);
-
-	// reset and configure events to be triggered when OK pressed
-	//this.div$.off('bimFeatureOK');
-	
-	// respond to bimFeatureOK event (triggered by OK button)...
-	//this.form$.on('bimFeatureOK', function(ev, result){
-		//BIM.fun.log('OK triggered, revised text is:'+result);
-		//call the provided callback function
-		//feature.onFeatureChange(result);
-		//BIM.fun.trigger('bimFeatureChanged', [feature]);
-	//});
 };
 
 __.undo=function(){	};	

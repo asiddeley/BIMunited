@@ -15,46 +15,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	
-	project:	BIM united FC (Framework Concept)
-	module: 	featurePosition
-	desc: 
-	author: 	Andrew Siddeley 
-	started:	6-Apr-2017
+	project:	BIM United Feature & Function Collection (FC)
+	module: 	material Feature
+	by:		 	Andrew Siddeley 
+	date:		18-Apr-2017
 	
 ****************************************************************/
 
 define(
 // load dependencies...
-['babylon', 'jquery'],
+['united/FeaturesUItext'],
 
 // then construct part object...
-function(babylon, $){
-/***********
-Returns a name feature getter (static method) wrapped in an object. 
-A feature {} used by uiFeatures to edit and update babylon mesh properties.
-The Feature getter is wrapped in an object so many features can be easily combined for each BIM entity / mesh
-Feature structure...
-	{label:'name', 
-	valu:mesh.variable, 
-	onFeatureChange:fn(ev,mesh,res){...}, 
-	editor:featureEditor}
-*/
-return {
-	getFeature:function(mesh){ 
-		return { 
-			positionR10:{
-				label:'PositionR10',
-				desc:'A 3d vector rounded to the nearest 10 units',
-				valu:mesh.position, 
-				onFeatureChange:function(result){ 
-					mesh.position=result;
-				},
-				editor:positionR10UI
-			}
-		};
-	}
-};
+function(FeaturesUItext){
 	
+var materialFeature=function(mesh){ 
+	//Static function that returns a fresh feature {}, scoped to a particular mesh
+	//A feature is a hash used by uiFeatures to edit and update babylon mesh properties like this...
+	//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
+	return { 
+		label:'Material',
+		valu:mesh.material,
+		editor:FeaturesUIchooseFn,
+		onFeatureChange:function(revisedMaterial) {mesh.material=revisedMaterial;},
+	};
+};
+
+return materialFeature;
+
 });
 
 

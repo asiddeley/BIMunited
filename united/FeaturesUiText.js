@@ -33,8 +33,8 @@ var FeaturesUItext=function(place) {
 	// Inherits from FeatureEditor, so call super function (the constructor in this case) to initialize fields
 	FeatureEditor.call(this, place);
 	
-	// TODO - add,change inherited fields as required here
-	//Important - prevent page from refreshing when form submitted
+	// TODO - add properties or change inherited fields as required here
+	// Important - prevent page from refreshing when form submitted
 	this.form$.on('submit', this, function(ev){ ev.preventDefault();	});
 	this.text$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
 	this.ok$=$('<input type="submit" value="ok">');
