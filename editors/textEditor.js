@@ -24,14 +24,14 @@
 define(
 
 // Load dependencies...
-['jquery', 'united/FeatureEditor'],
+['jquery', 'editors/editor'],
 
 // Then do...
-function($, FeatureEditor) {
+function($, Editor) {
 
-var FeaturesUItext=function(place) {
+var textEditor=function(place) {
 	// Inherits from FeatureEditor, so call super function (the constructor in this case) to initialize fields
-	FeatureEditor.call(this, place);
+	Editor.call(this, place);
 	
 	// TODO - add properties or change inherited fields as required here
 	// Important - prevent page from refreshing when form submitted
@@ -44,10 +44,10 @@ var FeaturesUItext=function(place) {
 };
 
 // inherit prototype...
-FeaturesUItext.prototype=Object.create(FeatureEditor.prototype);
-FeaturesUItext.prototype.constructor=FeaturesUItext;
+textEditor.prototype=Object.create(Editor.prototype);
+textEditor.prototype.constructor=textEditor;
 
-var __=FeaturesUItext.prototype;
+var __=textEditor.prototype;
 
 // override start function
 __.start=function(mesh, feature){
@@ -73,7 +73,7 @@ __.start=function(mesh, feature){
 };
 
 
-return FeaturesUItext;
+return textEditor;
 
 }); //end of define
 

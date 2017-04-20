@@ -14,6 +14,7 @@ requirejs.config({
 "paths": {
 	"arch":"../Arch",
 	"cameras": "../cameras",
+	"editors":"../editors",
 	"features":"../features",
 	"handlers":"../handlers",
 	"kernel": "../kernel",
