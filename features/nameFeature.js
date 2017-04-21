@@ -25,10 +25,10 @@
 
 define(
 // load dependencies...
-['editors/textEditor'],
+['editors/textFED'],
 
 // then construct part object...
-function(textEditor){
+function(textFED){
 	
 var nameFeature=function(mesh){ 
 	//Static function that returns a fresh name feature {}, scoped to a particular mesh
@@ -39,7 +39,7 @@ var nameFeature=function(mesh){
 		label:'Name',
 		valu:mesh.name,
 		onFeatureChange:function(result){mesh.name=result;},
-		editor:textEditor
+		editor:textFED
 	};
 };
 

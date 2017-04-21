@@ -21,10 +21,10 @@
 
 define(
 // load dependencies...
-['jquery', 'united/UI', 'editors/editor'],
+['jquery', 'united/UI', 'editors/FED'],
 
 // then do...
-function($, UI, FeatureEditor){
+function($, UI, FED){
 
 var FeaturesUI=function(board, title){
 	//inherit constructor from UI
@@ -92,7 +92,7 @@ FP.start=function(mesh){
 	for (label in fc){
 		f=fc[label];
 		//BIM.fun.log(JSON.stringify(f));
-		if (f.editor.prototype instanceof FeatureEditor) {this.widgetInit(mesh, f);}
+		if (f.editor.prototype instanceof FED) {this.widgetInit(mesh, f);}
 		else { BIM.fun.log('Feature not editable'); }
 	}
 };

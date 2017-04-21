@@ -25,10 +25,10 @@
 define(
 
 // load dependencies...
-['babylon', 'jquery', 'features/nameFeature'],
+['babylon', 'jquery', 'features/nameFeature',  'features/positionFeature' ],
 
 // then do...
-function(babylon, $, nameFeature){
+function(babylon, $, nameFeature, positionFeature){
 
 //DEP, use: var bimType=instanceOf (new Voxelite());
 //	bimType:'Voxel', 
@@ -84,7 +84,8 @@ var Voxelite=function(){
 		// {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
 		// return $.extend({},name.getFeature(mesh) );
 		return {
-			name:nameFeature(mesh)
+			name:nameFeature(mesh),
+			position:positionFeature(mesh)
 		}
 
 	}

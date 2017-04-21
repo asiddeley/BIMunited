@@ -25,10 +25,10 @@
 
 define(
 // load dependencies...
-['babylon', 'jquery'],
+['babylon', 'jquery', 'editors/positionFED'],
 
 // then construct part object...
-function(babylon, $){
+function(babylon, $, positionFED){
 /***********
 Returns a name feature getter (static method) wrapped in an object. 
 A feature {} used by uiFeatures to edit and update babylon mesh properties.
@@ -49,7 +49,7 @@ var positionFeature = function(mesh){
 		desc:'A 3d vector rounded to the nearest 10 units',
 		valu:mesh.position, 
 		onFeatureChange:function(result){  mesh.position=result; },
-		editor:FeatureUIrandom10
+		editor:positionFED
 	};
 };
 

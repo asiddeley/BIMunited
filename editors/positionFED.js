@@ -15,49 +15,89 @@
 
 	
 	project:	BIM united FC
-	module:		uiFeatureText
-	desc:		field for editing a text feature
-	by: 		Andrew Siddeley 
-	started:	26-Mar-2017
+	module:	positionFED
+	desc:		position Feature Editor 
+	by: 			Andrew Siddeley 
+	date:		21-Apr-2017
 **************************************************************/
 
 define(
 
 // Load dependencies...
-['jquery', 'editors/editor'],
+['jquery', 'editors/FED', 'babylon'],
 
 // Then do...
-function($, Editor) {
+function($, FED, babylon) {
 
-var textEditor=function(place) {
+var PositionFED=function(place) {
 	// Inherits from FeatureEditor, so call super function (the constructor in this case) to initialize fields
-	Editor.call(this, place);
+	FED.call(this, place);
 	
 	// TODO - add properties or change inherited fields as required here
+	var that=this;
 	// Important - prevent page from refreshing when form submitted
 	this.form$.on('submit', this, function(ev){ ev.preventDefault();	});
+	this.select$=$('<select></select>');
+	this.op1$=$('<option value="10">random (10)</option>');
+	this.op2$=$('<option value="100">random (100)</option>');
+	this.select$.append(this.op1$, this.op2$);
 	this.text$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
 	this.ok$=$('<input type="submit" value="ok">');
-	this.form$.append(this.text$, this.ok$);
+	this.form$.append(this.select$, this.text$, this.ok$);
 	this.wigetize();
+	this.select$.selectmenu({'select':function(ev, ui) { that.onSelect(ev, ui, that);}});
 	return this;
 };
 
 // inherit prototype...
-textEditor.prototype=Object.create(Editor.prototype);
-textEditor.prototype.constructor=textEditor;
+PositionFED.prototype=Object.create(FED.prototype);
+PositionFED.prototype.constructor=PositionFED;
 
-var __=textEditor.prototype;
+var __=PositionFED.prototype;
+
+__.onSelect=function(ev, ui, that){
+	//that - positionFED
+	//this - <select></select> 
+	//ev - event
+	//ui - selected item or one of <option></option> tags, see jauery-ui docs
+	//ui.item - {element:{value:'somestring', label:'somestring', }} //as discovered using JSON.stringify()
+	
+	BIM.fun.log(JSON.stringify(ui.item));
+	var v, i=ui.item.value;
+	switch(i){
+		case '10':
+			v=new babylon.Vector3(
+				Math.floor(Math.random()*10), 
+				Math.floor(Math.random()*10), 
+				Math.floor(Math.random()*10)
+			); 
+		break;
+		
+		case '100':
+			v=new babylon.Vector3(
+				Math.floor(Math.random()*100), 
+				Math.floor(Math.random()*100), 
+				Math.floor(Math.random()*100)
+			); 
+		break;
+		default:v=new babylon.Vector3(0,0,0);
+		
+	};
+	that.text$.val(v );
+
+};
 
 // override start function
 __.start=function(mesh, feature){
 	
 	// call super function - takes care of <form>, <label>, undo functionality etc.
-	FeatureEditor.prototype.start.call(this, mesh, feature);
+	FED.prototype.start.call(this, mesh, feature);
 
+	// TODO - take care of <select>, submit functionality
 	this.text$.val(feature.valu);
 
 	// reset and configure event since it's a new feature
+	// Ie. callback in submit event no longer applicable, 
 	this.form$.off('submit');
 	
 	// respond to bimFeatureOK event (triggered by OK button)...
@@ -65,15 +105,18 @@ __.start=function(mesh, feature){
 		ev.preventDefault();
 		//ev.data = 'this' as passed above
 		var result=ev.data.text$.val();
-		BIM.fun.log('submit triggered, revised text is:'+result);
-		feature.onFeatureChange(result);
-		BIM.fun.trigger('bimFeatureChanged', [feature]);
+		//ensure result is a babylon.Vector3;
+		
+		
+		BIM.fun.log('positionFeature is:'+result.toString() );
+		//feature.onFeatureChange(result);
+		//BIM.fun.trigger('bimFeatureChanged', [feature]);
 	});
 
 };
 
 
-return textEditor;
+return PositionFED;
 
 }); //end of define
 

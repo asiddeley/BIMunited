@@ -33,6 +33,7 @@ var MakerUI=function(board, title){
 	UI.call(this, board, title); 
 
 	//options for controlgroup() jquery-ui widget 
+	var that=this;
 	this.cg$options={		
 		'items':{
 		"button":"button, input[type=text], input[type=submit]",
@@ -41,7 +42,8 @@ var MakerUI=function(board, title){
 		"selectmenu": "select",
 		"menu":".dropdown-items",
 		"spinner": ".ui-spinner-input"},
-		'direction':'vertical'		
+		'direction':'vertical',
+		'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}
 	};
 
 	//options for selectmenu() jquery-ui widget
@@ -65,8 +67,7 @@ var MakerUI=function(board, title){
 	//this.sm$.on('select', function(ev, ui) { this.onChoosePart(ev, ui, that);} );
 	this.cg$.append(this.sm$, this.desc$, this.ok$);
 	this.cg$.controlgroup(this.cg$options);
-
-	this.sm$.selectmenu({'select':function(ev, ui) { this.onChoosePart(ev, ui, that);}});
+	//this.sm$.selectmenu({'select':function(ev, ui) { this.onChoosePart(ev, ui, that);}});
 
 	this.desc$.text('Choose a part, edit and add to model.');
 	this.div$.append(this.canvas$, this.cg$,  this.fui.div$);
@@ -81,8 +82,9 @@ var MakerUI=function(board, title){
 // Inherit the UI prototype
 MakerUI.prototype=Object.create(UI.prototype);
 MakerUI.prototype.constructor=MakerUI;
-	
-MakerUI.prototype.getEvents=function(){
+var __=MakerUI.prototype;
+
+__.getEvents=function(){
 	return {
 		bimInput:{name:'bimInput', data:this, handler:this.onInput },
 		bimRestock:{name:'bimRestock', data:this, handler:this.onRestock },
@@ -90,7 +92,7 @@ MakerUI.prototype.getEvents=function(){
 	};
 };
 
-MakerUI.prototype.onChoosePart=function(ev, ui, that){
+__.onChoosePart=function(ev, ui, that){
 	//that - makerUI
 	//this - <select></select> 
 	//ev - event
@@ -108,7 +110,7 @@ MakerUI.prototype.onChoosePart=function(ev, ui, that){
 };
 
 //inherited from UI but overriden
-MakerUI.prototype.onInput=function(ev, input){ 
+__.onInput=function(ev, input){ 
 	//don't use keyword 'this' here as it will refer to the event caller's context, not uiPicker
 	switch(input){
 	case 'ap':
@@ -127,11 +129,12 @@ MakerUI.prototype.onInput=function(ev, input){
 	}		
 };
 	
-MakerUI.prototype.onRestock=function(ev, lib){
+__.onRestock=function(ev, lib){
 	var op$;
 	var that=ev.data; // AKA this
 	that.partsLib=lib;
-	ev.data.sm$.selectmenu('destroy');
+	//ev.data.sm$.selectmenu('destroy');
+	ev.data.cg$.controlgroup('destroy');
 	ev.data.sm$.empty();
 	
 	for (var key in lib){ 
@@ -139,10 +142,12 @@ MakerUI.prototype.onRestock=function(ev, lib){
 		op$=$('<option></option>').text(key).val(key);
 		ev.data.sm$.append(op$);
 	}		
-	ev.data.sm$.selectmenu(	{'direction':'vertical', 'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}	});
+	//ev.data.sm$.selectmenu(	{'direction':'vertical', 'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}	});
+	that.cg$.controlgroup(that.cg$options);
+	that.sm$.selectmenu({'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}});
 };
 
-MakerUI.prototype.onTabsactivate=function(ev, ui){
+__.onTabsactivate=function(ev, ui){
 	// ev - event
 	// ev.data - 'this' passed from MakerUI
 	// ui - div of tab that was just activated (got focus) in the jquery-ui tabs widget
@@ -167,7 +172,7 @@ MakerUI.prototype.onTabsactivate=function(ev, ui){
 	}
 };
 	
-MakerUI.prototype.setScene=function(scene, canvas){
+__.setScene=function(scene, canvas){
 
 	var light = new babylon.HemisphericLight(
 		'hemiTop', 
