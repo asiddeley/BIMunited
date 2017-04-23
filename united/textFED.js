@@ -24,7 +24,7 @@
 define(
 
 // Load dependencies...
-['jquery', 'editors/FED'],
+['jquery', 'united/FED'],
 
 // Then do...
 function($, FED) {

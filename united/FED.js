@@ -70,7 +70,7 @@ __.wigetize=function(){
 			"controlgroupLabel": ".ui-controlgroup-label",
 			"checkboxradio": "input[type='checkbox'], input[type='radio']",
 			"selectmenu": "select",
-			"menu":".dropdown-items",
+			"menu":"ul, .dropdown-items",
 			"spinner": ".ui-spinner-input"}
 	});
 };

@@ -24,68 +24,77 @@
 define(
 
 // Load dependencies...
-['jquery', 'editors/FED', 'babylon'],
+['jquery', 'united/FED', 'babylon'],
 
 // Then do...
 function($, FED, babylon) {
 
 var PositionFED=function(place) {
-	// Inherits from FeatureEditor, so call super function (the constructor in this case) to initialize fields
+	// Inherit from FED by calling it's constructor...
 	FED.call(this, place);
 	
-	// TODO - add properties or change inherited fields as required here
-	var that=this;
-	// Important - prevent page from refreshing when form submitted
+	this.init();
 	this.form$.on('submit', this, function(ev){ ev.preventDefault();	});
-	this.select$=$('<select></select>');
-	this.op1$=$('<option value="10">random (10)</option>');
-	this.op2$=$('<option value="100">random (100)</option>');
-	this.select$.append(this.op1$, this.op2$);
 	this.text$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
-	this.ok$=$('<input type="submit" value="ok">');
-	this.form$.append(this.select$, this.text$, this.ok$);
-	this.wigetize();
-	this.select$.selectmenu({'select':function(ev, ui) { that.onSelect(ev, ui, that);}});
+	// this.ok$=$('<input type="submit" value="ok">');
+	this.more$=$('<button>...</button>');
+	this.more$.on('mouseenter', this, function(ev){
+		var that=ev.data;
+		//BIM.fun.log(JSON.stringify(that.ddmenu$));
+		that.menu$.show().position({my:"left bottom", at:"left top", of:that.more$});
+	});
+	this.form$.append(this.text$, this.more$, this.menu$);
+	
+	this.wigetize(); //inherited from FED
+	this.menu$.css("position","absolute").hide();
 	return this;
 };
 
-// inherit prototype...
+// Inherit from FED, prototype and constructor...
 PositionFED.prototype=Object.create(FED.prototype);
 PositionFED.prototype.constructor=PositionFED;
 
 var __=PositionFED.prototype;
 
-__.onSelect=function(ev, ui, that){
-	//that - positionFED
-	//this - <select></select> 
-	//ev - event
-	//ui - selected item or one of <option></option> tags, see jauery-ui docs
-	//ui.item - {element:{value:'somestring', label:'somestring', }} //as discovered using JSON.stringify()
-	
-	BIM.fun.log(JSON.stringify(ui.item));
-	var v, i=ui.item.value;
-	switch(i){
-		case '10':
-			v=new babylon.Vector3(
-				Math.floor(Math.random()*10), 
-				Math.floor(Math.random()*10), 
-				Math.floor(Math.random()*10)
+__.init=function(){	
+	var that=this;
+	this.menu$=$('<ul></ul>').append(
+		$('<li><div>randomized</div></li>').on('click',that, function(ev){
+			var v=new babylon.Vector3(
+				10*Math.floor(Math.random()*100), 
+				10*Math.floor(Math.random()*100), 
+				10*Math.floor(Math.random()*100)
 			); 
-		break;
-		
-		case '100':
-			v=new babylon.Vector3(
-				Math.floor(Math.random()*100), 
-				Math.floor(Math.random()*100), 
-				Math.floor(Math.random()*100)
-			); 
-		break;
-		default:v=new babylon.Vector3(0,0,0);
-		
-	};
-	that.text$.val(v );
-
+			ev.data.text$.val(v.toString());
+			ev.data.menu$.hide();
+		}),
+		$('<li><div>snaped</div></li>').on('click',that, function(ev){
+			ev.data.text$.val('{to match snapped}');
+			ev.data.menu$.hide();
+		}),
+		$('<li><div>picked</div></li>').on('click',that, function(ev){
+			ev.data.text$.val('{to match picked}');
+			ev.data.menu$.hide();
+		}),
+		$('<li><div>zero</div></li>').on('click',that, function(ev){
+			var v=new babylon.Vector3(0,0,0); 
+			ev.data.text$.val(v.toString());
+			ev.data.menu$.hide();
+		}),
+		//$('<li>--</li>')
+	).on('mouseleave',this, function(ev){ev.data.menu$.hide();});
 };
+
+__.initSelect=function(){
+	this.select$=$('<select></select>');
+	this.op1$=$('<option value="1">R10</option>');
+	this.op2$=$('<option value="2">R100</option>');
+	this.select$.append(this.op1$, this.op2$);
+	// TODO after wigetize()...
+	// var that=this;
+	// this.select$.selectmenu({'select':function(ev, ui) { that.onSelect(ev, ui, that);}});
+};
+
 
 // override start function
 __.start=function(mesh, feature){

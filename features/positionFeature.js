@@ -25,7 +25,7 @@
 
 define(
 // load dependencies...
-['babylon', 'jquery', 'editors/positionFED'],
+['babylon', 'jquery', 'united/positionFED'],
 
 // then construct part object...
 function(babylon, $, positionFED){

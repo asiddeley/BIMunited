@@ -19,6 +19,7 @@ requirejs.config({
 	"handlers":"../handlers",
 	"kernel": "../kernel",
 	"lights": "../lights",
+	"parts":"../parts",
 	"textures": "../textures",
 	"united": "../united",
 	//"jq": "jquery",
@@ -34,7 +35,8 @@ requirejs.config({
 
 define(
 // load dependencies...
-['kernel/Model',
+[
+//'kernel/Model',
 'jquery',
 'babylon',
 'united/TabbedUI',
@@ -45,10 +47,11 @@ define(
 'lights/hemi',
 'cameras/arcRotateCamera',
 'textures/TMCstdLib',
-'united/uiPartsLibrary'],
+'parts/partsLibrary'],
 
 // then do this...
-function (Model, 
+function (
+//Model, 
 $, 
 babylon, 
 TabbedUI,
@@ -119,7 +122,7 @@ var BIM={
 		this.light.handler.setScene(this.light);
 		
 		// visit all parts to set the babylon scene		
-		this.model.handler.setScene(this.model);
+		//this.model.handler.setScene(this.model);
 		
 		// initialize scene materials
 		//this.fun.log('initializing tcm');
@@ -241,7 +244,7 @@ var BIM={
 	
 	// DEPRICATED, use scene instead
 	// main model - this is the entry point for the scene 
-	model:Model.creaters.demo(),
+	//model:Model.creaters.demo(),
 	
 	// Reserved
 	n:null,

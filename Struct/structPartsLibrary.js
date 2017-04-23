@@ -18,32 +18,22 @@
 	module: 	module
 	desc: 
 	author: 	Andrew Siddeley 
-	started:	18-Feb-2017
+	started:	23-Apr-2017
 	
 */
 
 
 define(
 // load dependencies...
-['kernel/partSphere', 'handlers/voxelite'],
+['parts/voxelite'],
 
 // then do...
-function(s, v){
+function(v){
 	
 // hash of parts for this library
 return {
-	//Sphere:s,
-	Voxelite:v,
-	Voxelite1:v,
-	Voxelite2:v
-	//insert:i (instance, modelRef, ref, xref)
-	//model:m (block, blueprint, definition, prototype)
-	//ground:g
-	//terrain:ter
-	//stairFlight:sf
-	//wall:w,
-	//cube:c,
-	//torus:tor,
+	"Structuralite":v,
+	"Voxelite":v
 }
 
 });

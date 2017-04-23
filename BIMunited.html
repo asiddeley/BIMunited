@@ -35,10 +35,10 @@ function initMenus(ids, menuExt){
 		// Show and position menu of interest
 		'$("#'+ ida[i] + menuExt + '").show().position('+
 		'{my:"left top", at:"left bottom", of:"#'+ida[i]+'"}); '+
-		// Dropdown autohide in case a dd is left hanging.  Disabled when dd is entered
+		// Dropdown autohide in case a dd is left hanging, but disabled when dd is entered
 		'document.DDAH=setTimeout(function(){$("#'+ ida[i] + menuExt +'").hide();}, 2000);';
 		// console.log(js);
-		// Register function so triggered by nav button mouseenter event...
+		// Register function so triggered by nav button...
 		$("#"+ida[i]).mouseenter(new Function('event', js ));
 	};
 };
@@ -52,7 +52,7 @@ $("#navbar").controlgroup({items:{
 	"controlgroupLabel": ".ui-controlgroup-label",
 	"checkboxradio": "input[type='checkbox'], input[type='radio']",
 	"selectmenu": "select",
-	//"menu":".dropdown-items",
+	"menu":"ul, .dropdown-items",
 	"spinner": ".ui-spinner-input"
 }});
 
@@ -102,74 +102,65 @@ requirejs(['BIMunited'], function(BIM){
 	<button id="help">Help</button>	
 	<input id="myInput" type="text" placeholder="Command">
 	<input type="submit" value="Ok">	
+	
+	<ul id="file-menu" class="menu">
+		<li><div>Database</div>
+		<ul>
+			<li><div>Admin</div></li>
+			<li><div>Models</div></li>
+		</ul>
+		</li>
+		<li>--</li>
+		<li><div>New</div></li>
+		<li><div>Open</div></li>
+		<li><div>Open Read-Only</div></li>
+		<li><div>Save</div></li>
+		<li><div>Save as</div></li>
+		<li>--</li>
+		<li><div>Exit</div></li>
+	</ul>
+
+	<ul id="tool-menu" class="menu">
+		<li onclick="BIM.input('bb')"><div>Blackboard</div></li>
+		<li onclick="BIM.input('creater')"><div>Creater</div></li>
+		<li><div>Explorer</div></li>
+		<li><div>Selecter</div></li>
+		<li><div>Tagger</div></li>
+		<li><div>Viewer</div></li>
+	</ul>
+
+	<ul id="part-menu" class="menu">
+		<li><div>Voxelite</div></li>
+		<li><div>Parcela</div></li>
+		<li><div>Floor</div></li>
+		<li><div>Wall</div></li>
+		<li><div>Opening</div></li>
+		<li><div>Skybox</div></li>
+	</ul>
+
+	<ul id="help-menu" class="menu">
+		<li><div>About</div></li>
+		<li><div>User</div>
+			<ul>
+			<li><div>Overview</div></li>
+			<li><div>Command list</div></li>
+			<li><div>Documentation</div></li>
+			<li><div>Tutorials</div></li>
+			</ul>
+		</li>
+		<li><div>Develper</div>
+			<ul>
+			<li><div>Dev Overview</div></li>
+			<li><div>System events</div></li>
+			</ul>		
+		</li>
+		<li><div>GNU License</div></li>
+	</ul>
+	
 </form>
 
 <canvas id="canvas" style="width:800px; height:400px;"></canvas>
 
-<ul id="file-menu" class="menu">
-	<li><div>Database</div>
-	<ul>
-		<li><div>Admin</div></li>
-		<li><div>Models</div></li>
-	</ul>		
-	</li>
-	<li>--</li>
-	<li><div>New</div></li>
-	<li><div>Open</div></li>
-	<li><div>Open Read-Only</div></li>
-	<li><div>Save</div></li>
-	<li><div>Save as</div></li>
-	<li>--</li>
-	<li><div>Exit</div></li>
-</ul>
-
-<ul id="tool-menu" class="menu">
-	<li onclick="BIM.input('bb')"><div>Blackboard</div></li>
-	<li onclick="BIM.input('creater')"><div>Creater</div></li>
-	<li><div>Explorer</div></li>
-	<li><div>Selecter</div></li>
-	<li><div>Tagger</div></li>
-	<li><div>Viewer</div></li>
-</ul>
-
-<ul id="part-menu" class="menu">
-	<li><div>Voxelite</div></li>
-	<li><div>Parcela</div></li>
-	<li><div>Floor</div></li>
-	<li><div>Wall</div></li>
-	<li><div>Opening</div></li>
-	<li><div>Skybox</div></li>
-</ul>
-
-<ul id="help-menu" class="menu">
-	<li><div>About</div></li>
-	<li><div>User</div>
-		<ul>
-		<li><div>Overview</div></li>
-		<li><div>Command list</div></li>
-		<li><div>Documentation</div></li>
-		<li><div>Tutorials</div></li>
-		</ul>
-	</li>
-	<li><div>Develper</div>
-		<ul>
-		<li><div>Dev Overview</div></li>
-		<li><div>System events</div></li>
-		</ul>		
-	</li>
-	<li><div>GNU License</div></li>
-</ul>
-
-<!--select>
-	<option selected disabled>Parts</option>
-	<option>voxelite</option>
-	<option>slab</option>
-	<option>wall</option>
-	<option>stair</option>
-	<option>opening</option>
-	<option>land</option>
-	<option>sky</option>
-</select-->
 </div><!-- board -->
 
 

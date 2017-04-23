@@ -39,7 +39,13 @@ var TabbedUI=function(board, title){
 	//create empty tab group, add tabs child-uis later with addTabb
 	this.createTabgroup(); 
 	//use jquery-ui to turn div$ into a floating dialog box
-	this.div$.dialog({draggable:true, title:this.alias, autoOpen:true, width:400});
+	this.div$.dialog({
+		draggable:true,
+		title:this.alias,
+		autoOpen:true, 
+		width:400,
+		position:{ my: "right bottom", at: "center", of: window }
+	});
 
 	return this;
 };
