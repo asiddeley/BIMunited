@@ -21,7 +21,7 @@
 
 define(
 // load dependencies...
-['jquery', 'united/UI', 'united/FED'],
+['jquery', 'united/UI', 'features/FED'],
 
 // then do...
 function($, UI, FED){
@@ -92,8 +92,9 @@ FP.start=function(mesh){
 	for (label in fc){
 		f=fc[label];
 		//BIM.fun.log(JSON.stringify(f));
-		if (f.editor.prototype instanceof FED) {this.widgetInit(mesh, f);}
-		else { BIM.fun.log('Feature not editable'); }
+		if (f.editor.prototype instanceof FED) {
+			this.widgetInit(mesh, f);
+		} else { BIM.fun.log('Feature not editable'); }
 	}
 };
 	
@@ -109,6 +110,7 @@ FP.widgeti=0; //index for array
 
 FP.widgetInit=function(mesh, feature){
 	if (this.widgeti==this.widgeta.length){
+		// feature.editor is a constructor function
 		this.widgeta.push(new feature.editor(this.div$));
 	};
 	//if using jquery-ui widget then

@@ -24,7 +24,7 @@
 define(
 
 // Load dependencies...
-['jquery', 'united/FED', 'babylon'],
+['jquery', 'features/FED', 'babylon'],
 
 // Then do...
 function($, FED, babylon) {

@@ -25,7 +25,7 @@
 
 define(
 // load dependencies...
-['united/textFED'],
+['features/textFED'],
 
 // then construct part object...
 function(textFED){
