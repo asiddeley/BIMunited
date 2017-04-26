@@ -25,10 +25,10 @@
 
 define(
 // load dependencies...
-['babylon', 'jquery', 'features/positionFED', 'features/ChooserFED'],
+['babylon', 'jquery', 'features/ChooserFED'],
 
 // then construct part object...
-function(babylon, $, positionFED, ChooserFED){
+function(babylon, $, ChooserFED){
 /***********
 Returns a name feature getter (static method) wrapped in an object. 
 A feature {} used by uiFeatures to edit and update babylon mesh properties.
@@ -49,23 +49,30 @@ var positionFeature = function(mesh){
 		desc:'A 3d vector rounded to the nearest 10 units',
 		valu:mesh.position, 
 		onFeatureChange:function(result){  mesh.position=result; },
+		//onSubmit:function(valu){  mesh.position=valu; },
 		editor:ChooserFED,
 		choices:[
 			{label:'random', 
 				onChoose:function(ev){ 
-					var v=new babylon.Vector3(
+					v=new babylon.Vector3(
 						10*Math.floor(Math.random()*100), 
 						10*Math.floor(Math.random()*100), 
 						10*Math.floor(Math.random()*100)
 					); 
-					ev.data.text$.val(v);					
+					//show revised value
+					ev.data.valu$.val(v.toString() );
+					ev.data.valu=v;
+					//trigger form submit with revised value
+					ev.data.submit();
 				}
 			}, 
 			{label:'zero',
 				onChoose:function(ev){ 
 					var v=new babylon.Vector3(0,0,0); 
-					ev.data.text$.val(v);
-					//ev.data.text$.val('{x:0,y:0,z:0}');
+					ev.data.valu$.val(v);
+					ev.data.valu=v;
+					//trigger form submit with revised value
+					ev.data.submit();
 				}
 			}
 		]	

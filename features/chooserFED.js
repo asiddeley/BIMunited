@@ -29,32 +29,33 @@ define(
 // Then do...
 function($, FED, babylon) {
 
-var ChooserFED=function(place$) {
+var ChooserFED=function(place$, mesh, feature) {
 	// place$ - jquery wrapped DOM container element
-	// choices - array of choices [choice1, choice2...]
+	// mesh - owner of feature
+	// feature - {... choices:[choice, choice1...]... }
 	// choice - {label:'label', onSelect:function(ev){}, onSubmit:function(ev){}}
 
 	// Inherit from FED by calling it's constructor...
 	// It sets up label$ and text$. Inherit to set up ok$ or more$, then wigetize
-	FED.call(this, place$);
-	//BIM.fun.log('chooser');
-	//this.initMenu(choices);
+	FED.call(this, place$, feature);
+
 	this.form$.on('submit', this, function(ev){ ev.preventDefault(); return false;});
-	this.text$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
-	// this.ok$=$('<input type="submit" value="ok">');
-	this.more$=$('<button>...</button>');
-	this.more$.on('mouseenter', this, function(ev){
+	
+	// override - FED defines valu$ as <label></label>
+	this.valu$.remove();
+	this.valu$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
+
+	this.ok$=$('<input type="submit" value="ok">');
+	this.valu$.on('mouseenter', this, function(ev){
 		var that=ev.data;
-		//BIM.fun.log(JSON.stringify(that.ddmenu$));
-		that.menu$.show().position({
-			my:"left bottom", at:"right bottom", of:that.more$, collision:"flipfit"
-		});
+		that.menu$.show().position({my:"left bottom", at:"left top", of:that.valu$, collision:"flipfit"});
 	});
-	this.more$.on('click', this, function(ev){ ev.preventDefault(); return false;});
-	//this.form$.append(this.text$, this.more$, this.menu$);
-	//this.wigetize(); //inherited from FED
-	//this.menu$.css("position","absolute").hide();
-	this.form$.append(this.text$, this.more$);
+	// prevent hanging menu 
+	this.form$.on('mouseleave', this, function(ev){ ev.data.menu$.hide();});
+	
+	this.form$.append(this.valu$);
+	this.initMenu(feature.choices);
+	this.form$.append(this.ok$);
 	return this;
 };
 
@@ -65,12 +66,12 @@ ChooserFED.prototype.constructor=ChooserFED;
 var __=ChooserFED.prototype;
 
 __.initMenu=function(choices){
+
 	// choices - [{label:'label', onChoose:function(ev){}, onSubmit:function(ev){}}]
 	var fn, i, li$, that=this;
 	this.menu$=$('<ul></ul>').on('mouseleave',this, function(ev){ev.data.menu$.hide();});
 
 	for (i in choices){
-		//BIM.fun.log('onChoose->'+choices[i].onChoose.toString());
 		li$=$('<li></li>').append($('<div></div>').text(choices[i].label));
 		this.menu$.append(li$);
 		// click menu item to call the onChoose function
@@ -80,27 +81,21 @@ __.initMenu=function(choices){
 	}
 	
 	this.form$.append(this.menu$);
-	this.wigetize(); //inherited from FED
 	this.menu$.css("position","absolute").hide();
-
 };
+
+// override remove function
+__.remove=function(){
+	FED.prototype.remove.call(this);
+	this.menu$.remove();
+	this.ok$.remove();
+}
 
 // override start function
 __.start=function(mesh, feature){
 	
 	// call super function - takes care of <form>, <label>, undo...
 	FED.prototype.start.call(this, mesh, feature);
-	
-	BIM.fun.log(JSON.stringify(feature));
-	this.initMenu(feature.choices);
-	
-
-	// TODO - take care of <select>, submit functionality
-	//this.text$.val(feature.valu);
-
-	// reset and configure event since it's a new feature
-	// Ie. callback in submit event no longer applicable, 
-	this.form$.off('submit');
 	
 	/***********
 	// respond to bimFeatureOK event (triggered by OK button)...
@@ -115,7 +110,6 @@ __.start=function(mesh, feature){
 		//BIM.fun.trigger('bimFeatureChanged', [feature]);
 	});
 	**********/
-
 };
 
 

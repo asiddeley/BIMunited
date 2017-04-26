@@ -38,10 +38,10 @@ var FeaturesUI=function(board, title){
 FeaturesUI.prototype=Object.create(UI.prototype);
 FeaturesUI.prototype.constructor=FeaturesUI;
 
-var FP=FeaturesUI.prototype;
-FP.alias='Features';
+var __=FeaturesUI.prototype;
+__.alias='Features';
 	
-FP.getEvents=function(){
+__.getEvents=function(){
 	//For events, keyword 'this' refers to the event callers context
 	//The 'this' that refers to the FeaturesUI instance, is passed in ev.data 
 	return {
@@ -50,7 +50,7 @@ FP.getEvents=function(){
 	};
 };
 	
-FP.onInput=function(ev, input){
+__.onInput=function(ev, input){
 	switch (input){
 		case 'ff':
 		case 'features':ev.data.toggle();break;
@@ -68,7 +68,7 @@ FP.onInput=function(ev, input){
 	} 
 };
 
-FP.onPick=function(ev, picks){
+__.onPick=function(ev, picks){
 	//Beware of keyword 'this' in event handlers, use ev.data instead 
 	if (picks.length>0){
 		//access features of the last picked mesh
@@ -78,13 +78,15 @@ FP.onPick=function(ev, picks){
 	}
 };
 
-FP.reset=function(){	
-	this.widgeta.forEach(function(item){item.remove();});	
+__.reset=function(){	
+	this.widgeta.forEach(function(item){
+		item.remove();
+	});	
 	this.widgeta=[];
 	this.widgeti=0;	
 };
 		
-FP.start=function(mesh){
+__.start=function(mesh){
 	if (typeof mesh=='undefined' || mesh==null){ return false; }
 	this.reset();
 	var fc=mesh.bimHandler.getFeatures(mesh);
@@ -98,20 +100,20 @@ FP.start=function(mesh){
 	}
 };
 	
-FP.toggle=function(){
+__.toggle=function(){
 	if (this.div$.is(':ui-dialog')){
 		this.div$.dialog("close");
 	} else if (this.isDialog) {this.div$.dialog("open");}
 };
 	
-FP.widgeta=[]; //array
+__.widgeta=[]; //array
 
-FP.widgeti=0; //index for array
+__.widgeti=0; //index for array
 
-FP.widgetInit=function(mesh, feature){
+__.widgetInit=function(mesh, feature){
 	if (this.widgeti==this.widgeta.length){
 		// feature.editor is a constructor function
-		this.widgeta.push(new feature.editor(this.div$));
+		this.widgeta.push(new feature.editor(this.div$, mesh, feature));
 	};
 	//if using jquery-ui widget then
 	//$(this.wCell[this.wCelli++]).wCell('vlca', valu, label, onChange, part).show();	

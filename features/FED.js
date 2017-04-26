@@ -29,11 +29,13 @@ define(
 // Then do...
 function($) {
 
-var FeatureEditor=function(place) {
+var FeatureEditor=function(place, feature) {
 	//Note to inheritors, don't forget to this.wigetize() after calling this constructor.
-	this.form$=$('<form></form>');	
+	this.form$=$('<form></form>');
 	this.label$=$('<label></label>').addClass('ui-controlgroup-label');
-	this.form$.append(this.label$);
+	this.valu$=$('<label></label>').addClass('ui-controlgroup-label');
+	this.valu='default';
+	this.form$.append(this.label$, this.valu$);
 	$(place).append(this.form$);
 	return this;
 };
@@ -45,14 +47,36 @@ __.form$=null;
 __.label$=null;
 
 __.remove=function(){
+	/***
+	// See jquery docs...use $.remove() when you want to remove the element itself, as well as everything inside it.
+	// In addition to the elements themselves, all bound events and jQuery data associated with the elements are removed. 
+	// To remove the elements without removing data and events, use .detach() instead.	
+	***/
 	this.label$.remove();
+	this.valu$.remove();
 	this.form$.remove();
 };
 
 __.start=function(mesh, feature){
-
-	this.label$.text(feature.label); 
+	// turn into a jquery controgroup if not already
+	if (!this.form$.is(':ui-controlgroup')){ this.wigetize();  }
+	// reprogram the submit event in case feature editor is reused on a different feature - don't want to callback past features
+	this.form$.off('submit');
+	this.form$.on('submit', this, function(ev, valu) {
+		ev.preventDefault();
+		valu=(typeof valu != 'undefined')?valu:ev.data.valu;
+		//valu=ev.data.text$.val();
+		BIM.fun.log('FED submit triggered, revised value is:'+valu);
+		feature.onFeatureChange(valu);
+		//BIM.fun.trigger('bimFeatureChanged', [feature]);
+	});
+	BIM.fun.log('FED start:'+JSON.stringify(feature));
+	this.label$.text(feature.label);
+	this.valu$.text(feature.valu); //converted to text for display
+	this.valu=feature.valu; //revised valu 
 };
+
+__.submit=function(){ this.form$.trigger('submit'); };
 
 __.undo=function(){	};	
 __.undolog=[];

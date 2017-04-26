@@ -36,10 +36,14 @@ var textFED=function(place) {
 	// TODO - add properties or change inherited fields as required here
 	// Important - prevent page from refreshing when form submitted
 	this.form$.on('submit', this, function(ev){ ev.preventDefault();	});
-	this.text$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
+
+	// override valu$
+	this.valu$.remove(); //needs to be removed() before redefining 
+	this.valu$=$('<input type="text" placeholder="name" value="TextFED cons"></input>').addClass('ui-controlgroup-label');
+
 	this.ok$=$('<input type="submit" value="ok">');
-	this.form$.append(this.text$, this.ok$);
-	this.wigetize();
+	this.form$.append(this.valu$, this.ok$);
+	//this.wigetize();
 	return this;
 };
 
@@ -55,11 +59,16 @@ __.start=function(mesh, feature){
 	// call super function - takes care of <form>, <label>, undo functionality etc.
 	FED.prototype.start.call(this, mesh, feature);
 
-	this.text$.val(feature.valu);
-
-	// reset and configure event since it's a new feature
-	this.form$.off('submit');
+	BIM.fun.log('TextFED start:'+JSON.stringify(feature));
+	// value converted to string for display
+	this.valu$.val(feature.valu);
+	// the value stored for user to revise
+	this.valu=feature.valu;
 	
+	// reset and configure event since it's a new feature
+	//this.form$.off('submit');
+	
+	/***
 	// respond to bimFeatureOK event (triggered by OK button)...
 	this.form$.on('submit', this, function(ev){
 		ev.preventDefault();
@@ -69,7 +78,8 @@ __.start=function(mesh, feature){
 		feature.onFeatureChange(result);
 		BIM.fun.trigger('bimFeatureChanged', [feature]);
 	});
-
+	****/
+	
 };
 
 

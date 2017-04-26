@@ -62,7 +62,7 @@ var Voxelite=function(){
 		]
 	};		
 	
-	var v=BABYLON.MeshBuilder.CreateBox('Voxelite', options, scene);
+	var v=BABYLON.MeshBuilder.CreateBox('voxelite', options, scene);
 	//v.position=new babylon.Vector3(
 	//	10*Math.floor(Math.random()*10), 
 	//	10*Math.floor(Math.random()*10), 
