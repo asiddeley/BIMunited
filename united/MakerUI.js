@@ -23,10 +23,10 @@
 
 define(
 // load dependencies...
-['jquery', 'jquery-ui', 'babylon', 'united/UI', 'united/FeaturesUI' ],
+['jquery', 'jquery-ui', 'babylon', 'united/UI', 'united/FeaturesUI', 'parts/Triad' ],
 
 // then do...
-function($, $$, babylon, UI, FeaturesUI ){
+function($, $$, babylon, UI, FeaturesUI, triad ){
 
 var MakerUI=function(board, title){
 	// Inherit from UI, call super constructor
@@ -51,7 +51,7 @@ var MakerUI=function(board, title){
 	this.scene=null;
 	this.fui=new FeaturesUI(null, 'Features of New Part', false);
 	this.canvas$=$('<canvas></canvas>').css({'width':'100px', 'height':'100px'});
-	this.ok$=$('<button>Add to model</button>').on('click', function(ev){
+	this.ok$=$('<button>Make</button>').on('click', function(ev){
 		BIM.fun.log('Part to be made and added to scene');
 		//get chosen part handler
 		//eval creater function fn, and set cMesh to is (current Mesh).
@@ -177,17 +177,21 @@ __.setScene=function(scene, canvas){
 	var light = new babylon.HemisphericLight(
 		'hemiTop', 
 		new babylon.Vector3(10,10,10),
-		this.scene);
+		scene);
 	var cam = new babylon.ArcRotateCamera(
 		"ArcRotateCamera", //name
 		1, //alpha
 		0.8, //beta
 		10, //radius
 		new babylon.Vector3(0, 0, 0), //target
-		this.scene);
+		scene);
 	//cam.setTarget(new BABYLON.Vector3.Zero());
-    cam.attachControl(this.canvas$[0], false);
-	this.sample=babylon.Mesh.CreateBox('sample', 5, this.scene);
+    cam.attachControl(canvas, false);
+	this.sample=babylon.Mesh.CreateBox('sample', 5, scene);
+	
+	this.triad=triad.setScene(scene);
+	
+
 	//this.sample.position=new babylon.Vector3(5,5,5);
 };
 	
