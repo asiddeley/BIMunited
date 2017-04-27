@@ -42,8 +42,8 @@ __.axis=function(v1, v2, colour, scene) {
 	var ax=BABYLON.Mesh.CreateTube(
 		"tube", //name
 		[v1, v2], //vertices
-		1, //radius, 
-		6, //tesselation, 
+		0.5, //radius, 
+		4, //tesselation, 
 		null, //radiusFunction, 
 		BABYLON.Mesh.CAP_ALL, //cap,
 		scene //scene
@@ -54,14 +54,14 @@ __.axis=function(v1, v2, colour, scene) {
 };
 
 __.cone=function(v1, v2, v3, colour, scene){
-	var tip=BABYLON.MeshBuilder.CreateCylinder("triad tip", {
+	var tip=BABYLON.MeshBuilder.CreateCylinder("triadTip", {
 		diameterTop: 0,
 		diameterBottom: 2,
 		tessellation: 4,
 		faceColors:[colour, colour, colour]
 	}, scene);
 	//https://doc.babylonjs.com/overviews/how_rotations_and_translations_work
-	tip.rotation = BABYLON.Vector3.RotationFromAxis(axis1, axis2, axis3);
+	tip.rotation = new BABYLON.Vector3.RotationFromAxis(v1, v2, v3);
 	tip.position=v1;
 	
 	return c;
@@ -86,13 +86,15 @@ __.setScene=function(scene){
 	
 	var v0=new babylon.Vector3(0, 0, 0);
 	var vx=new babylon.Vector3(20, 0, 0);
+	var vy=new babylon.Vector3(0, 20, 0);
+	var vz=new babylon.Vector3(0, 0, 20);
 	
 	var xx=this.axis(v0, vx, red, scene);
-	var xxtip=this.axis(new babylon.Vector3(0, 0, 0), new babylon.Vector3(20, 0, 0), red, scene);
-	var yy=this.axis(new babylon.Vector3(0, 0, 0), new babylon.Vector3(0, 20, 0), green, scene);
-	var yytip=this.axis(new babylon.Vector3(0, 0, 0), new babylon.Vector3(0, 20, 0), green, scene);
-	var zz=this.axis(new babylon.Vector3(0, 0, 0), new babylon.Vector3(0, 0, 20), blue, scene);
-	var zztop=this.axis(new babylon.Vector3(0, 0, 0), new babylon.Vector3(0, 0, 20), blue, scene);
+	//var xxtip=this.axis( vz, vx, vy, red, scene);
+	var yy=this.axis(v0, vy, green, scene);
+	//var yytip=this.axis( vx, vy, vz, green, scene);
+	var zz=this.axis(v0, vz, blue, scene);
+	//var zztop=this.axis( vx, vz, vy, blue, scene);
 
 	
 	//add bim handler to babylon mesh object
