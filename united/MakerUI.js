@@ -101,7 +101,7 @@ __.onChoosePart=function(ev, ui, that){
 
 	//BIM.fun.log(JSON.stringify(ui.item));
 	BIM.fun.log('To make:'+ui.item.label);
-	that.sample.dispose(); //remake sample
+	if (typeof that.sample !='undefined') that.sample.dispose(); //remake sample
 	var bimHandler=that.partsLib[ui.item.label];
 	that.sample=bimHandler.setScene(that.scene);	
 	that.desc$.text(that.sample.bimHandler.desc);	
@@ -165,7 +165,7 @@ __.onTabsactivate=function(ev, ui){
 		mui.setScene(mui.scene, mui.canvas$[0]);
 		mui.engine.runRenderLoop(function(){
 			//give camera a little spin
-			mui.scene.activeCamera.alpha += .01;
+			//mui.scene.activeCamera.alpha += .01;
 			mui.scene.render();
 		});	
 		//this.scene.debugLayer.show();
@@ -187,7 +187,7 @@ __.setScene=function(scene, canvas){
 		scene);
 	//cam.setTarget(new BABYLON.Vector3.Zero());
     cam.attachControl(canvas, false);
-	this.sample=babylon.Mesh.CreateBox('sample', 5, scene);
+	//this.sample=babylon.Mesh.CreateBox('sample', 5, scene);
 	
 	this.triad=triad.setScene(scene);
 	

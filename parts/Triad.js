@@ -32,13 +32,14 @@ function(babylon, $, nameFeature, positionFeature){
 
 var Triad=function(){
 	this.bimType='Triad';
-	this.desc='A graphic representing the 3 axiis of a coordinate system';
+	this.desc='Three axiis of a coordinate system';
 	return this;
 }
 
 var __=Triad.prototype;
 
 __.axis=function(v1, v2, colour, scene) {
+	/*
 	var ax=BABYLON.Mesh.CreateTube(
 		"tube", //name
 		[v1, v2], //vertices
@@ -50,21 +51,32 @@ __.axis=function(v1, v2, colour, scene) {
 	);
 	ax.material=new babylon.StandardMaterial('triad axis', scene);
 	ax.material.diffuseColor=colour;
+	*/
+	var ax=babylon.Mesh.CreateLines('axis', [v1,v2], scene);
+	ax.color=colour;
 	return ax;
 };
 
 __.cone=function(v1, v2, v3, colour, scene){
-	var tip=BABYLON.MeshBuilder.CreateCylinder("triadTip", {
-		diameterTop: 0,
-		diameterBottom: 2,
-		tessellation: 4,
-		faceColors:[colour, colour, colour]
-	}, scene);
+
 	//https://doc.babylonjs.com/overviews/how_rotations_and_translations_work
-	tip.rotation = new BABYLON.Vector3.RotationFromAxis(v1, v2, v3);
-	tip.position=v1;
+		
+	var tip=babylon.Mesh.CreateCylinder('tip', //name
+		2,	//height, 
+		0,	//diameterTop,
+		1,	//diameterBottom, 
+		4,	//tessellation, 
+		1,	//subdivisions
+		scene,	//scene 
+		false,	//canBeRegenerated(opt), 
+		babylon.Mesh.DEFAULTSIDE //	
+	);
+	tip.material=new babylon.StandardMaterial("triad", scene);
+	tip.material.diffuseColor=colour;
+	tip.rotation = babylon.Vector3.RotationFromAxis(v1, v2, v3);
+	tip.position=v2;
 	
-	return c;
+	return tip;
 }
 
 __.getFeatures=function(mesh) {
@@ -90,11 +102,11 @@ __.setScene=function(scene){
 	var vz=new babylon.Vector3(0, 0, 20);
 	
 	var xx=this.axis(v0, vx, red, scene);
-	//var xxtip=this.axis( vz, vx, vy, red, scene);
+	var xxtip=this.cone( vz, vx, vy, red, scene);
 	var yy=this.axis(v0, vy, green, scene);
-	//var yytip=this.axis( vx, vy, vz, green, scene);
+	//var yytip=this.cone( vx, vy, vz, green, scene);
 	var zz=this.axis(v0, vz, blue, scene);
-	//var zztop=this.axis( vx, vz, vy, blue, scene);
+	//var zztop=this.cone( vx, vz, vy, blue, scene);
 
 	
 	//add bim handler to babylon mesh object
