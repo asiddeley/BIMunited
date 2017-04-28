@@ -165,28 +165,30 @@ __.onTabsactivate=function(ev, ui){
 		mui.setScene(mui.scene, mui.canvas$[0]);
 		mui.engine.runRenderLoop(function(){
 			//give camera a little spin
-			//mui.scene.activeCamera.alpha += .01;
+			mui.scene.activeCamera.alpha += .01;
+			mui.light.position=mui.cam.position;
 			mui.scene.render();
+			
+
 		});	
 		//this.scene.debugLayer.show();
 	}
+	
+	
 };
 	
 __.setScene=function(scene, canvas){
-
-	var light = new babylon.HemisphericLight(
-		'hemiTop', 
-		new babylon.Vector3(10,10,10),
-		scene);
-	var cam = new babylon.ArcRotateCamera(
+	this.light = new BABYLON.PointLight("light", new BABYLON.Vector3(0, 0, 0), scene);
+	//var light = new babylon.HemisphericLight('hemiTop',new babylon.Vector3(20,20,20),scene);
+	this.cam = new babylon.ArcRotateCamera(
 		"ArcRotateCamera", //name
 		1, //alpha
 		0.8, //beta
-		10, //radius
+		20, //radius
 		new babylon.Vector3(0, 0, 0), //target
 		scene);
 	//cam.setTarget(new BABYLON.Vector3.Zero());
-    cam.attachControl(canvas, false);
+    this.cam.attachControl(canvas, false);
 	//this.sample=babylon.Mesh.CreateBox('sample', 5, scene);
 	
 	this.triad=triad.setScene(scene);

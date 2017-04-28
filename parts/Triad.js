@@ -52,7 +52,7 @@ __.axis=function(v1, v2, colour, scene) {
 	ax.material=new babylon.StandardMaterial('triad axis', scene);
 	ax.material.diffuseColor=colour;
 	*/
-	var ax=babylon.Mesh.CreateLines('axis', [v1,v2], scene);
+	var ax=babylon.Mesh.CreateLines('axis', [v1, v2], scene);
 	ax.color=colour;
 	return ax;
 };
@@ -62,9 +62,9 @@ __.cone=function(v1, v2, v3, colour, scene){
 	//https://doc.babylonjs.com/overviews/how_rotations_and_translations_work
 		
 	var tip=babylon.Mesh.CreateCylinder('tip', //name
-		2,	//height, 
+		10,	//height, 
 		0,	//diameterTop,
-		1,	//diameterBottom, 
+		5,	//diameterBottom, 
 		4,	//tessellation, 
 		1,	//subdivisions
 		scene,	//scene 
@@ -73,7 +73,9 @@ __.cone=function(v1, v2, v3, colour, scene){
 	);
 	tip.material=new babylon.StandardMaterial("triad", scene);
 	tip.material.diffuseColor=colour;
-	tip.rotation = babylon.Vector3.RotationFromAxis(v1, v2, v3);
+	//Note that RotationFromAxis() changes the vertex objects provided by normalizing them
+	//so if they are used elsewhere, then it's best to provide copies (clones) as arguments
+	tip.rotation = new babylon.Vector3.RotationFromAxis(v1.clone(), v2.clone(), v3.clone());
 	tip.position=v2;
 	
 	return tip;
@@ -100,13 +102,17 @@ __.setScene=function(scene){
 	var vx=new babylon.Vector3(20, 0, 0);
 	var vy=new babylon.Vector3(0, 20, 0);
 	var vz=new babylon.Vector3(0, 0, 20);
+
 	
 	var xx=this.axis(v0, vx, red, scene);
 	var xxtip=this.cone( vz, vx, vy, red, scene);
+	//var xxtip=this.cone( vy, new babylon.Vector3(-20,0,0), vz, red, scene);
 	var yy=this.axis(v0, vy, green, scene);
 	//var yytip=this.cone( vx, vy, vz, green, scene);
+	var yytip=this.cone( vx, vy, vz, green, scene);
 	var zz=this.axis(v0, vz, blue, scene);
 	//var zztop=this.cone( vx, vz, vy, blue, scene);
+	var zztop=this.cone( vy, vz, vx, blue, scene);
 
 	
 	//add bim handler to babylon mesh object

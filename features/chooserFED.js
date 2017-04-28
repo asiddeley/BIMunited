@@ -48,7 +48,7 @@ var ChooserFED=function(place$, mesh, feature) {
 	this.ok$=$('<input type="submit" value="ok">');
 	this.valu$.on('mouseenter', this, function(ev){
 		var that=ev.data;
-		that.menu$.show().position({my:"left bottom", at:"left top", of:that.valu$, collision:"flipfit"});
+		that.menu$.show().position({my:"left bottom", at:"left top+2", of:that.valu$, collision:"flipfit"});
 	});
 	// prevent hanging menu 
 	this.form$.on('mouseleave', this, function(ev){ ev.data.menu$.hide();});
