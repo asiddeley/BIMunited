@@ -102,18 +102,13 @@ __.setScene=function(scene){
 	var vx=new babylon.Vector3(20, 0, 0);
 	var vy=new babylon.Vector3(0, 20, 0);
 	var vz=new babylon.Vector3(0, 0, 20);
-
 	
 	var xx=this.axis(v0, vx, red, scene);
 	var xxtip=this.cone( vz, vx, vy, red, scene);
-	//var xxtip=this.cone( vy, new babylon.Vector3(-20,0,0), vz, red, scene);
 	var yy=this.axis(v0, vy, green, scene);
-	//var yytip=this.cone( vx, vy, vz, green, scene);
 	var yytip=this.cone( vx, vy, vz, green, scene);
 	var zz=this.axis(v0, vz, blue, scene);
-	//var zztop=this.cone( vx, vz, vy, blue, scene);
 	var zztop=this.cone( vy, vz, vx, blue, scene);
-
 	
 	//add bim handler to babylon mesh object
 	xx.bimFC=triad;

@@ -44,10 +44,10 @@ __.alias='Features';
 __.getEvents=function(){
 	//For events, keyword 'this' refers to the event callers context
 	//The 'this' that refers to the FeaturesUI instance, is passed in ev.data 
-	return {
-		bimInput:{name:'bimInput', data:this, handler:this.onInput},
-		bimPick:{name:'bimPick', data:this, handler:this.onPick}
-	};
+	return [
+		{name:'bimInput', data:this, handler:this.onInput},
+		{name:'bimPick', data:this, handler:this.onPick}
+	];
 };
 	
 __.onInput=function(ev, input){
@@ -68,6 +68,7 @@ __.onInput=function(ev, input){
 	} 
 };
 
+//depricated
 __.onPick=function(ev, picks){
 	//Beware of keyword 'this' in event handlers, use ev.data instead 
 	if (picks.length>0){
@@ -89,8 +90,10 @@ __.reset=function(){
 __.start=function(mesh){
 	if (typeof mesh=='undefined' || mesh==null){ return false; }
 	this.reset();
-	var fc=mesh.bimHandler.getFeatures(mesh);
-	var f;
+	//header row
+	//this.widgetInit({}, {label:"FEATURES", valu:'-----------------------', editor:FED});
+	//var fc=mesh.bimHandler.getFeatures(mesh);
+	var f, fc=mesh.bimHandler.getFeatures(mesh);
 	for (label in fc){
 		f=fc[label];
 		//BIM.fun.log(JSON.stringify(f));

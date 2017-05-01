@@ -21,34 +21,58 @@
 	
 */
 
+// Define a Module with Simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define(function(require, exports, module){
 
-define(
-// load dependencies...
-['jquery', 'babylon', 'babylon2D', 'united/UI', 'united/uiFeatures' ],
-
-// then do...
-function($, babylon, babylon2D, UI, uiFeatures ){
+var $=require('jquery');
+var babylon=require('babylon');
+var babylon2D=require('babylon2D');
+var UI=require('united/UI');
+var FeaturesUI=require('united/FeaturesUI');
+var ChooserFED=require('features/chooserFED');
+var TextFED=require('features/textFED');
 
 var PickerUI=function(board, title){
 	//inherit constructor from UI
 	UI.call(this, board, title); 
-	
+		
+	var that=this;
+	this.fui=new FeaturesUI(null, 'Features');
+
 	this.canvas2D=null; //initialized in start() by which time BIM.scene is initialized 
 	
-	// DOM container elements with jquery wrapping, set by create()
-	this.div$=null;
-	this.divMode$=null;
-	this.divPick$=null;
-	this.keywordHandlers=null;
+	//Add features/editors for the pickerUI.  
+	//yes, FEDs can be used on any object - note the this arg for mesh.
+	//remember to start FEDs - see onTabsactivate
+	this.pickModeFED=new ChooserFED(this.div$, this, {
+		label:'pick mode',
+		valu:that.pickMode,
+		choices:[
+			{label:'one - pick one at a time', 
+			onChoose:function(ev){that.pickMode='one';}},
+			{label:'many - pick multiple', 
+			onChoose:function(ev){that.pickMode='many';}}			
+		],
+		onValuChange:function(ev,rv){}
+	});
+	this.pickLimitFED=new TextFED(this.div$, this, {
+		label:'pick limit', 
+		valu:this.pickLimit, 
+		onFC:function(ev,r){that.pickLimit=Number(r);}
+	});	
+	
+	this.pick$=null;
+	this.div$.append(this.pickModeFED.div$,this.fui.div$);
+	
 	//max number of picks to track
 	this.pickLimit=3;
 	//how to handle picks, (one) by one or (many) add to sellection	
 	this.pickMode="many";
 	// array of picked parts 
-	this.picks:[];
+	this.picks=[];
 	// array of tags - reused for each pick set
-	this.stickers:[];
-	
+	this.stickers=[];	
 	// return constructed ui object for chaining.
 	return this;
 }
@@ -61,7 +85,7 @@ var __=PickerUI.prototype;
 __.alias='Pick';
 
 __.add=function( part ){ 
-	if (this.pickMode=="many|ONE"){this.picks=[];}
+	if (this.pickMode=="one"){this.picks=[];}
 	//if part not in pick list...
 	if (this.picks.indexOf(part) == -1) {
 		//add part to pick list
@@ -83,20 +107,21 @@ __.add=function( part ){
 
 __.first=function(){return this.picks[0];}
 	
-//called by BIM.board when ui's created to register events and callbacks
-__.getEventHandlers=function(){
+//called by ?? when ui's created to register events and callbacks
+__.getEvents=function(){
 	return { 
-		bimFeatureOK:{name:'bimFeatureOK',  handler:uiPicker.onFeatureOK },
-		bimInput:{name:'bimInput',  handler:uiPicker.onInput },
-		bimPick:{}
+		bimFeatureOK:{name:'bimFeatureOK', data:this, handler:this.onFeatureOK },
+		bimInput:{name:'bimInput', data:this, handler:this.onInput },
+		bimPick:{},
+		tabsactivate:{name:'tabsactivate', data:this, handler:this.onTabsactivate }
 	};
 }
 	
 //called by BIM.board when ui's created for use with input autocomplete
 //called by onInput() below
-__.getKeywordHandlers=function(){
+__.getKeywords=function(){
 	//this.keywords defined here because it can't be defined until BIM.ui.picker is
-	if (this.keywordHandlers==null){ this.keywordHandlers=[
+	if (this.keywords==null){ this.keywords=[
 		{keywords:['pp'], 
 			handler:BIM.ui.uiPicker.toggle, 
 			help:'open the picker dialog'}, 
@@ -108,7 +133,7 @@ __.getKeywordHandlers=function(){
 			help:'close the picker dialog'
 		}
 	];}
-	return this.keywordHandlers;
+	return this.keywords;
 }
 	
 //deprecated
@@ -117,7 +142,7 @@ __.last=function(){
 	else { return this.picks[this.picks.length-1];}
 }
 
-//called by uiBlackboard when new BIM input received
+//called by ui.blackboard when there is BIM user input
 __.onInput=function(ev, input){ 
 	//beware of using 'this' inside an eventhandler function!
 	//because 'this' will refer to the event caller's context, not uiPicker
@@ -127,8 +152,8 @@ __.onInput=function(ev, input){
 			//BIM.ui.uiPicker.toggle(); 
 			ev.data.start();
 			break;
-		case 'ppw': BIM.ui.uiPicker.wipe(); break;
-		case 'ppx':	BIM.ui.uiPicker.div$.dialog('close');
+		case 'ppw': BIM.ui.picker.wipe(); break;
+		case 'ppx':	BIM.ui.picker.div$.dialog('close');
 	};		
 }
 	
@@ -152,12 +177,16 @@ __.onPointerDown=function (ev, pickResult) {
 	}
 }
 
-//UI standard function
-__.start=function(){ 
-	BIM.scene.onPointerDown=uiPicker.onPointerDown;
-	if (this.canvas2D==null) {
+//start the picker
+__.onTabsactivate=function(ev){ 
+	var that=ev.data;
+	that.pickModeFED.start(); 
+	that.pickLimitFED.start(); 
+	
+	BIM.scene.onPointerDown=that.onPointerDown;
+	if (that.canvas2D==null) {
 		//BIM.fun.log('picker start, BIM.scene ' + BIM.scene);
-		this.canvas2D=new babylon2D.ScreenSpaceCanvas2D( BIM.scene, {
+		that.canvas2D=new babylon2D.ScreenSpaceCanvas2D( BIM.scene, {
 			id:"uiPickerCanvas",
 			//don't cache as bitmap, keep canvas2d fresh
 			cachingStrategy:babylon2D.CACHESTRATEGY_DONTCACHE  

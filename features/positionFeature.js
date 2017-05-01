@@ -48,7 +48,7 @@ var positionFeature = function(mesh){
 		label:'position',
 		desc:'A 3d vector rounded to the nearest 10 units',
 		valu:mesh.position, 
-		onFeatureChange:function(result){  mesh.position=result; },
+		onValuChange:function(result){  mesh.position=result; },
 		//onSubmit:function(valu){  mesh.position=valu; },
 		editor:ChooserFED,
 		choices:[

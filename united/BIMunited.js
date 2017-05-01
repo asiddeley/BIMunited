@@ -36,13 +36,12 @@ requirejs.config({
 define(
 // load dependencies...
 [
-//'kernel/Model',
 'jquery',
 'babylon',
 'united/TabbedUI',
 'united/BlackboardUI',
 'united/MakerUI',
-//'united/uiPicker',
+'united/PickerUI',
 'united/FeaturesUI',
 'lights/hemi',
 'cameras/arcRotateCamera',
@@ -51,30 +50,28 @@ define(
 
 // then do this...
 function (
-//Model, 
 $, 
 babylon, 
 TabbedUI,
 BlackboardUI, 
 MakerUI, 
-//uiPicker, 
+PickerUI, 
 FeaturesUI, 
 Light, 
 arcRotateCamera, 
 TMC, 
 partsLibrary) {
 
-var Bim=function(){};
-var __=Bim.prototype;
+var BIM={};
 
-	// The a, b, c, d & e main API methods...
-__.admin=function(user, options){
+// The a, b, c, d & e main API methods...
+BIM.admin=function(user, options){
 	user=(typeof user=='undefined')?'admin':user;
 	options=(typeof options == 'undefined')?{}:options;
 	$.extend(this.options, {admin:user}, options);
 };
 	
-__.board=function(div, options){
+BIM.board=function(div, options){
 	if (typeof div == 'undefined'){div=$('<div></div>').appendTo(window.document.body);}
 	if (typeof options == 'undefined'){options={};}
 	//wrap div with jquery if not already
@@ -86,16 +83,16 @@ __.board=function(div, options){
 	this.ui.blackboard=new BlackboardUI(null, "Log");
 	tui.addTab( 
 		this.ui.blackboard, 
-		new MakerUI(null, 'Make')
-		//new FeaturesUI(null, 'Features')
+		new MakerUI(null, 'Make'),
+		new PickerUI(null, 'Pick')
 	); 
 }
 
-__.canvas=function(canvas){ $.extend(this.options, {'canvas':canvas}); }
+BIM.canvas=function(canvas){ $.extend(this.options, {'canvas':canvas}); }
 
-__.database=function(udata){	$.extend(this.options, {database:udata}); }
+BIM.database=function(udata){	$.extend(this.options, {database:udata}); }
 	
-__.engage=function(){
+BIM.engage=function(){
 
 	var that=this;	
 	// prepare engine
@@ -138,11 +135,13 @@ __.engage=function(){
 	this.options.board$.trigger('bimEngage');
 };
 	
-	// function collection 
-__.fun={
+// function collection 
+BIM.fun={
+	//depricated
 	addEventHandlers:function(eh){
-		BIM.ui.uiBlackboard.addEventHandlers(eh);			
+		BIM.ui.blackboard.addEventHandlers(eh);			
 	},
+	
 	autoHeight:function(el){
 		// grows textarea fit text - useful for typing in a small textarea 
 		$(el).css('height','auto').css('height', el.scrollHeight+5);		
@@ -158,27 +157,29 @@ __.fun={
 	},
 	
 	on:function(eventHandlers){
+		//eventHandler eg. {name:'bimInput', data:this, handler:this.onInput }
 		var ee=eventHandlers, n, b$=BIM.options.board$;
 		//add event handlers to board, the acting event manager
-		for (n in ee){b$.on(n, ee[n].data, ee[n].handler);}	
+		for (n in ee){b$.on(ee[n].name, ee[n].data, ee[n].handler);}	
 	},
-	
+
 	off:function(eventHandlers){
 		var ee=eventHandlers;
 		//add event handlers to board, the acting event manager
 		var n, b$=$(this.options.board);
-		for (n in ee){b$.of(n, ee[n].data, ee[n].handler);}	
+		for (n in ee){b$.off(ee[n], ee[n].data, ee[n].handler);}	
 	},
-	
+
 	randomPosition:function() {
 		var s=100;//BIM.model.worldBox.size;
 		var v=new babylon.Vector3(Math.random()*s,  Math.random()*s, Math.random()*s); 
 		return v;
 	},
 	
-	trigger:function(ev, arg1){
+	trigger:function(ev, arg1, arg2){
 		//BIM.ui.uiBlackboard.div$.trigger(ev, arg1);
-		BIM.options.board$.trigger(ev, arg1);
+		//BIM.fun.log('BIM.trigger:'+ev);
+		BIM.options.board$.trigger(ev, arg1, arg2);
 	},
 			
 	uid:function(name){
@@ -189,15 +190,14 @@ __.fun={
 		var count=this.uidstore[name];
 		count=(typeof count == 'undefined')?1:count+1; //define or increment id number
 		this.uidstore[name]=count; //save count
-		//alert( name+count.toString());
 		return name+count.toString();
 	},
 	uidstore:{ },
 	unique:function(name){return this.uid(name);}
 };
 	
-//shortcuts
-__.get={
+//getters
+BIM.get={
 	activeModel:function(am) {
 		if(typeof am!='undefined') {this.activeModelObj=am;}
 		if(this.activeModelObj==null) {this.activeModelObj=BIM.model;}
@@ -218,21 +218,21 @@ __.get={
 	uid: function(name) {return BIM.fun.uid(name);}
 };
 
-__.help=function(input){
+BIM.help=function(input){
 	this.fun.log('help on '+input);
 }
 	
-	//main method for user interaction
-__.input=function(input){return this.fun.trigger('bimInput', input);}
+//main method for user interaction
+BIM.input=function(input){return this.fun.trigger('bimInput', input);}
 	
-	//list of commands, 
-__.keywords={};
+//list of commands, 
+BIM.keywords={};
 	
-	// main light
-__.light=Light.demo(1);
+// main light
+BIM.light=Light.demo(1);
 	
-	// Extended by user in a, b, c, d & e API functions
-__.options={
+// Extended by user in a, b, c, d & e API functions
+BIM.options={
 	admin:{user:"unnamed", disc:'arch'},
 	board:null,
 	canvas:null,
@@ -241,28 +241,27 @@ __.options={
 };	
 	
 //parts library 
-__.partsLib=partsLibrary;
+BIM.parts=partsLibrary;
 	
 //Libaray of models not rendered unless called/referenced from model	
-__.referenceLib={};
+BIM.referenceLib={};
 	
 //Babylon scene, analog to BIM.model, initialized by engage()
-__.scene=null;
+BIM.scene=null;
 	
 //Texture colour material library 
-__.textures=TMC.stdLib();
+BIM.textures=TMC.stdLib();
 	
 //User interfaces, initialized by this.board()
-__.ui={};
+BIM.ui={};
 	
 //View library, A view is the BIM analog to babylon camera
-__.views={ main:arcRotateCamera };
+BIM.views={ main:arcRotateCamera };
 	
 //Worldbox Library.  
 //A worldbox contains information about a model's bounds, units, and yonder ie sky box and ground
-__.worldBoxLib={};
+BIM.worldBoxes={};
 
-BIM=new Bim();
 window.BIM=BIM;
 return BIM;
 

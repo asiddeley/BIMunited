@@ -43,12 +43,14 @@ var UI=function(board, title){
 		//use jquery-ui to turn div$ into a floating dialog box
 		this.div$.dialog({draggable:true, title:this.alias, autoOpen:true});
 	}
-	
+	// REGISTER EVENTS 
 	BIM.fun.on(this.getEvents());	
 	return this;
 };
+
+var __=UI.prototype;
 	
-UI.prototype.getKeywords=function(keywords){
+__.getKeywords=function(keywords){
 	//get or set keyword-handlers
 	if (typeof keywords==Array){this.keywords=keywords}
 	else if (this.keywords==null){ this.keywords=[{
@@ -60,17 +62,15 @@ UI.prototype.getKeywords=function(keywords){
 	return this.keywords;
 };
 
-UI.prototype.getEvents=function(){
+__.getEvents=function(){
 	// Beware of using 'this' in event handlers as it will refer to the callers context
 	// Instead assume 'this' is passed in event data thus... handler(ev){ev.data.toggle();}
-	return { 
-		bimInput: {name:'bimInput',	handler:this.onInput, data:this }
-	};
+	return [{name:'bimInput',	handler:this.onInput, data:this }];
 };
 
-UI.prototype.keywords=null;
+__.keywords=null;
 	
-UI.prototype.onInput=function(ev, input){
+__.onInput=function(ev, input){
 	//BIM.fun.log(input);
 	//call others to process input 
 	//this.div$.trigger('bimInput', [command]);
@@ -81,8 +81,8 @@ UI.prototype.onInput=function(ev, input){
 		case 'dd':ev.data.toggle();break;
 	};
 };
-			
-UI.prototype.toggle=function(){
+
+__.toggle=function(){
 	if (this.div$.is(':ui-dialog')){
 		if (this.div$.dialog("isOpen")) {this.div$.dialog("close");} 
 		else {this.div$.dialog("open");}

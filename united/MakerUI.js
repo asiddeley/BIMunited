@@ -14,19 +14,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	project:	BIM united FC
-	module: 	PartsUI
+	module: 	MakerUI
 	by: 		Andrew Siddeley 
 	started:	16-Feb-2017
 	
 */
 
-
-define(
-// load dependencies...
-['jquery', 'jquery-ui', 'babylon', 'united/UI', 'united/FeaturesUI', 'parts/Triad' ],
-
-// then do...
-function($, $$, babylon, UI, FeaturesUI, triad ){
+// Define a Module with Simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define(function(require, exports, module){
+	
+var $=require('jquery');
+var $$=require('jquery-ui');
+var babylon=require('babylon');
+var UI=require('united/UI');
+var FeaturesUI=require('united/FeaturesUI');
+var triad=require('parts/Triad');
 
 var MakerUI=function(board, title){
 	// Inherit from UI, call super constructor
@@ -49,7 +52,7 @@ var MakerUI=function(board, title){
 	//options for selectmenu() jquery-ui widget
 
 	this.scene=null;
-	this.fui=new FeaturesUI(null, 'Features of New Part', false);
+	this.fui=new FeaturesUI(null, 'Features of New Part');
 	this.canvas$=$('<canvas></canvas>').css({'width':'100px', 'height':'100px'});
 	this.ok$=$('<button>Make</button>').on('click', function(ev){
 		BIM.fun.log('Part to be made and added to scene');
@@ -70,11 +73,11 @@ var MakerUI=function(board, title){
 	//this.sm$.selectmenu({'select':function(ev, ui) { this.onChoosePart(ev, ui, that);}});
 
 	this.desc$.text('Choose a part, edit and add to model.');
-	this.div$.append(this.canvas$, this.cg$,  this.fui.div$);
+	this.div$.append(this.canvas$, this.cg$, this.fui.div$);
 
 	//For setup of sample canvas/scene, see onTabsactivate below.
 	
-	BIM.fun.trigger('bimRestock', [BIM.partsLib]);
+	BIM.fun.trigger('bimRestock', [BIM.parts]);
 
 	return this;
 };
@@ -102,7 +105,7 @@ __.onChoosePart=function(ev, ui, that){
 	//BIM.fun.log(JSON.stringify(ui.item));
 	BIM.fun.log('To make:'+ui.item.label);
 	if (typeof that.sample !='undefined') that.sample.dispose(); //remake sample
-	var bimHandler=that.partsLib[ui.item.label];
+	var bimHandler=that.parts[ui.item.label];
 	that.sample=bimHandler.setScene(that.scene);	
 	that.desc$.text(that.sample.bimHandler.desc);	
 	//connect and show features of sample
@@ -124,7 +127,7 @@ __.onInput=function(ev, input){
 		var keys=['ap', 'parts', 'events', 'keywords', 'restock'];
 		BIM.fun.log(ev.data.alias.toUpperCase()+'\n' + keys.join("\n"));
 		break;		
-	case 'restock':BIM.fun.trigger('bimRestock', [BIM.partsLib]); break;
+	case 'restock':BIM.fun.trigger('bimRestock', [BIM.parts]); break;
 
 	}		
 };
@@ -132,8 +135,7 @@ __.onInput=function(ev, input){
 __.onRestock=function(ev, lib){
 	var op$;
 	var that=ev.data; // AKA this
-	that.partsLib=lib;
-	//ev.data.sm$.selectmenu('destroy');
+	that.parts=lib;
 	ev.data.cg$.controlgroup('destroy');
 	ev.data.sm$.empty();
 	
@@ -184,7 +186,7 @@ __.setScene=function(scene, canvas){
 		"ArcRotateCamera", //name
 		1, //alpha
 		0.8, //beta
-		20, //radius
+		50, //radius
 		new babylon.Vector3(0, 0, 0), //target
 		scene);
 	//cam.setTarget(new BABYLON.Vector3.Zero());

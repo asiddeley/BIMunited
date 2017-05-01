@@ -54,8 +54,9 @@ var TabbedUI=function(board, title){
 // Inherit prototype from UI
 TabbedUI.prototype=Object.create(UI.prototype);
 TabbedUI.prototype.constructor=TabbedUI;
+var __=TabbedUI.prototype;
 
-TabbedUI.prototype.addTab=function(){ 
+__.addTab=function(){ 
 
 	var c, index, tab$, panel$, ui;
 	this.divTabgroup$.tabs('destroy');
@@ -83,12 +84,12 @@ TabbedUI.prototype.addTab=function(){
 	return this;
 };
 
-TabbedUI.prototype.tabs=function(){
+__.tabs=function(){
 	//use jquery-ui to turn it into a tab widget
 	this.divTabgroup$.tabs();
 }
 
-TabbedUI.prototype.createTabgroup=function(){
+__.createTabgroup=function(){
 
 	/*************************
 	For DOM structure for jquery tabs, see example at https://api.jqueryui.com/tabs/
@@ -120,12 +121,13 @@ TabbedUI.prototype.createTabgroup=function(){
 //TabbedUI.prototype.board$=null;
 
 //DOM element for blackboard, logging user input etc
-TabbedUI.prototype.div$=null;
+__.div$=null;
 	
-TabbedUI.prototype.divTabgroup$=null;
-TabbedUI.prototype.divUL$=null;
-	
-TabbedUI.prototype.getKeywords=function(keywords){
+__.divTabgroup$=null;
+
+__.divUL$=null;
+
+__.getKeywords=function(keywords){
 	//get or set keyword-handlers
 	if (typeof keywords==Array){this.keywords=keywords}
 	else if (this.keywords==null){ this.keywords=[{
@@ -137,7 +139,7 @@ TabbedUI.prototype.getKeywords=function(keywords){
 	return this.keywords;
 };
 
-TabbedUI.prototype.getEvents=function(){
+__.getEvents=function(){
 	// Beware of using 'this' in event handlers as it will refer to the callers context
 	// Instead assume 'this' is passed in event data thus... handler(ev){ev.data.toggle();}
 	return { 
@@ -145,9 +147,9 @@ TabbedUI.prototype.getEvents=function(){
 	};
 };
 
-TabbedUI.prototype.keywords=null;
+__.keywords=null;
 	
-TabbedUI.prototype.onInput=function(ev, input){
+__.onInput=function(ev, input){
 	//BIM.fun.log(input);
 	//call others to process input 
 	//this.div$.trigger('bimInput', [command]);

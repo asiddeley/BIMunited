@@ -29,59 +29,66 @@ define(
 // Then do...
 function($, FED) {
 
-var textFED=function(place) {
-	// Inherits from FeatureEditor, so call super function (the constructor in this case) to initialize fields
-	FED.call(this, place);
+var textFED=function(place, feature) {
+	//Inherits from FeatureEditor, call super constructor to initialize
+	FED.call(this, place, feature);
 	
-	// TODO - add properties or change inherited fields as required here
-	// Important - prevent page from refreshing when form submitted
-	this.form$.on('submit', this, function(ev){ ev.preventDefault();	});
-
-	// override valu$
-	this.valu$.remove(); //needs to be removed() before redefining 
-	this.valu$=$('<input type="text" placeholder="name" value="TextFED cons"></input>').addClass('ui-controlgroup-label');
+	//this.valu$.hide(); //inherited but not used
+	this.text$=$('<input type="text" placeholder=" " value=" "></input>');
 
 	this.ok$=$('<input type="submit" value="ok">');
-	this.form$.append(this.valu$, this.ok$);
-	//this.wigetize();
+	
+	//modify inherited form submit function
+	this.form$.on('submit', function(){
+		
+	});
+	//.click(function(ev){
+	//	BIM.fun.trigger('bimFeatureChange', ev.data.text$.text());
+		//ev.data.submit(ev.data.text$.text());		
+	//});
+	this.form$.append(this.text$, this.ok$);
 	return this;
 };
 
-// inherit prototype...
+//inherit prototype...
 textFED.prototype=Object.create(FED.prototype);
 textFED.prototype.constructor=textFED;
 
+//override onSubmit - OK pressed
+var __.onSubmit=function(ev){
+	BIM.fun.trigger('bimFeatureChange', [
+		ev.data.feature, //feature
+		ev.data.text$.val() //revised value
+	]);
+}
+
 var __=textFED.prototype;
 
-// override start function
+//override start function
 __.start=function(mesh, feature){
-	
-	// call super function - takes care of <form>, <label>, undo functionality etc.
+
+	//call super function
+	//stores feature (2nd arg if defined) to this feature
 	FED.prototype.start.call(this, mesh, feature);
 
-	BIM.fun.log('TextFED start:'+JSON.stringify(feature));
-	// value converted to string for display
-	this.valu$.val(feature.valu);
-	// the value stored for user to revise
-	this.valu=feature.valu;
-	
-	// reset and configure event since it's a new feature
-	//this.form$.off('submit');
-	
-	/***
-	// respond to bimFeatureOK event (triggered by OK button)...
-	this.form$.on('submit', this, function(ev){
+	//BIM.fun.log('TextFED start:'+JSON.stringify(feature));
+	//value converted to string for display
+	this.text$.val(this.feature.valu);
+	/**********
+	// reprogram the submit event in case feature editor is reused on
+	// a different feature - wouldn't want to callback past features
+	this.form$.off('submit');
+	this.form$.on('submit', this, function(ev) {
+		//BIM.fun.log('submit');
 		ev.preventDefault();
-		//ev.data = 'this' as passed above
-		var result=ev.data.text$.val();
-		BIM.fun.log('submit triggered, revised text is:'+result);
-		feature.onFeatureChange(result);
-		BIM.fun.trigger('bimFeatureChanged', [feature]);
+		BIM.fun.trigger('bimFeatureChange', [
+		ev.data.feature, //feature
+		ev.data.text$.val() //revised value
+		]);
 	});
-	****/
+	*****/
 	
 };
-
 
 return textFED;
 

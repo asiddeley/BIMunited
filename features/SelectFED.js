@@ -15,10 +15,10 @@
 
 	
 	project:	BIM united FC
-	module:		chooseFED
-	desc:		position Feature Editor 
-	by: 			Andrew Siddeley 
-	date:		21-Apr-2017
+	module:		SelectFED
+	desc:		
+	by: 		Andrew Siddeley 
+	date:		29-Apr-2017
 **************************************************************/
 
 define(
@@ -43,52 +43,52 @@ var ChooserFED=function(place$, mesh, feature) {
 	
 	// override - FED defines valu$ as <label></label>
 	this.valu$.remove();
-	this.valu$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
+	this.valu$=$('<select></select>');
 
-	this.ok$=$('<input type="submit" value="ok">');
-	this.valu$.on('mouseenter', this, function(ev){
-		var that=ev.data;
-		that.menu$.show().position({my:"left bottom", at:"left top+2", of:that.valu$, collision:"flipfit"});
-	});
+	//this.ok$=$('<input type="submit" value="ok">');
+	//this.valu$.on('mouseenter', this, function(ev){
+	//	var that=ev.data;
+	//	that.menu$.show().position({my:"left bottom", at:"left top+2", of:that.valu$, collision:"flipfit"});
+	//});
 	// prevent lingering menu 
-	this.form$.on('mouseleave', this, function(ev){ ev.data.menu$.hide();});
+	//this.form$.on('mouseleave', this, function(ev){ ev.data.menu$.hide();});
 	
 	this.form$.append(this.valu$);
-	this.initMenu(feature.choices);
+	this.initChoices(feature.choices);
 	this.form$.append(this.ok$);
 	return this;
 };
 
 // Inherit from FED, prototype and constructor...
-ChooserFED.prototype=Object.create(FED.prototype);
-ChooserFED.prototype.constructor=ChooserFED;
-// prototype short-form __
-var __=ChooserFED.prototype;
+SelectFED.prototype=Object.create(FED.prototype);
+SelectFED.prototype.constructor=SelectFED;
+// SelectFED.prototype shortcut is __
+var __=SelectFED.prototype;
 
-__.initMenu=function(choices){
+__.initChoices=function(choices){
 
 	// choices - [{label:'label', onChoose:function(ev){}, onSubmit:function(ev){}}]
 	var fn, i, li$, that=this;
-	this.menu$=$('<ul></ul>').on('mouseleave',this, function(ev){ev.data.menu$.hide();});
+	//this.menu$=$('<ul></ul>').on('mouseleave',this, function(ev){ev.data.menu$.hide();});
 
 	for (i in choices){
-		li$=$('<li></li>').append($('<div></div>').text(choices[i].label));
+		li$=$('<option></option>').text(choices[i].label));
 		this.menu$.append(li$);
 		// click menu item to call the onChoose function
 		li$.on('click', this, choices[i].onChoose);
 		// then hides menu
-		li$.on('click', this, function(ev){ev.data.menu$.hide();});
+		//li$.on('click', this, function(ev){ev.data.menu$.hide();});
 	}
 	
-	this.form$.append(this.menu$);
-	this.menu$.css("position","absolute").hide();
+	this.form$.append(this.valu$);
+	//this.menu$.css("position","absolute").hide();
 };
 
 // override remove function
 __.remove=function(){
 	FED.prototype.remove.call(this);
-	this.menu$.remove();
-	this.ok$.remove();
+	//this.menu$.remove();
+	//this.ok$.remove();
 }
 
 // override start function

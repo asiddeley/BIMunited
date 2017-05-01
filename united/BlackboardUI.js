@@ -67,32 +67,34 @@ var BlackboardUI = function(board, title){
 // Inherit prototype from UI
 BlackboardUI.prototype=Object.create(UI.prototype);
 BlackboardUI.prototype.constructor=BlackboardUI;
+var __=BlackboardUI.prototype;
 			
 //DOM element for big text dumps	
-BlackboardUI.prototype.divDump$=null;
+__.divDump$=null;
 
-BlackboardUI.prototype.divLog$=null;
+__.divLog$=null;
 	
-BlackboardUI.prototype.getKeywords=function(){
+__.getKeywords=function(){
 	if (this.keywords==null){ this.keywords=[
 		{keywords:['bb'], 
-			handler:this.toggle, 
-			help:'open/close the blackboard'}
+		handler:this.toggle, 
+		help:'open/close the blackboard'}
 	];}
 	return this.keywords;
 };
 	
-BlackboardUI.prototype.getEvents=function(){
-	return { 
-	bimInput:{name:'bimInput', data:this, handler:this.onInput },
-	bimMsg:{name:'bimMsg', data:this, handler:function(ev, msg){ev.data.log(msg);} }
-	};
+__.getEvents=function(){
+	return [ 
+		{name:'bimInput', data:this, handler:this.onInput },
+		{name:'bimMsg', data:this, handler:function(ev, msg){ev.data.log(msg);}},
+		{name:'bimMsg', data:this, handler:function(ev, msg){ev.data.log('BIM FC');}}
+	];
 };
 	
-BlackboardUI.prototype.keywords=null;
+__.keywords=null;
 
 // Inherited but overriden	
-BlackboardUI.prototype.onInput=function(ev, input){
+__.onInput=function(ev, input){
 	//BIM.ui.uiBlackboard.log(input);
 	ev.data.log("> "+input);
 	
@@ -146,7 +148,7 @@ BlackboardUI.prototype.onInput=function(ev, input){
 };
 	
 
-BlackboardUI.prototype.log=function(msg){
+__.log=function(msg){
 	//insert returns every 100 characters
 	msg=msg.replace(/(.{100})/g, "$1\n");
 	
@@ -163,9 +165,9 @@ BlackboardUI.prototype.log=function(msg){
 	$(this.divLog$).html(htm);
 };
 	
-BlackboardUI.prototype.logStore=[];
+__.logStore=[];
 	
-BlackboardUI.prototype.toggleDebug=function(){
+__.toggleDebug=function(){
 	if (!this.toggleDebugB) {
 		BIM.scene.debugLayer.shouldDisplayLabel=function(node){return true;}
 		BIM.scene.debugLayer.shouldDisplayAxis=function(mesh){return true;}
@@ -177,8 +179,9 @@ BlackboardUI.prototype.toggleDebug=function(){
 	};
 };
 	
-BlackboardUI.prototype.toggleDebugB=false;
+__.toggleDebugB=false;
 
+// usage> var bb=new BlackboardUI(DOMcontainer, "log" );
 return BlackboardUI;
 
 });
