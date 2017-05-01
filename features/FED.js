@@ -21,50 +21,64 @@
 	started:	16-Apr-2017
 **************************************************************/
 
-define(
-
-// Load dependencies...
-['jquery'],
-
-// Then do...
-function($) {
+// Define module with simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define( function(require, exports, module) {
+	
+var $=require('jquery');
 
 var FeatureEditor=function(place, feature) {
 	//place - DOM container
 	//feature - {label:'name', valu:mesh.variable, onFC:fn(ev,mesh,res){...}, FED:featureEditor}
-
-	this.form$=$('<form></form>');
+	var that=this;
+	this.form$=$('<form></form>').on('submit', this, function(ev){ 
+		ev.data.onSubmit(ev, ev.data.feature, ev.data.valuRev);
+	});
 	this.label$=$('<span></span>').addClass('ui-controlgroup-label');
 	this.valu$=$('<span></span>').addClass('ui-controlgroup-label');
 	this.form$.append(this.label$, this.valu$);
 	$(place).append(this.form$);
 		
-	BIM.fun.on([{name:'bimFeatureChange', data:this, handler:this.onFeatureChange}]);
-	
+	BIM.fun.on( this.getEvents() );
+
+	this.feature=null;	
 	if (typeof feature != 'undefined'){
 		this.feature=feature;
 		this.label$.text(feature.label);
 		this.valu$.text(feature.valu); //converted to text for display
 	}
-	
+
 	return this;
 };
 
 
 var __=FeatureEditor.prototype;
 
+__.getEvents=function(){
+	return [ {name:'featureChange', data:this, handler:this.onFeatureChange} ];
+};
+
 __.onFeatureChange=function(ev, feature, valuRev){
 	//triggered by form submit
-	//this base class has no way of submitting, that's for inheritors to implement
-	//BIM.fun.log('onFC:' + JSON.stringify(feature));
-
-	//all FEDs called, filter applicable FEDs for update
-	if (feature===ev.data.feature){
-		BIM.fun.log('THE ONE:'+ valuRev);
-		ev.data.valu$.text(valuRev);
-		if (typeof feature.onFeatureChange =='function'){feature.onFeatureChange(valuRev);}
-		if (typeof feature.onValuChange =='function'){feature.onValuChange(valuRev);}
+	var that=ev.data; 
+	//all FEDs called, but only update applicable FED/feature
+	if (feature===that.feature){
+		//BIM.fun.log('the one:'+ valuRev);
+		try{
+			//update valu field with revised value
+			that.valu$.text(valuRev);
+			//execute the feature callback function that applies the changed valu to the mesh object
+			if (typeof feature.onFeatureChange =='function'){feature.onFeatureChange(valuRev);}
+			if (typeof feature.onValuChange =='function'){feature.onValuChange(valuRev);}
+		} catch(er) {BIM.fun.log(er.toString());}
 	}
+};
+
+__.onSubmit=function(ev, feature, valuRev ){ 
+	//this base class has no way of submitting, that's for inheritors to implement
+	//with an ok button (or such) that would trigger the form submit event.
+	ev.preventDefault(); 
+	
 };
 
 __.remove=function(){
@@ -74,9 +88,8 @@ __.remove=function(){
 	this.label$.remove();
 	this.valu$.remove();
 	this.form$.remove();
-	BIM.fun.off('bimFeatureChange', this.onFeatureChange);
+	BIM.fun.off(this.getEvents() );
 };
-
 
 __.start=function(mesh, feature){
 	
@@ -88,21 +101,7 @@ __.start=function(mesh, feature){
 	
 	// turn form into a jquery controgroup if not already
 	if (!this.form$.is(':ui-controlgroup')){ this.wigetize();  }
-	
-	// reprogram the submit event in case feature editor is reused on
-	// a different feature - wouldn't want to callback past features
-	//this.form$.off('submit');
-	//this.form$.on('submit', this, function(ev, valuRev) {
-		//ev.preventDefault();
-		//BIM.fun.log('submit');
-		//BIM.fun.trigger('bimFeatureChange', [ev.data.feature, valuRev]);
-	//});
-
-	//BIM.fun.log('FED start:'+JSON.stringify(feature));
-
 };
-
-__.onSubmit=function(valuRev){ this.form$.trigger('submit', valuRev); };
 
 __.undo=function(){	};	
 __.undolog=[];

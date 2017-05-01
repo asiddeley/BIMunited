@@ -21,13 +21,13 @@
 	date:		21-Apr-2017
 **************************************************************/
 
-define(
-
-// Load dependencies...
-['jquery', 'features/FED', 'babylon'],
-
-// Then do...
-function($, FED, babylon) {
+// Define module with simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define( function(require, exports, module) {
+	
+var $=require('jquery');
+var FED=require('features/FED');
+var babylon=require('babylon');
 
 var ChooserFED=function(place$, mesh, feature) {
 	// place$ - jquery wrapped DOM container element
@@ -39,7 +39,7 @@ var ChooserFED=function(place$, mesh, feature) {
 	// It sets up label$ and text$. Inherit to set up ok$ or more$, then wigetize
 	FED.call(this, place$, feature);
 
-	this.form$.on('submit', this, function(ev){ ev.preventDefault(); return false;});
+	//this.form$.on('submit', this, function(ev){ ev.preventDefault(); return false;});
 	
 	// override - FED defines valu$ as <label></label>
 	this.valu$.remove();
@@ -84,7 +84,20 @@ __.initMenu=function(choices){
 	this.menu$.css("position","absolute").hide();
 };
 
-// override remove function
+// override 
+__.onSubmit=function(ev){
+	//FED.prototype.onSubmit.call(this, ev);
+	FED.prototype.onSubmit.call(ev.data, ev);
+	
+}
+
+// override
+__.onFeatureChange=function(ev, feature, valuRev){
+	FED.prototype.onFeatureChange.call(ev.data, valuRev);
+	
+}
+
+// override 
 __.remove=function(){
 	FED.prototype.remove.call(this);
 	this.menu$.remove();

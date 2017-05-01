@@ -21,31 +21,23 @@
 	started:	26-Mar-2017
 **************************************************************/
 
-define(
-
-// Load dependencies...
-['jquery', 'features/FED'],
-
-// Then do...
-function($, FED) {
+// Define module with simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define( function(require, exports, module) {
+	
+var $=require('jquery');
+var FED=require('features/FED');
 
 var textFED=function(place, feature) {
 	//Inherits from FeatureEditor, call super constructor to initialize
 	FED.call(this, place, feature);
 	
-	//this.valu$.hide(); //inherited but not used
+	this.valu$.hide(); //inherited but not used
 	this.text$=$('<input type="text" placeholder=" " value=" "></input>');
-
+	//feature arg is optional, may be undefined
+	try{ this.text$.val(fearture.valu); } catch(er) { BIM.fun.log(er.toString()) ;};
 	this.ok$=$('<input type="submit" value="ok">');
 	
-	//modify inherited form submit function
-	this.form$.on('submit', function(){
-		
-	});
-	//.click(function(ev){
-	//	BIM.fun.trigger('bimFeatureChange', ev.data.text$.text());
-		//ev.data.submit(ev.data.text$.text());		
-	//});
 	this.form$.append(this.text$, this.ok$);
 	return this;
 };
@@ -54,40 +46,32 @@ var textFED=function(place, feature) {
 textFED.prototype=Object.create(FED.prototype);
 textFED.prototype.constructor=textFED;
 
-//override onSubmit - OK pressed
-var __.onSubmit=function(ev){
-	BIM.fun.trigger('bimFeatureChange', [
+var __=textFED.prototype;
+
+//override - ok button pressed
+__.onSubmit=function(ev) {
+	//ok button triggers local form event
+	FED.prototype.onSubmit.call(this, ev);
+	BIM.fun.trigger('featureChange', [
 		ev.data.feature, //feature
 		ev.data.text$.val() //revised value
 	]);
-}
+};
 
-var __=textFED.prototype;
+//override 
+__.onFeatureChange=function(ev, feature, valuRev){
+	//form submit event triggers this bim wide event
+	//takes care of executing feature-callback function to update mesh
+	FED.prototype.onFeatureChange.call(this, ev, feature, valuRev); 
+
+};
 
 //override start function
 __.start=function(mesh, feature){
-
 	//call super function
 	//stores feature (2nd arg if defined) to this feature
 	FED.prototype.start.call(this, mesh, feature);
-
-	//BIM.fun.log('TextFED start:'+JSON.stringify(feature));
-	//value converted to string for display
-	this.text$.val(this.feature.valu);
-	/**********
-	// reprogram the submit event in case feature editor is reused on
-	// a different feature - wouldn't want to callback past features
-	this.form$.off('submit');
-	this.form$.on('submit', this, function(ev) {
-		//BIM.fun.log('submit');
-		ev.preventDefault();
-		BIM.fun.trigger('bimFeatureChange', [
-		ev.data.feature, //feature
-		ev.data.text$.val() //revised value
-		]);
-	});
-	*****/
-	
+	try{ this.text$.val(fearture.valu); } catch(er) {BIM.fun.log(er.toString());}
 };
 
 return textFED;
