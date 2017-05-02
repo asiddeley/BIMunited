@@ -40,9 +40,9 @@ Feature structure...
 	editor:featureEditor}
 */
 var positionFeature = function(mesh){ 
-	//Static function that returns a fresh feature {}, scoped to a particular mesh
-	//A feature is a hash used by uiFeatures to edit and update babylon mesh properties like this...
-	//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
+	//Static function that returns a fresh feature {}, scoped to a particular mesh.
+	//A feature is a hash used by FeaturesUI to edit and update babylon mesh properties.
+	//Eg. {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
 	
 	return { 
 		label:'position',

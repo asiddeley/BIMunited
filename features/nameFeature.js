@@ -38,7 +38,7 @@ var nameFeature=function(mesh){
 	return { 
 		label:'Name',
 		valu:mesh.name,
-		onFeatureChange:function(result){mesh.name=result;},
+		onValuChange:function(result){mesh.name=result;},
 		editor:textFED
 	};
 };

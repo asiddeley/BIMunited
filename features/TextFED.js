@@ -32,10 +32,10 @@ var textFED=function(place, feature) {
 	//Inherits from FeatureEditor, call super constructor to initialize
 	FED.call(this, place, feature);
 	
-	this.valu$.hide(); //inherited but not used
+	//this.valu$.hide(); //inherited but not used
 	this.text$=$('<input type="text" placeholder=" " value=" "></input>');
 	//feature arg is optional, may be undefined
-	try{ this.text$.val(fearture.valu); } catch(er) { BIM.fun.log(er.toString()) ;};
+	try{ this.text$.val(feature.valu); } catch(er) { BIM.fun.log(er.toString()) ;};
 	this.ok$=$('<input type="submit" value="ok">');
 	
 	this.form$.append(this.text$, this.ok$);
@@ -71,7 +71,7 @@ __.start=function(mesh, feature){
 	//call super function
 	//stores feature (2nd arg if defined) to this feature
 	FED.prototype.start.call(this, mesh, feature);
-	try{ this.text$.val(fearture.valu); } catch(er) {BIM.fun.log(er.toString());}
+	try{ this.text$.val(feature.valu); } catch(er) {BIM.fun.log(er.toString());}
 };
 
 return textFED;

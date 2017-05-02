@@ -70,7 +70,7 @@ __.onFeatureChange=function(ev, feature, valuRev){
 			//execute the feature callback function that applies the changed valu to the mesh object
 			if (typeof feature.onFeatureChange =='function'){feature.onFeatureChange(valuRev);}
 			if (typeof feature.onValuChange =='function'){feature.onValuChange(valuRev);}
-		} catch(er) {BIM.fun.log(er.toString());}
+		} catch(er) {BIM.fun.log( 'Error: '+er.name +', Msg:'+ er.message +', File:'+ er.fileName+', line:'+er.line);}
 	}
 };
 
