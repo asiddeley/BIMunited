@@ -29,31 +29,25 @@ var $=require('jquery');
 var FED=require('features/FED');
 var babylon=require('babylon');
 
-var ChooserFED=function(place$, mesh, feature) {
+var ChooserFED=function(place$, feature) {
 	// place$ - jquery wrapped DOM container element
-	// mesh - owner of feature
 	// feature - {... choices:[choice, choice1...]... }
 	// choice - {label:'label', onSelect:function(ev){}, onSubmit:function(ev){}}
 
 	// Inherit from FED by calling it's constructor...
-	// It sets up label$ and text$. Inherit to set up ok$ or more$, then wigetize
+	// It sets up label$ and valu$. Inherit to set up ok$ or more$, then wigetize
 	FED.call(this, place$, feature);
-
-	//this.form$.on('submit', this, function(ev){ ev.preventDefault(); return false;});
 	
-	// override - FED defines valu$ as <label></label>
-	this.valu$.remove();
-	this.valu$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
-
+	this.text$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
 	this.ok$=$('<input type="submit" value="ok">');
-	this.valu$.on('mouseenter', this, function(ev){
+	this.text$.on('mouseenter', this, function(ev){
 		var that=ev.data;
 		that.menu$.show().position({my:"left bottom", at:"left top+2", of:that.valu$, collision:"flipfit"});
 	});
 	// prevent lingering menu 
 	this.form$.on('mouseleave', this, function(ev){ ev.data.menu$.hide();});
 	
-	this.form$.append(this.valu$);
+	this.form$.append(this.text$);
 	this.initMenu(feature.choices);
 	this.form$.append(this.ok$);
 	return this;
@@ -62,8 +56,7 @@ var ChooserFED=function(place$, mesh, feature) {
 // Inherit from FED, prototype and constructor...
 ChooserFED.prototype=Object.create(FED.prototype);
 ChooserFED.prototype.constructor=ChooserFED;
-// prototype short-form __
-var __=ChooserFED.prototype;
+var __=ChooserFED.prototype;  //shortcut to prototype
 
 __.initMenu=function(choices){
 
@@ -86,14 +79,14 @@ __.initMenu=function(choices){
 
 // override 
 __.onSubmit=function(ev){
-	//FED.prototype.onSubmit.call(this, ev);
-	FED.prototype.onSubmit.call(ev.data, ev);
+	//Important to pass (event, feature, revisedValu)
+	FED.prototype.onSubmit.call(ev.data, ev, ev.data.feature, ev.data.text$.val());
 	
 }
 
 // override
 __.onFeatureChange=function(ev, feature, valuRev){
-	FED.prototype.onFeatureChange.call(ev.data, valuRev);
+	FED.prototype.onFeatureChange.call(ev.data, ev.data.feature);
 	
 }
 

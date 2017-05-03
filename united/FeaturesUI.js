@@ -80,25 +80,21 @@ __.onPick=function(ev, picks){
 };
 
 __.reset=function(){	
-	this.widgeta.forEach(function(item){
-		item.remove();
-	});	
-	this.widgeta=[];
+	this.widgets.forEach(function(item){ item.remove();	});	
+	this.widgets=[];
 	this.widgeti=0;	
 };
 		
 __.start=function(mesh){
 	if (typeof mesh=='undefined' || mesh==null){ return false; }
 	this.reset();
-	//header row
-	//this.widgetInit({}, {label:"FEATURES", valu:'-----------------------', editor:FED});
-	//var fc=mesh.bimHandler.getFeatures(mesh);
 	var f, fc=mesh.bimHandler.getFeatures(mesh);
 	for (label in fc){
 		f=fc[label];
 		//BIM.fun.log(JSON.stringify(f));
 		if (f.editor.prototype instanceof FED) {
-			this.widgetInit(mesh, f);
+			this.widgets.push(new f.editor(this.div$, f).start());
+			//this.widgetinit(mesh, f);
 		} else { BIM.fun.log('Feature not editable'); }
 	}
 };
@@ -109,18 +105,18 @@ __.toggle=function(){
 	} else if (this.isDialog) {this.div$.dialog("open");}
 };
 	
-__.widgeta=[]; //array
+__.widgets=[]; //array
 
 __.widgeti=0; //index for array
 
-__.widgetInit=function(mesh, feature){
+__.widgetinit=function(feature){
 	if (this.widgeti==this.widgeta.length){
 		// feature.editor is a constructor function
-		this.widgeta.push(new feature.editor(this.div$, mesh, feature));
+		this.widgets.push(new feature.editor(this.div$, feature));
 	};
 	//if using jquery-ui widget then
 	//$(this.wCell[this.wCelli++]).wCell('vlca', valu, label, onChange, part).show();	
-	(this.widgeta[this.widgeti++]).start(mesh, feature);
+	(this.widgets[this.widgeti++]).start(feature);
 };
 
 /*

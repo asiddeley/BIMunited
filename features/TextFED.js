@@ -34,11 +34,11 @@ var textFED=function(place, feature) {
 	
 	//this.valu$.hide(); //inherited but not used
 	this.text$=$('<input type="text" placeholder=" " value=" "></input>');
-	//feature arg is optional, may be undefined
 	try{ this.text$.val(feature.valu); } catch(er) { BIM.fun.log(er.toString()) ;};
 	this.ok$=$('<input type="submit" value="ok">');
 	
 	this.form$.append(this.text$, this.ok$);
+	
 	return this;
 };
 
@@ -48,30 +48,27 @@ textFED.prototype.constructor=textFED;
 
 var __=textFED.prototype;
 
-//override - ok button pressed
+//override 
 __.onSubmit=function(ev) {
 	//ok button triggers local form event
-	FED.prototype.onSubmit.call(this, ev);
-	BIM.fun.trigger('featureChange', [
-		ev.data.feature, //feature
-		ev.data.text$.val() //revised value
-	]);
+	//call prototype function and pass as arguments, event, feature and updated valu
+	//onSUbmit triggers the featureChange event 
+	FED.prototype.onSubmit.call(this, ev, ev.data.feature, ev.data.text$.val());
 };
 
-//override 
-__.onFeatureChange=function(ev, feature, valuRev){
-	//form submit event triggers this bim wide event
-	//takes care of executing feature-callback function to update mesh
-	FED.prototype.onFeatureChange.call(this, ev, feature, valuRev); 
-
+//override
+__.onFeatureChange=function(ev, feature, valuRenew){
+	//this function is called by the BIM wide featureChange event (triggered by onSubmit) 
+	//calling the prototype function takes care of executing feature-callback function to update mesh
+	FED.prototype.onFeatureChange.call(this, feature, valuRenew); 
+	//To Do - anything that needs updating due the changed feature 
 };
 
 //override start function
-__.start=function(mesh, feature){
-	//call super function
-	//stores feature (2nd arg if defined) to this feature
-	FED.prototype.start.call(this, mesh, feature);
-	try{ this.text$.val(feature.valu); } catch(er) {BIM.fun.log(er.toString());}
+__.start=function(){
+	//call super function - mainly to wigetize the form 
+	FED.prototype.start.call(this);
+	//try{ this.text$.val(feature.valu); } catch(er) {BIM.fun.log(er.toString());}
 };
 
 return textFED;

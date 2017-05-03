@@ -32,7 +32,7 @@ var FeatureEditor=function(place, feature) {
 	//feature - {label:'name', valu:mesh.variable, onFC:fn(ev,mesh,res){...}, FED:featureEditor}
 	var that=this;
 	this.form$=$('<form></form>').on('submit', this, function(ev){ 
-		ev.data.onSubmit(ev, ev.data.feature, ev.data.valuRev);
+		ev.data.onSubmit(ev);
 	});
 	this.label$=$('<span></span>').addClass('ui-controlgroup-label');
 	this.valu$=$('<span></span>').addClass('ui-controlgroup-label');
@@ -41,12 +41,9 @@ var FeatureEditor=function(place, feature) {
 		
 	BIM.fun.on( this.getEvents() );
 
-	this.feature=null;	
-	if (typeof feature != 'undefined'){
-		this.feature=feature;
-		this.label$.text(feature.label);
-		this.valu$.text(feature.valu); //converted to text for display
-	}
+	this.feature=feature;
+	this.label$.text(feature.label);
+	this.valu$.text(feature.valu); //converted to text for display
 
 	return this;
 };
@@ -58,12 +55,25 @@ __.getEvents=function(){
 	return [ {name:'featureChange', data:this, handler:this.onFeatureChange} ];
 };
 
+__.onSubmit=function(ev, feature, revisedValu){ 
+	//this base class has no way of submitting, that's for inheritors to implement
+	//with an ok button (or such) that would trigger the form submit event.
+	ev.preventDefault(); 
+	BIM.fun.log('FEDonSubmit:' + revisedValu);
+	if (typeof feature != 'undefined' && typeof revisedValu != 'undefined') {
+		BIM.fun.trigger('featureChange', [feature, revisedValu]);
+	}
+	
+};
+
 __.onFeatureChange=function(ev, feature, valuRev){
 	//triggered by form submit
 	var that=ev.data; 
 	//all FEDs called, but only update applicable FED/feature
+	BIM.fun.log('FED onFeatureChange:'+ valuRev);
+
 	if (feature===that.feature){
-		//BIM.fun.log('the one:'+ valuRev);
+		BIM.fun.log('the one:'+ valuRev);
 		try{
 			//update valu field with revised value
 			that.valu$.text(valuRev);
@@ -74,12 +84,7 @@ __.onFeatureChange=function(ev, feature, valuRev){
 	}
 };
 
-__.onSubmit=function(ev, feature, valuRev ){ 
-	//this base class has no way of submitting, that's for inheritors to implement
-	//with an ok button (or such) that would trigger the form submit event.
-	ev.preventDefault(); 
-	
-};
+
 
 __.remove=function(){
 	/*** 
@@ -91,16 +96,26 @@ __.remove=function(){
 	BIM.fun.off(this.getEvents() );
 };
 
-__.start=function(mesh, feature){
-	
-	if (typeof feature != 'undefined'){
-		this.feature=feature;
-		this.label$.text(feature.label);
-		this.valu$.text(feature.valu); 
+__.start=function(){
+	/*
+	Turn form into a jquery controgroup if not already.
+	Why not do this in constructor? to allow inheritors to 
+	add items for inclusion in the controlgroup in their constructor
+	inheritor must call start to wigetize
+	*/
+	if (!this.form$.is(':ui-controlgroup')){ 
+		this.form$.controlgroup({
+			'direction':'horizontal',
+			'items':{
+				"button":"button, input[type=text], input[type=submit]",
+				"controlgroupLabel": ".ui-controlgroup-label",
+				"checkboxradio": "input[type='checkbox'], input[type='radio']",
+				"selectmenu": "select",
+				"menu":"ul, .dropdown-items",
+				"spinner": ".ui-spinner-input"}
+		});
 	}
-	
-	// turn form into a jquery controgroup if not already
-	if (!this.form$.is(':ui-controlgroup')){ this.wigetize();  }
+
 };
 
 __.undo=function(){	};	
@@ -109,19 +124,6 @@ __.undopush=function(that, valu){
 	//add value to the undo stack but limit it to just 10 changes
 	that.undolog.push(valu);		
 	if (that.undolog.length > 10) {that.undolog.shift();}
-};
-
-__.wigetize=function(){
-	this.form$.controlgroup({
-		'direction':'horizontal',
-		'items':{
-			"button":"button, input[type=text], input[type=submit]",
-			"controlgroupLabel": ".ui-controlgroup-label",
-			"checkboxradio": "input[type='checkbox'], input[type='radio']",
-			"selectmenu": "select",
-			"menu":"ul, .dropdown-items",
-			"spinner": ".ui-spinner-input"}
-	});
 };
 
 return FeatureEditor;

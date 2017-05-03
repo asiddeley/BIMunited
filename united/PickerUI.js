@@ -109,12 +109,11 @@ __.first=function(){return this.picks[0];}
 	
 //called by ?? when ui's created to register events and callbacks
 __.getEvents=function(){
-	return { 
-		bimFeatureOK:{name:'bimFeatureOK', data:this, handler:this.onFeatureOK },
-		bimInput:{name:'bimInput', data:this, handler:this.onInput },
-		bimPick:{},
-		tabsactivate:{name:'tabsactivate', data:this, handler:this.onTabsactivate }
-	};
+	return [
+		{name:'bimFeatureOK', data:this, handler:this.onFeatureOK },
+		{name:'bimInput', data:this, handler:this.onInput },
+		{name:'tabsactivate', data:this, handler:this.onTabsactivate }
+	];
 }
 	
 //called by BIM.board when ui's created for use with input autocomplete
