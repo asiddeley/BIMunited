@@ -116,7 +116,7 @@ __.widgetinit=function(feature){
 	};
 	//if using jquery-ui widget then
 	//$(this.wCell[this.wCelli++]).wCell('vlca', valu, label, onChange, part).show();	
-	(this.widgets[this.widgeti++]).start(feature);
+	(this.widgets[this.widgeti++]).start();
 };
 
 /*

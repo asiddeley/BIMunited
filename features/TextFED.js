@@ -53,14 +53,14 @@ __.onSubmit=function(ev) {
 	//ok button triggers local form event
 	//call prototype function and pass as arguments, event, feature and updated valu
 	//onSUbmit triggers the featureChange event 
-	FED.prototype.onSubmit.call(this, ev, ev.data.feature, ev.data.text$.val());
+	FED.prototype.onSubmit.call(ev.data, ev, ev.data.feature, ev.data.text$.val());
 };
 
 //override
 __.onFeatureChange=function(ev, feature, valuRenew){
 	//this function is called by the BIM wide featureChange event (triggered by onSubmit) 
 	//calling the prototype function takes care of executing feature-callback function to update mesh
-	FED.prototype.onFeatureChange.call(this, feature, valuRenew); 
+	FED.prototype.onFeatureChange.call(ev.data, ev, feature, valuRenew); 
 	//To Do - anything that needs updating due the changed feature 
 };
 

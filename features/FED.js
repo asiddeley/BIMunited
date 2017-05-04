@@ -31,9 +31,7 @@ var FeatureEditor=function(place, feature) {
 	//place - DOM container
 	//feature - {label:'name', valu:mesh.variable, onFC:fn(ev,mesh,res){...}, FED:featureEditor}
 	var that=this;
-	this.form$=$('<form></form>').on('submit', this, function(ev){ 
-		ev.data.onSubmit(ev);
-	});
+	this.form$=$('<form></form>').on('submit', this, this.onSubmit);
 	this.label$=$('<span></span>').addClass('ui-controlgroup-label');
 	this.valu$=$('<span></span>').addClass('ui-controlgroup-label');
 	this.form$.append(this.label$, this.valu$);
@@ -70,9 +68,9 @@ __.onFeatureChange=function(ev, feature, valuRev){
 	//triggered by form submit
 	var that=ev.data; 
 	//all FEDs called, but only update applicable FED/feature
-	BIM.fun.log('FED onFeatureChange:'+ valuRev);
+	//BIM.fun.log('FED onFeatureChange:'+ JSON.stringify(ev.data));
 
-	if (feature===that.feature){
+	if (feature === that.feature){
 		BIM.fun.log('the one:'+ valuRev);
 		try{
 			//update valu field with revised value
@@ -80,7 +78,7 @@ __.onFeatureChange=function(ev, feature, valuRev){
 			//execute the feature callback function that applies the changed valu to the mesh object
 			if (typeof feature.onFeatureChange =='function'){feature.onFeatureChange(valuRev);}
 			if (typeof feature.onValuChange =='function'){feature.onValuChange(valuRev);}
-		} catch(er) {BIM.fun.log( 'Error: '+er.name +', Msg:'+ er.message +', File:'+ er.fileName+', line:'+er.line);}
+		} catch(er) {BIM.fun.log( er.toString() );}
 	}
 };
 

@@ -34,7 +34,7 @@ var ChooserFED=require('features/chooserFED');
 var TextFED=require('features/textFED');
 
 var PickerUI=function(board, title){
-	//inherit constructor from UI
+	//inherit UI constructor
 	UI.call(this, board, title); 
 		
 	var that=this;
@@ -43,9 +43,9 @@ var PickerUI=function(board, title){
 	this.canvas2D=null; //initialized in start() by which time BIM.scene is initialized 
 	
 	//Add features/editors for the pickerUI.  
-	//yes, FEDs can be used on any object - note the this arg for mesh.
-	//remember to start FEDs - see onTabsactivate
-	this.pickModeFED=new ChooserFED(this.div$, this, {
+	//yes, FEDs can be used on any object.
+	//Remember to start FEDs - see onTabsactivate
+	this.pickModeFED=new ChooserFED(this.div$, {
 		label:'pick mode',
 		valu:that.pickMode,
 		choices:[
@@ -56,12 +56,13 @@ var PickerUI=function(board, title){
 		],
 		onValuChange:function(ev,rv){}
 	});
+	this.pickModeFED.start();
 	this.pickLimitFED=new TextFED(this.div$, this, {
 		label:'pick limit', 
 		valu:this.pickLimit, 
 		onFC:function(ev,r){that.pickLimit=Number(r);}
 	});	
-	
+	this.pickLimitFED.start();
 	this.pick$=null;
 	this.div$.append(this.pickModeFED.div$,this.fui.div$);
 	
@@ -76,11 +77,10 @@ var PickerUI=function(board, title){
 	// return constructed ui object for chaining.
 	return this;
 }
-//inherit prototype from UI
+//inherit UI prototype
 PickerUI.prototype=Object.create(UI.prototype);
 PickerUI.prototype.constructor=PickerUI;
-
-var __=PickerUI.prototype;
+var __=PickerUI.prototype; //define __ as shortcut
 	
 __.alias='Pick';
 
@@ -107,7 +107,7 @@ __.add=function( part ){
 
 __.first=function(){return this.picks[0];}
 	
-//called by ?? when ui's created to register events and callbacks
+//called by UI when ui's created to register events and callbacks
 __.getEvents=function(){
 	return [
 		{name:'bimFeatureOK', data:this, handler:this.onFeatureOK },
@@ -116,7 +116,7 @@ __.getEvents=function(){
 	];
 }
 	
-//called by BIM.board when ui's created for use with input autocomplete
+//called by BIM.board when ui's created, may be used for input autocomplete
 //called by onInput() below
 __.getKeywords=function(){
 	//this.keywords defined here because it can't be defined until BIM.ui.picker is

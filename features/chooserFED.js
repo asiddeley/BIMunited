@@ -86,7 +86,7 @@ __.onSubmit=function(ev){
 
 // override
 __.onFeatureChange=function(ev, feature, valuRev){
-	FED.prototype.onFeatureChange.call(ev.data, ev.data.feature);
+	FED.prototype.onFeatureChange.call(ev.data, ev, feature, valuRev);
 	
 }
 
@@ -98,10 +98,10 @@ __.remove=function(){
 }
 
 // override start function
-__.start=function(mesh, feature){
+__.start=function(){
 	
 	// call super function - takes care of <form>, <label>, undo...
-	FED.prototype.start.call(this, mesh, feature);
+	FED.prototype.start.call(this);
 	
 	/***********
 	// respond to bimFeatureOK event (triggered by OK button)...
