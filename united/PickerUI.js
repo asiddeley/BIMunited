@@ -50,16 +50,16 @@ var PickerUI=function(board, title){
 		valu:that.pickMode,
 		choices:[
 			{label:'one - pick one at a time', 
-			onChoose:function(ev){that.pickMode='one';}},
+			onChoose:function(ev){  that.pickMode='one'; return that.pickMode;}},
 			{label:'many - pick multiple', 
-			onChoose:function(ev){that.pickMode='many';}}			
+			onChoose:function(ev){that.valu$.text('one');}}			
 		],
-		onValuChange:function(ev,rv){}
+		onValuChange:function(ev, rv){}
 	});
 	this.pickModeFED.start();
-	this.pickLimitFED=new TextFED(this.div$, this, {
+	this.pickLimitFED=new TextFED(this.div$, {
 		label:'pick limit', 
-		valu:this.pickLimit, 
+		valu:that.pickLimit, 
 		onFC:function(ev,r){that.pickLimit=Number(r);}
 	});	
 	this.pickLimitFED.start();

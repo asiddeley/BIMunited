@@ -67,8 +67,12 @@ __.initMenu=function(choices){
 	for (i in choices){
 		li$=$('<li></li>').append($('<div></div>').text(choices[i].label));
 		this.menu$.append(li$);
+
+		BIM.fun.log('chooserFED:' + choices[i].onChoose.toString() );		
+		//fn=new Function('ev', choices[i].onChoose.toString() );
+		
 		// click menu item to call the onChoose function
-		li$.on('click', this, choices[i].onChoose);
+		li$.on('click', this, choices[i].onChoose );
 		// then hides menu
 		li$.on('click', this, function(ev){ev.data.menu$.hide();});
 	}
