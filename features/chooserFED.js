@@ -61,7 +61,7 @@ var __=ChooserFED.prototype;  //shortcut to prototype
 __.initMenu=function(choices){
 
 	// choices - [{label:'label', onChoose:function(ev){}, onSubmit:function(ev){}}]
-	var fn, i, li$, that=this;
+	var i, li$, that=this;
 	this.menu$=$('<ul></ul>').on('mouseleave',this, function(ev){ev.data.menu$.hide();});
 
 	for (i in choices){
@@ -69,10 +69,20 @@ __.initMenu=function(choices){
 		this.menu$.append(li$);
 
 		BIM.fun.log('chooserFED:' + choices[i].onChoose.toString() );		
-		//fn=new Function('ev', choices[i].onChoose.toString() );
-		
+
 		// click menu item to call the onChoose function
-		li$.on('click', this, choices[i].onChoose );
+		li$.on('click', //event
+			{that:this, onChoose:choices[i].onChoose}, //event data
+			function(ev){ //event callback
+				BIM.fun.log('onChoose')
+				try {
+					//execute the onChoose function passed in ev.data...
+					var v=ev.data.onChoose();
+					ev.data.that.valu$.text(v);
+				} catch(er) { BIM.fun.log(er.toString()); }
+			}
+		);
+
 		// then hides menu
 		li$.on('click', this, function(ev){ev.data.menu$.hide();});
 	}
