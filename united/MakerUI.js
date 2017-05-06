@@ -37,6 +37,7 @@ var MakerUI=function(board, title){
 
 	//options for controlgroup() jquery-ui widget 
 	var that=this;
+	/*
 	this.cg$options={		
 		'items':{
 		"button":"button, input[type=text], input[type=submit]",
@@ -48,7 +49,7 @@ var MakerUI=function(board, title){
 		'direction':'vertical',
 		'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}
 	};
-
+	*/
 	//options for selectmenu() jquery-ui widget
 
 	this.scene=null;
@@ -67,16 +68,13 @@ var MakerUI=function(board, title){
 	
 	//var that=this;
 	this.sm$=$('<select></select>'); 
-	//this.sm$.on('select', function(ev, ui) { this.onChoosePart(ev, ui, that);} );
 	this.cg$.append(this.sm$, this.desc$, this.ok$);
-	this.cg$.controlgroup(this.cg$options);
-	//this.sm$.selectmenu({'select':function(ev, ui) { this.onChoosePart(ev, ui, that);}});
+	this.wigetize(this);//this.cg$.controlgroup(this.cg$options);
 
 	this.desc$.text('Choose a part, edit and add to model.');
 	this.div$.append(this.canvas$, this.cg$, this.fui.div$);
 
-	//For setup of sample canvas/scene, see onTabsactivate below.
-	
+	//For setup of sample canvas & scene, see onTabsactivate below.
 	BIM.fun.trigger('bimRestock', [BIM.parts]);
 
 	return this;
@@ -88,11 +86,11 @@ MakerUI.prototype.constructor=MakerUI;
 var __=MakerUI.prototype;
 
 __.getEvents=function(){
-	return {
-		bimInput:{name:'bimInput', data:this, handler:this.onInput },
-		bimRestock:{name:'bimRestock', data:this, handler:this.onRestock },
-		tabsactivate:{name:'tabsactivate', data:this, handler:this.onTabsactivate }
-	};
+	return [
+		{name:'bimInput', data:this, handler:this.onInput },
+		{name:'bimRestock', data:this, handler:this.onRestock },
+		{name:'tabsactivate', data:this, handler:this.onTabsactivate }
+	];
 };
 
 __.onChoosePart=function(ev, ui, that){
@@ -143,15 +141,15 @@ __.onRestock=function(ev, lib){
 		//ev.data.addItem( key, lib[key] );
 		op$=$('<option></option>').text(key).val(key);
 		ev.data.sm$.append(op$);
-	}		
+	}
+	
+	ev.data.wigetize(ev.data);
 	//ev.data.sm$.selectmenu(	{'direction':'vertical', 'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}	});
-	that.cg$.controlgroup(that.cg$options);
-	that.sm$.selectmenu({'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}});
 };
 
 __.onTabsactivate=function(ev, ui){
 	// ev - event
-	// ev.data - 'this' passed from MakerUI
+	// ev.data - 'this' as passed from MakerUI
 	// ui - div of tab that was just activated (got focus) in the jquery-ui tabs widget
 	// ui - {}
 	var myTabsGotFocus=(ui.newPanel.find('div')[0]==ev.data.div$[0]);
@@ -170,8 +168,6 @@ __.onTabsactivate=function(ev, ui){
 			mui.scene.activeCamera.alpha += .01;
 			mui.light.position=mui.cam.position;
 			mui.scene.render();
-			
-
 		});	
 		//this.scene.debugLayer.show();
 	}
@@ -198,6 +194,24 @@ __.setScene=function(scene, canvas){
 
 	//this.sample.position=new babylon.Vector3(5,5,5);
 };
+
+__.wigetize=function(that){
+	that.cg$.controlgroup({		
+		'items':{
+		"button":"button, input[type=text], input[type=submit]",
+		"controlgroupLabel": ".ui-controlgroup-label",
+		"checkboxradio": "input[type='checkbox'], input[type='radio']",
+		"selectmenu": "select",
+		"menu":".dropdown-items",
+		"spinner": ".ui-spinner-input"},
+		'direction':'vertical',
+		//not effective, see last line instead
+		'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}
+	});
+	that.sm$.selectmenu({'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}});
+}
+
+
 	
 return MakerUI;
 

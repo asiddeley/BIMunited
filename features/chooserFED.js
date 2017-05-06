@@ -38,11 +38,17 @@ var ChooserFED=function(place$, feature) {
 	// It sets up label$ and valu$. Inherit to set up ok$ or more$, then wigetize
 	FED.call(this, place$, feature);
 	
-	this.text$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
+	//this.text$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
 	this.ok$=$('<input type="submit" value="ok">');
-	this.text$.on('mouseenter', this, function(ev){
+	this.valu$.text(feature.valu);
+	this.valu$.on('mouseenter', this, function(ev){
 		var that=ev.data;
-		that.menu$.show().position({my:"left bottom", at:"left top+2", of:that.valu$, collision:"flipfit"});
+		that.menu$.show().position({
+			my:"left bottom", 
+			at:"left top+2", 
+			of:that.valu$, 
+			collision:"flipfit"
+		});
 	});
 	// prevent lingering menu 
 	this.form$.on('mouseleave', this, function(ev){ ev.data.menu$.hide();});
@@ -68,13 +74,13 @@ __.initMenu=function(choices){
 		li$=$('<li></li>').append($('<div></div>').text(choices[i].label));
 		this.menu$.append(li$);
 
-		BIM.fun.log('chooserFED:' + choices[i].onChoose.toString() );		
+		//BIM.fun.log('chooserFED:' + choices[i].onChoose.toString() );		
 
 		// click menu item to call the onChoose function
 		li$.on('click', //event
 			{that:this, onChoose:choices[i].onChoose}, //event data
 			function(ev){ //event callback
-				BIM.fun.log('onChoose')
+				BIM.fun.log('onChoose');
 				try {
 					//execute the onChoose function passed in ev.data...
 					var v=ev.data.onChoose();
@@ -83,7 +89,7 @@ __.initMenu=function(choices){
 			}
 		);
 
-		// then hides menu
+		// then hide menu
 		li$.on('click', this, function(ev){ev.data.menu$.hide();});
 	}
 	
@@ -94,7 +100,7 @@ __.initMenu=function(choices){
 // override 
 __.onSubmit=function(ev){
 	//Important to pass (event, feature, revisedValu)
-	FED.prototype.onSubmit.call(ev.data, ev, ev.data.feature, ev.data.text$.val());
+	FED.prototype.onSubmit.call(ev.data, ev, ev.data.feature);
 	
 }
 
@@ -113,23 +119,8 @@ __.remove=function(){
 
 // override start function
 __.start=function(){
-	
 	// call super function - takes care of <form>, <label>, undo...
 	FED.prototype.start.call(this);
-	
-	/***********
-	// respond to bimFeatureOK event (triggered by OK button)...
-	this.form$.on('submit', this, function(ev){
-		ev.preventDefault();
-		//ev.data = 'this' as passed above
-		var result=ev.data.text$.val();
-		//ensure result is a babylon.Vector3;
-		
-		//BIM.fun.log('positionFeature is:'+result.toString() );
-		//feature.onFeatureChange(result);
-		//BIM.fun.trigger('bimFeatureChanged', [feature]);
-	});
-	**********/
 };
 
 

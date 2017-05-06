@@ -53,30 +53,19 @@ var positionFeature = function(mesh){
 		editor:ChooserFED,
 		choices:[
 			{label:'random', 
-				onChoose:function(ev){ 
-					v=new babylon.Vector3(
-						10*Math.floor(Math.random()*100), 
-						10*Math.floor(Math.random()*100), 
-						10*Math.floor(Math.random()*100)
-					); 
-					//show revised value
-					//ev.data.valu$.val(v.toString() );
-					//ev.data.valu=v;
-					//trigger form submit with revised value
-					//ev.data.submit();
-					return v;
-				}
-			}, 
+			onChoose:function(ev){ 
+				v=new babylon.Vector3(
+					10*Math.floor(Math.random()*100), 
+					10*Math.floor(Math.random()*100), 
+					10*Math.floor(Math.random()*100)
+				); 
+				return v;
+			}}, 
 			{label:'zero',
-				onChoose:function(ev){ 
-					var v=new babylon.Vector3(0,0,0); 
-					//ev.data.valu$.val(v);
-					//ev.data.valu=v;
-					//trigger form submit with revised value
-					//ev.data.submit();
-					return v;
-				}
-			}
+			onChoose:function(ev){ 
+				var v=new babylon.Vector3(0,0,0); 
+				return v;
+			}}
 		]	
 	};
 };

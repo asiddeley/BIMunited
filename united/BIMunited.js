@@ -1,67 +1,68 @@
-/////////////////////
-//
-// Andrew Siddeley
-// 17-Dec-2016
-//
-// Main entry point of app
+/************************************************************
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+	project:	BIM united FC
+	module: 	BIM united
+	desc: 		Main entry point of app
+	by: 		Andrew Siddeley 
+	started:	17-Dec-2017
+	
+*/	
 
 requirejs.config({
-	
-//default base URL is same as HTML 
-//but needs to be the same as jquery for jquery to work
-"baseUrl": "javascript/",
-
-"paths": {
-	"arch":"../Arch",
-	"cameras": "../cameras",
-	"editors":"../editors",
-	"features":"../features",
-	"handlers":"../handlers",
-	"kernel": "../kernel",
-	"lights": "../lights",
-	"parts":"../parts",
-	"textures": "../textures",
-	"united": "../united",
-	//"jq": "jquery",
-	//"jq": "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min",
-	"sylvester": "sylvester/sylvesterXp",
-	"jq":"../javascript/jquery",
-	"babylon":"../babylon/babylon.required",
-	"babylon2D":"../babylon/babylon.canvas2d.required"
-}
-
+	//default base URL is same as HTML 
+	//but needs to be the same as jquery for jquery to work
+	"baseUrl": "javascript/",
+	"paths": {
+		"arch":"../Arch",
+		"cameras": "../cameras",
+		"editors":"../editors",
+		"features":"../features",
+		"handlers":"../handlers",
+		"kernel": "../kernel",
+		"lights": "../lights",
+		"parts":"../parts",
+		"textures": "../textures",
+		"united": "../united",
+		//"jq": "jquery",
+		//"jq": "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min",
+		"sylvester": "sylvester/sylvesterXp",
+		"jq":"../javascript/jquery",
+		"babylon":"../babylon/babylon.required",
+		"babylon2D":"../babylon/babylon.canvas2d.required"
+	}
 });
 
+// Define a Module with Simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define(function(require, exports, module){
 
-define(
-// load dependencies...
-[
-'jquery',
-'babylon',
-'united/TabbedUI',
-'united/BlackboardUI',
-'united/MakerUI',
-'united/PickerUI',
-'united/FeaturesUI',
-'lights/hemi',
-'cameras/arcRotateCamera',
-'textures/TMCstdLib',
-'parts/partsLibrary'],
-
-// then do this...
-function (
-$, 
-babylon, 
-TabbedUI,
-BlackboardUI, 
-MakerUI, 
-PickerUI, 
-FeaturesUI, 
-Light, 
-arcRotateCamera, 
-TMC, 
-partsLibrary) {
-
+// Dependencies...
+var $=require('jquery');
+var babylon=require('babylon');
+var TabbedUI=require('united/TabbedUI');
+var BlackboardUI=require('united/BlackboardUI');
+var MakerUI=require('united/MakerUI');
+var PickerUI=require('united/PickerUI');
+var PeekerUI=require('united/PeekerUI');
+var PokerUI=require('united/PokerUI');
+var FeaturesUI=require('united/FeaturesUI');
+var Light=require('lights/hemi');
+var arcRotateCamera=require('cameras/arcRotateCamera');
+var TMC=require('textures/TMCstdLib');
+var partsLibrary=require('parts/partsLibrary');
 var BIM={};
 
 // The a, b, c, d & e main API methods...
@@ -84,7 +85,9 @@ BIM.board=function(div, options){
 	tui.addTab( 
 		this.ui.blackboard, 
 		new MakerUI(null, 'Make'),
-		new PickerUI(null, 'Pick')
+		new PeekerUI(null, 'Peek'),
+		new PickerUI(null, 'Pick'),
+		new PokerUI(null, 'Poke')
 	); 
 }
 

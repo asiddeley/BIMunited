@@ -33,7 +33,7 @@ var textFED=function(place, feature) {
 	FED.call(this, place, feature);
 	
 	//this.valu$.hide(); //inherited but not used
-	this.text$=$('<input type="text" placeholder=" " value=" "></input>');
+	this.text$=$('<input type="text" placeholder=" " value="--"></input>');
 	try{ this.text$.val(feature.valu); } catch(er) { BIM.fun.log(er.toString()) ;};
 	this.ok$=$('<input type="submit" value="ok">');
 	
@@ -52,7 +52,7 @@ var __=textFED.prototype;
 __.onSubmit=function(ev) {
 	//ok button triggers local form event
 	//call prototype function and pass as arguments, event, feature and updated valu
-	//onSUbmit triggers the featureChange event 
+	//onSubmit triggers the featureChange event 
 	FED.prototype.onSubmit.call(ev.data, ev, ev.data.feature, ev.data.text$.val());
 };
 

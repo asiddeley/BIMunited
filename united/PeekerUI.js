@@ -14,10 +14,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	project:	BIM united FC
-	module: 	PickerUI
+	module: 	PeekerUI
 	desc: 
 	author:		Andrew Siddeley 
-	started:	6-Feb-2017
+	started:	6-May-2017
 	
 */
 
@@ -33,75 +33,77 @@ var FeaturesUI=require('united/FeaturesUI');
 var ChooserFED=require('features/chooserFED');
 var TextFED=require('features/textFED');
 
-var PickerUI=function(board, title){
+var PeekerUI=function(board, title){
 	//inherit UI constructor
 	UI.call(this, board, title); 
 		
 	var that=this;
-	this.alias='Pick'; //tab name
+	this.alias='Peek';
 	this.fui=new FeaturesUI(null, 'Features');
-
 	this.canvas2D=null; //initialized in start() by which time BIM.scene is initialized 
-	this.pickMode='single'; //options:single|multiple
 	
 	//Note that FEDs can be used on any object as below, not just babylon meshes.
 	//Remember to start FEDs - see onTabsactivate
-	this.pickModeFED=new ChooserFED(this.div$, {
-		label:'pick mode',
-		valu:this.pickMode,
+	
+	this.peekMode='single';
+	this.peekModeFED=new ChooserFED(this.div$, {
+		label:'peek mode',
+		valu:this.peekMode,
 		choices:[
-			{label:'single', onChoose:function(ev){ 
-				that.pickMode='single'; return that.pickMode;
-			}},
-			{label:'multiple', onChoose:function(ev){ 
-				that.pickMode='multiple'; return that.pickMode;
-			}}			
+			{label:'single', 
+			onChoose:function(ev){return 'single';}},
+			{label:'multiple',
+			onChoose:function(ev){return 'multiple';}}			
 		],
 		onValuChange:function(ev, rv){}
 	});
-	this.pickModeFED.start();
+	this.peekModeFED.start();
 	
 	//max number of picks to track
-	this.pickLimit=3;	
-	this.pickLimitFED=new TextFED(this.div$, {
-		label:'pick limit', 
-		valu:that.pickLimit, 
-		onFC:function(ev,r){that.pickLimit=Number(r);}
+	this.peekLimit=3;
+	this.peekLimitFED=new TextFED(this.div$, {
+		label:'peek limit', 
+		valu:that.peekLimit, 
+		onFC:function(ev,r){
+			//that.peekLimit=Number(r);
+		}
 	});	
-	this.pickLimitFED.start();
-	this.pick$=null;
-	//this.div$.append(this.pickModeFED.div$,this.fui.div$);
+	this.peekLimitFED.start();
+	
+	this.peek$=null;
+	//this.div$.append(this.peekModeFED.div$,this.fui.div$);
 
 	// array of picked parts 
-	this.picks=[];
+	this.peeks=[];
 	// array of tags - reused for each pick set
 	this.stickers=[];	
 	// return constructed ui object for chaining.
 	return this;
 }
+
 //inherit UI prototype
-PickerUI.prototype=Object.create(UI.prototype);
-PickerUI.prototype.constructor=PickerUI;
-var __=PickerUI.prototype; //define __ as shortcut
+PeekerUI.prototype=Object.create(UI.prototype);
+PeekerUI.prototype.constructor=PeekerUI;
+var __=PeekerUI.prototype; //define __ as shortcut
 	
 __.add=function( part ){ 
-	if (this.pickMode=='single'){this.picks=[];}
+	if (this.peekMode=="single"){this.picks=[];}
 	//if part not in pick list...
-	if (this.picks.indexOf(part) == -1) {
+	if (this.peeks.indexOf(part) == -1) {
 		//add part to pick list
-		this.picks.push(part);
+		this.peeks.push(part);
 		//ensure number of picks does not exceed pick limit set by user
-		if (this.picks.length>this.pickLimit) {this.picks.shift();}
+		if (this.peeks.length>this.peekLimit) {this.peeks.shift();}
 	} else {
 		//remove part from pick list by filtering it out
-		this.picks=$.grep(this.picks, function(v, i){return (part !== v);});
+		this.peeks=$.grep(this.peeks, function(v, i){return (part !== v);});
 	}
 	//refresh
-	this.divPick$.text(this.picks.length.toString()); //update board
+	this.divPeek$.text(this.picks.length.toString()); //update board
 	this.stickersRegen();
 	//trigger event - note that event is automatically passed as arg1
 	//$.trigger('customEvent', ['arg2', 'arg3'...])
-	//BIM.fun.trigger('bimPick', [this.picks]);
+	//BIM.fun.trigger('bimPeek', [this.peeks]);
 }
 	
 //called by UI when ui's created to register events and callbacks
@@ -118,18 +120,18 @@ __.getEvents=function(){
 __.getKeywords=function(){
 	//this.keywords defined here because it can't be defined until BIM.ui.picker is
 	if (this.keywords==null){ this.keywords=[
-		{keywords:['pp'], 
-			handler:BIM.ui.uiPicker.toggle, 
-			help:'open the picker dialog'}, 
-		{keywords:['wipe','ppw'], 
-			handler:BIM.ui.uiPicker.wipe, 
-			help:'clear selection'}, 
-		{keywords:['close','pickx'], 
+		{keywords:['peek','pe'], 
+			handler:function(){
+				//BIM.fun.log('Poke function TBD');
+				this.toggle();
+			},
+			help:'show/hide the peek dialog'}, 
+		{keywords:['close', 'peekx'], 
 			handler:function(){
 				//BIM.ui.uiPicker.div$.dialog('close');
-				BIM.fun.log('close handler not defined');
+				BIM.fun.log('close peek WIP');
 			},
-			help:'close pick TBD'
+			help:'close peek TBD'
 		}
 	];}
 	return this.keywords;
@@ -140,12 +142,11 @@ __.onInput=function(ev, input){
 	//beware of using 'this' inside an eventhandler function!
 	//because 'this' will refer to the event caller's context, not uiPicker
 	switch (input) {
-		case 'pick':
-		case 'pp':  
+		case 'peek':
 			//BIM.ui.uiPicker.toggle(); 
 			ev.data.start();
 			break;
-		case 'ppw': BIM.ui.picker.wipe(); break;
+		case 'peek wipe': BIM.ui.picker.wipe(); break;
 		//case 'ppx':	BIM.ui.picker.div$.dialog('close');
 	};		
 }
@@ -173,8 +174,8 @@ __.onPointerDown=function (ev, pickResult) {
 //start the picker
 __.onTabsactivate=function(ev){ 
 	var that=ev.data;
-	that.pickModeFED.start(); 
-	that.pickLimitFED.start(); 
+	that.peekModeFED.start(); 
+	that.peekLimitFED.start(); 
 	
 	BIM.scene.onPointerDown=that.onPointerDown;
 	if (that.canvas2D==null) {
@@ -245,13 +246,13 @@ __.stickersRegen=function(){
 }
 	
 __.wipe=function(){
-	this.picks=[];
+	this.peeks=[];
 	this.stickerRegen();
 	//for chaining
 	return this; 
 }	
 
-return PickerUI;
+return PeekerUI;
 
 });
 
