@@ -35,47 +35,36 @@ var MakerUI=function(board, title){
 	// Inherit from UI, call super constructor
 	UI.call(this, board, title); 
 
-	//options for controlgroup() jquery-ui widget 
-	var that=this;
-	/*
-	this.cg$options={		
-		'items':{
-		"button":"button, input[type=text], input[type=submit]",
-		"controlgroupLabel": ".ui-controlgroup-label",
-		"checkboxradio": "input[type='checkbox'], input[type='radio']",
-		"selectmenu": "select",
-		"menu":".dropdown-items",
-		"spinner": ".ui-spinner-input"},
-		'direction':'vertical',
-		'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}
-	};
-	*/
-	//options for selectmenu() jquery-ui widget
+	this.parts={}; //set onRestock
+	this.sample=null; //babylon mesh set onChoosePart
+	this.bimHandler={}; //set onChoosePart
 
 	this.scene=null;
 	this.fui=new FeaturesUI(null, 'Features of New Part');
 	this.canvas$=$('<canvas></canvas>').css({'width':'100px', 'height':'100px'});
-	this.ok$=$('<button>Make</button>').on('click', function(ev){
-		BIM.fun.log('Part to be made and added to scene');
-		//get chosen part handler
-		//eval creater function fn, and set cMesh to is (current Mesh).
-		////BIM.get.cMesh(fn());
-		//message to uiFeatures to expose new mesh features
-		////BIM.input('_meshAdded');
+	this.ok$=$('<button>MAKE</button>').on('click', this, function(ev){
+		//BIM.fun.log('Make');
+		ev.data.bimHandler.setScene(BIM.scene);			
 	});
 	this.cg$=$('<div></div>').css({'display':'inline-block', 'vertical-align':'top', 'width':'200px'});
 	this.desc$=$('<div></div>').addClass('ui-controlgroup-label'); 
 	
-	//var that=this;
-	this.sm$=$('<select></select>'); 
-	this.cg$.append(this.sm$, this.desc$, this.ok$);
-	this.wigetize(this);//this.cg$.controlgroup(this.cg$options);
+	this.part$=$('<select></select>'); 
+	this.resource$=$('<select></select>'); 
+
+	this.cg$.append(this.ok$, this.part$, this.desc$, this.resource$);
+	this.wigetize(this);
 
 	this.desc$.text('Choose a part, edit and add to model.');
-	this.div$.append(this.canvas$, this.cg$, this.fui.div$);
+	this.div$.append(this.cg$, this.canvas$, this.fui.div$);
 
 	//For setup of sample canvas & scene, see onTabsactivate below.
 	BIM.fun.trigger('bimRestock', [BIM.parts]);
+	BIM.fun.trigger('resourcesupdate', [[
+		{name:'Arch Lib', url:'...'},
+		{name:'Elec Lib', url:'...'},
+		{name:'Mech Lib', url:'...'}
+	]]);
 
 	return this;
 };
@@ -89,6 +78,7 @@ __.getEvents=function(){
 	return [
 		{name:'bimInput', data:this, handler:this.onInput },
 		{name:'bimRestock', data:this, handler:this.onRestock },
+		{name:'resourcesupdate', data:this, handler:this.onResourcesUpdate },
 		{name:'tabsactivate', data:this, handler:this.onTabsactivate }
 	];
 };
@@ -101,13 +91,17 @@ __.onChoosePart=function(ev, ui, that){
 	//ui.item - {element:{value:'somestring', label:'somestring', }}
 
 	//BIM.fun.log(JSON.stringify(ui.item));
-	BIM.fun.log('To make:'+ui.item.label);
-	if (typeof that.sample !='undefined') that.sample.dispose(); //remake sample
-	var bimHandler=that.parts[ui.item.label];
-	that.sample=bimHandler.setScene(that.scene);	
+	//BIM.fun.log('To make:'+ui.item.label);
+	if (that.sample !=null) {that.sample.dispose();} //remake sample
+	that.bimHandler=that.partsLib[ui.item.label];
+	that.sample=that.bimHandler.setScene(that.scene);	
 	that.desc$.text(that.sample.bimHandler.desc);	
 	//connect and show features of sample
 	that.fui.start(that.sample);
+};
+
+__.onChooseResource=function(ev, ui, that){
+	//TO DO
 };
 
 //inherited from UI but overriden
@@ -129,22 +123,38 @@ __.onInput=function(ev, input){
 
 	}		
 };
+
 	
-__.onRestock=function(ev, lib){
+__.onResourcesUpdate=function(ev, resources){
+
+	if (typeof resources!='undefined'){
+		var op$, i;
+		var that=ev.data; 
+		that.resources=resources;
+		ev.data.cg$.controlgroup('destroy');
+		ev.data.resource$.empty();
+		for (i in resources){ 
+			op$=$('<option></option>').text(resources[i].name).val(resources[i].url);
+			ev.data.resource$.append(op$);
+		}
+		ev.data.wigetize(ev.data);
+	}
+};
+
+
+	
+__.onRestock=function(ev, lib, resources){
 	var op$;
-	var that=ev.data; // AKA this
-	that.parts=lib;
+	var that=ev.data; 
+	that.partsLib=lib;
 	ev.data.cg$.controlgroup('destroy');
-	ev.data.sm$.empty();
-	
+	ev.data.part$.empty();
 	for (var key in lib){ 
 		//ev.data.addItem( key, lib[key] );
 		op$=$('<option></option>').text(key).val(key);
-		ev.data.sm$.append(op$);
+		ev.data.part$.append(op$);
 	}
-	
 	ev.data.wigetize(ev.data);
-	//ev.data.sm$.selectmenu(	{'direction':'vertical', 'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}	});
 };
 
 __.onTabsactivate=function(ev, ui){
@@ -206,9 +216,16 @@ __.wigetize=function(that){
 		"spinner": ".ui-spinner-input"},
 		'direction':'vertical',
 		//not effective, see last line instead
-		'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}
+		//'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}
 	});
-	that.sm$.selectmenu({'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}});
+	that.part$.selectmenu({'select':function(ev, ui) {
+		BIM.fun.log('part selected');
+		that.onChoosePart(ev, ui, that);
+	}});
+	that.resource$.selectmenu({'select':function(ev, ui) {
+		that.onChooseResource(ev, ui, that);
+	}});
+
 }
 
 

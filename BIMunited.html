@@ -19,27 +19,30 @@
 function inputHandler(ev){
 	ev.preventDefault(); //disable normal form submit behavior that refreshes page
 	var i=$("#myInput").val(); //get text from form 
-	$("#myInput").val('');
-	BIM.input(i); //and pass it to BIM for processing
+	$("#myInput").val(''); //clear the form
+	BIM.input(i); //pass command to BIM for processing
 	return false; //prevent further bubbling of event
 };
 
-function initMenus(ids, menuExt){
-	var ida=ids.split(" "), js;
-	for (var i in ida){
-		// Create callback function for each navbutton that 
-		// positions it's dropdown menu at it's location.
-		// Construct it as a string ...
-		// first, hide all menus
-		js='$(".menu").hide();'+
-		// Show and position menu of interest
-		'$("#'+ ida[i] + menuExt + '").show().position('+
-		'{my:"left top", at:"left bottom", of:"#'+ida[i]+'"}); '+
-		// Dropdown autohide in case a dd is left hanging, but disabled when dd is entered
-		'document.DDAH=setTimeout(function(){$("#'+ ida[i] + menuExt +'").hide();}, 2000);';
-		// console.log(js);
-		// Register function so triggered by nav button...
-		$("#"+ida[i]).mouseenter(new Function('event', js ));
+function initMenus(navbuttonIdStr, menuExtStr){
+	var ids=navbuttonIdStr.split(" "), i;
+	for (i in ids){
+		// Register following function triggered by each nav button
+		// When executed, function positions menu at each navbutton location
+		$('#'+ids[i]).mouseenter({id:ids[i], ext:menuExtStr}, function(ev){
+			//note how data is passed using first argument of mouseenter
+			var navbutton=ev.data.id; 
+			var menu=ev.data.id + ev.data.ext;
+			$('.menu').hide();
+			// Show and position menu of interest at its navbutton
+			$('#'+ menu).show().position({
+				my:'left top',
+				at:'left bottom',
+				of:'#'+navbutton
+			});
+			// autohide in case menu is left hanging - don't forget to disarm if entered
+			document.DDAH=setTimeout(function(){$('#'+menu).hide();}, 2000);
+		});
 	};
 };
 
@@ -120,11 +123,16 @@ requirejs(['BIMunited'], function(BIM){
 
 	<ul id="tool-menu" class="menu">
 		<li onclick="BIM.input('bb')"><div>Blackboard</div></li>
-		<li onclick="BIM.input('creater')"><div>Creater</div></li>
-		<li><div>Explorer</div></li>
-		<li><div>Selecter</div></li>
-		<li><div>Tagger</div></li>
-		<li><div>Viewer</div></li>
+		<li>--</li>
+		<li onclick="BIM.input('make')"><div>Make</div></li>
+		<li onclick="BIM.input('peek')"><div>Peek</div></li>
+		<li onclick="BIM.input('pick')"><div>Pick</div></li>
+		<li onclick="BIM.input('poke')"><div>Poke</div></li>
+		<li>--</li>
+		<li onclick="BIM.input('push')"><div>Push</div></li>
+		<li onclick="BIM.input('pull')"><div>Pull</div></li>
+		<li onclick="BIM.input('punch')"><div>Punch</div></li>
+		<li onclick="BIM.input('point')"><div>Point</div></li>
 	</ul>
 
 	<ul id="part-menu" class="menu">
@@ -133,7 +141,7 @@ requirejs(['BIMunited'], function(BIM){
 		<li><div>Floor</div></li>
 		<li><div>Wall</div></li>
 		<li><div>Opening</div></li>
-		<li><div>Skybox</div></li>
+		<li><div>Worldbox</div></li>
 	</ul>
 
 	<ul id="help-menu" class="menu">

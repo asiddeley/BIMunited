@@ -55,9 +55,9 @@ var positionFeature = function(mesh){
 			{label:'random', 
 			onChoose:function(ev){ 
 				v=new babylon.Vector3(
-					10*Math.floor(Math.random()*100), 
-					10*Math.floor(Math.random()*100), 
-					10*Math.floor(Math.random()*100)
+					10*Math.floor(Math.random()*10), 
+					10*Math.floor(Math.random()*10), 
+					10*Math.floor(Math.random()*10)
 				); 
 				return v;
 			}}, 
