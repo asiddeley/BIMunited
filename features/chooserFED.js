@@ -80,11 +80,15 @@ __.initMenu=function(choices){
 		li$.on('click', //event
 			{that:this, onChoose:choices[i].onChoose}, //event data
 			function(ev){ //event callback
-				BIM.fun.log('onChoose');
+				//BIM.fun.log('onChoose/submit:' + JSON.stringify(ev.data.that.feature) );
 				try {
 					//execute the onChoose function passed in ev.data...
 					var v=ev.data.onChoose();
-					ev.data.that.valu$.text(v);
+					//ev.data.that.valu$.text(v); //done by FED
+					ev.data.that.feature.propToBe=v;
+					BIM.fun.log('chooserFED select propToBe:' + v );
+					//need to trigger submit here - note that submit event is local to this module 
+					ev.data.that.form$.trigger('submit', [ ev.data.that.feature ]);
 				} catch(er) { BIM.fun.log(er.toString()); }
 			}
 		);

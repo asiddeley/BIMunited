@@ -31,10 +31,11 @@ var UI=require('united/UI');
 var FeaturesUI=require('united/FeaturesUI');
 var triad=require('parts/Triad');
 
-var MakerUI=function(board, title){
+var PartsUI=function(board, title){
 	// Inherit from UI, call super constructor
 	UI.call(this, board, title); 
 
+	this.alias='Part';
 	this.parts={}; //set onRestock
 	this.sample=null; //babylon mesh set onChoosePart
 	this.bimHandler={}; //set onChoosePart
@@ -42,9 +43,15 @@ var MakerUI=function(board, title){
 	this.scene=null;
 	this.fui=new FeaturesUI(null, 'Features of New Part');
 	this.canvas$=$('<canvas></canvas>').css({'width':'100px', 'height':'100px'});
-	this.ok$=$('<button>MAKE</button>').on('click', this, function(ev){
+	this.ok$=$('<button>ADD (to Model)</button>').on('click', this, function(ev){
 		//BIM.fun.log('Make');
-		ev.data.bimHandler.setScene(BIM.scene);			
+		//BIM.scene.addMesh(ev.data.sample); //no effect, needs work and what about
+		//material and other dependencies?
+		var p=ev.data.bimHandler.setScene(BIM.scene);			
+		//var p=ev.data.bimHandler.setScene(BIM.scene, features);
+		//p.bimHandler.applyFeatures(p, features);
+
+
 	});
 	this.cg$=$('<div></div>').css({'display':'inline-block', 'vertical-align':'top', 'width':'200px'});
 	this.desc$=$('<div></div>').addClass('ui-controlgroup-label'); 
@@ -52,14 +59,14 @@ var MakerUI=function(board, title){
 	this.part$=$('<select></select>'); 
 	this.resource$=$('<select></select>'); 
 
-	this.cg$.append(this.ok$, this.part$, this.desc$, this.resource$);
+	this.cg$.append(this.ok$, this.resource$, this.part$, this.desc$ );
 	this.wigetize(this);
 
 	this.desc$.text('Choose a part, edit and add to model.');
 	this.div$.append(this.cg$, this.canvas$, this.fui.div$);
 
 	//For setup of sample canvas & scene, see onTabsactivate below.
-	BIM.fun.trigger('bimRestock', [BIM.parts]);
+	BIM.fun.trigger('restock', [BIM.parts]);
 	BIM.fun.trigger('resourcesupdate', [[
 		{name:'Arch Lib', url:'...'},
 		{name:'Elec Lib', url:'...'},
@@ -70,14 +77,14 @@ var MakerUI=function(board, title){
 };
 
 // Inherit the UI prototype
-MakerUI.prototype=Object.create(UI.prototype);
-MakerUI.prototype.constructor=MakerUI;
-var __=MakerUI.prototype;
+PartsUI.prototype=Object.create(UI.prototype);
+PartsUI.prototype.constructor=PartsUI;
+var __=PartsUI.prototype;
 
 __.getEvents=function(){
 	return [
 		{name:'bimInput', data:this, handler:this.onInput },
-		{name:'bimRestock', data:this, handler:this.onRestock },
+		{name:'restock', data:this, handler:this.onRestock },
 		{name:'resourcesupdate', data:this, handler:this.onResourcesUpdate },
 		{name:'tabsactivate', data:this, handler:this.onTabsactivate }
 	];
@@ -219,7 +226,7 @@ __.wigetize=function(that){
 		//'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}
 	});
 	that.part$.selectmenu({'select':function(ev, ui) {
-		BIM.fun.log('part selected');
+		//BIM.fun.log('part selected');
 		that.onChoosePart(ev, ui, that);
 	}});
 	that.resource$.selectmenu({'select':function(ev, ui) {
@@ -230,7 +237,7 @@ __.wigetize=function(that){
 
 
 	
-return MakerUI;
+return PartsUI;
 
 });
 

@@ -50,34 +50,37 @@ var FeatureEditor=function(place, feature) {
 var __=FeatureEditor.prototype;
 
 __.getEvents=function(){
-	return [ {name:'featureChange', data:this, handler:this.onFeatureChange} ];
+	return [ {name:'featurechange', data:this, handler:this.onFeatureChange} ];
 };
 
-__.onSubmit=function(ev, feature, revisedValu){ 
+__.onSubmit=function(ev){ 
 	//this base class has no way of submitting, that's for inheritors to implement
 	//with an ok button (or such) that would trigger the form submit event.
 	ev.preventDefault(); 
-	BIM.fun.log('FEDonSubmit:' + revisedValu);
+	var feature=ev.data.feature;
+	var revisedValu=ev.data.feature.propToBe;
+	BIM.fun.log('FED onSubmit:' + arguments.length);
 	if (typeof feature != 'undefined' && typeof revisedValu != 'undefined') {
-		BIM.fun.trigger('featureChange', [feature, revisedValu]);
+		BIM.fun.trigger('featurechange', [feature]);
 	}
 	
 };
 
-__.onFeatureChange=function(ev, feature, valuRev){
+__.onFeatureChange=function(ev, feature){
 	//triggered by form submit
-	var that=ev.data; 
+	var that=ev.data; 	
 	//all FEDs called, but only update applicable FED/feature
-	//BIM.fun.log('FED onFeatureChange:'+ JSON.stringify(ev.data));
+	BIM.fun.log('FED onFeatureChange');
 
 	if (feature === that.feature){
-		BIM.fun.log('the one:'+ valuRev);
+		BIM.fun.log('the one to update: ' + feature.propToBe);
 		try{
 			//update valu field with revised value
-			that.valu$.text(valuRev);
+			that.valu$.text( feature.propToBe );
 			//execute the feature callback function that applies the changed valu to the mesh object
-			if (typeof feature.onFeatureChange =='function'){feature.onFeatureChange(valuRev);}
-			if (typeof feature.onValuChange =='function'){feature.onValuChange(valuRev);}
+			if (typeof feature.onFeatureChange =='function'){feature.onFeatureChange( feature.propToBe);} //DEPRICATED
+			if (typeof feature.onValuChange =='function'){feature.onValuChange( feature.propToBe);} //DEPRICATED
+			if (typeof feature.propUpdater =='function'){feature.propUpdater( feature.propToBe);}
 		} catch(er) {
 			BIM.fun.log( er.toString() );
 		}

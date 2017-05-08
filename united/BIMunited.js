@@ -54,7 +54,7 @@ var $=require('jquery');
 var babylon=require('babylon');
 var TabbedUI=require('united/TabbedUI');
 var BlackboardUI=require('united/BlackboardUI');
-var MakerUI=require('united/MakerUI');
+var PartsUI=require('united/PartsUI');
 var PickerUI=require('united/PickerUI');
 var PeekerUI=require('united/PeekerUI');
 var PokerUI=require('united/PokerUI');
@@ -84,7 +84,7 @@ BIM.board=function(div, options){
 	this.ui.blackboard=new BlackboardUI(null, "Log");
 	tui.addTab( 
 		this.ui.blackboard, 
-		new MakerUI(null, 'Make'),
+		new PartsUI(null, 'Part'),
 		new PeekerUI(null, 'Peek'),
 		new PickerUI(null, 'Pick'),
 		new PokerUI(null, 'Poke')

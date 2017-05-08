@@ -15,55 +15,39 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	
-	project:	BIM united FC (Function Collection)
-	module: 	voxel
-	desc: 
+	project:	BIM united FC (Feature & Function Collection)
+	module: 	__PartHandler
+	desc: 		Abstract base class for all part handlers.  Constructor function creates a handler Object, one handler per bimType
 	author: 	Andrew Siddeley 
-	started:	24-Mar-2017
+	started:	8-May-2017
 	
 ****************************************************************/
 // Define a Module with Simplified CommonJS Wrapper...
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module){
 
-var babylon=require('babylon');
 var $=require('jquery');
+var babylon=require('babylon');
 var nameFeature=require('features/nameFeature');
 var positionFeature=require('features/positionFeature');
 
 //DEP, use: var bimType=instanceOf (new Voxelite());
 //	bimType:'Voxel', 
-	
-// Constructor - Used only once below  
-// Voxelite() => voxelite {obj}, the handler with Static methods
-var Voxelite=function(){
 
+// Constructor - Used only once below  to create a static part handler or function Collection
+// Voxelite() => voxelite {obj}, the handler with Static methods
+var __PartHandler=function(){
 
 	this.bimType='Voxelite';
 	this.desc='A unit cube, that can be placed at integer coordinates.';
-	this.setScene=function(scene){ 
-	
-	var m=new babylon.StandardMaterial("voxelTexture", scene);
-	m.diffuseTexture = new babylon.Texture("textures/voxelTextures.png", scene);
-	m.uScale=1.0;
-	m.vScale=1.0;
-	//m.backFaceCulling=true;
 
-	var options={
-		width:10,
-		height:10,
-		depth:10,
-		faceUV:[
-			//faceUV order is: z+, z-, x+. x-, y+, y-
-			//BABYLON.Vector4(uLL, vLL, uUR, vUR)
-			new BABYLON.Vector4(9/16, 3/16, 8/16, 2/16), //sides
-			new BABYLON.Vector4(8/16, 2/16, 9/16, 3/16), //note flip uUR, vUR, uLL, vLL
-			new BABYLON.Vector4(9/16, 2/16, 10/16, 3/16),
-			new BABYLON.Vector4(9/16, 2/16, 10/16, 3/16),
-			new BABYLON.Vector4(11/16, 2/16, 12/16, 3/16), //grass top		
-			new BABYLON.Vector4(10/16, 2/16, 11/16, 3/16), //dirt bottom		
-		]
-	};		
+};
+var __=__PartHandler.prototype;	
+	
+__.setScene=function(scene){  
+
+	//return babylon mesh
+};		
 	
 	var v=BABYLON.MeshBuilder.CreateBox('voxelite', options, scene);
 	//v.position=new babylon.Vector3(
@@ -95,7 +79,5 @@ var Voxelite=function(){
 	}
 }
 
-var voxelite=new Voxelite();
-// return one voxelite handler for all voxelite meshes
-return voxelite;
+return __PartHandler;
 });
