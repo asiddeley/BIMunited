@@ -38,24 +38,23 @@ var ChooserFED=function(place$, feature) {
 	// It sets up label$ and valu$. Inherit to set up ok$ or more$, then wigetize
 	FED.call(this, place$, feature);
 	
-	//this.text$=$('<input type="text" placeholder="name"></input>').addClass('ui-controlgroup-label');
-	this.ok$=$('<input type="submit" value="ok">');
-	this.valu$.text(feature.valu);
-	this.valu$.on('mouseenter', this, function(ev){
+	//this.ok$=$('<input type="submit" value="ok">');
+	this.prop$.text(feature.prop);
+	this.prop$.on('mouseenter', this, function(ev){
 		var that=ev.data;
 		that.menu$.show().position({
 			my:"left bottom", 
 			at:"left top+2", 
-			of:that.valu$, 
+			of:that.prop$, 
 			collision:"flipfit"
 		});
 	});
 	// prevent lingering menu 
 	this.form$.on('mouseleave', this, function(ev){ ev.data.menu$.hide();});
 	
-	this.form$.append(this.text$);
+	//this.form$.append(this.text$);
 	this.initMenu(feature.choices);
-	this.form$.append(this.ok$);
+	//this.form$.append(this.ok$);
 	return this;
 };
 
@@ -86,7 +85,7 @@ __.initMenu=function(choices){
 					var v=ev.data.onChoose();
 					//ev.data.that.valu$.text(v); //done by FED
 					ev.data.that.feature.propToBe=v;
-					BIM.fun.log('chooserFED select propToBe:' + v );
+					//BIM.fun.log('chooserFED select propToBe:' + v );
 					//need to trigger submit here - note that submit event is local to this module 
 					ev.data.that.form$.trigger('submit', [ ev.data.that.feature ]);
 				} catch(er) { BIM.fun.log(er.toString()); }
@@ -109,9 +108,8 @@ __.onSubmit=function(ev){
 }
 
 // override
-__.onFeatureChange=function(ev, feature, valuRev){
-	FED.prototype.onFeatureChange.call(ev.data, ev, feature, valuRev);
-	
+__.onFeatureChange=function(ev, feature){
+	FED.prototype.onFeatureChange.call(ev.data, ev, feature);	
 }
 
 // override 

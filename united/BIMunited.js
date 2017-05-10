@@ -139,7 +139,7 @@ BIM.engage=function(){
 };
 	
 // function collection 
-BIM.fun={
+BIM.func={
 	//depricated
 	addEventHandlers:function(eh){
 		BIM.ui.blackboard.addEventHandlers(eh);			
@@ -198,6 +198,8 @@ BIM.fun={
 	uidstore:{ },
 	unique:function(name){return this.uid(name);}
 };
+// alias
+BIM.fun=BIM.func;
 	
 //getters
 BIM.get={

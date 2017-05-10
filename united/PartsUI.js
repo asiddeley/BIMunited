@@ -97,7 +97,7 @@ __.onChoosePart=function(ev, ui, that){
 	//ui - selected item or one of <option></option> tags, see jauery-ui docs
 	//ui.item - {element:{value:'somestring', label:'somestring', }}
 
-	//BIM.fun.log(JSON.stringify(ui.item));
+	BIM.fun.log(JSON.stringify(ui.item));
 	//BIM.fun.log('To make:'+ui.item.label);
 	if (that.sample !=null) {that.sample.dispose();} //remake sample
 	that.bimHandler=that.partsLib[ui.item.label];

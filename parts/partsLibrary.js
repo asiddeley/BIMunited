@@ -22,19 +22,19 @@
 	
 */
 
+// Define a Module with Simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define(function(require, exports, module){
 
-define(
-// load dependencies...
-['parts/Voxelite'],
+var Voxelite=require('handlers/Voxelite');
+var vox=new Voxelite();
 
-// then do...
-function(vox){
-	
-// hash of parts for this library
+// library of part handlers
+// remember - one handler for every type of Bim part
 return {
-	Voxelite:vox,
-	Voxelite1:vox,
-	Voxelite2:vox
+	voxelite:vox,
+	voxelite_isotope1:vox,
+	voxelite_isotope2:vox
 	//insert:i (instance, modelRef, ref, xref)
 	//model:m (block, blueprint, definition, prototype)
 	//ground:g
@@ -43,7 +43,7 @@ return {
 	//wall:w,
 	//cube:c,
 	//torus:tor,
-}
+};
 
 });
 

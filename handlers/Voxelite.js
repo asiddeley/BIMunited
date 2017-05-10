@@ -37,12 +37,15 @@ var positionFeature=require('features/positionFeature');
 // Constructor - Used only once below  
 // Voxelite() => voxelite {obj}, the handler with Static methods
 var Voxelite=function(){
-
-
 	this.bimType='Voxelite';
 	this.desc='A unit cube, that can be placed at integer coordinates.';
-	this.setScene=function(scene){ 
+};
+
+var __=Voxelite.prototype;	
 	
+__.setScene=function(scene){ 
+	
+	//__.BIM.func.dependency(babylon.StandardMaterial, 'voxelTexture', scene)
 	var m=new babylon.StandardMaterial("voxelTexture", scene);
 	m.diffuseTexture = new babylon.Texture("textures/voxelTextures.png", scene);
 	m.uScale=1.0;
@@ -66,36 +69,32 @@ var Voxelite=function(){
 	};		
 	
 	var v=BABYLON.MeshBuilder.CreateBox('voxelite', options, scene);
-	//v.position=new babylon.Vector3(
-	//	10*Math.floor(Math.random()*10), 
-	//	10*Math.floor(Math.random()*10), 
-	//	10*Math.floor(Math.random()*10)); 
 	v.material=m;	
 		
 	//add bim handler to babylon mesh object
 	v.bimHandler=voxelite;
+	//v.bimHandler=this;
 		
 	//return the new mesh that was added to the scene
 	return v;
-	};
+};
 
-	
-
-	this.getFeatures=function(mesh) {
-		// Returns a fresh hash of features:
-		// {name:{feature}, position:{feature}...}
-		// A feature is a hash scoped to a particular mesh like this:
-		// {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
-		// return $.extend({},name.getFeature(mesh) );
-		return {
-			name:nameFeature(mesh),
-			position:positionFeature(mesh)
-		}
-
+__.getFeatures=function(mesh) {
+	// Returns a fresh hash of features:
+	// {name:{feature}, position:{feature}...}
+	// A feature is a hash scoped to a particular mesh like this:
+	// {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
+	// return $.extend({},name.getFeature(mesh) );
+	return {
+		name:nameFeature(mesh),
+		position:positionFeature(mesh)
 	}
 }
 
+
 var voxelite=new Voxelite();
-// return one voxelite handler for all voxelite meshes
-return voxelite;
+// one voxelite handler for all voxelite meshes
+//return voxelite;
+
+return Voxelite;
 });

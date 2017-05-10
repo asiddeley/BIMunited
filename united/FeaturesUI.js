@@ -80,21 +80,22 @@ __.onPick=function(ev, picks){
 };
 
 __.reset=function(){	
-	this.widgets.forEach(function(item){ item.remove();	});	
+	this.widgets.forEach(function(item){ 
+		BIM.func.log("reset:"+JSON.stringify(item));
+		item.remove();	
+	});	
 	this.widgets=[];
 	this.widgeti=0;	
 };
-		
+
 __.start=function(mesh){
 	if (typeof mesh=='undefined' || mesh==null){ return false; }
 	this.reset();
 	var f, fc=mesh.bimHandler.getFeatures(mesh);
 	for (label in fc){
 		f=fc[label];
-		//BIM.fun.log(JSON.stringify(f));
-		if (f.editor.prototype instanceof FED) {
-			this.widgets.push(new f.editor(this.div$, f).start());
-			//this.widgetinit(mesh, f);
+		if (f.control.prototype instanceof FED) {
+			this.widgets.push(new f.control(this.div$, f).start());
 		} else { BIM.fun.log('Feature not editable'); }
 	}
 };
@@ -106,9 +107,8 @@ __.toggle=function(){
 };
 	
 __.widgets=[]; //array
-
+/*
 __.widgeti=0; //index for array
-
 __.widgetinit=function(feature){
 	if (this.widgeti==this.widgeta.length){
 		// feature.editor is a constructor function
@@ -118,6 +118,7 @@ __.widgetinit=function(feature){
 	//$(this.wCell[this.wCelli++]).wCell('vlca', valu, label, onChange, part).show();	
 	(this.widgets[this.widgeti++]).start();
 };
+*/
 
 /*
 usage:

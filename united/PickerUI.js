@@ -48,16 +48,13 @@ var PickerUI=function(board, title){
 	//Remember to start FEDs - see onTabsactivate
 	this.pickModeFED=new ChooserFED(this.div$, {
 		label:'pick mode',
-		valu:this.pickMode,
+		prop:this.pickMode,
+		propToBe:'determined by onChoose',
+		propUpdater:function(ev, rv){},
 		choices:[
-			{label:'single', onChoose:function(ev){ 
-				that.pickMode='single'; return that.pickMode;
-			}},
-			{label:'multiple', onChoose:function(ev){ 
-				that.pickMode='multiple'; return that.pickMode;
-			}}			
-		],
-		onValuChange:function(ev, rv){}
+			{label:'single', onChoose:function(ev){ return 'single' }},
+			{label:'multiple', onChoose:function(ev){ return 'multiple';}}			
+		]
 	});
 	this.pickModeFED.start();
 	
@@ -65,8 +62,8 @@ var PickerUI=function(board, title){
 	this.pickLimit=3;	
 	this.pickLimitFED=new TextFED(this.div$, {
 		label:'pick limit', 
-		valu:that.pickLimit, 
-		onFC:function(ev,r){that.pickLimit=Number(r);}
+		prop:that.pickLimit, 
+		propUpdater:function(ev,r){ return r;}
 	});	
 	this.pickLimitFED.start();
 	this.pick$=null;

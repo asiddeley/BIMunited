@@ -33,15 +33,15 @@ var FeatureEditor=function(place, feature) {
 	var that=this;
 	this.form$=$('<form></form>').on('submit', this, this.onSubmit);
 	this.label$=$('<span></span>').addClass('ui-controlgroup-label');
-	this.valu$=$('<span></span>').addClass('ui-controlgroup-label');
-	this.form$.append(this.label$, this.valu$);
+	this.prop$=$('<span></span>').addClass('ui-controlgroup-label');
+	this.form$.append(this.label$, this.prop$);
 	$(place).append(this.form$);
 		
 	BIM.fun.on( this.getEvents() );
 
 	this.feature=feature;
 	this.label$.text(feature.label);
-	this.valu$.text(feature.valu); //converted to text for display
+	this.prop$.text(feature.prop); //converted to text for display
 
 	return this;
 };
@@ -59,7 +59,7 @@ __.onSubmit=function(ev){
 	ev.preventDefault(); 
 	var feature=ev.data.feature;
 	var revisedValu=ev.data.feature.propToBe;
-	BIM.fun.log('FED onSubmit:' + arguments.length);
+	//BIM.fun.log('FED onSubmit:' + arguments.length);
 	if (typeof feature != 'undefined' && typeof revisedValu != 'undefined') {
 		BIM.fun.trigger('featurechange', [feature]);
 	}
@@ -70,16 +70,16 @@ __.onFeatureChange=function(ev, feature){
 	//triggered by form submit
 	var that=ev.data; 	
 	//all FEDs called, but only update applicable FED/feature
-	BIM.fun.log('FED onFeatureChange');
+	//BIM.fun.log('FED onFeatureChange');
 
 	if (feature === that.feature){
-		BIM.fun.log('the one to update: ' + feature.propToBe);
+		//BIM.fun.log('the one to update: ' + feature.propToBe);
 		try{
 			//update valu field with revised value
-			that.valu$.text( feature.propToBe );
+			that.prop$.text( feature.propToBe );
 			//execute the feature callback function that applies the changed valu to the mesh object
-			if (typeof feature.onFeatureChange =='function'){feature.onFeatureChange( feature.propToBe);} //DEPRICATED
-			if (typeof feature.onValuChange =='function'){feature.onValuChange( feature.propToBe);} //DEPRICATED
+			//if (typeof feature.onFeatureChange =='function'){feature.onFeatureChange( feature.propToBe);} //DEPRICATED
+			//if (typeof feature.onValuChange =='function'){feature.onValuChange( feature.propToBe);} //DEPRICATED
 			if (typeof feature.propUpdater =='function'){feature.propUpdater( feature.propToBe);}
 		} catch(er) {
 			BIM.fun.log( er.toString() );

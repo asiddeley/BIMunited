@@ -103,7 +103,7 @@ __.start=function(mesh, feature){
 	FED.prototype.start.call(this, mesh, feature);
 
 	// TODO - take care of <select>, submit functionality
-	this.text$.val(feature.valu);
+	this.text$.val(feature.prop);
 
 	// reset and configure event since it's a new feature
 	// Ie. callback in submit event no longer applicable, 
@@ -113,11 +113,10 @@ __.start=function(mesh, feature){
 	this.form$.on('submit', this, function(ev){
 		ev.preventDefault();
 		//ev.data = 'this' as passed above
-		var result=ev.data.text$.val();
+		var propToBe=ev.data.text$.val();
 		//ensure result is a babylon.Vector3;
 		
-		
-		BIM.fun.log('positionFeature is:'+result.toString() );
+		BIM.fun.log('positionFeature is:'+propToBe.toString() );
 		//feature.onFeatureChange(result);
 		//BIM.fun.trigger('bimFeatureChanged', [feature]);
 	});

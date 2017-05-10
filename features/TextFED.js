@@ -32,13 +32,11 @@ var textFED=function(place, feature) {
 	//Inherits from FeatureEditor, call super constructor to initialize
 	FED.call(this, place, feature);
 	
-	//this.valu$.hide(); //inherited but not used
+	//this.prop$.hide(); //inherited but not used
 	this.text$=$('<input type="text" placeholder=" " value="--"></input>');
-	try{ this.text$.val(feature.valu); } catch(er) { BIM.fun.log(er.toString()) ;};
+	try{ this.text$.val(feature.prop); } catch(er) { BIM.fun.log(er.toString()) ;};
 	this.ok$=$('<input type="submit" value="ok">');
-	
 	this.form$.append(this.text$, this.ok$);
-	
 	return this;
 };
 
@@ -52,15 +50,16 @@ var __=textFED.prototype;
 __.onSubmit=function(ev) {
 	//ok button triggers local form event
 	//call prototype function and pass as arguments, event, feature and updated valu
-	//onSubmit triggers the featureChange event 
-	FED.prototype.onSubmit.call(ev.data, ev, ev.data.feature, ev.data.text$.val());
+	//onSubmit triggers the featureChange event 	
+	ev.data.feature.propToBe=ev.data.text$.val(); //note how new property value is passed for base class to call updater() with
+	FED.prototype.onSubmit.call(ev.data, ev, ev.data.feature);
 };
 
 //override
-__.onFeatureChange=function(ev, feature, valuRenew){
+__.onFeatureChange=function(ev, feature){
 	//this function is called by the BIM wide featureChange event (triggered by onSubmit) 
 	//calling the prototype function takes care of executing feature-callback function to update mesh
-	FED.prototype.onFeatureChange.call(ev.data, ev, feature, valuRenew); 
+	FED.prototype.onFeatureChange.call(ev.data, ev, feature); 
 	//To Do - anything that needs updating due the changed feature 
 };
 
