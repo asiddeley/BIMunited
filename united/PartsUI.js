@@ -47,10 +47,9 @@ var PartsUI=function(board, title){
 		//BIM.fun.log('Make');
 		//BIM.scene.addMesh(ev.data.sample); //no effect, needs work and what about
 		//material and other dependencies?
-		var p=ev.data.bimHandler.setScene(BIM.scene);			
-		//var p=ev.data.bimHandler.setScene(BIM.scene, features);
-		//p.bimHandler.applyFeatures(p, features);
-
+		var newpart=ev.data.bimHandler.setScene(BIM.scene);
+		//match sample features to new part
+		FeaturesUI.prototype.matchFeatures(ev.data.sample, newpart);
 
 	});
 	this.cg$=$('<div></div>').css({'display':'inline-block', 'vertical-align':'top', 'width':'200px'});

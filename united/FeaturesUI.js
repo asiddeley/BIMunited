@@ -31,7 +31,7 @@ var FeaturesUI=function(board, title){
 	UI.call(this, board, title); 
 	
 	this.alias='Features';
-	this.widgets=[]; 
+	this.controls=[]; 
 	
 	// return constructed ui object for chaining.
 	return this;
@@ -71,45 +71,37 @@ __.onInput=function(ev, input){
 	} 
 };
 
-//depricated
-__.onPick=function(ev, picks){
-	//Beware of keyword 'this' in event handlers, use ev.data instead 
-	if (picks.length>0){
-		//access features of the last picked mesh
-		ev.data.start(picks[picks.length-1]);
-	} else {
-		ev.data.reset();
-	}
-};
-
-__.reset=function(){
-	this.widgets.forEach(function(item){ 
-		//BIM.func.log("reset:"+JSON.stringify(item));
-		if (typeof item != 'undefined') item.remove();	
-	});	
-	this.widgets=[];
-};
+//utility
+__.matchFeatures=function(sourceMesh, targetMesh) {
+	if (sourceMesh.bimHandler.bimType == targetMesh.bimHandler.bimType){
+		var tfc=targetMesh.bimHandler.getFeatures(targetMesh);
+		var sfc=sourceMesh.bimHandler.getFeatures(sourceMesh);
+		//go thru each source feature and apply the target property updater with the source prop as argument
+		for (var i in sfc) { tfc[i].propUpdater(sfc[i].prop);	}
+	} else {BIM.func.log('warning, cannot match features of different bimTypes');}
+}
 
 __.start=function(mesh){
 	if (typeof mesh=='undefined' || mesh==null){ return false; }
 	//this.reset();
-	this.widgets.forEach(function(fc){fc.remove();});
-	this.widgets=[];
+	//delete widgets so new ones can be made
+	this.controls.forEach(function(fc){fc.remove();});
+	this.controls=[];
+	
 	var f, fc, ff=mesh.bimHandler.getFeatures(mesh);
 	for (label in ff){
 		f=ff[label];
 		if (f.control.prototype instanceof FC) {
 			fc=new f.control(this.div$, f);
 			fc.start();
-			this.widgets.push(fc);
+			this.controls.push(fc);
 		} else { BIM.fun.log('Feature not editable'); }
 	}
 };
 	
 __.toggle=function(){
-	if (this.div$.is(':ui-dialog')){
-		this.div$.dialog("close");
-	} else if (this.isDialog) {this.div$.dialog("open");}
+	if (this.div$.is(':ui-dialog')){ this.div$.dialog("close"); }
+	else if (this.isDialog) { this.div$.dialog("open"); }
 };
 	
 /*

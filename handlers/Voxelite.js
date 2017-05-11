@@ -72,8 +72,8 @@ __.setScene=function(scene){
 	v.material=m;	
 		
 	//add bim handler to babylon mesh object
-	v.bimHandler=voxelite;
-	//v.bimHandler=this;
+	//v.bimHandler=voxelite;
+	v.bimHandler=this;
 		
 	//return the new mesh that was added to the scene
 	return v;
@@ -92,7 +92,7 @@ __.getFeatures=function(mesh) {
 }
 
 
-var voxelite=new Voxelite();
+//var voxelite=new Voxelite();
 // one voxelite handler for all voxelite meshes
 //return voxelite;
 
