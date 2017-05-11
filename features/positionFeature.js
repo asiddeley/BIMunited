@@ -25,10 +25,10 @@
 
 define(
 // load dependencies...
-['babylon', 'jquery', 'features/ChooserFED'],
+['babylon', 'jquery', 'features/ChooserFC'],
 
 // then construct part object...
-function(babylon, $, ChooserFED){
+function(babylon, $, ChooserFC){
 /***********
 Returns a name feature getter (static method) wrapped in an object. 
 A feature {} used by uiFeatures to edit and update babylon mesh properties.
@@ -51,7 +51,7 @@ var positionFeature = function(mesh){
 		propToBe:null,
 		propUpdater:function(result){  mesh.position=result; },
 		//onSubmit:function(valu){  mesh.position=valu; },
-		control:ChooserFED, //feature control
+		control:ChooserFC, //feature control
 		choices:[
 			{label:'random', 
 			onChoose:function(ev){ 

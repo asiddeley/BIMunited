@@ -24,12 +24,12 @@
 define(
 
 // Load dependencies...
-['jquery', 'features/FED', 'babylon'],
+['jquery', 'features/FC', 'babylon'],
 
 // Then do...
-function($, FED, babylon) {
+function($, FC, babylon) {
 
-var ChooserFED=function(place$, mesh, feature) {
+var ChooserFC=function(place$, mesh, feature) {
 	// place$ - jquery wrapped DOM container element
 	// mesh - owner of feature
 	// feature - {... choices:[choice, choice1...]... }
@@ -42,8 +42,8 @@ var ChooserFED=function(place$, mesh, feature) {
 	this.form$.on('submit', this, function(ev){ ev.preventDefault(); return false;});
 	
 	// override - FED defines valu$ as <label></label>
-	this.valu$.remove();
-	this.valu$=$('<select></select>');
+	this.prop$.remove();
+	this.prop$=$('<select></select>');
 
 	//this.ok$=$('<input type="submit" value="ok">');
 	//this.valu$.on('mouseenter', this, function(ev){
@@ -53,17 +53,17 @@ var ChooserFED=function(place$, mesh, feature) {
 	// prevent lingering menu 
 	//this.form$.on('mouseleave', this, function(ev){ ev.data.menu$.hide();});
 	
-	this.form$.append(this.valu$);
+	this.form$.append(this.prop$);
 	this.initChoices(feature.choices);
 	this.form$.append(this.ok$);
 	return this;
 };
 
 // Inherit from FED, prototype and constructor...
-SelectFED.prototype=Object.create(FED.prototype);
-SelectFED.prototype.constructor=SelectFED;
+SelectFC.prototype=Object.create(FC.prototype);
+SelectFC.prototype.constructor=SelectFC;
 // SelectFED.prototype shortcut is __
-var __=SelectFED.prototype;
+var __=SelectFC.prototype;
 
 __.initChoices=function(choices){
 
@@ -86,7 +86,7 @@ __.initChoices=function(choices){
 
 // override remove function
 __.remove=function(){
-	FED.prototype.remove.call(this);
+	FC.prototype.remove.call(this);
 	//this.menu$.remove();
 	//this.ok$.remove();
 }
@@ -95,7 +95,7 @@ __.remove=function(){
 __.start=function(mesh, feature){
 	
 	// call super function - takes care of <form>, <label>, undo...
-	FED.prototype.start.call(this, mesh, feature);
+	FC.prototype.start.call(this, mesh, feature);
 	
 	/***********
 	// respond to bimFeatureOK event (triggered by OK button)...
@@ -113,7 +113,7 @@ __.start=function(mesh, feature){
 };
 
 
-return ChooserFED;
+return ChooserFC;
 
 }); //end of define
 

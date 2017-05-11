@@ -30,8 +30,8 @@ var babylon=require('babylon');
 var babylon2D=require('babylon2D');
 var UI=require('united/UI');
 var FeaturesUI=require('united/FeaturesUI');
-var ChooserFED=require('features/chooserFED');
-var TextFED=require('features/textFED');
+var ChooserFC=require('features/chooserFC');
+var TextFC=require('features/textFC');
 
 var PeekerUI=function(board, title){
 	//inherit UI constructor
@@ -46,29 +46,29 @@ var PeekerUI=function(board, title){
 	//Remember to start FEDs - see onTabsactivate
 	
 	this.peekMode='single';
-	this.peekModeFED=new ChooserFED(this.div$, {
+	this.peekModeFC=new ChooserFC(this.div$, {
 		label:'peek mode',
-		valu:this.peekMode,
+		prop:this.peekMode,
+		propToBe:'byChoices',
+		propUpdater:function(ev, rv){},
 		choices:[
 			{label:'single', 
 			onChoose:function(ev){return 'single';}},
 			{label:'multiple',
 			onChoose:function(ev){return 'multiple';}}			
-		],
-		onValuChange:function(ev, rv){}
+		]
 	});
-	this.peekModeFED.start();
+	this.peekModeFC.start();
 	
 	//max number of picks to track
 	this.peekLimit=3;
-	this.peekLimitFED=new TextFED(this.div$, {
+	this.peekLimitFC=new TextFC(this.div$, {
 		label:'peek limit', 
-		valu:that.peekLimit, 
-		onFC:function(ev,r){
-			//that.peekLimit=Number(r);
-		}
+		prop:that.peekLimit,
+		propToBe:'TBD by user input',	
+		propUpdater:function(ev,r){	return r;}
 	});	
-	this.peekLimitFED.start();
+	this.peekLimitFC.start();
 	
 	this.peek$=null;
 	//this.div$.append(this.peekModeFED.div$,this.fui.div$);
@@ -174,8 +174,8 @@ __.onPointerDown=function (ev, pickResult) {
 //start the picker
 __.onTabsactivate=function(ev){ 
 	var that=ev.data;
-	that.peekModeFED.start(); 
-	that.peekLimitFED.start(); 
+	that.peekModeFC.start(); 
+	that.peekLimitFC.start(); 
 	
 	BIM.scene.onPointerDown=that.onPointerDown;
 	if (that.canvas2D==null) {

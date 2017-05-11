@@ -25,10 +25,10 @@
 
 define(
 // load dependencies...
-['features/textFED'],
+['features/textFC'],
 
 // then construct part object...
-function(textFED){
+function(textFC){
 	
 var nameFeature=function(mesh){ 
 	//Static function that returns a fresh name feature {}, scoped to a particular mesh
@@ -40,7 +40,7 @@ var nameFeature=function(mesh){
 		prop:mesh.name,
 		propToBe:null,
 		propUpdater:function(result){mesh.name=result;},
-		control:textFED
+		control:textFC
 	};
 };
 

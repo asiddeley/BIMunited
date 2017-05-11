@@ -26,17 +26,17 @@
 define( function(require, exports, module) {
 	
 var $=require('jquery');
-var FED=require('features/FED');
+var FC=require('features/FC');
 var babylon=require('babylon');
 
-var ChooserFED=function(place$, feature) {
+var ChooserFC=function(place$, feature) {
 	// place$ - jquery wrapped DOM container element
 	// feature - {... choices:[choice, choice1...]... }
 	// choice - {label:'label', onSelect:function(ev){}, onSubmit:function(ev){}}
 
 	// Inherit from FED by calling it's constructor...
 	// It sets up label$ and valu$. Inherit to set up ok$ or more$, then wigetize
-	FED.call(this, place$, feature);
+	FC.call(this, place$, feature);
 	
 	//this.ok$=$('<input type="submit" value="ok">');
 	this.prop$.text(feature.prop);
@@ -59,9 +59,9 @@ var ChooserFED=function(place$, feature) {
 };
 
 // Inherit from FED, prototype and constructor...
-ChooserFED.prototype=Object.create(FED.prototype);
-ChooserFED.prototype.constructor=ChooserFED;
-var __=ChooserFED.prototype;  //shortcut to prototype
+ChooserFC.prototype=Object.create(FC.prototype);
+ChooserFC.prototype.constructor=ChooserFC;
+var __=ChooserFC.prototype;  //shortcut to prototype
 
 __.initMenu=function(choices){
 
@@ -103,30 +103,30 @@ __.initMenu=function(choices){
 // override 
 __.onSubmit=function(ev){
 	//Important to pass (event, feature, revisedValu)
-	FED.prototype.onSubmit.call(ev.data, ev, ev.data.feature);
+	FC.prototype.onSubmit.call(ev.data, ev, ev.data.feature);
 	
 }
 
 // override
 __.onFeatureChange=function(ev, feature){
-	FED.prototype.onFeatureChange.call(ev.data, ev, feature);	
+	FC.prototype.onFeatureChange.call(ev.data, ev, feature);	
 }
 
 // override 
 __.remove=function(){
-	FED.prototype.remove.call(this);
+	FC.prototype.remove.call(this);
 	this.menu$.remove();
-	this.ok$.remove();
+	//this.ok$.remove();
 }
 
 // override start function
 __.start=function(){
 	// call super function - takes care of <form>, <label>, undo...
-	FED.prototype.start.call(this);
+	FC.prototype.start.call(this);
 };
 
 
-return ChooserFED;
+return ChooserFC;
 
 }); //end of define
 

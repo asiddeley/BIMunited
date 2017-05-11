@@ -167,9 +167,9 @@ BIM.func={
 	},
 
 	off:function(eventHandlers){
-		var ee=eventHandlers;
+		//eventHandler eg. {name:'bimInput', data:this, handler:this.onInput }
+		var ee=eventHandlers, n, b$=BIM.options.board$;
 		//add event handlers to board, the acting event manager
-		var n, b$=$(this.options.board);
 		for (n in ee){b$.off(ee[n], ee[n].data, ee[n].handler);}	
 	},
 

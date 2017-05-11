@@ -24,14 +24,14 @@
 define(
 
 // Load dependencies...
-['jquery', 'features/FED', 'babylon'],
+['jquery', 'features/FC', 'babylon'],
 
 // Then do...
-function($, FED, babylon) {
+function($, FC, babylon) {
 
-var PositionFED=function(place) {
+var PositionFC=function(place) {
 	// Inherit from FED by calling it's constructor...
-	FED.call(this, place);
+	FC.call(this, place);
 	
 	this.init();
 	this.form$.on('submit', this, function(ev){ ev.preventDefault();	});
@@ -51,10 +51,10 @@ var PositionFED=function(place) {
 };
 
 // Inherit from FED, prototype and constructor...
-PositionFED.prototype=Object.create(FED.prototype);
-PositionFED.prototype.constructor=PositionFED;
+PositionFC.prototype=Object.create(FC.prototype);
+PositionFC.prototype.constructor=PositionFC;
 
-var __=PositionFED.prototype;
+var __=PositionFC.prototype;
 
 __.init=function(){	
 	var that=this;
@@ -100,7 +100,7 @@ __.initSelect=function(){
 __.start=function(mesh, feature){
 	
 	// call super function - takes care of <form>, <label>, undo functionality etc.
-	FED.prototype.start.call(this, mesh, feature);
+	FC.prototype.start.call(this, mesh, feature);
 
 	// TODO - take care of <select>, submit functionality
 	this.text$.val(feature.prop);
@@ -124,7 +124,7 @@ __.start=function(mesh, feature){
 };
 
 
-return PositionFED;
+return PositionFC;
 
 }); //end of define
 

@@ -28,8 +28,8 @@ define(function(require, exports, module){
 var $=require('jquery');
 var babylon=require('babylon');
 var UI=require('united/UI');
-var ChooserFED=require('features/chooserFED');
-var TextFED=require('features/textFED');
+var ChooserFC=require('features/chooserFC');
+var TextFC=require('features/textFC');
 
 var PokerUI=function(board, title){
 	//inherit UI constructor
@@ -39,20 +39,21 @@ var PokerUI=function(board, title){
 
 	//pokemode - which reaction to call when a mesh is picked	
 	this.pokeMode="show reactions";
-	this.pokeModeFED=new ChooserFED(this.div$, {
+	this.pokeModeFC=new ChooserFC(this.div$, {
 		label:'pick mode',
-		valu:this.pokeMode,
+		prop:this.pokeMode,
+		propToBe:'TBD by choices',
+		propUpdater:function(ev, rv){},
 		choices:[
 			{label:'do-1st-reaction', 
 			onChoose:function(ev){ return 'do-1st-reaction';}},
 			{label:'do-2nd-reaction', 
-			onChoose:function(ev){ return'do-2nd-reaction';}},
+			onChoose:function(ev){ return 'do-2nd-reaction';}},
 			{label:'choose-reaction', 
-			onChoose:function(ev){ return'choose-reaction';}}			
-		],
-		onValuChange:function(ev, rv){}
+			onChoose:function(ev){ return 'choose-reaction';}}			
+		]
 	});
-	this.pokeModeFED.start();
+	this.pokeModeFC.start();
 
 	//this.div$.append(this.pokeModeFED.div$);
 

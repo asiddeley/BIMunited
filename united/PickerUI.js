@@ -30,8 +30,8 @@ var babylon=require('babylon');
 var babylon2D=require('babylon2D');
 var UI=require('united/UI');
 var FeaturesUI=require('united/FeaturesUI');
-var ChooserFED=require('features/chooserFED');
-var TextFED=require('features/textFED');
+var ChooserFC=require('features/chooserFC');
+var TextFC=require('features/textFC');
 
 var PickerUI=function(board, title){
 	//inherit UI constructor
@@ -46,7 +46,7 @@ var PickerUI=function(board, title){
 	
 	//Note that FEDs can be used on any object as below, not just babylon meshes.
 	//Remember to start FEDs - see onTabsactivate
-	this.pickModeFED=new ChooserFED(this.div$, {
+	this.pickModeFC=new ChooserFC(this.div$, {
 		label:'pick mode',
 		prop:this.pickMode,
 		propToBe:'determined by onChoose',
@@ -56,16 +56,18 @@ var PickerUI=function(board, title){
 			{label:'multiple', onChoose:function(ev){ return 'multiple';}}			
 		]
 	});
-	this.pickModeFED.start();
+	this.pickModeFC.start();
 	
 	//max number of picks to track
 	this.pickLimit=3;	
-	this.pickLimitFED=new TextFED(this.div$, {
+	this.pickLimitFC=new TextFC(this.div$, {
 		label:'pick limit', 
-		prop:that.pickLimit, 
+		prop:this.pickLimit, 
+		propToBe:'TBD by user input',
 		propUpdater:function(ev,r){ return r;}
 	});	
-	this.pickLimitFED.start();
+	this.pickLimitFC.start();
+	
 	this.pick$=null;
 	//this.div$.append(this.pickModeFED.div$,this.fui.div$);
 
@@ -170,8 +172,8 @@ __.onPointerDown=function (ev, pickResult) {
 //start the picker
 __.onTabsactivate=function(ev){ 
 	var that=ev.data;
-	that.pickModeFED.start(); 
-	that.pickLimitFED.start(); 
+	that.pickModeFC.start(); 
+	that.pickLimitFC.start(); 
 	
 	BIM.scene.onPointerDown=that.onPointerDown;
 	if (that.canvas2D==null) {

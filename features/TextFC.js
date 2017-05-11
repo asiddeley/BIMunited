@@ -26,11 +26,11 @@
 define( function(require, exports, module) {
 	
 var $=require('jquery');
-var FED=require('features/FED');
+var FC=require('features/FC');
 
-var textFED=function(place, feature) {
+var textFC=function(place, feature) {
 	//Inherits from FeatureEditor, call super constructor to initialize
-	FED.call(this, place, feature);
+	FC.call(this, place, feature);
 	
 	//this.prop$.hide(); //inherited but not used
 	this.text$=$('<input type="text" placeholder=" " value="--"></input>');
@@ -41,10 +41,10 @@ var textFED=function(place, feature) {
 };
 
 //inherit prototype...
-textFED.prototype=Object.create(FED.prototype);
-textFED.prototype.constructor=textFED;
+textFC.prototype=Object.create(FC.prototype);
+textFC.prototype.constructor=textFC;
 
-var __=textFED.prototype;
+var __=textFC.prototype;
 
 //override 
 __.onSubmit=function(ev) {
@@ -52,25 +52,25 @@ __.onSubmit=function(ev) {
 	//call prototype function and pass as arguments, event, feature and updated valu
 	//onSubmit triggers the featureChange event 	
 	ev.data.feature.propToBe=ev.data.text$.val(); //note how new property value is passed for base class to call updater() with
-	FED.prototype.onSubmit.call(ev.data, ev, ev.data.feature);
+	FC.prototype.onSubmit.call(ev.data, ev, ev.data.feature);
 };
 
 //override
 __.onFeatureChange=function(ev, feature){
 	//this function is called by the BIM wide featureChange event (triggered by onSubmit) 
 	//calling the prototype function takes care of executing feature-callback function to update mesh
-	FED.prototype.onFeatureChange.call(ev.data, ev, feature); 
+	FC.prototype.onFeatureChange.call(ev.data, ev, feature); 
 	//To Do - anything that needs updating due the changed feature 
 };
 
 //override start function
 __.start=function(){
 	//call super function - mainly to wigetize the form 
-	FED.prototype.start.call(this);
+	FC.prototype.start.call(this);
 	//try{ this.text$.val(feature.valu); } catch(er) {BIM.fun.log(er.toString());}
 };
 
-return textFED;
+return textFC;
 
 }); //end of define
 

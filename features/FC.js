@@ -27,7 +27,7 @@ define( function(require, exports, module) {
 	
 var $=require('jquery');
 
-var FeatureEditor=function(place, feature) {
+var FeatureControl=function(place, feature) {
 	//place - DOM container
 	//feature - {label:'name', valu:mesh.variable, onFC:fn(ev,mesh,res){...}, FED:featureEditor}
 	var that=this;
@@ -37,7 +37,7 @@ var FeatureEditor=function(place, feature) {
 	this.form$.append(this.label$, this.prop$);
 	$(place).append(this.form$);
 		
-	BIM.fun.on( this.getEvents() );
+	BIM.func.on( this.getEvents() );
 
 	this.feature=feature;
 	this.label$.text(feature.label);
@@ -47,7 +47,7 @@ var FeatureEditor=function(place, feature) {
 };
 
 
-var __=FeatureEditor.prototype;
+var __=FeatureControl.prototype;
 
 __.getEvents=function(){
 	return [ {name:'featurechange', data:this, handler:this.onFeatureChange} ];
@@ -94,7 +94,7 @@ __.remove=function(){
 	See jquery docs...use $.remove() when you want to remove the element itself, as well as everything inside it. In addition to the elements themselves, all bound events and jQuery data associated with the elements are removed. To remove the elements without removing data and events, use .detach() instead.	
 	***/
 	this.label$.remove();
-	this.valu$.remove();
+	this.prop$.remove();
 	this.form$.remove();
 	BIM.fun.off(this.getEvents() );
 };
@@ -129,7 +129,7 @@ __.undopush=function(that, valu){
 	if (that.undolog.length > 10) {that.undolog.shift();}
 };
 
-return FeatureEditor;
+return FeatureControl;
 
 }); //end of define
 

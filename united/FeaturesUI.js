@@ -21,14 +21,17 @@
 
 define(
 // load dependencies...
-['jquery', 'united/UI', 'features/FED'],
+['jquery', 'united/UI', 'features/FC'],
 
 // then do...
-function($, UI, FED){
+function($, UI, FC){
 
 var FeaturesUI=function(board, title){
 	//inherit constructor from UI
 	UI.call(this, board, title); 
+	
+	this.alias='Features';
+	this.widgets=[]; 
 	
 	// return constructed ui object for chaining.
 	return this;
@@ -39,7 +42,7 @@ FeaturesUI.prototype=Object.create(UI.prototype);
 FeaturesUI.prototype.constructor=FeaturesUI;
 
 var __=FeaturesUI.prototype;
-__.alias='Features';
+
 	
 __.getEvents=function(){
 	//For events, keyword 'this' refers to the event callers context
@@ -79,23 +82,26 @@ __.onPick=function(ev, picks){
 	}
 };
 
-__.reset=function(){	
+__.reset=function(){
 	this.widgets.forEach(function(item){ 
-		BIM.func.log("reset:"+JSON.stringify(item));
-		item.remove();	
+		//BIM.func.log("reset:"+JSON.stringify(item));
+		if (typeof item != 'undefined') item.remove();	
 	});	
 	this.widgets=[];
-	this.widgeti=0;	
 };
 
 __.start=function(mesh){
 	if (typeof mesh=='undefined' || mesh==null){ return false; }
-	this.reset();
-	var f, fc=mesh.bimHandler.getFeatures(mesh);
-	for (label in fc){
-		f=fc[label];
-		if (f.control.prototype instanceof FED) {
-			this.widgets.push(new f.control(this.div$, f).start());
+	//this.reset();
+	this.widgets.forEach(function(fc){fc.remove();});
+	this.widgets=[];
+	var f, fc, ff=mesh.bimHandler.getFeatures(mesh);
+	for (label in ff){
+		f=ff[label];
+		if (f.control.prototype instanceof FC) {
+			fc=new f.control(this.div$, f);
+			fc.start();
+			this.widgets.push(fc);
 		} else { BIM.fun.log('Feature not editable'); }
 	}
 };
@@ -106,20 +112,6 @@ __.toggle=function(){
 	} else if (this.isDialog) {this.div$.dialog("open");}
 };
 	
-__.widgets=[]; //array
-/*
-__.widgeti=0; //index for array
-__.widgetinit=function(feature){
-	if (this.widgeti==this.widgeta.length){
-		// feature.editor is a constructor function
-		this.widgets.push(new feature.editor(this.div$, feature));
-	};
-	//if using jquery-ui widget then
-	//$(this.wCell[this.wCelli++]).wCell('vlca', valu, label, onChange, part).show();	
-	(this.widgets[this.widgeti++]).start();
-};
-*/
-
 /*
 usage:
 myFeaturesUI=new Features(board, uiStore, evManager, isDialog);
