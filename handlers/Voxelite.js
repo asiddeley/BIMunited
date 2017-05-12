@@ -36,7 +36,7 @@ var positionFeature=require('features/positionFeature');
 	
 // Constructor - Used only once below  
 // Voxelite() => voxelite {obj}, the handler with Static methods
-var Voxelite=function(){
+var Voxelite=function(options){
 	this.bimType='Voxelite';
 	this.desc='A unit cube, that can be placed at integer coordinates.';
 };
@@ -74,7 +74,22 @@ __.setScene=function(scene){
 	//add bim handler to babylon mesh object
 	//v.bimHandler=voxelite;
 	v.bimHandler=this;
-		
+	
+	var peek=new  BABYLON.ExecuteCodeAction(
+		BABYLON.ActionManager.OnPickTrigger,
+		function(ev){
+			//alert( JSON.stringify(ev) ); //circular ref error
+			alert(Object.keys(ev).toString() );
+		}
+	);
+	v.actionManager = new BABYLON.ActionManager(scene);
+	v.actionManager.registerAction(peek);
+	
+
+
+
+
+	
 	//return the new mesh that was added to the scene
 	return v;
 };
@@ -88,6 +103,10 @@ __.getFeatures=function(mesh) {
 	return {
 		name:nameFeature(mesh),
 		position:positionFeature(mesh)
+		//pokeLeft:variousFeatureActions(mesh),
+		//pokeRight:customFeatureActions(mesh),
+		//pick:pickActionFeature(mesh), //allows mesh to be picked by featureUI
+		//peek:peekActionFeature(mesh), //
 	}
 }
 

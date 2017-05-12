@@ -157,13 +157,13 @@ __.onFeatureOK=function(ev, part, valu){
 __.onPointerDown=function (ev, pickResult) {
 	if (pickResult.hit) {
 		if (pickResult.pickedMesh != null) {
-			if (typeof pickResult.pickedMesh.BimFC == "undefined"){
+			if (typeof pickResult.pickedMesh.bimHandler == "undefined"){
 				BIM.fun.log("Mesh has no BIM features");
 			} else {
 				BIM.get.cMesh(pickResult.pickedMesh); //set cMech to pick
 				BIM.input("_meshPicked"); //announce it to all uis
 				//BIM.ui.uiPicker.add(pickResult.pickedMesh.bimHandler);
-				ev.data.add(pickResult.pickedMesh);
+				//ev.dataev.data.add(pickResult.pickedMesh); //wrong, this is a babylon event so ev.data=undefined 
 			}				
 		}
 	}
