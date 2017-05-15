@@ -15,36 +15,60 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	
-	project:	BIM united FC (Framework Concept)
-	module: 	part
+	project:	BIM united FC (Feature Collection)
+	module: 	pickableFA
 	desc: 
 	author: 	Andrew Siddeley 
-	started:	26-Feb-2017
+	started:	13-May-2017
 	
 ****************************************************************/
 
 // Define a Module with Simplified CommonJS Wrapper...
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module) {
-	
-var TextFC=require('features/textFC');	
-var nameFeature=function(mesh){ 
+
+var ChooserFC=require('features/ChooserFC');
+
+var pickableFA=function(mesh){ 
 	//Static function that returns a fresh name feature {}, scoped to a particular mesh
 	//A feature is a hash used by uiFeatures to control
 	//an object's (eg. babylon mesh) property (eg. position), and looks like this...
 	//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
 	return { 
-		alias:'Name',
-		control:TextFC,
-		prop:mesh.name,
-		propDefault:'unnamed',
-		propToBe:null,
-		propUpdate:function(propToBe){mesh.name=propToBe;}
+		alias:'pickable', //pick action
+		control:ChooserFC, //requires choices as provided below
+		choices:[
+			{label:'enable', onChoose:function(ev){return true;}}, 
+			{label:'disable', onChoose:function(ev){return false;}}
+		],
+		prop:mesh.bimData.pickenabled, //property path
+		propDefault:true, //property in boolean 
+		propInit:function(scene){
+			mesh.bimData.pickenabled=true;
+			var peek=new BABYLON.ExecuteCodeAction(
+				BABYLON.ActionManager.OnPickTrigger,
+				function(ev){
+					//alert( JSON.stringify(ev) ); //circular ref error
+					BIM.fun.log(Object.keys(ev).toString() );
+					//get the attention of PickerUI
+					BIM.fun.trigger('meshPicked', ev.meshUnderPointer);
+				}
+			);
+			mesh.actionManager = new BABYLON.ActionManager(scene);
+			mesh.actionManager.registerAction(peek);			
+		},
+		propToBe:null, //to be determined
+		propUpdate:function(propToBe){
+			if (propToBe){
+				//enable action
+			}
+			/*TO DO register/unregister action */
+		}
+
 	};
 };
 
-return nameFeature;
-
+return pickableFA;
 });
 
 

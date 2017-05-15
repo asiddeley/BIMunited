@@ -28,7 +28,7 @@ define( function(require, exports, module) {
 var $=require('jquery');
 var FC=require('features/FC');
 
-var textFC=function(place, feature) {
+var TextFC=function(place, feature) {
 	//Inherits from FeatureEditor, call super constructor to initialize
 	FC.call(this, place, feature);
 	
@@ -41,10 +41,10 @@ var textFC=function(place, feature) {
 };
 
 //inherit prototype...
-textFC.prototype=Object.create(FC.prototype);
-textFC.prototype.constructor=textFC;
+TextFC.prototype=Object.create(FC.prototype);
+TextFC.prototype.constructor=TextFC;
 
-var __=textFC.prototype;
+var __=TextFC.prototype;
 
 //override 
 __.onSubmit=function(ev) {
@@ -70,7 +70,7 @@ __.start=function(){
 	//try{ this.text$.val(feature.valu); } catch(er) {BIM.fun.log(er.toString());}
 };
 
-return textFC;
+return TextFC;
 
 }); //end of define
 

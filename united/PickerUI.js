@@ -47,7 +47,8 @@ var PickerUI=function(board, title){
 	//Note that FEDs can be used on any object as below, not just babylon meshes.
 	//Remember to start FEDs - see onTabsactivate
 	this.pickModeFC=new ChooserFC(this.div$, {
-		label:'pick mode',
+		alias:'pick mode',
+		control:ChooserFC, //used by featuresUI only, redundant in this case
 		prop:this.pickMode,
 		propToBe:'determined by onChoose',
 		propUpdater:function(ev, rv){},
@@ -61,7 +62,7 @@ var PickerUI=function(board, title){
 	//max number of picks to track
 	this.pickLimit=3;	
 	this.pickLimitFC=new TextFC(this.div$, {
-		label:'pick limit', 
+		alias:'pick limit', 
 		prop:this.pickLimit, 
 		propToBe:'TBD by user input',
 		propUpdater:function(ev,r){ return r;}

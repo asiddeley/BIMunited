@@ -16,7 +16,7 @@
 
 	
 	project:	BIM united FC (Function Collection)
-	module: 	voxel
+	module: 	voxelite
 	desc: 
 	author: 	Andrew Siddeley 
 	started:	24-Mar-2017
@@ -30,6 +30,8 @@ var babylon=require('babylon');
 var $=require('jquery');
 var nameFeature=require('features/nameFeature');
 var positionFeature=require('features/positionFeature');
+var pickableFA=require('features/pickableFA');
+
 
 //DEP, use: var bimType=instanceOf (new Voxelite());
 //	bimType:'Voxel', 
@@ -73,21 +75,11 @@ __.setScene=function(scene){
 		
 	//add bim handler to babylon mesh object
 	//v.bimHandler=voxelite;
+	//bimable()??
 	v.bimHandler=this;
+	v.bimData={};
 	
-	var peek=new  BABYLON.ExecuteCodeAction(
-		BABYLON.ActionManager.OnPickTrigger,
-		function(ev){
-			//alert( JSON.stringify(ev) ); //circular ref error
-			alert(Object.keys(ev).toString() );
-		}
-	);
-	v.actionManager = new BABYLON.ActionManager(scene);
-	v.actionManager.registerAction(peek);
-	
-
-
-
+	pickableFA(v).propInit(scene); //creates the property
 
 	
 	//return the new mesh that was added to the scene
@@ -101,19 +93,24 @@ __.getFeatures=function(mesh) {
 	// {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
 	// return $.extend({},name.getFeature(mesh) );
 	return {
-		name:nameFeature(mesh),
-		position:positionFeature(mesh)
+		name:nameFeature(mesh), //name:nameFE(mesh)
+		position:positionFeature(mesh),
+		pickable:pickableFA(mesh)
+		
 		//pokeLeft:variousFeatureActions(mesh),
 		//pokeRight:customFeatureActions(mesh),
-		//pick:pickActionFeature(mesh), //allows mesh to be picked by featureUI
-		//peek:peekActionFeature(mesh), //
+		//pickable:pickActionFeature(mesh), //allows mesh to be picked by featureUI
+		//peekable:peekAF(mesh), //
 	}
 }
 
 
 //var voxelite=new Voxelite();
-// one voxelite handler for all voxelite meshes
+//one voxelite handler for all voxelite meshes
 //return voxelite;
 
+//usage: 
+//voxeliteHandler=new Voxelite(); 
+//voxeliteHandler.setScene(scene); //to add a new bimType to the scene
 return Voxelite;
 });

@@ -47,7 +47,7 @@ var PeekerUI=function(board, title){
 	
 	this.peekMode='single';
 	this.peekModeFC=new ChooserFC(this.div$, {
-		label:'peek mode',
+		alias:'peek mode',
 		prop:this.peekMode,
 		propToBe:'byChoices',
 		propUpdater:function(ev, rv){},
@@ -63,7 +63,7 @@ var PeekerUI=function(board, title){
 	//max number of picks to track
 	this.peekLimit=3;
 	this.peekLimitFC=new TextFC(this.div$, {
-		label:'peek limit', 
+		alias:'peek limit', 
 		prop:that.peekLimit,
 		propToBe:'TBD by user input',	
 		propUpdater:function(ev,r){	return r;}

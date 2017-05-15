@@ -30,13 +30,17 @@ var babylon=require('babylon');
 var UI=require('united/UI');
 var FeaturesUI=require('united/FeaturesUI');
 var triad=require('parts/Triad');
+var FC=require('features/FC');
+var ChooserFC=require('features/ChooserFC');
+//var voxelite=require('handlers/Voxelite'); //default
 
 var PartsUI=function(board, title){
 	// Inherit from UI, call super constructor
 	UI.call(this, board, title); 
 
+	var that=this;
 	this.alias='Part';
-	this.parts={}; //set onRestock
+
 	this.sample=null; //babylon mesh set onChoosePart
 	this.bimHandler={}; //set onChoosePart
 
@@ -45,13 +49,14 @@ var PartsUI=function(board, title){
 	this.canvas$=$('<canvas></canvas>').css({'width':'100px', 'height':'100px'});
 	this.ok$=$('<button>ADD (to Model)</button>').on('click', this, function(ev){
 		//BIM.fun.log('Make');
-		//BIM.scene.addMesh(ev.data.sample); //no effect, needs work and what about
-		//material and other dependencies?
+		//BIM.scene.addMesh(ev.data.sample); //no effect, needs work
+		//What about material and other dependencies?
 		var newpart=ev.data.bimHandler.setScene(BIM.scene);
 		//match sample features to new part
-		FeaturesUI.prototype.matchFeatures(ev.data.sample, newpart);
-
+		FeaturesUI.prototype.matchAll(ev.data.sample, newpart);
 	});
+	this.ok$.button().addClass('ui-controlgroup-label');
+	/*
 	this.cg$=$('<div></div>').css({'display':'inline-block', 'vertical-align':'top', 'width':'200px'});
 	this.desc$=$('<div></div>').addClass('ui-controlgroup-label'); 
 	
@@ -63,14 +68,62 @@ var PartsUI=function(board, title){
 
 	this.desc$.text('Choose a part, edit and add to model.');
 	this.div$.append(this.cg$, this.canvas$, this.fui.div$);
+	*/
+	
+	this.column$=$('<div></div>').css({'display':'inline-block', 'vertical-align':'top', 'width':'200px'});
+	this.column$.append(this.ok$);
+	this.div$.append(this.column$, this.canvas$, this.fui.div$);
 
+	this.desc='Choose a part, edit and add to model';
+	this.descFC=new FC(this.column$, {
+		alias:'desc', 
+		clan:'bimMagenta', 
+		prop:that.desc
+	});
+	
+	this.parts='{}'; //set by onRestock ?????????
+	this.partsLib={}; //set by onRestock
+	this.partFC=new ChooserFC(this.column$,{
+		alias:'part',
+		clan:'bimMagenta',
+		choices:that.partChoices,
+		prop:that.parts,
+		propToBe:'TBD from Choices',
+		propUpdater:function(ev, label){
+			alert(label);
+			//if (that.sample !=null) {that.sample.dispose();} //remake sample
+			//that.bimHandler=that.partsLib[label]; 
+			//that.sample=that.bimHandler.setScene(that.scene);	
+			////that.desc$.text(that.sample.bimHandler.desc);	
+			////connect and show features of sample
+			//that.fui.start(that.sample);			
+		}
+	});
+	this.partChoices=[
+		{label:'voxelite', onChoose:function(ev){return 'voxelite';}},
+		{label:'voxelite-iso', onChoose:function(ev){return 'voxelite-iso';}}			
+	];
+
+	this.resource='Arch';
+	this.resourceFC=new ChooserFC(this.column$,{
+		alias:'resource',
+		clan:'bimMagenta',
+		choices:[
+			{label:'Arch', onChoose:function(ev){return 'Arch';}},
+			{label:'Elec', onChoose:function(ev){return 'Elec';}}			
+		],
+		prop:that.resource,
+		propToBe:'TBD from Choices',
+		propUpdater:function(ev, rv){}
+	});
+	
 	//For setup of sample canvas & scene, see onTabsactivate below.
-	BIM.fun.trigger('restock', [BIM.parts]);
-	BIM.fun.trigger('resourcesupdate', [[
-		{name:'Arch Lib', url:'...'},
-		{name:'Elec Lib', url:'...'},
-		{name:'Mech Lib', url:'...'}
-	]]);
+	//BIM.fun.trigger('restock', [BIM.parts]);
+	//BIM.fun.trigger('resourcesupdate', [[
+	//	{name:'Arch Lib', url:'...'},
+	//	{name:'Elec Lib', url:'...'},
+	//	{name:'Mech Lib', url:'...'}
+	//]]);
 
 	return this;
 };
@@ -89,8 +142,9 @@ __.getEvents=function(){
 	];
 };
 
+/* DEPRICATED but keep as good example of jquery <select> widget callback
 __.onChoosePart=function(ev, ui, that){
-	//that - makerUI
+	//that - partUI
 	//this - <select></select> 
 	//ev - event
 	//ui - selected item or one of <option></option> tags, see jauery-ui docs
@@ -105,7 +159,7 @@ __.onChoosePart=function(ev, ui, that){
 	//connect and show features of sample
 	that.fui.start(that.sample);
 };
-
+*/
 __.onChooseResource=function(ev, ui, that){
 	//TO DO
 };
@@ -172,7 +226,7 @@ __.onTabsactivate=function(ev, ui){
 	//BIM.fun.log('myTabsGotFocus '+ myTabsGotFocus.toString());
 
 	// Cannot seem to initialize babylon engine and scene without canvas visible
-	// So,if MakerUI tab in focus and scene not yet initialized then do it...
+	// So if PartsUI tab in focus and scene not yet initialized then do it...
 	if (myTabsGotFocus && ev.data.scene==null){
 		//set up mini scene for making new part
 		var mui=ev.data;

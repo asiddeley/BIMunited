@@ -30,17 +30,19 @@ var $=require('jquery');
 var FeatureControl=function(place, feature) {
 	//place - DOM container
 	//feature - {label:'name', valu:mesh.variable, onFC:fn(ev,mesh,res){...}, FED:featureEditor}
-	var that=this;
+	//var that=this;
+	var clan=(typeof feature.clan=='undefined')?'bimForm':feature.clan;
 	this.form$=$('<form></form>').on('submit', this, this.onSubmit);
 	this.label$=$('<span></span>').addClass('ui-controlgroup-label');
 	this.prop$=$('<span></span>').addClass('ui-controlgroup-label');
-	this.form$.append(this.label$, this.prop$);
+	this.form$.append(this.label$, this.prop$).addClass('bimForm');
 	$(place).append(this.form$);
-		
-	BIM.func.on( this.getEvents() );
+	
+	//register this guy's events	
+	BIM.func.on(this.getEvents());
 
 	this.feature=feature;
-	this.label$.text(feature.label);
+	this.label$.text(feature.alias);
 	this.prop$.text(feature.prop); //converted to text for display
 
 	return this;
@@ -62,8 +64,7 @@ __.onSubmit=function(ev){
 	//BIM.fun.log('FED onSubmit:' + arguments.length);
 	if (typeof feature != 'undefined' && typeof revisedValu != 'undefined') {
 		BIM.fun.trigger('featurechange', [feature]);
-	}
-	
+	}	
 };
 
 __.onFeatureChange=function(ev, feature){
@@ -78,15 +79,12 @@ __.onFeatureChange=function(ev, feature){
 			//update valu field with revised value
 			that.prop$.text( feature.propToBe );
 			//execute the feature callback function that applies the changed valu to the mesh object
-			//if (typeof feature.onFeatureChange =='function'){feature.onFeatureChange( feature.propToBe);} //DEPRICATED
-			//if (typeof feature.onValuChange =='function'){feature.onValuChange( feature.propToBe);} //DEPRICATED
-			if (typeof feature.propUpdater =='function'){feature.propUpdater( feature.propToBe);}
+			if (typeof feature.propUpdate =='function'){feature.propUpdate(feature.propToBe);}
 		} catch(er) {
 			BIM.fun.log( er.toString() );
 		}
 	}
 };
-
 
 
 __.remove=function(){

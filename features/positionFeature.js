@@ -39,39 +39,38 @@ Feature structure...
 	onFeatureChange:fn(ev,mesh,res){...}, 
 	editor:featureEditor}
 */
-var positionFeature = function(mesh){ 
+return function(mesh){ 
 	//Static function that returns a fresh feature {}, scoped to a particular mesh.
 	//A feature is a hash used by FeaturesUI to edit and update babylon mesh properties.
 	//Eg. {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
 	
 	return { 
-		label:'position',
-		desc:'A 3d vector rounded to the nearest 10 units',
+		//label:'position',
+		alias:'position',
+		control:ChooserFC, //feature control - ChooserFC requires choices below...
+		desc:'Vertex rounded to the nearest 10 units',
 		prop:mesh.position,
+		propDefault:new babylon.Vector3(0,0,0),
+		propInit:function(){this.propUpdater(this.propDefault);},
 		propToBe:null,
-		propUpdater:function(result){  mesh.position=result; },
-		//onSubmit:function(valu){  mesh.position=valu; },
-		control:ChooserFC, //feature control
+		propUpdate:function(propToBe){ mesh.position=propToBe; },
 		choices:[
 			{label:'random', 
 			onChoose:function(ev){ 
-				v=new babylon.Vector3(
+				return new babylon.Vector3(
 					10*Math.floor(Math.random()*10), 
 					10*Math.floor(Math.random()*10), 
 					10*Math.floor(Math.random()*10)
 				); 
-				return v;
 			}}, 
 			{label:'zero',
 			onChoose:function(ev){ 
-				var v=new babylon.Vector3(0,0,0); 
-				return v;
+				return new babylon.Vector3(0,0,0); 
 			}}
 		]	
 	};
 };
 
-return positionFeature
 
 });
 

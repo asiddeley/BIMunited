@@ -64,9 +64,13 @@ ChooserFC.prototype.constructor=ChooserFC;
 var __=ChooserFC.prototype;  //shortcut to prototype
 
 __.initMenu=function(choices){
+	//choices -[{label:'label', onChoose:function(ev){}, onSubmit:function(ev){}}]
 
-	// choices - [{label:'label', onChoose:function(ev){}, onSubmit:function(ev){}}]
+	//clear menu if already exists, means that menu is being redefined
+	if(typeof this.menu$!='undefined'){this.menu$.remove();}
+
 	var i, li$, that=this;
+	
 	this.menu$=$('<ul></ul>').on('mouseleave',this, function(ev){ev.data.menu$.hide();});
 
 	for (i in choices){
@@ -75,17 +79,15 @@ __.initMenu=function(choices){
 
 		//BIM.fun.log('chooserFED:' + choices[i].onChoose.toString() );		
 
-		// click menu item to call the onChoose function
+		//click menu item to call the onChoose function
 		li$.on('click', //event
 			{that:this, onChoose:choices[i].onChoose}, //event data
 			function(ev){ //event callback
 				//BIM.fun.log('onChoose/submit:' + JSON.stringify(ev.data.that.feature) );
 				try {
 					//execute the onChoose function passed in ev.data...
-					var v=ev.data.onChoose();
+					ev.data.that.feature.propToBe=ev.data.onChoose();
 					//ev.data.that.valu$.text(v); //done by FED
-					ev.data.that.feature.propToBe=v;
-					//BIM.fun.log('chooserFED select propToBe:' + v );
 					//need to trigger submit here - note that submit event is local to this module 
 					ev.data.that.form$.trigger('submit', [ ev.data.that.feature ]);
 				} catch(er) { BIM.fun.log(er.toString()); }
@@ -104,7 +106,6 @@ __.initMenu=function(choices){
 __.onSubmit=function(ev){
 	//Important to pass (event, feature, revisedValu)
 	FC.prototype.onSubmit.call(ev.data, ev, ev.data.feature);
-	
 }
 
 // override

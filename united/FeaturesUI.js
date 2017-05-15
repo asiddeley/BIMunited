@@ -72,12 +72,12 @@ __.onInput=function(ev, input){
 };
 
 //utility
-__.matchFeatures=function(sourceMesh, targetMesh) {
+__.matchAll=function(sourceMesh, targetMesh) {
 	if (sourceMesh.bimHandler.bimType == targetMesh.bimHandler.bimType){
 		var tfc=targetMesh.bimHandler.getFeatures(targetMesh);
 		var sfc=sourceMesh.bimHandler.getFeatures(sourceMesh);
 		//go thru each source feature and apply the target property updater with the source prop as argument
-		for (var i in sfc) { tfc[i].propUpdater(sfc[i].prop);	}
+		for (var i in sfc) { tfc[i].propUpdate(sfc[i].prop);	}
 	} else {BIM.func.log('warning, cannot match features of different bimTypes');}
 }
 

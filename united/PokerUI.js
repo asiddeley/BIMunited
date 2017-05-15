@@ -40,7 +40,7 @@ var PokerUI=function(board, title){
 	//pokemode - which reaction to call when a mesh is picked	
 	this.pokeMode="show reactions";
 	this.pokeModeFC=new ChooserFC(this.div$, {
-		label:'pick mode',
+		alias:'pick mode',
 		prop:this.pokeMode,
 		propToBe:'TBD by choices',
 		propUpdater:function(ev, rv){},
