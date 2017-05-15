@@ -31,20 +31,21 @@ var FeatureControl=function(place, feature) {
 	//place - DOM container
 	//feature - {label:'name', valu:mesh.variable, onFC:fn(ev,mesh,res){...}, FED:featureEditor}
 	//var that=this;
-	var clan=(typeof feature.clan=='undefined')?'bimForm':feature.clan;
+	var clan=(typeof feature.clan=='undefined')?'bimFC':feature.clan;
 	this.form$=$('<form></form>').on('submit', this, this.onSubmit);
 	this.label$=$('<span></span>').addClass('ui-controlgroup-label');
 	this.prop$=$('<span></span>').addClass('ui-controlgroup-label');
-	this.form$.append(this.label$, this.prop$).addClass('bimForm');
+	this.form$.append(this.label$, this.prop$).addClass(clan);
 	$(place).append(this.form$);
 	
 	//register this guy's events	
 	BIM.func.on(this.getEvents());
 
 	this.feature=feature;
-	this.label$.text(feature.alias);
-	this.prop$.text(feature.prop); //converted to text for display
-
+	if (feature.alias==null) {this.label$.hide();} else {this.label$.text(feature.alias);} //hide label if empty string
+	if (typeof feature.prop == 'string') { this.prop$.text(feature.prop);} //converted to text for display
+	else  { /*this.prop$.text(feature.prop.toString());*/}
+	
 	return this;
 };
 
@@ -77,7 +78,8 @@ __.onFeatureChange=function(ev, feature){
 		//BIM.fun.log('the one to update: ' + feature.propToBe);
 		try{
 			//update valu field with revised value
-			that.prop$.text( feature.propToBe );
+			if (typeof feature.propToBe == 'string'){ that.prop$.text( feature.propToBe );}
+			else { that.prop$.text( feature.propToBe.toString() );}
 			//execute the feature callback function that applies the changed valu to the mesh object
 			if (typeof feature.propUpdate =='function'){feature.propUpdate(feature.propToBe);}
 		} catch(er) {
@@ -102,7 +104,7 @@ __.start=function(){
 	Turn form into a jquery controgroup if not already.
 	Why not do this in constructor? to allow inheritors to 
 	add items for inclusion in the controlgroup in their constructor
-	inheritor must call start to wigetize
+	inheritor must call start() to wigetize
 	*/
 	if (!this.form$.is(':ui-controlgroup')){ 
 		this.form$.controlgroup({

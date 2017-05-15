@@ -42,11 +42,12 @@ var PartsUI=function(board, title){
 	this.alias='Part';
 
 	this.sample=null; //babylon mesh set onChoosePart
-	this.bimHandler={}; //set onChoosePart
 
 	this.scene=null;
 	this.fui=new FeaturesUI(null, 'Features of New Part');
 	this.canvas$=$('<canvas></canvas>').css({'width':'100px', 'height':'100px'});
+	
+	this.btnrow$=$('<span></span>').addClass('bimFC1');
 	this.ok$=$('<button>ADD (to Model)</button>').on('click', this, function(ev){
 		//BIM.fun.log('Make');
 		//BIM.scene.addMesh(ev.data.sample); //no effect, needs work
@@ -56,6 +57,7 @@ var PartsUI=function(board, title){
 		FeaturesUI.prototype.matchAll(ev.data.sample, newpart);
 	});
 	this.ok$.button().addClass('ui-controlgroup-label');
+	this.btnrow$.append(this.ok$);
 	/*
 	this.cg$=$('<div></div>').css({'display':'inline-block', 'vertical-align':'top', 'width':'200px'});
 	this.desc$=$('<div></div>').addClass('ui-controlgroup-label'); 
@@ -71,23 +73,40 @@ var PartsUI=function(board, title){
 	*/
 	
 	this.column$=$('<div></div>').css({'display':'inline-block', 'vertical-align':'top', 'width':'200px'});
-	this.column$.append(this.ok$);
+	this.column$.append(this.btnrow$);
 	this.div$.append(this.column$, this.canvas$, this.fui.div$);
 
 	this.desc='Choose a part, edit and add to model';
 	this.descFC=new FC(this.column$, {
-		alias:'desc', 
-		clan:'bimMagenta', 
-		prop:that.desc
+		alias:null, 
+		clan:'bimFC1', 
+		control:FC,
+		prop:this.desc,
+		propToBe:null,
+		propUpdater:function(ev, propToBe){ /*Read-only so don't return anything*/}
 	});
+	this.descFC.start();
 	
-	this.parts='{}'; //set by onRestock ?????????
-	this.partsLib={}; //set by onRestock
-	this.partFC=new ChooserFC(this.column$,{
-		alias:'part',
-		clan:'bimMagenta',
-		choices:that.partChoices,
-		prop:that.parts,
+	this.bimHandler=BIM.parts.voxelite; //AKA part set onChoosePart???
+	this.part='voxelite'; //String.Clone(this.bimHandler.bimType); //just want to read bimHandler.bimType and not change it as partFC (below) will do.
+	this.partChoices=[
+		{label:'voxelite', onChoose:function(ev){     
+			//set bimHandler
+			return 'voxelite';}
+		},
+		{label:'voxelite-isotope', onChoose:function(ev){
+			//set bimHandler
+			return 'voxelite-isotope';}
+		}			
+	];	
+	//this.partsLib={}; //set by onRestock
+	this.partFC=new ChooserFC(this.column$, {
+		alias:'part ',
+		choices:this.partChoices,
+		clan:'bimFC1',		
+		control:ChooserFC,
+		prop:this.part,
+		//prop.this.bimHandler,
 		propToBe:'TBD from Choices',
 		propUpdater:function(ev, label){
 			alert(label);
@@ -97,13 +116,13 @@ var PartsUI=function(board, title){
 			////that.desc$.text(that.sample.bimHandler.desc);	
 			////connect and show features of sample
 			//that.fui.start(that.sample);			
-		}
+		}		
 	});
-	this.partChoices=[
-		{label:'voxelite', onChoose:function(ev){return 'voxelite';}},
-		{label:'voxelite-iso', onChoose:function(ev){return 'voxelite-iso';}}			
-	];
+	this.partFC.start();
+	
+	
 
+	/*
 	this.resource='Arch';
 	this.resourceFC=new ChooserFC(this.column$,{
 		alias:'resource',
@@ -116,6 +135,8 @@ var PartsUI=function(board, title){
 		propToBe:'TBD from Choices',
 		propUpdater:function(ev, rv){}
 	});
+	*/
+	
 	
 	//For setup of sample canvas & scene, see onTabsactivate below.
 	//BIM.fun.trigger('restock', [BIM.parts]);
