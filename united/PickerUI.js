@@ -51,7 +51,7 @@ var PickerUI=function(board, title){
 		control:ChooserFC, //used by featuresUI only, redundant in this case
 		prop:this.pickMode,
 		propToBe:'determined by onChoose',
-		propUpdater:function(ev, rv){},
+		propUpdate:function(ev, rv){},
 		choices:[
 			{label:'single', onChoose:function(ev){ return 'single' }},
 			{label:'multiple', onChoose:function(ev){ return 'multiple';}}			

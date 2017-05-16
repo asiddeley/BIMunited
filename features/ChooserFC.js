@@ -69,19 +69,26 @@ __.initMenu=function(choices){
 	//clear menu if already exists, means that menu is being redefined
 	if(typeof this.menu$!='undefined'){this.menu$.remove();}
 
-	var i, li$, that=this;
+	var i, li$, choice, that=this;
 	
 	this.menu$=$('<ul></ul>').on('mouseleave',this, function(ev){ev.data.menu$.hide();});
 
 	for (i in choices){
-		li$=$('<li></li>').append($('<div></div>').text(choices[i].label));
+		//choices can be a list of strings - ['option1', 'option2', ...]
+		//or a list of objects - [{label:'option1', onChoose:function(){} }, ... ]
+		choice=choices[i];
+		if (typeof  choice !='object') {
+			choice={	label:choice, onChoose:new Function( 'arg', 'return"'+ choice + '";' ) };
+		}
+			
+		li$=$('<li></li>').append($('<div></div>').text(choice.label));
 		this.menu$.append(li$);
 
 		//BIM.fun.log('chooserFED:' + choices[i].onChoose.toString() );		
 
 		//click menu item to call the onChoose function
 		li$.on('click', //event
-			{that:this, onChoose:choices[i].onChoose}, //event data
+			{that:this, onChoose:choice.onChoose}, //event data
 			function(ev){ //event callback
 				//BIM.fun.log('onChoose/submit:' + JSON.stringify(ev.data.that.feature) );
 				try {

@@ -72,10 +72,10 @@ __.onFeatureChange=function(ev, feature){
 	//triggered by form submit
 	var that=ev.data; 	
 	//all FEDs called, but only update applicable FED/feature
-	//BIM.fun.log('FED onFeatureChange');
+	//BIM.fun.log('FED onFeatureChange:' + Object.keys(feature).toString());
 
 	if (feature === that.feature){
-		//BIM.fun.log('the one to update: ' + feature.propToBe);
+		BIM.fun.log('the one to update: ' + feature.propToBe);
 		try{
 			//update valu field with revised value
 			if (typeof feature.propToBe == 'string'){ that.prop$.text( feature.propToBe );}

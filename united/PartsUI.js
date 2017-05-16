@@ -76,40 +76,35 @@ var PartsUI=function(board, title){
 	this.column$.append(this.btnrow$);
 	this.div$.append(this.column$, this.canvas$, this.fui.div$);
 
-	this.desc='Choose a part, edit and add to model';
-	this.descFC=new FC(this.column$, {
+	
+	this.bimHandler=BIM.parts.voxelite; //AKA part set onChoosePart???
+	//this.part='voxelite'; //String.Clone(this.bimHandler.bimType); //just want to read bimHandler.bimType and not change it as partFC (below) will do.
+	this.partChoices=Object.keys(BIM.parts); 
+	this.partName=this.partChoices[0]; //1st on list is default part
+	this.partHandler=BIM.parts[this.partName];
+	this.partDesc=this.partHandler.desc;
+	
+	this.partDescFC=new FC(this.column$, {
 		alias:null, 
 		clan:'bimFC1', 
 		control:FC,
-		prop:this.desc,
+		prop:'Description: ' + this.partDesc,
 		propToBe:null,
-		propUpdater:function(ev, propToBe){ /*Read-only so don't return anything*/}
+		propUpdate:function(ev, propToBe){ /*Read-only so don't return anything*/}
 	});
-	this.descFC.start();
+	this.partDescFC.start();	
 	
-	this.bimHandler=BIM.parts.voxelite; //AKA part set onChoosePart???
-	this.part='voxelite'; //String.Clone(this.bimHandler.bimType); //just want to read bimHandler.bimType and not change it as partFC (below) will do.
-	this.partChoices=[
-		{label:'voxelite', onChoose:function(ev){     
-			//set bimHandler
-			return 'voxelite';}
-		},
-		{label:'voxelite-isotope', onChoose:function(ev){
-			//set bimHandler
-			return 'voxelite-isotope';}
-		}			
-	];	
 	//this.partsLib={}; //set by onRestock
 	this.partFC=new ChooserFC(this.column$, {
 		alias:'part ',
 		choices:this.partChoices,
 		clan:'bimFC1',		
 		control:ChooserFC,
-		prop:this.part,
+		prop:this.partName,
 		//prop.this.bimHandler,
 		propToBe:'TBD from Choices',
-		propUpdater:function(ev, label){
-			alert(label);
+		propUpdate:function(label){
+			//alert(label);
 			//if (that.sample !=null) {that.sample.dispose();} //remake sample
 			//that.bimHandler=that.partsLib[label]; 
 			//that.sample=that.bimHandler.setScene(that.scene);	
