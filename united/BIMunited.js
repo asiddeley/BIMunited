@@ -249,7 +249,7 @@ BIM.options={
 BIM.parts=partsLibrary;
 	
 //Libaray of models not rendered unless called/referenced from model	
-BIM.referenceLib={};
+BIM.resources={Arch:{alias:'arch', url:'arch'}, Geology:{}, Elec:{}, Mech:{}, OpsMaint:{}, QSCA:{}};
 	
 //Babylon scene, analog to BIM.model, initialized by engage()
 BIM.scene=null;

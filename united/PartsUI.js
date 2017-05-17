@@ -58,89 +58,70 @@ var PartsUI=function(board, title){
 	});
 	this.ok$.button().addClass('ui-controlgroup-label');
 	this.btnrow$.append(this.ok$);
-	/*
-	this.cg$=$('<div></div>').css({'display':'inline-block', 'vertical-align':'top', 'width':'200px'});
-	this.desc$=$('<div></div>').addClass('ui-controlgroup-label'); 
 	
-	this.part$=$('<select></select>'); 
-	this.resource$=$('<select></select>'); 
-
-	this.cg$.append(this.ok$, this.resource$, this.part$, this.desc$ );
-	this.wigetize(this);
-
-	this.desc$.text('Choose a part, edit and add to model.');
-	this.div$.append(this.cg$, this.canvas$, this.fui.div$);
-	*/
-	
-	this.column$=$('<div></div>').css({'display':'inline-block', 'vertical-align':'top', 'width':'200px'});
+	this.column$=$('<div></div>').css({
+		'display':'inline-block',
+		'vertical-align':'top',
+		'width':'200px'});
 	this.column$.append(this.btnrow$);
 	this.div$.append(this.column$, this.canvas$, this.fui.div$);
 
 	
-	this.bimHandler=BIM.parts.voxelite; //AKA part set onChoosePart???
+	//this.bimHandler=BIM.parts.voxelite; //AKA part set onChoosePart???
 	//this.part='voxelite'; //String.Clone(this.bimHandler.bimType); //just want to read bimHandler.bimType and not change it as partFC (below) will do.
 	this.partChoices=Object.keys(BIM.parts); 
 	this.partName=this.partChoices[0]; //1st on list is default part
 	this.partHandler=BIM.parts[this.partName];
 	this.partDesc=this.partHandler.desc;
-	
 	this.partDescFC=new FC(this.column$, {
-		alias:null, 
+		//This feature should answer to restock event!!
+		alias:null, //Description
 		clan:'bimFC1', 
 		control:FC,
-		prop:'Description: ' + this.partDesc,
+		prop:'Description:'+this.partDesc, //a little cheat to get alias in same box as property
 		propToBe:null,
 		propUpdate:function(ev, propToBe){ /*Read-only so don't return anything*/}
 	});
 	this.partDescFC.start();	
 	
-	//this.partsLib={}; //set by onRestock
+	/////////////////////////////////////
 	this.partFC=new ChooserFC(this.column$, {
 		alias:'part ',
-		choices:this.partChoices,
+		choices:that.partChoices,
 		clan:'bimFC1',		
 		control:ChooserFC,
-		prop:this.partName,
+		prop:that.partName,
 		//prop.this.bimHandler,
 		propToBe:'TBD from Choices',
 		propUpdate:function(label){
 			//alert(label);
-			//if (that.sample !=null) {that.sample.dispose();} //remake sample
-			//that.bimHandler=that.partsLib[label]; 
-			//that.sample=that.bimHandler.setScene(that.scene);	
-			////that.desc$.text(that.sample.bimHandler.desc);	
-			////connect and show features of sample
-			//that.fui.start(that.sample);			
+			if (that.sample !=null) {that.sample.dispose();} //remake sample
+			that.bimHandler=BIM.parts[label]; //set to chosen part handler
+			that.sample=that.bimHandler.setScene(that.scene);	
+			//connect and show features of sample
+			that.fui.start(that.sample);			
 		}		
 	});
 	this.partFC.start();
 	
-	
-
-	/*
-	this.resource='Arch';
+	///////////////////////////////////
+	this.resource=null; //{label:arch, url:''...}
+	this.resourceChoices=Object.keys(BIM.resources); 	
+	this.resourceName=this.resourceChoices[0];
 	this.resourceFC=new ChooserFC(this.column$,{
 		alias:'resource',
-		clan:'bimMagenta',
-		choices:[
-			{label:'Arch', onChoose:function(ev){return 'Arch';}},
-			{label:'Elec', onChoose:function(ev){return 'Elec';}}			
-		],
-		prop:that.resource,
+		clan:'bimFC1',
+		choices:that.resourceChoices,
+		prop:that.resourceName,
 		propToBe:'TBD from Choices',
-		propUpdater:function(ev, rv){}
+		propUpdate:function(label){
+			that.resource=BIM.resources[label];
+			//TO DO
+			//BIM.fun.trigger('change-parts', that.resourceName)
+		}
 	});
-	*/
+	this.resourceFC.start();
 	
-	
-	//For setup of sample canvas & scene, see onTabsactivate below.
-	//BIM.fun.trigger('restock', [BIM.parts]);
-	//BIM.fun.trigger('resourcesupdate', [[
-	//	{name:'Arch Lib', url:'...'},
-	//	{name:'Elec Lib', url:'...'},
-	//	{name:'Mech Lib', url:'...'}
-	//]]);
-
 	return this;
 };
 
@@ -152,6 +133,7 @@ var __=PartsUI.prototype;
 __.getEvents=function(){
 	return [
 		{name:'bimInput', data:this, handler:this.onInput },
+		{name:'featurechange', data:this, handler:this.onFeatureChange },
 		{name:'restock', data:this, handler:this.onRestock },
 		{name:'resourcesupdate', data:this, handler:this.onResourcesUpdate },
 		{name:'tabsactivate', data:this, handler:this.onTabsactivate }

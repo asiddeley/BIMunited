@@ -78,7 +78,7 @@ __.initMenu=function(choices){
 		//or a list of objects - [{label:'option1', onChoose:function(){} }, ... ]
 		choice=choices[i];
 		if (typeof  choice !='object') {
-			choice={	label:choice, onChoose:new Function( 'arg', 'return"'+ choice + '";' ) };
+			choice={label:choice, onChoose:new Function('arg', 'return "'+choice+'";') };
 		}
 			
 		li$=$('<li></li>').append($('<div></div>').text(choice.label));
@@ -93,6 +93,7 @@ __.initMenu=function(choices){
 				//BIM.fun.log('onChoose/submit:' + JSON.stringify(ev.data.that.feature) );
 				try {
 					//execute the onChoose function passed in ev.data...
+					//alert (ev.data.onChoose);
 					ev.data.that.feature.propToBe=ev.data.onChoose();
 					//ev.data.that.valu$.text(v); //done by FED
 					//need to trigger submit here - note that submit event is local to this module 
