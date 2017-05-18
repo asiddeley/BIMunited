@@ -45,9 +45,10 @@ var PartsUI=function(board, title){
 
 	this.scene=null;
 	this.fui=new FeaturesUI(null, 'Features of New Part');
-	this.canvas$=$('<canvas></canvas>').css({'width':'100px', 'height':'100px'});
+
+	//CSS tip - container height must be explicitly set for content height to work
+	this.canvas$=$('<canvas></canvas>').css({'width':'49%', 'height':'100%', 'float':'right'});
 	
-	this.btnrow$=$('<span></span>').addClass('bimFC1');
 	this.ok$=$('<button>ADD (to Model)</button>').on('click', this, function(ev){
 		//BIM.fun.log('Make');
 		//BIM.scene.addMesh(ev.data.sample); //no effect, needs work
@@ -57,28 +58,37 @@ var PartsUI=function(board, title){
 		FeaturesUI.prototype.matchAll(ev.data.sample, newpart);
 	});
 	this.ok$.button().addClass('ui-controlgroup-label');
+	this.btnrow$=$('<div></div>').addClass('bimFC1');
 	this.btnrow$.append(this.ok$);
 	
-	this.column$=$('<div></div>').css({
+	this.column$=$('<span></span>').css({
 		'display':'inline-block',
 		'vertical-align':'top',
-		'width':'200px'});
+		'width':'50%'
+	});
 	this.column$.append(this.btnrow$);
-	this.div$.append(this.column$, this.canvas$, this.fui.div$);
-
 	
+	this.card$=$('<div></div>').addClass('bimFC1').height(125);
+	this.card$.append(this.column$, this.canvas$);
+	this.div$.append(this.card$, this.fui.div$);
+
 	//this.bimHandler=BIM.parts.voxelite; //AKA part set onChoosePart???
 	//this.part='voxelite'; //String.Clone(this.bimHandler.bimType); //just want to read bimHandler.bimType and not change it as partFC (below) will do.
 	this.partChoices=Object.keys(BIM.parts); 
 	this.partName=this.partChoices[0]; //1st on list is default part
 	this.partHandler=BIM.parts[this.partName];
 	this.partDesc=this.partHandler.desc;
+	this.resource=null; //{label:arch, url:''...}
+	this.resourceChoices=Object.keys(BIM.resources); 	
+	this.resourceName=this.resourceChoices[0];
+	
+	////////////////////////////////////////////////////
 	this.partDescFC=new FC(this.column$, {
 		//This feature should answer to restock event!!
 		alias:null, //Description
 		clan:'bimFC1', 
 		control:FC,
-		prop:'Description:'+this.partDesc, //a little cheat to get alias in same box as property
+		prop:this.partDesc, //a little cheat to get alias in same box as property
 		propToBe:null,
 		propUpdate:function(ev, propToBe){ /*Read-only so don't return anything*/}
 	});
@@ -88,7 +98,7 @@ var PartsUI=function(board, title){
 	this.partFC=new ChooserFC(this.column$, {
 		alias:'part ',
 		choices:that.partChoices,
-		clan:'bimFC1',		
+		clan:'bimFC1',
 		control:ChooserFC,
 		prop:that.partName,
 		//prop.this.bimHandler,
@@ -105,12 +115,10 @@ var PartsUI=function(board, title){
 	this.partFC.start();
 	
 	///////////////////////////////////
-	this.resource=null; //{label:arch, url:''...}
-	this.resourceChoices=Object.keys(BIM.resources); 	
-	this.resourceName=this.resourceChoices[0];
 	this.resourceFC=new ChooserFC(this.column$,{
-		alias:'resource',
+		alias:'library',
 		clan:'bimFC1',
+		control:ChooserFC,
 		choices:that.resourceChoices,
 		prop:that.resourceName,
 		propToBe:'TBD from Choices',
@@ -160,6 +168,11 @@ __.onChoosePart=function(ev, ui, that){
 */
 __.onChooseResource=function(ev, ui, that){
 	//TO DO
+};
+
+__.onFeatureChange=function(ev, feature){
+
+
 };
 
 //inherited from UI but overriden

@@ -108,14 +108,14 @@ __.start=function(){
 	*/
 	if (!this.form$.is(':ui-controlgroup')){ 
 		this.form$.controlgroup({
-			'direction':'horizontal',
-			'items':{
-				"button":"button, input[type=text], input[type=submit]",
-				"controlgroupLabel": ".ui-controlgroup-label",
-				"checkboxradio": "input[type='checkbox'], input[type='radio']",
-				"selectmenu": "select",
-				"menu":"ul, .dropdown-items",
-				"spinner": ".ui-spinner-input"}
+				'direction':'horizontal',
+				'items':{
+					"button":"button, input[type=text], input[type=submit]",
+					"controlgroupLabel": ".ui-controlgroup-label",
+					"checkboxradio": "input[type='checkbox'], input[type='radio']",
+					"selectmenu": "select",
+					"menu":"ul, .dropdown-items",
+					"spinner": ".ui-spinner-input"}
 		});
 	}
 
