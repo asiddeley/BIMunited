@@ -31,7 +31,7 @@ var $=require('jquery');
 var nameFeature=require('features/nameFeature');
 var positionFeature=require('features/positionFeature');
 var pickableFA=require('features/pickableFA');
-
+var growableFA=require('features/growableFA');
 
 //DEP, use: var bimType=instanceOf (new Voxelite());
 //	bimType:'Voxel', 

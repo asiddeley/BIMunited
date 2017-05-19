@@ -30,19 +30,20 @@ define( function(require, exports, module) {
 var ChooserFC=require('features/ChooserFC');
 
 var growableFA=function(mesh){ 
-	//Static function that returns a fresh name feature object {}, scoped to a particular mesh
-	//A feature is a hash used by uiFeatures to control
-	//an object's (eg. babylon mesh) property (eg. position), and looks like this...
-	//{alias:'name', control:ChooserFC, prop:mesh.variable, propUpdate:fn(ev,mesh,res){...}, ...}
+	/***************
+	Static function that returns a fresh name feature object {}, scoped to a particular mesh
+	A feature is a hash used by uiFeatures to control
+	an object's (eg. babylon mesh) property (eg. position), eg.
+	{alias:'name', control:ChooserFC, prop:mesh.variable, propUpdate:fn(ev,mesh,res){...}, ...}
+
+	growableFA creates instances of the mesh depending on were the user clicks
+	*/
 	return { 
-		alias:'growable', //pick action
+		alias:'growable',
 		control:ChooserFC, //requires choices
 		//control:OptionsFC, //versatile
-		choices:[
-			{label:'enable', onChoose:function(ev){return true;}}, 
-			{label:'disable', onChoose:function(ev){return false;}}
-		],
-		prop:mesh.bimData.pickenabled, //property path
+		choices:[ 'enabled - clone', 'enabled - instance', 'disable'],
+		prop:mesh.bimData.growEnabled, //property path
 		propDefault:true, //property in boolean 
 		//propInit:function(scene, mesh){return this.setScene(scene);};
 		propToBe:null, //to be determined
@@ -53,14 +54,14 @@ var growableFA=function(mesh){
 			/*TO DO register/unregister action */
 		},
 		setScene:function(scene){
-			mesh.bimData.pickenabled=true;
+			if (typeof mesh.bimData=='undefinded') {mesh.bimData={};}
+			mesh.bimData.growEnabled=true;
 			var peek=new BABYLON.ExecuteCodeAction(
 				BABYLON.ActionManager.OnPickTrigger,
 				function(ev){
 					//alert( JSON.stringify(ev) ); //circular ref error
 					BIM.fun.log(Object.keys(ev).toString() );
-					//get the attention of PickerUI
-					BIM.fun.trigger('meshPicked', ev.meshUnderPointer);
+					BIM.fun.trigger('growablepreaction', ev.meshUnderPointer);
 				}
 			);
 			mesh.actionManager = new BABYLON.ActionManager(scene);

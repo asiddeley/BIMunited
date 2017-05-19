@@ -58,7 +58,7 @@ var PartsUI=function(board, title){
 		FeaturesUI.prototype.matchAll(ev.data.sample, newpart);
 	});
 	this.ok$.button().addClass('ui-controlgroup-label');
-	this.btnrow$=$('<div></div>').addClass('bimFC1');
+	this.btnrow$=$('<div></div>'); //.addClass('bimFC1');
 	this.btnrow$.append(this.ok$);
 	
 	this.column$=$('<span></span>').css({

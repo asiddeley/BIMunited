@@ -77,7 +77,7 @@ __.initMenu=function(choices){
 		//choices can be a list of strings - ['option1', 'option2', ...]
 		//or a list of objects - [{label:'option1', onChoose:function(){} }, ... ]
 		choice=choices[i];
-		BIM.fun.log(i.toString()+':'+JSON.stringify(choice));
+		//BIM.fun.log(i.toString()+':'+JSON.stringify(choice));
 		if (typeof  choice !='object') {
 			choice={label:choice, onChoose:new Function('arg', 'return "'+choice+'";') };
 		}
@@ -94,10 +94,8 @@ __.initMenu=function(choices){
 				//BIM.fun.log('onChoose/submit:' + JSON.stringify(ev.data.that.feature) );
 				try {
 					//execute the onChoose function passed in ev.data...
-					//alert (ev.data.onChoose);
-				//ev.data.that.feature.propToBe=ev.data.onChoose();
-					//ev.data.that.valu$.text(v); //done by FED
-					//need to trigger submit here - note that submit event is local to this module 
+					ev.data.that.feature.propToBe=ev.data.onChoose();
+					//note that submit event is local to this module 
 					ev.data.that.form$.trigger('submit', [ ev.data.that.feature ]);
 				} catch(er) { BIM.fun.log(er.toString()); }
 			}
