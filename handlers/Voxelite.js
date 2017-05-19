@@ -70,20 +70,21 @@ __.setScene=function(scene){
 		]
 	};		
 	
-	var v=BABYLON.MeshBuilder.CreateBox('voxelite', options, scene);
-	v.material=m;	
+	var mesh=BABYLON.MeshBuilder.CreateBox('voxelite', options, scene);
+	mesh.material=m;	
 		
 	//add bim handler to babylon mesh object
 	//v.bimHandler=voxelite;
 	//bimable()??
-	v.bimHandler=this;
-	v.bimData={};
+	mesh.bimHandler=this;
+	mesh.bimData={};
 	
-	pickableFA(v).propInit(scene); //creates the property
+	pickableFA(mesh).setScene(scene); //initialize the property
+	growableFA(mesh).setScene(scene); //allows voxelite to grow by adding instances off picked face
 
 	
 	//return the new mesh that was added to the scene
-	return v;
+	return mesh;
 };
 
 __.getFeatures=function(mesh) {
@@ -95,7 +96,8 @@ __.getFeatures=function(mesh) {
 	return {
 		name:nameFeature(mesh), //name:nameFE(mesh)
 		position:positionFeature(mesh),
-		pickable:pickableFA(mesh)
+		pickable:pickableFA(mesh),
+		growable:growableFA(mesh)
 		
 		//pokeLeft:variousFeatureActions(mesh),
 		//pokeRight:customFeatureActions(mesh),

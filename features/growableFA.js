@@ -16,10 +16,10 @@
 
 	
 	project:	BIM united FC (Feature Collection)
-	module: 	pickableFA
+	module: 	growableFA
 	desc: 
 	author: 	Andrew Siddeley 
-	started:	13-May-2017
+	started:	19-May-2017
 	
 ****************************************************************/
 
@@ -29,14 +29,15 @@ define( function(require, exports, module) {
 
 var ChooserFC=require('features/ChooserFC');
 
-var pickableFA=function(mesh){ 
+var growableFA=function(mesh){ 
 	//Static function that returns a fresh name feature object {}, scoped to a particular mesh
 	//A feature is a hash used by uiFeatures to control
 	//an object's (eg. babylon mesh) property (eg. position), and looks like this...
 	//{alias:'name', control:ChooserFC, prop:mesh.variable, propUpdate:fn(ev,mesh,res){...}, ...}
 	return { 
-		alias:'pickable', //pick action
+		alias:'growable', //pick action
 		control:ChooserFC, //requires choices
+		//control:OptionsFC, //versatile
 		choices:[
 			{label:'enable', onChoose:function(ev){return true;}}, 
 			{label:'disable', onChoose:function(ev){return false;}}
@@ -69,7 +70,7 @@ var pickableFA=function(mesh){
 	};
 };
 
-return pickableFA;
+return growableFA;
 });
 
 
