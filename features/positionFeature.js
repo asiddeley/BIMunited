@@ -63,7 +63,7 @@ return function(mesh){
 					10*Math.floor(Math.random()*10)
 				); 
 			}}, 
-			{label:'zero',
+			{label:'origin',
 			onChoose:function(ev){ 
 				return new babylon.Vector3(0,0,0); 
 			}}

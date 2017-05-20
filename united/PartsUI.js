@@ -75,7 +75,7 @@ var PartsUI=function(board, title){
 	//this.bimHandler=BIM.parts.voxelite; //AKA part set onChoosePart???
 	//this.part='voxelite'; //String.Clone(this.bimHandler.bimType); //just want to read bimHandler.bimType and not change it as partFC (below) will do.
 	this.partChoices=Object.keys(BIM.parts); 
-	this.partName=this.partChoices[0]; //1st on list is default part
+	this.partName=this.partChoices[0]; //1st item in list is default part
 	this.partHandler=BIM.parts[this.partName];
 	this.partDesc=this.partHandler.desc;
 	this.resource=null; //{label:arch, url:''...}
@@ -88,7 +88,7 @@ var PartsUI=function(board, title){
 		alias:null, //Description
 		clan:'bimFC1', 
 		control:FC,
-		prop:this.partDesc, //a little cheat to get alias in same box as property
+		prop:this.partDesc, 
 		propToBe:null,
 		propUpdate:function(ev, propToBe){ /*Read-only so don't return anything*/}
 	});

@@ -76,7 +76,7 @@ __.init=function(){
 			ev.data.text$.val('{to match picked}');
 			ev.data.menu$.hide();
 		}),
-		$('<li><div>zero</div></li>').on('click',that, function(ev){
+		$('<li><div>origin</div></li>').on('click',that, function(ev){
 			var v=new babylon.Vector3(0,0,0); 
 			ev.data.text$.val(v.toString());
 			ev.data.menu$.hide();

@@ -60,8 +60,28 @@ var growableFA=function(mesh){
 				BABYLON.ActionManager.OnPickTrigger,
 				function(ev){
 					//alert( JSON.stringify(ev) ); //circular ref error
-					BIM.fun.log(Object.keys(ev).toString() );
-					BIM.fun.trigger('growablepreaction', ev.meshUnderPointer);
+					//BIM.fun.log(Object.keys(ev).toString() );
+					//BIM.fun.log(ev.pointerX, ev.pointerY);
+					//BIM.fun.log(ev.meshUnderPointer.position);
+					//BIM.fun.log(scene.activeCamera.position);
+					//BIM.fun.log('mesh',Object.keys(ev.meshUnderPointer));
+					
+					var m=ev.meshUnderPointer.position;
+					var c=scene.activeCamera.position;
+					var d=m.subtract(c);
+					var a=BIM.fun.closestAxis(d);
+					//BIM.fun.log('diff',d,'closet axix',a);
+					var r=new BABYLON.Vector3(m.x-a.x*10, m.y-a.y*10, m.z-a.z*10);
+					//check to see if 
+					
+					var meshInst=ev.meshUnderPointer.createInstance('grown');					
+					meshInst.position.copyFromFloats(m.x-a.x*10, m.y-a.y*10, m.z-a.z*10);
+					//add growable functionality to instance
+					meshInst.bimData={}; //TO-DO make this bimableFE
+					growableFA(meshInst).setScene(scene);
+					
+					//trigger grow event for any interested UIs
+					BIM.fun.trigger('grow', ev.meshUnderPointer);
 				}
 			);
 			mesh.actionManager = new BABYLON.ActionManager(scene);

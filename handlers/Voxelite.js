@@ -40,7 +40,7 @@ var growableFA=require('features/growableFA');
 // Voxelite() => voxelite {obj}, the handler with Static methods
 var Voxelite=function(options){
 	this.bimType='Voxelite';
-	this.desc='A unit cube, that can be placed at integer coordinates.';
+	this.desc='A 10 unit cube, that can be placed at 10 unit coordinates.';
 };
 
 var __=Voxelite.prototype;	

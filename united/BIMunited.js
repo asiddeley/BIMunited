@@ -150,13 +150,33 @@ BIM.func={
 		$(el).css('height','auto').css('height', el.scrollHeight+5);		
 	},
 	
+	closestAxis:function(vector3){
+		//returns a BABYLON.Vector3 representing the closest axis to the argument vector
+		//thanks to http://stackoverflow.com/questions/25825464/get-closest-cartesian-axis-aligned-vector-in-javascript
+		var r=new BABYLON.Vector3(0,0,0); //result
+		var x=vector3.x, y=vector3.y, z=vector3.z;
+		// absolute values for direction cosines, bigger value equals closer to basis axis
+		var xn=Math.abs(x), yn=Math.abs(y), zn=Math.abs(z);
+
+		if ((xn >= yn) && (xn >= zn)) {
+			(x > 0) ? r.copyFromFloats(1,0,0):r.copyFromFloats(-1,0,0);
+		} else if ((yn > xn) && (yn >= zn)) {
+			(y > 0) ? r.copyFromFloats(0,1,0):r.copyFromFloats(0,-1,0);
+		} else if ((zn > xn) && (zn > yn)) {
+			(z > 0) ? r.copyFromFloats(0,0,1):r.copyFromFloats(0,0,-1);
+		} else {
+			r.copyFromFloats(1,0,0);
+		}
+		return r;
+	},
+	
 	dump:function(txt){
 		BIM.ui.blackboard.divDump$.show().text(txt);
 	},		
 
-	log:function(message) {
+	log:function() {
 		//this.trigger('bimMsg', message);
-		BIM.ui.blackboard.log(message);
+		for (var a in arguments) BIM.ui.blackboard.log(arguments[a].toString());
 	},
 	
 	on:function(eventHandlers){
