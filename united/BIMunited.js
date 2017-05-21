@@ -150,6 +150,24 @@ BIM.func={
 		$(el).css('height','auto').css('height', el.scrollHeight+5);		
 	},
 	
+	cameraPause:function(eventName){
+		if (typeof eventName=='undefined') eventName='unpause';
+		//detach camera
+		setTimeout(function () {
+			cam.detachControl(BIM.options.canvas);
+		}, 0);
+		
+		//and setup one-time event to restore or attach camera
+		BIM.fun.one([{
+			name:eventName,
+			data:{},
+			handler:function(){
+				//alert(BIM.scene.activeCamera.name);
+				BIM.scene.activeCamera.attachControl(BIM.options.canvas, true);
+			}
+		}]);		
+	},
+	
 	closestAxis:function(vector3){
 		//returns a BABYLON.Vector3 representing the closest axis to the argument vector
 		//thanks to http://stackoverflow.com/questions/25825464/get-closest-cartesian-axis-aligned-vector-in-javascript
@@ -184,6 +202,12 @@ BIM.func={
 		var ee=eventHandlers, n, b$=BIM.options.board$;
 		//add event handlers to board, the acting event manager
 		for (n in ee){b$.on(ee[n].name, ee[n].data, ee[n].handler);}	
+	},
+	
+	one:function(eventHandlers){
+		//eventHandlers - [{name:'bimInput', data:this, handler:this.onInput }...]
+		var ee=eventHandlers, n, b$=BIM.options.board$;		
+		for (n in ee){b$.one(ee[n].name, ee[n].data, ee[n].handler);}	
 	},
 
 	off:function(eventHandlers){

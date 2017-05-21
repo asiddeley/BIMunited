@@ -41,7 +41,7 @@ var PartsUI=function(board, title){
 	var that=this;
 	this.alias='Part';
 
-	this.sample=null; //babylon mesh set onChoosePart
+	//this.sample=null; //babylon mesh set onChoosePart
 
 	this.scene=null;
 	this.fui=new FeaturesUI(null, 'Features of New Part');
@@ -129,6 +129,9 @@ var PartsUI=function(board, title){
 		}
 	});
 	this.resourceFC.start();
+	
+	//this.sample=this.partHandler.setScene(this.scene);	
+	//this.fui.start(this.sample);
 	
 	return this;
 };

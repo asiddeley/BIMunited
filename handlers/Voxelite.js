@@ -72,7 +72,7 @@ __.setScene=function(scene){
 	
 	var mesh=BABYLON.MeshBuilder.CreateBox('voxelite', options, scene);
 	mesh.material=m;	
-		
+
 	//add bim handler to babylon mesh object
 	//v.bimHandler=voxelite;
 	//bimable()??

@@ -29,13 +29,44 @@ define( function(require, exports, module) {
 
 var ChooserFC=require('features/ChooserFC');
 
+var growableFn=function(ev, more){
+	//function for BABYLON.executeCodeAction in growableFA.setScene()
+	//executed when mesh (or instance of mesh) is picked
+
+	//thanks http://www.html5gamedevs.com/topic/22709-stop-camera-rotation-mouse-drag/
+	BIM.fun.cameraPause('grown'); //unpaused when grown event triggered below
+	
+	var mori=ev.meshUnderPointer; //mesh or instance
+	var inst; //reserved for new instance
+	var pm=mori.position;
+	var pc=more.scene.activeCamera.position;
+	var pd=pm.subtract(pc);
+	var aa=BIM.fun.closestAxis(pd);
+	var pi=new BABYLON.Vector3(pm.x-aa.x*10, pm.y-aa.y*10, pm.z-aa.z*10);
+	
+	if (typeof mori.createInstance!='undefined'){
+		inst=mori.createInstance('grown');
+		//important to add bimData to instance
+		inst.bimData={mesh:mori}; //  TO-DO make this bimableFE??
+	} else {
+		inst=mori.bimData.mesh.createInstance('grown');
+		//important to add bimData to instance
+		inst.bimData=$.extend({}, mori.bimData); //add bimData to inst by cloning it from source
+	}
+	
+	inst.position.copyFromFloats(pi.x, pi.y, pi.z);
+	//add growable functionality to instance
+	growableFA(inst).setScene(more.scene);
+	
+	//trigger grow event for any interested UIs, including unpause camera
+	BIM.fun.trigger('grown', inst);
+};
+
 var growableFA=function(mesh){ 
 	/***************
-	Static function that returns a fresh name feature object {}, scoped to a particular mesh
-	A feature is a hash used by uiFeatures to control
-	an object's (eg. babylon mesh) property (eg. position), eg.
-	{alias:'name', control:ChooserFC, prop:mesh.variable, propUpdate:fn(ev,mesh,res){...}, ...}
-
+	Static function that returns a fresh feature action object {}, scoped to a particular mesh
+	mesh - scope or context of this feature
+	more - {} with additional data such as bimHandler, scene or whatever
 	growableFA creates instances of the mesh depending on were the user clicks
 	*/
 	return { 
@@ -56,36 +87,13 @@ var growableFA=function(mesh){
 		setScene:function(scene){
 			if (typeof mesh.bimData=='undefinded') {mesh.bimData={};}
 			mesh.bimData.growEnabled=true;
-			var peek=new BABYLON.ExecuteCodeAction(
-				BABYLON.ActionManager.OnPickTrigger,
-				function(ev){
-					//alert( JSON.stringify(ev) ); //circular ref error
-					//BIM.fun.log(Object.keys(ev).toString() );
-					//BIM.fun.log(ev.pointerX, ev.pointerY);
-					//BIM.fun.log(ev.meshUnderPointer.position);
-					//BIM.fun.log(scene.activeCamera.position);
-					//BIM.fun.log('mesh',Object.keys(ev.meshUnderPointer));
-					
-					var m=ev.meshUnderPointer.position;
-					var c=scene.activeCamera.position;
-					var d=m.subtract(c);
-					var a=BIM.fun.closestAxis(d);
-					//BIM.fun.log('diff',d,'closet axix',a);
-					var r=new BABYLON.Vector3(m.x-a.x*10, m.y-a.y*10, m.z-a.z*10);
-					//check to see if 
-					
-					var meshInst=ev.meshUnderPointer.createInstance('grown');					
-					meshInst.position.copyFromFloats(m.x-a.x*10, m.y-a.y*10, m.z-a.z*10);
-					//add growable functionality to instance
-					meshInst.bimData={}; //TO-DO make this bimableFE
-					growableFA(meshInst).setScene(scene);
-					
-					//trigger grow event for any interested UIs
-					BIM.fun.trigger('grow', ev.meshUnderPointer);
-				}
-			);
 			mesh.actionManager = new BABYLON.ActionManager(scene);
-			mesh.actionManager.registerAction(peek);
+			mesh.actionManager.registerAction(
+				new BABYLON.ExecuteCodeAction(
+					BABYLON.ActionManager.OnPickTrigger,
+					function(ev){ growableFn(ev, {scene:scene});}
+				)
+			);
 			return mesh;
 		}
 	};
