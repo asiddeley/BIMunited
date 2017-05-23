@@ -79,6 +79,7 @@ __.setScene=function(scene){
 	mesh.bimHandler=this;
 	mesh.bimData={};
 	
+	//peekableFC(mesh).init(this); //adds the getFeature func
 	pickableFA(mesh).setScene(scene); //initialize the property
 	growableFA(mesh).setScene(scene); //allows voxelite to grow by adding instances off picked face
 

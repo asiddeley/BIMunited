@@ -91,7 +91,7 @@ BIM.board=function(div, options){
 	); 
 }
 
-BIM.canvas=function(canvas){ $.extend(this.options, {'canvas':canvas}); }
+BIM.canvas=function(canvas){ $.extend(this.options, {canvas:canvas}); }
 
 BIM.database=function(udata){	$.extend(this.options, {database:udata}); }
 	
@@ -151,19 +151,19 @@ BIM.func={
 	},
 	
 	cameraPause:function(eventName){
-		if (typeof eventName=='undefined') eventName='unpause';
+		if (typeof eventName=='undefined') {eventName='unpause';}
 		//detach camera
-		setTimeout(function () {
-			cam.detachControl(BIM.options.canvas);
-		}, 0);
+		setTimeout(
+			function(){BIM.scene.activeCamera.detachControl(BIM.options.canvas);},
+			0
+		);
 		
 		//and setup one-time event to restore or attach camera
 		BIM.fun.one([{
 			name:eventName,
 			data:{},
 			handler:function(){
-				//alert(BIM.scene.activeCamera.name);
-				BIM.scene.activeCamera.attachControl(BIM.options.canvas, true);
+				BIM.scene.activeCamera.attachControl(BIM.options.canvas,false);
 			}
 		}]);		
 	},

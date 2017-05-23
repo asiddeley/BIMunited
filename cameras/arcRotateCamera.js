@@ -44,7 +44,7 @@ var ArcRotateCamera={
 		);
 		
         //cam.setTarget(new BABYLON.Vector3.Zero());
-        cam.attachControl(BIM.options.canvas, false);	
+        cam.attachControl(BIM.options.canvas);	
 		cam.bimHandler=ArcRotateCamera;
 		return cam;
 	},
