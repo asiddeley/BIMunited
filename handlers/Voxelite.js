@@ -46,7 +46,7 @@ var Voxelite=function(options){
 var __=Voxelite.prototype;	
 	
 __.setScene=function(scene){ 
-	
+
 	//__.BIM.func.dependency(babylon.StandardMaterial, 'voxelTexture', scene)
 	var m=new babylon.StandardMaterial("voxelTexture", scene);
 	m.diffuseTexture = new babylon.Texture("textures/voxelTextures.png", scene);

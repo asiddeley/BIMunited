@@ -140,16 +140,13 @@ BIM.engage=function(){
 	
 // function collection 
 BIM.func={
-	//depricated
-	addEventHandlers:function(eh){
-		BIM.ui.blackboard.addEventHandlers(eh);			
-	},
+	//Depricated
+	addEventHandlers:function(eh){BIM.ui.blackboard.addEventHandlers(eh);},
+
+	// grows textarea fit text - useful for typing in a small textarea 
+	autoHeight:function(el){$(el).css('height','auto').css('height', el.scrollHeight+5);},
 	
-	autoHeight:function(el){
-		// grows textarea fit text - useful for typing in a small textarea 
-		$(el).css('height','auto').css('height', el.scrollHeight+5);		
-	},
-	
+	//Depricated - stopped working and not necessary
 	cameraPause:function(eventName){
 		if (typeof eventName=='undefined') {eventName='unpause';}
 		//detach camera
@@ -167,34 +164,33 @@ BIM.func={
 			}
 		}]);		
 	},
-	
+
+	//returns a BABYLON.Vector3 representing the closest axis to the argument vector
+	//thanks to http://stackoverflow.com/questions/25825464/get-closest-cartesian-axis-aligned-vector-in-javascript
 	closestAxis:function(vector3){
-		//returns a BABYLON.Vector3 representing the closest axis to the argument vector
-		//thanks to http://stackoverflow.com/questions/25825464/get-closest-cartesian-axis-aligned-vector-in-javascript
 		var r=new BABYLON.Vector3(0,0,0); //result
 		var x=vector3.x, y=vector3.y, z=vector3.z;
 		// absolute values for direction cosines, bigger value equals closer to basis axis
 		var xn=Math.abs(x), yn=Math.abs(y), zn=Math.abs(z);
-
-		if ((xn >= yn) && (xn >= zn)) {
-			(x > 0) ? r.copyFromFloats(1,0,0):r.copyFromFloats(-1,0,0);
-		} else if ((yn > xn) && (yn >= zn)) {
-			(y > 0) ? r.copyFromFloats(0,1,0):r.copyFromFloats(0,-1,0);
-		} else if ((zn > xn) && (zn > yn)) {
-			(z > 0) ? r.copyFromFloats(0,0,1):r.copyFromFloats(0,0,-1);
-		} else {
-			r.copyFromFloats(1,0,0);
-		}
+		if ((xn>=yn)&&(xn>=zn)) {(x>0) ? r.copyFromFloats(1,0,0):r.copyFromFloats(-1,0,0);
+		} else if ((yn>xn)&&(yn>=zn)) {(y>0) ? r.copyFromFloats(0,1,0):r.copyFromFloats(0,-1,0);
+		} else if ((zn>xn)&&(zn>yn)) {(z>0) ? r.copyFromFloats(0,0,1):r.copyFromFloats(0,0,-1);
+		} else {r.copyFromFloats(1,0,0);}
 		return r;
 	},
 	
-	dump:function(txt){
-		BIM.ui.blackboard.divDump$.show().text(txt);
-	},		
-
-	log:function() {
-		//this.trigger('bimMsg', message);
-		for (var a in arguments) BIM.ui.blackboard.log(arguments[a].toString());
+	dump:function(txt){	BIM.ui.blackboard.divDump$.show().text(txt);},
+	
+	//this.trigger('bimMsg', message);
+	log:function() {for (var a in arguments) BIM.ui.blackboard.log(arguments[a].toString());},
+	
+	matchAll:function(sourceMesh, targetMesh) {
+		var tfc=targetMesh.bimHandler.getFeatures(targetMesh);
+		var sfc=sourceMesh.bimHandler.getFeatures(sourceMesh);
+		for (var key in sfc) { 
+			if (typeof sfc[key] !='undefined'){tfc[i].propUpdate(sfc[i].prop);}
+			else {BIM.func.log('Match target missing feature:',key);}
+		}
 	},
 	
 	on:function(eventHandlers){
@@ -217,10 +213,24 @@ BIM.func={
 		for (n in ee){b$.off(ee[n], ee[n].data, ee[n].handler);}	
 	},
 
-	randomPosition:function() {
-		var s=100;//BIM.model.worldBox.size;
-		var v=new babylon.Vector3(Math.random()*s,  Math.random()*s, Math.random()*s); 
-		return v;
+	randomInt:function(s) {
+		s=(typeof s=='undefined')?100:s; //default is 100
+		return (Math.floor(Math.random()*s)); 
+	},
+	
+	randomPosition:function(s) {
+		s=(typeof s=='undefined')?100:s; //default is 100
+		return (new babylon.Vector3(Math.random()*s,  Math.random()*s, Math.random()*s)); 
+	},
+	
+	randomV3I:function(s) {
+		//random vertex of 3 integers
+		s=(typeof s=='undefined')?100:s; //default is 100
+		return (new babylon.Vector3(
+			Math.floor(Math.random()*s), 
+			Math.floor(Math.random()*s),
+			Math.floor(Math.random()*s)
+		)); 
 	},
 	
 	trigger:function(ev, arg1, arg2){
@@ -263,8 +273,23 @@ BIM.get={
 	
 	bb:function(){ return BIM.ui.blackboard;},
 	canvas:function() {return BIM.options.canvas;},	
+	////////////////////////////////////
+	featurize:function(obj, feature1, feature2, etc){
+		//adds features {} and getFeatures function to obj
+		
+	},
 	scene: function() {return BIM.scene;},
-	uid: function(name) {return BIM.fun.uid(name);}
+	uid: function(name) {return BIM.fun.uid(name);},
+	//global variable storage
+	val:function(key, valu){
+		//TO DO...
+		//usage - store 'hello world' as 'msg'
+		//BIM.get.val('msg','hello world'); 
+		//usage - retrieve 'msg'
+		//BIM.get.val('msg');
+		alert(key.toString());
+	},
+	valstore:{}
 };
 
 BIM.help=function(input){
@@ -280,7 +305,7 @@ BIM.keywords={};
 // main light
 BIM.light=Light.demo(1);
 	
-// Extended by user in a, b, c, d & e API functions
+// Extended by user in API functions above
 BIM.options={
 	admin:{user:"unnamed", disc:'arch'},
 	board:null,

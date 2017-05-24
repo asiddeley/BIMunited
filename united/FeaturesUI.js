@@ -13,26 +13,28 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-	project:	BIM
-	module: 	uiPartProperties
+	project:	BIM United FC
+	module: 	FeaturesUI
 	by: 		Andrew Siddeley 
 	started:	19-Jan-2017
 */
 
-define(
-// load dependencies...
-['jquery', 'united/UI', 'features/FC'],
 
-// then do...
-function($, UI, FC){
+// Define module with simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define( function(require, exports, module) {
+
+var $=require('jquery');
+var UI=require('united/UI');
+var FC=require('features/FC');
 
 var FeaturesUI=function(board, title){
 	//inherit constructor from UI
 	UI.call(this, board, title); 
-	
+
 	this.alias='Features';
-	this.controls=[]; 
-	
+	this.controls=[];
+
 	// return constructed ui object for chaining.
 	return this;
 };
