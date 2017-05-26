@@ -181,6 +181,30 @@ BIM.func={
 	
 	dump:function(txt){	BIM.ui.blackboard.divDump$.show().text(txt);},
 	
+	//turn mesh into a bim
+	featurize:function(handler, scene, mesh, features){
+		//that - either a Handler
+		if (mesh!=null){
+			mesh.bimHandler=handler;
+			if (typeof mesh.bimData=='undefined') {mesh.bimData={};}
+			//if (typeof mesh.bimData.fms=='undefined') {mesh.bimData.fms=[];}
+			handler.features.concat(features);
+			handler.getFeatures=function(mesh){
+				var i, fm, features={};
+				for (i in mesh.bimData.fms){
+					fm=mesh.bimData.fms[i];
+					f=fm(mesh);
+					features[f.alias]=f;
+				}
+				return features;
+			};
+		}
+		for (var i in featureMakers){
+			try{features[i](mesh).setScene(scene);}
+			catch(er){BIM.fun.log(er.toString());}
+		}
+	},
+	
 	//this.trigger('bimMsg', message);
 	log:function() {for (var a in arguments) BIM.ui.blackboard.log(arguments[a].toString());},
 	

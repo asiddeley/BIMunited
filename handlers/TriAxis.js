@@ -25,7 +25,7 @@
 define(
 
 // load dependencies...
-['babylon', 'jquery', 'features/nameFeature',  'features/positionFeature' ],
+['babylon', 'jquery', 'features/nameable',  'features/positionFeature' ],
 
 // then do...
 function(babylon, $, nameFeature, positionFeature){
