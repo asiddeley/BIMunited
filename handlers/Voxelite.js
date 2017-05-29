@@ -59,6 +59,7 @@ var Voxelite=function(featureFunctions){
 	//feature is a function that consctucts a feature {} scoped to a mesh
 	//PROPOSE
 	//feature is a static {} with 2 significant functions engage(mesh)
+	//Feature is a Constructor, 
 };
 
 //inherit prototype from UI
