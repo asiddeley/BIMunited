@@ -48,7 +48,7 @@ var Voxelite=function(featureFunctions){
 	
 	this.bimType='Voxelite';
 	this.desc='A 10 unit cube, that can be placed at 10 unit coordinates.';
-	this.featureMakers=[
+	this.features=[
 		nameable, //name:nameFE(mesh)
 		//desc:new userFeature('Desc', 'A 10 unit cube, that can be placed at 10 unit coordinates.'),
 		positionFeature,
@@ -96,19 +96,17 @@ __.setScene=function(scene){
 	var mesh=BABYLON.MeshBuilder.CreateBox('voxelite', options, scene);
 	mesh.material=m;	
 
-	//add bim handler to babylon mesh object
+	//add bim handler to babylon mesh object	
+	//TO-DO move 2 lines of code below to super class Element and add this line here: Element.prototype.setScene.call(this, scene);
 	mesh.bimHandler=this;
 	mesh.bimData={};
+
 	
-	//BIM.fun.featurize(mesh, [
-	//	pickable,
-	//	mcGrowable
-	//], scene);
-	//nameable(mesh).setScene(scene); //nameable setScene NA
+	nameable.prototype.setScene(scene); //nameable setScene has no effect
 	//peekableFC(mesh).init(this); //adds the getFeature func
 	//pickable(mesh).setScene(scene); //initialize the property
 	mcGrowable(mesh).setScene(scene); //allows voxelite to grow by adding instances off a picked face
-
+	
 	//return the new mesh that was added to the scene
 	return mesh;
 };

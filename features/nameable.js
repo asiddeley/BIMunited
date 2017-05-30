@@ -26,27 +26,39 @@
 // Define a Module with Simplified CommonJS Wrapper...
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module) {
-	
-var TextFC=require('features/textFC');	
-var nameable=function(mesh){ 
-	//Static function that returns a fresh name feature {}, scoped to a particular object ie. mesh
-	//A feature is a hash used by a featuresUI to control
-	//an object's (eg. babylon mesh) property (eg. position), and looks like this...
-	//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
-	return { 
-		alias:'Name',
-		control:TextFC,
-		prop:mesh.name,
-		propDefault:'unnamed',
-		propToBe:null,
-		propUpdate:function(propToBe){mesh.name=propToBe;},
-		setScene:function(scene){
-			//scene contributer not applicable
-		}
-	};
+
+var Feature=require('features/Features');
+var TextFC=require('features/textFC');
+
+var Nameable=function(mesh, options){ 
+
+	Feature.call(this, mesh, options);
+
+	this.alias='name';
+	this.control=TextFC;
+	this.prop=mesh.name;
+	this.propDefault='unnamed';
+	this.propToBe=null;
+}
+
+// Inherit from the super class
+Nameable.prototype=Object.create(Feature.prototype);
+Nameable.prototype.constructor=Nameable;
+//shortcut
+var __=Nameable.prototype;
+
+__.propUpdate=function(propToBe){
+	mesh.name=propToBe;
 };
 
-return nameable;
+__.setScene:function(scene){
+	Feature.prototype.setScene(scene);
+	//scene contributer not applicable
+};
+
+
+
+return Nameable;
 
 });
 

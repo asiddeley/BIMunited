@@ -27,7 +27,7 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module) {
 	
-var Feature=function(mesh, options){ 
+var Feature=function(mesh, options){
 	//Static function that returns a fresh name feature {}, scoped to a particular object ie. mesh
 	//A feature is a hash used by a featuresUI to control
 	//an object's (eg. babylon mesh) property (eg. position), and looks like this...
@@ -38,13 +38,18 @@ var Feature=function(mesh, options){
 	this.prop=mesh.name;
 	this.propDefault='unnamed';
 	this.propToBe=null;
-	this.propUpdate=function(propToBe){mesh.name=propToBe;};
-	this.setScene=function(scene){
-
-
-	};
 
 };
+
+Feature.prototype.propUpdate=function(propToBe){
+	mesh.name=propToBe;
+}
+
+Feature.prototype.setScene=function(scene){
+
+
+}
+
 
 return Feature;
 
