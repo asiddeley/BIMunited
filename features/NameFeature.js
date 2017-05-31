@@ -33,7 +33,7 @@ var TextFC=require('features/textFC');
 var Nameable=function(mesh, options){ 
 
 	Feature.call(this, mesh, options);
-
+	
 	this.alias='name';
 	this.control=TextFC;
 	this.prop=mesh.name;
@@ -41,7 +41,7 @@ var Nameable=function(mesh, options){
 	this.propToBe=null;
 }
 
-// Inherit from the super class
+//Inherit from the super class
 Nameable.prototype=Object.create(Feature.prototype);
 Nameable.prototype.constructor=Nameable;
 //shortcut

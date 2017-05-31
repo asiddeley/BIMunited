@@ -28,7 +28,7 @@ define( function(require, exports, module){
 
 var babylon=require('babylon');
 var $=require('jquery');
-var nameable=require('features/nameable');
+var nameable=require('features/NameFeature');
 var positionFeature=require('features/positionFeature');
 var pickable=require('features/pickable');
 var mcGrowable=require('features/mcGrowable');
@@ -102,10 +102,10 @@ __.setScene=function(scene){
 	mesh.bimData={};
 
 	
-	nameable.prototype.setScene(scene); //nameable setScene has no effect
+	nameable.prototype.setScene(mesh, scene); //nameable setScene has no effect
 	//peekableFC(mesh).init(this); //adds the getFeature func
 	//pickable(mesh).setScene(scene); //initialize the property
-	mcGrowable(mesh).setScene(scene); //allows voxelite to grow by adding instances off a picked face
+	mcGrowable.prototype.setScene(mesh, scene); //allows voxelite to grow by adding instances off a picked face
 	
 	//return the new mesh that was added to the scene
 	return mesh;

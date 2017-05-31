@@ -42,13 +42,13 @@ var Feature=function(mesh, options){
 };
 
 Feature.prototype.propUpdate=function(propToBe){
-	mesh.name=propToBe;
-}
+	//mesh.name=propToBe;
+};
 
 Feature.prototype.setScene=function(scene){
 
 
-}
+};
 
 
 return Feature;

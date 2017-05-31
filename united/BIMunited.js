@@ -181,7 +181,7 @@ BIM.func={
 	
 	dump:function(txt){	BIM.ui.blackboard.divDump$.show().text(txt);},
 	
-	//turn mesh into a bim
+	//DEPRECATED   turn mesh into a bim
 	featurize:function(handler, scene, mesh, features){
 		//that - either a Handler
 		if (mesh!=null){

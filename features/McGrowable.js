@@ -27,6 +27,7 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module) {
 
+var Feature=require('features/Features');
 var ChooserFC=require('features/ChooserFC');
 
 var trigger=BABYLON.ActionManager.OnPickTrigger;
@@ -34,6 +35,7 @@ var trigger=BABYLON.ActionManager.OnPickTrigger;
 var cull=function(ev){
 	var mori=ev.meshUnderPointer; //mesh or instance
 	ok=true;
+	//contains instances therefore it's a mesh
 	if (typeof mori.instances!='undefined' && mori.instances.length>0){
 		var msg='Contains '+ 
 		mori.instances.length.toString()+
@@ -41,6 +43,7 @@ var cull=function(ev){
 		ok=confirm(msg);		
 	}
 	if (ok) {
+		//trigger an event for any interested listeners such as undo...
 		BIM.fun.trigger('operation', {name:'dispose', item:mori});
 		mori.dispose();
 	}
@@ -62,7 +65,7 @@ var grow=function(ev, more){
 	var pc=more.scene.activeCamera.position;
 	var pd=pm.subtract(pc);
 	var aa=BIM.fun.closestAxis(pd);
-	var ip=new BABYLON.Vector3(pm.x-aa.x*10, pm.y-aa.y*10, pm.z-aa.z*10);
+	var np=new BABYLON.Vector3(pm.x-aa.x*10, pm.y-aa.y*10, pm.z-aa.z*10); //new position
 	
 	if (typeof mori.createInstance!='undefined'){
 		inst=mori.createInstance('grown');
@@ -74,7 +77,7 @@ var grow=function(ev, more){
 		inst.bimData=$.extend({}, mori.bimData); //add bimData to inst by cloning it from source
 	}
 	
-	inst.position.copyFromFloats(ip.x, ip.y, ip.z);
+	inst.position.copyFromFloats(np.x, np.y, np.z);
 	//add growable functionality to instance
 	growableFA(inst).setScene(more.scene);
 	
@@ -83,7 +86,7 @@ var grow=function(ev, more){
 	//BIM.scene.activeCamera.attachControl(BIM.options.canvas);
 };
 
-var growableFA=function(mesh){ 
+var GrowableFA=function(mesh, more){ 
 	/***************
 	Feature Factory
 	Static function that returns a fresh feature action object {}, scoped to a particular mesh
@@ -91,6 +94,8 @@ var growableFA=function(mesh){
 	more - {} with additional data such as bimHandler, scene or whatever
 	growableFA creates instances of the mesh depending on were the user clicks
 	*/
+	Feature.call(this, mesh, more);
+	
 	if (typeof mesh.bimData=='undefined') {bimData={};}
 	if (typeof mesh.bimData.growEnadled=='undefined') {mesh.bimData.growEnadled=true;}
 	
@@ -98,46 +103,55 @@ var growableFA=function(mesh){
 	//feature=new Feature('growable', propPath, [true, false]); //first choice is default
 	//feature.extend({}); //merge or mixin 
 	
-	return { 
-		alias:'growable',
-		control:ChooserFC, //requires choices
-		//control:OptionsFC, //versatile
-		choices:[ 'enabled - clone', 'enabled - instance', 'disable'],
-		prop:mesh.bimData.growEnabled, //property path
-		propDefault:true, //property in boolean 
-		//propInit:function(scene, mesh){return this.setScene(scene);};
-		propToBe:null, //to be determined
-		propUpdate:function(propToBe){
-			if (propToBe){
-				//enable action
-			}
-			/*TO DO register/unregister action */
-		},
-		setScene:function(scene){
-			if (typeof mesh.bimData=='undefinded') {mesh.bimData={};}
-			mesh.bimData.growEnabled=true;
-			if (typeof mesh.actionManager=='undefined'){
-				mesh.actionManager = new BABYLON.ActionManager(scene);
-			};
-			mesh.actionManager.registerAction(
-				new BABYLON.ExecuteCodeAction(
-					BABYLON.ActionManager.OnLeftPickTrigger,
-					function(ev){ grow(ev, {scene:scene});}
-				)
-			);
-			mesh.actionManager.registerAction(
-				new BABYLON.ExecuteCodeAction(
-					BABYLON.ActionManager.OnRightPickTrigger,
-					cull
-				)
-			);
-			
-			return mesh;
-		}
+	this.alias='growable';
+	this.control=ChooserFC; //requires choices
+	this.choices=[ 'enabled - clone', 'enabled - instance', 'disable'];
+	this.prop=mesh.bimData.growEnabled; //property path
+	this.propDefault=true; //property in boolean 
+	//propInit:function(scene, mesh){return this.setScene(scene);};
+	this.propToBe=null; //to be determined
+};
+	
+//Inherit from the super class
+GrowableFA.prototype=Object.create(Feature.prototype);
+GrowableFA.prototype.constructor=GrowableFA;
+//shortcut
+var __=GrowableFA.prototype;
+	
+__.propUpdate=function(propToBe){
+	if (propToBe){
+		//enable action
+	}
+	/*TO DO register/unregister action */
+};
+	
+	
+__.setScene:function(scene, mesh){
+	//first call super, don't care what it returns
+	Feature.prototype.setScene(scene);
+	
+	if (typeof mesh.bimData=='undefinded') {mesh.bimData={};}
+	mesh.bimData.growEnabled=true;
+	if (typeof mesh.actionManager=='undefined'){
+		mesh.actionManager = new BABYLON.ActionManager(scene);
 	};
+	mesh.actionManager.registerAction(
+		new BABYLON.ExecuteCodeAction(
+			BABYLON.ActionManager.OnLeftPickTrigger,
+			function(ev){ grow(ev, {scene:scene});}
+		)
+	);
+	mesh.actionManager.registerAction(
+		new BABYLON.ExecuteCodeAction(
+			BABYLON.ActionManager.OnRightPickTrigger,
+			cull
+		)
+	);
+	
+	return mesh;
 };
 
-return growableFA;
+return GrowableFA;
 });
 
 
