@@ -341,8 +341,16 @@ BIM.options={
 //parts library 
 BIM.parts=partsLibrary;
 	
-//Libaray of models not rendered unless called/referenced from model	
-BIM.resources={Arch:{alias:'arch', url:'arch'}, Geology:{}, Elec:{}, Mech:{}, OpsMaint:{}, QSCA:{}};
+//Library of element/part libraries 	
+BIM.resources={
+	Arch:{alias:'Arch', url:'arch'},
+	Geology:{alias:'Geo', url:'geology'},
+	Elec:{alias:'Elec', url:'elec'},
+	Elements{alias:'Elements', url:'handlers'},
+	Mech:{alias:'Mech', url:'Mech'},
+	OpsMan:{alias:'O & M', url:'OpsMaint'},
+	QSCA:{alias:'QS & CA', url:'QSCA'}
+};
 	
 //Babylon scene, analog to BIM.model, initialized by engage()
 BIM.scene=null;

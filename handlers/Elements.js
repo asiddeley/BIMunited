@@ -27,18 +27,16 @@
 define(function(require, exports, module){
 
 var Voxelite=require('handlers/Voxelite');
-var mcGrowable=require('features/mcGrowable');
-var voxelite=new Voxelite();
+var McGrowable=require('features/McGrowable');
 
-// library of handlers
-// remember - one handler for every type of Bim part
+// library of element handlers
+// remember - one handler for every type of Bim element
 return {
-	voxelite:voxelite,
-	voxelite_isotope1:voxelite,
-	voxelite_isotope2:new Voxelite([
-		mcGrowable
+	voxelite:new Voxelite(),
+	voxelite_isotope_1:new Voxelite( [
+		McGrowable
 		//customFeature:new Feature('name',[])
-	])
+	] )
 };
 
 });

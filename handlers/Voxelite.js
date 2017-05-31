@@ -28,33 +28,36 @@ define( function(require, exports, module){
 
 var babylon=require('babylon');
 var $=require('jquery');
-var nameable=require('features/NameFeature');
-var positionFeature=require('features/positionFeature');
-var pickable=require('features/pickable');
-var mcGrowable=require('features/mcGrowable');
+var Nameable=require('features/NameFeature');
+var PositionFeature=require('features/positionFeature');
+var Pickable=require('features/pickable');
+var McGrowable=require('features/McGrowable');
 
 //DEP, use: var bimType=instanceOf (new Voxelite());
 //	bimType:'Voxel', 
 	
 // Constructor - Used only once below  
 // Voxelite() - returns a voxelite {obj}, the handler with Static methods
-var Voxelite=function(featureFunctions){
+var Voxelite=function(moreFeatures){
 	//Inheritance Vs Mixin - Build elements and parts by extending Handler OR NOT?
 	//PRO: all handlers begin by extending ElementHandler (alias EH) which creates addFM method
 	//CON: should be possible to assemble handlers at runtime with BIM.fun.featurize() i.e.
 	//creating handlers on the fly and adding bimability to any Babylon mesh
 	//Inheritance code - add optional featureFunctions to Voxelite handler
-	//Handler.call(this, featureFunctions);
+	//Element_handler.call(this, featureFunctions);
 	
 	this.bimType='Voxelite';
 	this.desc='A 10 unit cube, that can be placed at 10 unit coordinates.';
 	this.features=[
-		nameable, //name:nameFE(mesh)
+		Nameable, //name:nameFE(mesh)
 		//desc:new userFeature('Desc', 'A 10 unit cube, that can be placed at 10 unit coordinates.'),
 		positionFeature,
 		pickable,
-		mcGrowable
-	];
+		//McGrowable //add via moreFeatures argument
+ 	];
+	
+	if (moreFeatures instanceof Array){ this.features.append(moreFeatures); };
+	
 	//AS-IS
 	//feature is a function that consctucts a feature {} scoped to a mesh
 	//PROPOSE
@@ -63,12 +66,13 @@ var Voxelite=function(featureFunctions){
 };
 
 //inherit prototype from UI
-//Voxelite.prototype=Object.create(Handler.prototype);
-//Voxelite.prototype.constructor=Handler;
+//Voxelite.prototype=Object.create(Element_handler.prototype);
+//Voxelite.prototype.constructor=Element_handler;
 
 var __=Voxelite.prototype;	
-	
-__.setScene=function(scene){ 
+
+//static funtion so mesh first	arg ? No, mesh is optional so second arg
+__.setScene=function(scene, mesh){ 
 
 	//__.BIM.func.dependency(babylon.StandardMaterial, 'voxelTexture', scene)
 	var m=new babylon.StandardMaterial("voxelTexture", scene);
@@ -102,21 +106,24 @@ __.setScene=function(scene){
 	mesh.bimData={};
 
 	
-	nameable.prototype.setScene(mesh, scene); //nameable setScene has no effect
+	Nameable.prototype.setScene(scene, mesh); //nameable setScene has no effect
 	//peekableFC(mesh).init(this); //adds the getFeature func
 	//pickable(mesh).setScene(scene); //initialize the property
-	mcGrowable.prototype.setScene(mesh, scene); //allows voxelite to grow by adding instances off a picked face
+	McGrowable.prototype.setScene(scene, mesh); //allows voxelite to grow by adding instances off a picked face
 	
 	//return the new mesh that was added to the scene
 	return mesh;
 };
-//created by BIM.fun.featurize()
+
+/*** DEPRECATED - to be inheruted or added by peekable
 __.getFeatures=function(mesh) {
 	// Returns a fresh hash of features:
 	// {name:{feature}, position:{feature}...}
 	// A feature is a hash scoped to a particular mesh like this:
 	// {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
 	// return $.extend({},name.getFeature(mesh) );
+
+
 	return {
 		name:nameable(mesh), //name:nameFE(mesh)
 		//desc:description(),
@@ -129,8 +136,9 @@ __.getFeatures=function(mesh) {
 		//pickable:pickActionFeature(mesh), //allows mesh to be picked by featureUI
 		//peekable:peekAF(mesh), //
 	}
-}
 
+}
+**************/
 
 //var voxelite=new Voxelite();
 //one voxelite handler for all voxelite meshes
