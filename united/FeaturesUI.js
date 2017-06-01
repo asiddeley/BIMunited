@@ -27,6 +27,7 @@ define( function(require, exports, module) {
 var $=require('jquery');
 var UI=require('united/UI');
 var FC=require('features/FC');
+var Feature=require('feature/Feature');
 
 var FeaturesUI=function(board, title){
 	//inherit constructor from UI
@@ -86,18 +87,27 @@ __.matchAll=function(sourceMesh, targetMesh) {
 __.start=function(mesh){
 	if (typeof mesh=='undefined' || mesh==null){ return false; }
 	//this.reset();
-	//delete widgets so new ones can be made
+	//Dispose previously used control objs to free memory, new ones to be created
 	this.controls.forEach(function(fc){fc.remove();});
 	this.controls=[];
 	
-	var f, fc, ff=mesh.bimHandler.getFeatures(mesh);
-	for (label in ff){
-		f=ff[label];
-		if (f.control.prototype instanceof FC) {
-			fc=new f.control(this.div$, f);
-			fc.start();
-			this.controls.push(fc);
-		} else { BIM.fun.log('Feature not editable'); }
+	var F, f, fc, ff, i;
+	//WAS ff=mesh.bimHandler.getFeatures(mesh); 
+	//WAS ff = {name:{alias:'name',prop:mesh.name...}...}
+	//NOW ff=[Nameable, McGrowable...]	
+	ff=mesh.bimHandler.features;
+	for (i in ff){
+		F=ff[i];
+		try {
+		//if (F instanceof Feature){ //NOW
+			f=new F(mesh); //NOW
+			if (f.control.prototype instanceof FC) {
+				fc=new f.control(this.div$, f);
+				fc.start();
+				this.controls.push(fc);
+			} else { BIM.fun.log('Feature not editable'); }
+		//} else { BIM.fun.log('Not a feature'); }
+		} catch(er) {BIM.fun.log(er);}
 	}
 };
 	

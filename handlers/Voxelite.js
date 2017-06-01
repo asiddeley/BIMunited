@@ -115,7 +115,7 @@ __.setScene=function(scene, mesh){
 	return mesh;
 };
 
-/*** DEPRECATED - to be inheruted or added by peekable
+/*** DEPRECATED - to be inherited or added by peekable
 __.getFeatures=function(mesh) {
 	// Returns a fresh hash of features:
 	// {name:{feature}, position:{feature}...}

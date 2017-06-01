@@ -33,8 +33,9 @@ var Feature=function(mesh, options){
 	//an object's (eg. babylon mesh) property (eg. position), and looks like this...
 	//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
 	
-	this.alias='Name';
+	this.alias='name';
 	this.control=TextFC;
+	this.mesh=mesh;
 	this.prop=mesh.name;
 	this.propDefault='unnamed';
 	this.propToBe=null;
@@ -42,8 +43,7 @@ var Feature=function(mesh, options){
 };
 
 Feature.prototype.propUpdate=function(propToBe){
-	//mesh.name=propToBe;
-
+	this.mesh[this.alias]=propToBe;
 };
 
 Feature.prototype.setScene=function(scene, mesh){
