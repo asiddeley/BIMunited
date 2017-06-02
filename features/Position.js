@@ -23,13 +23,15 @@
 	
 ****************************************************************/
 
-define(
-// load dependencies...
-['babylon', 'jquery', 'features/ChooserFC'],
+// Define a Module with Simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define( function(require, exports, module) {
 
-// then construct part object...
-function(babylon, $, ChooserFC){
-/***********
+var babylon=require('babylon');
+var $=require('jquery');
+var ChooserFC=require('features/ChooserFC');
+
+/*
 Returns a name feature getter (static method) wrapped in an object. 
 A feature {} used by uiFeatures to edit and update babylon mesh properties.
 The Feature getter is wrapped in an object so many features can be easily combined for each BIM entity / mesh
@@ -39,22 +41,20 @@ Feature structure...
 	onFeatureChange:fn(ev,mesh,res){...}, 
 	editor:featureEditor}
 */
-return function(mesh){ 
+var Position=function(mesh, more){ 
 	//Static function that returns a fresh feature {}, scoped to a particular mesh.
 	//A feature is a hash used by FeaturesUI to edit and update babylon mesh properties.
 	//Eg. {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
-	
-	return { 
-		//label:'position',
-		alias:'position',
-		control:ChooserFC, //feature control - ChooserFC requires choices below...
-		desc:'Vertex rounded to the nearest 10 units',
-		prop:mesh.position,
-		propDefault:new babylon.Vector3(0,0,0),
-		propInit:function(){this.propUpdater(this.propDefault);},
-		propToBe:null,
-		propUpdate:function(propToBe){ mesh.position=propToBe; },
-		choices:[
+	Feature.call(this, mesh, more);
+
+	this.alias='position';
+	this.control=ChooserFC; //feature control - ChooserFC requires choices below...
+	this.desc='Vertex rounded to the nearest 10 units';
+	this.prop=mesh.position; //meant for display only - call this.propUpdate to change
+	this.propDefault=new babylon.Vector3(0,0,0);
+	this.propInit=function(){this.propUpdater(this.propDefault);};
+	this.propToBe=null;
+	this.choices=[
 			{label:'random', 
 			onChoose:function(ev){ 
 				return new babylon.Vector3(
@@ -71,7 +71,27 @@ return function(mesh){
 	};
 };
 
+//Inherit from the super class
+Position.prototype=Object.create(Feature.prototype);
+Position.prototype.constructor=Position;
+//shortcut
+var __=Position.prototype;
 
+//override
+__.propUpdate=function(propToBe){ 
+	//exec super function for default behaviour
+	Feature.prototype.propUpdate(propToBe);
+	//this.mesh.position=propToBe; 
+};
+
+//override
+__.setScene:function(scene, mesh){
+	Feature.prototype.setScene(scene, mesh);
+	//TO-DO...
+}
+
+
+return Position;
 });
 
 

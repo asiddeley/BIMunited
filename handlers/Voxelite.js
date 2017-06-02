@@ -29,8 +29,8 @@ define( function(require, exports, module){
 var babylon=require('babylon');
 var $=require('jquery');
 var Nameable=require('features/NameFeature');
-var PositionFeature=require('features/positionFeature');
-var Pickable=require('features/pickable');
+var Position=require('features/Position');
+var Pickable=require('features/Pickable');
 var McGrowable=require('features/McGrowable');
 
 //DEP, use: var bimType=instanceOf (new Voxelite());
@@ -38,7 +38,7 @@ var McGrowable=require('features/McGrowable');
 	
 // Constructor - Used only once below  
 // Voxelite() - returns a voxelite {obj}, the handler with Static methods
-var Voxelite=function(moreFeatures){
+var Voxelite=function(mesh, moreFeatures){
 	//Inheritance Vs Mixin - Build elements and parts by extending Handler OR NOT?
 	//PRO: all handlers begin by extending ElementHandler (alias EH) which creates addFM method
 	//CON: should be possible to assemble handlers at runtime with BIM.fun.featurize() i.e.
@@ -46,13 +46,14 @@ var Voxelite=function(moreFeatures){
 	//Inheritance code - add optional featureFunctions to Voxelite handler
 	//Element_handler.call(this, featureFunctions);
 	
+	
 	this.bimType='Voxelite';
 	this.desc='A 10 unit cube, that can be placed at 10 unit coordinates.';
 	this.features=[
 		Nameable, //name:nameFE(mesh)
 		//desc:new userFeature('Desc', 'A 10 unit cube, that can be placed at 10 unit coordinates.'),
-		positionFeature,
-		pickable,
+		Position,
+		Pickable,
 		//McGrowable //add via moreFeatures argument
  	];
 	
@@ -108,8 +109,12 @@ __.setScene=function(scene, mesh){
 	
 	Nameable.prototype.setScene(scene, mesh); //nameable setScene has no effect
 	//peekableFC(mesh).init(this); //adds the getFeature func
-	//pickable(mesh).setScene(scene); //initialize the property
-	McGrowable.prototype.setScene(scene, mesh); //allows voxelite to grow by adding instances off a picked face
+	Position.prototype.setScene(scene, mesh);
+	
+	Pickable.prototype.setScene(scene, mesh); //initialize the property
+	//Minecraft like growability by adding instances off a picked face
+	McGrowable.prototype.setScene(scene, mesh);
+
 	
 	//return the new mesh that was added to the scene
 	return mesh;

@@ -86,10 +86,9 @@ var grow=function(ev, more){
 	//BIM.scene.activeCamera.attachControl(BIM.options.canvas);
 };
 
-var GrowableFA=function(mesh, more){ 
+var McGrowable=function(mesh, more){ 
 	/***************
-	Feature Factory
-	Static function that returns a fresh feature action object {}, scoped to a particular mesh
+	Function that returns a fresh feature action object {}, scoped to a particular mesh
 	mesh - scope or context of this feature
 	more - {} with additional data such as bimHandler, scene or whatever
 	growableFA creates instances of the mesh depending on were the user clicks
@@ -106,29 +105,29 @@ var GrowableFA=function(mesh, more){
 	this.alias='growable';
 	this.control=ChooserFC; //requires choices
 	this.choices=[ 'enabled - clone', 'enabled - instance', 'disable'];
-	this.prop=mesh.bimData.growEnabled; //property path
-	this.propDefault=true; //property in boolean 
+	this.prop=mesh.bimData.growEnabled; //meant for display only
+	this.propDefault=true; //property in boolean
 	//propInit:function(scene, mesh){return this.setScene(scene);};
 	this.propToBe=null; //to be determined
 };
-	
+
 //Inherit from the super class
-GrowableFA.prototype=Object.create(Feature.prototype);
-GrowableFA.prototype.constructor=GrowableFA;
+McGrowable.prototype=Object.create(Feature.prototype);
+McGrowable.prototype.constructor=McGrowable;
 //shortcut
-var __=GrowableFA.prototype;
-	
+var __=McGrowableA.prototype;
+
 __.propUpdate=function(propToBe){
 	if (propToBe){
 		//enable action
 	}
 	/*TO DO register/unregister action */
 };
-	
-	
+
+//override
 __.setScene:function(scene, mesh){
 	//first call super, don't care what it returns
-	Feature.prototype.setScene(scene);
+	Feature.prototype.setScene(scene, mesh);
 	
 	if (typeof mesh.bimData=='undefinded') {mesh.bimData={};}
 	mesh.bimData.growEnabled=true;
@@ -151,7 +150,7 @@ __.setScene:function(scene, mesh){
 	return mesh;
 };
 
-return GrowableFA;
+return McGrowable;
 });
 
 
