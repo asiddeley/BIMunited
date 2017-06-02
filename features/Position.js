@@ -29,6 +29,7 @@ define( function(require, exports, module) {
 
 var babylon=require('babylon');
 var $=require('jquery');
+var Feature=require('features/Feature');
 var ChooserFC=require('features/ChooserFC');
 
 /*
@@ -55,21 +56,21 @@ var Position=function(mesh, more){
 	this.propInit=function(){this.propUpdater(this.propDefault);};
 	this.propToBe=null;
 	this.choices=[
-			{label:'random', 
-			onChoose:function(ev){ 
-				return new babylon.Vector3(
-					10*Math.floor(Math.random()*10), 
-					10*Math.floor(Math.random()*10), 
-					10*Math.floor(Math.random()*10)
-				); 
-			}}, 
-			{label:'origin',
-			onChoose:function(ev){ 
-				return new babylon.Vector3(0,0,0); 
-			}}
-		]	
-	};
+		{label:'random', 
+		onChoose:function(ev){ 
+			return new babylon.Vector3(
+				10*Math.floor(Math.random()*10), 
+				10*Math.floor(Math.random()*10), 
+				10*Math.floor(Math.random()*10)
+			); 
+		}}, 
+		{label:'origin',
+		onChoose:function(ev){ 
+			return new babylon.Vector3(0,0,0); 
+		}}
+	]	
 };
+
 
 //Inherit from the super class
 Position.prototype=Object.create(Feature.prototype);
@@ -85,7 +86,7 @@ __.propUpdate=function(propToBe){
 };
 
 //override
-__.setScene:function(scene, mesh){
+__.setScene=function(scene, mesh){
 	Feature.prototype.setScene(scene, mesh);
 	//TO-DO...
 }

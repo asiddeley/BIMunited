@@ -22,21 +22,34 @@
 	started:	24-Mar-2017
 	
 ****************************************************************/
-define(
+// Define a Module with Simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define( function(require, exports, module) {
 
-// load dependencies...
-['babylon', 'jquery', 'features/nameable',  'features/positionFeature' ],
+var Element=require('handlers/Element__Handler');
+var babylon=require('babylon');
+var $=require('jquery');
+//var Namable=require('features/nameable');
+//var Position=require('features/Position');
 
-// then do...
-function(babylon, $, nameFeature, positionFeature){
-
-var Triad=function(){
-	this.bimType='Triad';
+var TriAxis=function(){
+	Element.call(this);
+	
+	this.bimType='TriAxis';
 	this.desc='Three axiis of a coordinate system';
+	/*************** 
+	// triAxis is a constant with inaccessible properties so no features 
+	this.features=[ Nameable, Position];
+	*/
+	
 	return this;
 }
 
-var __=Triad.prototype;
+//Inherit from the super class
+TriAxis.prototype=Object.create(Element.prototype);
+TriAxis.prototype.constructor=TriAxis;
+//shortcut
+var __=TriAxis.prototype;
 
 __.axis=function(v1, v2, colour, scene) {
 	/*
@@ -81,19 +94,13 @@ __.cone=function(v1, v2, v3, colour, scene){
 	return tip;
 }
 
-__.getFeatures=function(mesh) {
-	// Returns a fresh hash of features:
-	// {name:{feature}, position:{feature}...}
-	// A feature is a hash scoped to a particular mesh like this:
-	// {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
-	// return $.extend({},name.getFeature(mesh) );
-	return {
-		name:nameFeature(mesh),
-		position:positionFeature(mesh)
-	};
-};
 
+
+//override
 __.setScene=function(scene){
+
+	
+
 	var red=new babylon.Color3(1, 0, 0);
 	var green=new babylon.Color3(0, 1, 0);
 	var blue=new babylon.Color3(0, 0, 1);	
@@ -111,16 +118,14 @@ __.setScene=function(scene){
 	var zztop=this.cone( vy, vz, vx, blue, scene);
 	
 	//add bim handler to babylon mesh object
-	xx.bimFC=triad;
+	//assuming xx is the head mesh 
+	xx.bimHandler=this;
 		
 	//return the new mesh that was added to the scene
 	return xx;
 };
 
+return TriAxis;
 
-
-var triad=new Triad();
-// return one static handler or function collection (FC) for this bimType
-return triad;
 }); //end of define
 

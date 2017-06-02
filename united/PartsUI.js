@@ -29,7 +29,7 @@ var $$=require('jquery-ui');
 var babylon=require('babylon');
 var UI=require('united/UI');
 var FeaturesUI=require('united/FeaturesUI');
-var triad=require('handlers/TriAxis');
+var TriAxis=require('handlers/TriAxis');
 var FC=require('features/FC');
 var ChooserFC=require('features/ChooserFC');
 //var voxelite=require('handlers/Voxelite'); //default
@@ -260,6 +260,9 @@ __.onTabsactivate=function(ev, ui){
 };
 	
 __.setScene=function(scene, canvas){
+
+	//meant to be run the first time onTabsactivate to initiate the sample scene
+
 	this.light = new BABYLON.PointLight("light", new BABYLON.Vector3(0, 0, 0), scene);
 	//var light = new babylon.HemisphericLight('hemiTop',new babylon.Vector3(20,20,20),scene);
 	this.cam = new babylon.ArcRotateCamera(
@@ -273,8 +276,8 @@ __.setScene=function(scene, canvas){
     this.cam.attachControl(canvas, false);
 	//this.sample=babylon.Mesh.CreateBox('sample', 5, scene);
 	
-	this.triad=triad.setScene(scene);
-	
+	this.triAxis=new TriAxis();
+	this.triAxis.setScene(scene);
 
 	//this.sample.position=new babylon.Vector3(5,5,5);
 };

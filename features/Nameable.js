@@ -27,7 +27,7 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module) {
 
-var Feature=require('features/Features');
+var Feature=require('features/Feature');
 var TextFC=require('features/textFC');
 
 var Nameable=function(mesh, options){ 
@@ -51,7 +51,7 @@ __.propUpdate=function(propToBe){
 	mesh.name=propToBe;
 };
 
-__.setScene:function(scene){
+__.setScene=function(scene){
 	Feature.prototype.setScene(scene);
 	//scene contributer not applicable
 };

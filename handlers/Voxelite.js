@@ -28,48 +28,34 @@ define( function(require, exports, module){
 
 var babylon=require('babylon');
 var $=require('jquery');
-var Nameable=require('features/NameFeature');
+var Element=require('handlers/Element__Handler');
+var Nameable=require('features/Nameable');
 var Position=require('features/Position');
 var Pickable=require('features/Pickable');
 var McGrowable=require('features/McGrowable');
 
-//DEP, use: var bimType=instanceOf (new Voxelite());
-//	bimType:'Voxel', 
-	
-// Constructor - Used only once below  
-// Voxelite() - returns a voxelite {obj}, the handler with Static methods
 var Voxelite=function(mesh, moreFeatures){
-	//Inheritance Vs Mixin - Build elements and parts by extending Handler OR NOT?
-	//PRO: all handlers begin by extending ElementHandler (alias EH) which creates addFM method
-	//CON: should be possible to assemble handlers at runtime with BIM.fun.featurize() i.e.
-	//creating handlers on the fly and adding bimability to any Babylon mesh
-	//Inheritance code - add optional featureFunctions to Voxelite handler
-	//Element_handler.call(this, featureFunctions);
-	
+	Element.call(this, mesh);
 	
 	this.bimType='Voxelite';
 	this.desc='A 10 unit cube, that can be placed at 10 unit coordinates.';
-	this.features=[
+	//Note that the following method is inherited from Element...
+	this.addFeatures([
 		Nameable, //name:nameFE(mesh)
 		//desc:new userFeature('Desc', 'A 10 unit cube, that can be placed at 10 unit coordinates.'),
 		Position,
 		Pickable,
 		//McGrowable //add via moreFeatures argument
- 	];
+ 	]);
 	
 	if (moreFeatures instanceof Array){ this.features.append(moreFeatures); };
-	
-	//AS-IS
-	//feature is a function that consctucts a feature {} scoped to a mesh
-	//PROPOSE
-	//feature is a static {} with 2 significant functions engage(mesh)
-	//Feature is a Constructor, 
+
 };
 
-//inherit prototype from UI
-//Voxelite.prototype=Object.create(Element_handler.prototype);
-//Voxelite.prototype.constructor=Element_handler;
-
+//inherit prototype from super
+Voxelite.prototype=Object.create(Element.prototype);
+Voxelite.prototype.constructor=Element;
+//shortcut
 var __=Voxelite.prototype;	
 
 //static funtion so mesh first	arg ? No, mesh is optional so second arg

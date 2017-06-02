@@ -346,7 +346,7 @@ BIM.resources={
 	Arch:{alias:'Arch', url:'arch'},
 	Geology:{alias:'Geo', url:'geology'},
 	Elec:{alias:'Elec', url:'elec'},
-	Elements{alias:'Elements', url:'handlers'},
+	Elements:{alias:'Elements', url:'handlers'},
 	Mech:{alias:'Mech', url:'Mech'},
 	OpsMan:{alias:'O & M', url:'OpsMaint'},
 	QSCA:{alias:'QS & CA', url:'QSCA'}

@@ -26,6 +26,8 @@
 // Define a Module with Simplified CommonJS Wrapper...
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module) {
+
+var TextFC=require('features/TextFC');
 	
 var Feature=function(mesh, options){
 	//Static function that returns a fresh name feature {}, scoped to a particular object ie. mesh

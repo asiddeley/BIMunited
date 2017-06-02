@@ -27,7 +27,7 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module) {
 
-var Feature=require('features/Features');
+var Feature=require('features/Feature');
 var ChooserFC=require('features/ChooserFC');
 
 var trigger=BABYLON.ActionManager.OnPickTrigger;
@@ -79,7 +79,7 @@ var grow=function(ev, more){
 	
 	inst.position.copyFromFloats(np.x, np.y, np.z);
 	//add growable functionality to instance
-	growableFA(inst).setScene(more.scene);
+	McGrowable(inst).setScene(more.scene);
 	
 	//trigger grow event for any interested UIs
 	//BIM.fun.trigger('grown', inst);
@@ -95,8 +95,8 @@ var McGrowable=function(mesh, more){
 	*/
 	Feature.call(this, mesh, more);
 	
-	if (typeof mesh.bimData=='undefined') {bimData={};}
-	if (typeof mesh.bimData.growEnadled=='undefined') {mesh.bimData.growEnadled=true;}
+	if (typeof mesh.bimData=='undefined') {mesh.bimData={};}
+	if (typeof mesh.bimData.growEnabled=='undefined') {mesh.bimData.growEnabled=true;}
 	
 	//should
 	//feature=new Feature('growable', propPath, [true, false]); //first choice is default
@@ -115,7 +115,7 @@ var McGrowable=function(mesh, more){
 McGrowable.prototype=Object.create(Feature.prototype);
 McGrowable.prototype.constructor=McGrowable;
 //shortcut
-var __=McGrowableA.prototype;
+var __=McGrowable.prototype;
 
 __.propUpdate=function(propToBe){
 	if (propToBe){
@@ -125,7 +125,7 @@ __.propUpdate=function(propToBe){
 };
 
 //override
-__.setScene:function(scene, mesh){
+__.setScene=function(scene, mesh){
 	//first call super, don't care what it returns
 	Feature.prototype.setScene(scene, mesh);
 	

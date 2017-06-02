@@ -27,7 +27,7 @@ define( function(require, exports, module) {
 var $=require('jquery');
 var UI=require('united/UI');
 var FC=require('features/FC');
-var Feature=require('feature/Feature');
+var Feature=require('features/Feature');
 
 var FeaturesUI=function(board, title){
 	//inherit constructor from UI
@@ -77,10 +77,12 @@ __.onInput=function(ev, input){
 //utility
 __.matchAll=function(sourceMesh, targetMesh) {
 	if (sourceMesh.bimHandler.bimType == targetMesh.bimHandler.bimType){
-		var tfc=targetMesh.bimHandler.getFeatures(targetMesh);
-		var sfc=sourceMesh.bimHandler.getFeatures(sourceMesh);
+		var tfc=targetMesh.bimHandler.getfeatures(targetMesh);
+		var sfc=sourceMesh.bimHandler.getfeatures(sourceMesh);
 		//go thru each source feature and apply the target property updater with the source prop as argument
-		for (var i in sfc) { tfc[i].propUpdate(sfc[i].prop);	}
+		for (var i in sfc) {
+			tfc[i].propUpdate(sfc[i].prop);
+		}
 	} else {BIM.func.log('warning, cannot match features of different bimTypes');}
 }
 
@@ -91,22 +93,19 @@ __.start=function(mesh){
 	this.controls.forEach(function(fc){fc.remove();});
 	this.controls=[];
 	
-	var F, f, fc, ff, i;
-	//WAS ff=mesh.bimHandler.getFeatures(mesh); 
-	//WAS ff = {name:{alias:'name',prop:mesh.name...}...}
+	var f, fc, features, i;
+	features=mesh.bimHandler.getfeatures(mesh); 
+	//ff = {name:{alias:'name',prop:mesh.name...}...}
 	//NOW ff=[Nameable, McGrowable...]	
-	ff=mesh.bimHandler.features;
-	for (i in ff){
-		F=ff[i];
+	//ff=mesh.bimHandler.features;
+	for (i in features){
+		f=features[i];
+		//if (f.control.prototype instanceof FC) {
 		try {
-		//if (F instanceof Feature){ //NOW
-			f=new F(mesh); //NOW
-			if (f.control.prototype instanceof FC) {
-				fc=new f.control(this.div$, f);
-				fc.start();
-				this.controls.push(fc);
-			} else { BIM.fun.log('Feature not editable'); }
-		//} else { BIM.fun.log('Not a feature'); }
+			fc=new f.control(this.div$, f);
+			fc.start();
+			this.controls.push(fc);
+		//} else { BIM.fun.log('Feature not editable'); }
 		} catch(er) {BIM.fun.log(er);}
 	}
 };

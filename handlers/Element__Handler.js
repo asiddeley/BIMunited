@@ -26,58 +26,53 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module){
 
-var $=require('jquery');
-var babylon=require('babylon');
-var nameFeature=require('features/nameFeature');
-var positionFeature=require('features/positionFeature');
+//var $=require('jquery');
+//var babylon=require('babylon');
+//var Nameable=require('features/Nameable');
+//var Position=require('features/Position');
 
 //DEP, use: var bimType=instanceOf (new Voxelite());
 //	bimType:'Voxel', 
 
 // Constructor - Used only once below  to create a static part handler or function Collection
 // Voxelite() => voxelite {obj}, the handler with Static methods
-var __PartHandler=function(){
+var Element__Handler=function(){
 
 	this.bimType='Voxelite';
 	this.desc='A unit cube, that can be placed at integer coordinates.';
+	this.Features=[];
 
 };
-var __=__PartHandler.prototype;	
-	
-__.setScene=function(scene){  
+var __=Element__Handler.prototype;	
+
+//Static and Method function - mesh is optional
+__.setScene=function(scene, mesh){  
 
 	//return babylon mesh
-};		
-	
-	var v=BABYLON.MeshBuilder.CreateBox('voxelite', options, scene);
-	//v.position=new babylon.Vector3(
-	//	10*Math.floor(Math.random()*10), 
-	//	10*Math.floor(Math.random()*10), 
-	//	10*Math.floor(Math.random()*10)); 
-	v.material=m;	
-		
-	//add bim handler to babylon mesh object
-	v.bimHandler=voxelite;
-		
-	//return the new mesh that was added to the scene
-	return v;
-	};
+};
 
-	
-
-	this.getFeatures=function(mesh) {
-		// Returns a fresh hash of features:
-		// {name:{feature}, position:{feature}...}
-		// A feature is a hash scoped to a particular mesh like this:
-		// {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
-		// return $.extend({},name.getFeature(mesh) );
-		return {
-			name:nameFeature(mesh),
-			position:positionFeature(mesh)
-		}
-
+__.addFeatures=function(Features){
+	//adds a feature constructor function to this Element__Handler
+	if (Features instanceof Array) {
+		for (var i in Features){ this.Features.push(Features[i]); }
 	}
+};	
+
+__.getfeatures=function(mesh) {
+	// Returns a fresh hash of features:
+	// {name:{feature}, position:{feature}...}
+	// A feature is a hash scoped to a particular mesh like this:
+	// {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
+	// return $.extend({},name.getFeature(mesh) );
+	
+	//Hope there's no confusion on Features, features & feature.
+	var features={}, feature, i;
+	for (i in this.Features){
+		feature=new this.Features[i](mesh);
+		features[feature.alias]=feature;
+	}
+	return features;
 }
 
-return __PartHandler;
+return Element__Handler;
 });

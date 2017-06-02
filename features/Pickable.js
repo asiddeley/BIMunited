@@ -27,10 +27,11 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module) {
 
+var Feature=require('features/Feature');
 var ChooserFC=require('features/ChooserFC');
 
 
-var PickableFA=function(mesh, more){ 
+var Pickable=function(mesh, more){ 
 	//Constructor of pickable Features
 	//mesh - mesh or any object to act as the container of the features
 	//more - options to be merged into this features
@@ -96,7 +97,7 @@ __.setScene.prototype=function(scene, mesh){
 	return mesh;
 };
 
-return PickableFA;
+return Pickable;
 });
 
 
