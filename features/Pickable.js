@@ -65,7 +65,7 @@ var __=Pickable.prototype;
 
 //override
 __.propUpdate.prototype=function(propToBe){
-	//first call super, don't care what it returns
+	//call prototype, or super method in OOP. Don't care what it returns
 	Feature.prototype.propUpdate(propToBe);
 
 	Feature.propUpdate(propToBe);
@@ -78,8 +78,8 @@ __.propUpdate.prototype=function(propToBe){
 //override
 __.setScene.prototype=function(scene, mesh){
 
-	//first call super, don't care what it returns
-	Feature.prototype.setScene(scene);
+	//call prototype, or super method in OOP. Don't care what it returns
+	Feature.prototype.setScene(scene, mesh);
 
 	mesh.bimData.pickenabled=true;
 

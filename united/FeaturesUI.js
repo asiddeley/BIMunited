@@ -95,9 +95,7 @@ __.start=function(mesh){
 	
 	var f, fc, features, i;
 	features=mesh.bimHandler.getfeatures(mesh); 
-	//ff = {name:{alias:'name',prop:mesh.name...}...}
-	//NOW ff=[Nameable, McGrowable...]	
-	//ff=mesh.bimHandler.features;
+
 	for (i in features){
 		f=features[i];
 		//if (f.control.prototype instanceof FC) {

@@ -31,14 +31,12 @@ var McGrowable=require('features/McGrowable');
 
 // library of element handlers
 // remember - one handler for every type of Bim element
+console.log('Building element library');
 return {
 	voxelite:new Voxelite(),
-	voxelite_isotope_1:new Voxelite( [
-		McGrowable
-		//customFeature:new Feature('name',[])
-	] )
+	voxelite_isotope_1:new Voxelite( [McGrowable] )
 };
 
-});
+}); //end of define
 
 

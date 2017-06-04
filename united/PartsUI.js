@@ -35,22 +35,21 @@ var ChooserFC=require('features/ChooserFC');
 //var voxelite=require('handlers/Voxelite'); //default
 
 var PartsUI=function(board, title){
-	// Inherit from UI, call super constructor
+	// Inherit from UI
 	UI.call(this, board, title); 
 
 	var that=this;
 	this.alias='Part';
-
-	//this.sample=null; //babylon mesh set onChoosePart
-
 	this.scene=null;
 	this.fui=new FeaturesUI(null, 'Features of New Part');
 
 	//CSS tip - container height must be explicitly set for content height to work
-	this.canvas$=$('<canvas></canvas>').css({'width':'49%', 'height':'100%', 'float':'right'});
+	this.canvas$=$('<canvas></canvas>').css(
+		{'max-width':'49%', 'height':'100%', 'float':'right'}
+		//{'width':'100px', 'height':'75px', 'float':'right'}
+	);
 	
 	this.ok$=$('<button>ADD (to Model)</button>').on('click', this, function(ev){
-		//BIM.fun.log('Make');
 		//BIM.scene.addMesh(ev.data.sample); //no effect, needs work
 		//What about material and other dependencies?
 		var newpart=ev.data.bimHandler.setScene(BIM.scene);
@@ -72,14 +71,12 @@ var PartsUI=function(board, title){
 	this.card$.append(this.column$, this.canvas$);
 	this.div$.append(this.card$, this.fui.div$);
 
-	//this.bimHandler=BIM.parts.voxelite; //AKA part set onChoosePart???
-	//this.part='voxelite'; //String.Clone(this.bimHandler.bimType); //just want to read bimHandler.bimType and not change it as partFC (below) will do.
 	this.partChoices=Object.keys(BIM.parts); 
 	this.partName=this.partChoices[0]; //1st item in list is default part
 	this.partHandler=BIM.parts[this.partName];
 	this.partDesc=this.partHandler.desc;
 	this.resource=null; //{label:arch, url:''...}
-	this.resourceChoices=Object.keys(BIM.resources); 	
+	this.resourceChoices=Object.keys(BIM.resources);
 	this.resourceName=this.resourceChoices[0];
 	
 	////////////////////////////////////////////////////

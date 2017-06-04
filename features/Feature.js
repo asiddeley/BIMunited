@@ -41,6 +41,7 @@ var Feature=function(mesh, options){
 	this.prop=mesh.name; //meant for display only
 	this.propDefault='unnamed'; //meant to be overriden
 	this.propToBe=null; //meant to be overriden
+	if (typeof mesh.bimData=='undefined') {mesh.bimData={};}
 
 };
 

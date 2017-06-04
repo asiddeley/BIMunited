@@ -43,7 +43,7 @@ var TabbedUI=function(board, title){
 		draggable:true,
 		title:this.alias,
 		autoOpen:true, 
-		width:400,
+		width:500,
 		position:{ my: "right bottom", at: "center", of: window }
 	});
 

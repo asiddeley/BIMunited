@@ -79,7 +79,7 @@ var grow=function(ev, more){
 	
 	inst.position.copyFromFloats(np.x, np.y, np.z);
 	//add growable functionality to instance
-	McGrowable(inst).setScene(more.scene);
+	McGrowable.prototype.setScene(more.scene, inst);
 	
 	//trigger grow event for any interested UIs
 	//BIM.fun.trigger('grown', inst);
@@ -92,10 +92,9 @@ var McGrowable=function(mesh, more){
 	mesh - scope or context of this feature
 	more - {} with additional data such as bimHandler, scene or whatever
 	growableFA creates instances of the mesh depending on were the user clicks
-	*/
+	****************/
 	Feature.call(this, mesh, more);
 	
-	if (typeof mesh.bimData=='undefined') {mesh.bimData={};}
 	if (typeof mesh.bimData.growEnabled=='undefined') {mesh.bimData.growEnabled=true;}
 	
 	//should
@@ -105,18 +104,18 @@ var McGrowable=function(mesh, more){
 	this.alias='growable';
 	this.control=ChooserFC; //requires choices
 	this.choices=[ 'enabled - clone', 'enabled - instance', 'disable'];
-	this.prop=mesh.bimData.growEnabled; //meant for display only
+	this.prop=mesh.bimData.growEnabled; //prop - meant for display only
 	this.propDefault=true; //property in boolean
-	//propInit:function(scene, mesh){return this.setScene(scene);};
 	this.propToBe=null; //to be determined
 };
 
-//Inherit from the super class
+//Inherit from prototype of the super class in OOP
 McGrowable.prototype=Object.create(Feature.prototype);
 McGrowable.prototype.constructor=McGrowable;
 //shortcut
 var __=McGrowable.prototype;
 
+//override
 __.propUpdate=function(propToBe){
 	if (propToBe){
 		//enable action
@@ -126,7 +125,7 @@ __.propUpdate=function(propToBe){
 
 //override
 __.setScene=function(scene, mesh){
-	//first call super, don't care what it returns
+	//first call prototype (or super in OOP), don't care what it returns
 	Feature.prototype.setScene(scene, mesh);
 	
 	if (typeof mesh.bimData=='undefinded') {mesh.bimData={};}
@@ -134,12 +133,14 @@ __.setScene=function(scene, mesh){
 	if (typeof mesh.actionManager=='undefined'){
 		mesh.actionManager = new BABYLON.ActionManager(scene);
 	};
+	
 	mesh.actionManager.registerAction(
 		new BABYLON.ExecuteCodeAction(
 			BABYLON.ActionManager.OnLeftPickTrigger,
 			function(ev){ grow(ev, {scene:scene});}
 		)
 	);
+	
 	mesh.actionManager.registerAction(
 		new BABYLON.ExecuteCodeAction(
 			BABYLON.ActionManager.OnRightPickTrigger,

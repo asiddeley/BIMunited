@@ -34,21 +34,18 @@ var Position=require('features/Position');
 var Pickable=require('features/Pickable');
 var McGrowable=require('features/McGrowable');
 
-var Voxelite=function(mesh, moreFeatures){
-	Element.call(this, mesh);
+var Voxelite=function(topFeatures){
+	Element.call(this, topFeatures);
 	
-	this.bimType='Voxelite';
-	this.desc='A 10 unit cube, that can be placed at 10 unit coordinates.';
+	this.bimType='Voxelite'; //DEP?? - use instanceof or prototype.constructor
+	this.desc='A volumetric pixel or 10 unit cube that can be placed at 10 unit coordinates.';
 	//Note that the following method is inherited from Element...
-	this.addFeatures([
-		Nameable, //name:nameFE(mesh)
-		//desc:new userFeature('Desc', 'A 10 unit cube, that can be placed at 10 unit coordinates.'),
+	this.addFeatures(
+		Nameable, 
+		//userFeature('Desc', 'A 10 unit cube, that can be placed at 10 unit coordinates.'),
 		Position,
 		Pickable,
-		//McGrowable //add via moreFeatures argument
- 	]);
-	
-	if (moreFeatures instanceof Array){ this.features.append(moreFeatures); };
+ 	);
 
 };
 
@@ -58,9 +55,19 @@ Voxelite.prototype.constructor=Element;
 //shortcut
 var __=Voxelite.prototype;	
 
-//static funtion so mesh first	arg ? No, mesh is optional so second arg
-__.setScene=function(scene, mesh){ 
+//override
+__.getfeatures=function(mesh){
+	return Element.prototype.getfeatures.call(this, mesh);
+};
 
+//static funtion so mesh first	arg ? No, mesh is optional so second arg
+//override Element.setScene
+__.setScene=function(scene, mesh){ 
+	//why is mesh provided as an argument if it is meant to be created here?
+	//Important convention - if calling prototype method then always do it first
+	//except that it needs to be called at the end here after mesh is created
+	//Element.prototype.setScene(scene, mesh); //...is at end of function.
+	
 	//__.BIM.func.dependency(babylon.StandardMaterial, 'voxelTexture', scene)
 	var m=new babylon.StandardMaterial("voxelTexture", scene);
 	m.diffuseTexture = new babylon.Texture("textures/voxelTextures.png", scene);
@@ -86,57 +93,9 @@ __.setScene=function(scene, mesh){
 	
 	var mesh=BABYLON.MeshBuilder.CreateBox('voxelite', options, scene);
 	mesh.material=m;	
-
-	//add bim handler to babylon mesh object	
-	//TO-DO move 2 lines of code below to super class Element and add this line here: Element.prototype.setScene.call(this, scene);
-	mesh.bimHandler=this;
-	mesh.bimData={};
-
-	
-	Nameable.prototype.setScene(scene, mesh); //nameable setScene has no effect
-	//peekableFC(mesh).init(this); //adds the getFeature func
-	Position.prototype.setScene(scene, mesh);
-	
-	Pickable.prototype.setScene(scene, mesh); //initialize the property
-	//Minecraft like growability by adding instances off a picked face
-	McGrowable.prototype.setScene(scene, mesh);
-
-	
-	//return the new mesh that was added to the scene
+	Element.prototype.setScene.call(this, scene, mesh);
 	return mesh;
 };
 
-/*** DEPRECATED - to be inherited or added by peekable
-__.getFeatures=function(mesh) {
-	// Returns a fresh hash of features:
-	// {name:{feature}, position:{feature}...}
-	// A feature is a hash scoped to a particular mesh like this:
-	// {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditer}
-	// return $.extend({},name.getFeature(mesh) );
-
-
-	return {
-		name:nameable(mesh), //name:nameFE(mesh)
-		//desc:description(),
-		position:positionFeature(mesh),
-		pickable:pickable(mesh),
-		growable:mcGrowable(mesh)
-		
-		//pokeLeft:variousFeatureActions(mesh),
-		//pokeRight:customFeatureActions(mesh),
-		//pickable:pickActionFeature(mesh), //allows mesh to be picked by featureUI
-		//peekable:peekAF(mesh), //
-	}
-
-}
-**************/
-
-//var voxelite=new Voxelite();
-//one voxelite handler for all voxelite meshes
-//return voxelite;
-
-//usage: 
-//voxeliteHandler=new Voxelite(); 
-//voxeliteHandler.setScene(scene); //to add a new bimType to the scene
 return Voxelite;
 });

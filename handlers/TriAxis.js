@@ -99,7 +99,7 @@ __.cone=function(v1, v2, v3, colour, scene){
 //override
 __.setScene=function(scene){
 
-	
+	//Element.prototype.setScene(scene);
 
 	var red=new babylon.Color3(1, 0, 0);
 	var green=new babylon.Color3(0, 1, 0);

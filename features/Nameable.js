@@ -41,18 +41,23 @@ var Nameable=function(mesh, options){
 	this.propToBe=null;
 }
 
-//Inherit from the super class
+//Inherit from prototype, or super class in OOP
 Nameable.prototype=Object.create(Feature.prototype);
 Nameable.prototype.constructor=Nameable;
 //shortcut
 var __=Nameable.prototype;
 
+//override
 __.propUpdate=function(propToBe){
-	mesh.name=propToBe;
+	//call prototype, or super method in OOP 
+	Feature.prototype.propUpdate.call(this, propToBe);
+	//mesh.name=propToBe;
 };
 
+//override
 __.setScene=function(scene){
-	Feature.prototype.setScene(scene);
+	//call prototype, same as super method in OOP 
+	Feature.prototype.setScene.call(this,scene);
 	//scene contributer not applicable
 };
 

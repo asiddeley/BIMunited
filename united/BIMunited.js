@@ -62,7 +62,8 @@ var FeaturesUI=require('united/FeaturesUI');
 var Light=require('lights/hemi');
 var arcRotateCamera=require('cameras/arcRotateCamera');
 var TMC=require('textures/TMCstdLib');
-var partsLibrary=require('parts/partsLibrary');
+//var partsLibrary=require('parts/partsLibrary');
+var partsLibrary=require('handlers/element__handlers');
 var BIM={};
 
 // The a, b, c, d & e main API methods...
@@ -208,13 +209,9 @@ BIM.func={
 	//this.trigger('bimMsg', message);
 	log:function() {for (var a in arguments) BIM.ui.blackboard.log(arguments[a].toString());},
 	
+
 	matchAll:function(sourceMesh, targetMesh) {
-		var tfc=targetMesh.bimHandler.getFeatures(targetMesh);
-		var sfc=sourceMesh.bimHandler.getFeatures(sourceMesh);
-		for (var key in sfc) { 
-			if (typeof sfc[key] !='undefined'){tfc[i].propUpdate(sfc[i].prop);}
-			else {BIM.func.log('Match target missing feature:',key);}
-		}
+		FeaturesUI.prototype.matchAll(sourceMesh, targetMesh);
 	},
 	
 	on:function(eventHandlers){
