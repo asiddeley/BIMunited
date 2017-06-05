@@ -55,9 +55,9 @@ __.propUpdate=function(propToBe){
 };
 
 //override
-__.setScene=function(scene){
+__.setScene=function(scene, mesh){
 	//call prototype, same as super method in OOP 
-	Feature.prototype.setScene.call(this,scene);
+	Feature.prototype.setScene.call(this, scene, mesh);
 	//scene contributer not applicable
 };
 

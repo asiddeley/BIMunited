@@ -46,7 +46,7 @@ var PartsUI=function(board, title){
 	//CSS tip - container height must be explicitly set for content height to work
 	this.canvas$=$('<canvas></canvas>').css(
 		{'max-width':'49%', 'height':'100%', 'float':'right'}
-		//{'width':'100px', 'height':'75px', 'float':'right'}
+		//{'width':'150px', 'height':'100px', 'float':'right'}
 	);
 	
 	this.ok$=$('<button>ADD (to Model)</button>').on('click', this, function(ev){
@@ -87,7 +87,8 @@ var PartsUI=function(board, title){
 		control:FC,
 		prop:this.partDesc, 
 		propToBe:null,
-		propUpdate:function(ev, propToBe){ /*Read-only so don't return anything*/}
+		propUpdate:function(propToBe){ /*Read-only so don't do or return anything*/},
+		setScene:function(scene, mesh){}
 	});
 	this.partDescFC.start();	
 	
@@ -96,7 +97,7 @@ var PartsUI=function(board, title){
 		alias:'part ',
 		choices:that.partChoices,
 		clan:'bimFC1',
-		control:ChooserFC,
+		//control:ChooserFC,
 		prop:that.partName,
 		//prop.this.bimHandler,
 		propToBe:'TBD from Choices',
@@ -148,24 +149,6 @@ __.getEvents=function(){
 	];
 };
 
-/* DEPRICATED but keep as good example of jquery <select> widget callback
-__.onChoosePart=function(ev, ui, that){
-	//that - partUI
-	//this - <select></select> 
-	//ev - event
-	//ui - selected item or one of <option></option> tags, see jauery-ui docs
-	//ui.item - {element:{value:'somestring', label:'somestring', }}
-
-	//BIM.fun.log(JSON.stringify(ui.item));
-	//BIM.fun.log('To make:'+ui.item.label);
-	if (that.sample !=null) {that.sample.dispose();} //remake sample
-	that.bimHandler=that.partsLib[ui.item.label];
-	that.sample=that.bimHandler.setScene(that.scene);	
-	that.desc$.text(that.sample.bimHandler.desc);	
-	//connect and show features of sample
-	that.fui.start(that.sample);
-};
-*/
 __.onChooseResource=function(ev, ui, that){
 	//TO DO
 };
@@ -278,31 +261,6 @@ __.setScene=function(scene, canvas){
 
 	//this.sample.position=new babylon.Vector3(5,5,5);
 };
-
-__.wigetize=function(that){
-	that.cg$.controlgroup({		
-		'items':{
-		"button":"button, input[type=text], input[type=submit]",
-		"controlgroupLabel": ".ui-controlgroup-label",
-		"checkboxradio": "input[type='checkbox'], input[type='radio']",
-		"selectmenu": "select",
-		"menu":".dropdown-items",
-		"spinner": ".ui-spinner-input"},
-		'direction':'vertical',
-		//not effective, see last line instead
-		//'select':function(ev, ui) { that.onChoosePart(ev, ui, that);}
-	});
-	that.part$.selectmenu({'select':function(ev, ui) {
-		//BIM.fun.log('part selected');
-		that.onChoosePart(ev, ui, that);
-	}});
-	that.resource$.selectmenu({'select':function(ev, ui) {
-		that.onChooseResource(ev, ui, that);
-	}});
-
-}
-
-
 	
 return PartsUI;
 

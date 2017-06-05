@@ -42,6 +42,8 @@ var __=Element__Handler.prototype;
 
 __.setScene=function(scene, mesh){
 	//mesh - babylon mesh, optional
+	
+	if (typeof mesh == 'undefined'){mesh={};}
 	mesh.bimHandler=this; //should be named .bimhandler or .bimelement__handler
 	mesh.bimData={};
 	for (var i in this.Features){

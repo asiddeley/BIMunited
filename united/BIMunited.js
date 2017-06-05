@@ -59,11 +59,11 @@ var PickerUI=require('united/PickerUI');
 var PeekerUI=require('united/PeekerUI');
 var PokerUI=require('united/PokerUI');
 var FeaturesUI=require('united/FeaturesUI');
-var Light=require('lights/hemi');
+//var Lights=require('lights/lights');
 var arcRotateCamera=require('cameras/arcRotateCamera');
 var TMC=require('textures/TMCstdLib');
 //var partsLibrary=require('parts/partsLibrary');
-var partsLibrary=require('handlers/element__handlers');
+var partsLibrary=require('handlers/handlers__elements');
 var BIM={};
 
 // The a, b, c, d & e main API methods...
@@ -112,7 +112,7 @@ BIM.engage=function(){
 	var s=this.scene;
 	
 	// set light in scene
-	this.light.handler.setScene(this.light);
+	this.lights.main.setScene(this.scene);
 	
 	// visit all parts to set the babylon scene		
 	//this.model.handler.setScene(this.model);
@@ -182,33 +182,8 @@ BIM.func={
 	
 	dump:function(txt){	BIM.ui.blackboard.divDump$.show().text(txt);},
 	
-	//DEPRECATED   turn mesh into a bim
-	featurize:function(handler, scene, mesh, features){
-		//that - either a Handler
-		if (mesh!=null){
-			mesh.bimHandler=handler;
-			if (typeof mesh.bimData=='undefined') {mesh.bimData={};}
-			//if (typeof mesh.bimData.fms=='undefined') {mesh.bimData.fms=[];}
-			handler.features.concat(features);
-			handler.getFeatures=function(mesh){
-				var i, fm, features={};
-				for (i in mesh.bimData.fms){
-					fm=mesh.bimData.fms[i];
-					f=fm(mesh);
-					features[f.alias]=f;
-				}
-				return features;
-			};
-		}
-		for (var i in featureMakers){
-			try{features[i](mesh).setScene(scene);}
-			catch(er){BIM.fun.log(er.toString());}
-		}
-	},
-	
 	//this.trigger('bimMsg', message);
 	log:function() {for (var a in arguments) BIM.ui.blackboard.log(arguments[a].toString());},
-	
 
 	matchAll:function(sourceMesh, targetMesh) {
 		FeaturesUI.prototype.matchAll(sourceMesh, targetMesh);
@@ -239,7 +214,7 @@ BIM.func={
 		return (Math.floor(Math.random()*s)); 
 	},
 	
-	randomPosition:function(s) {
+	randomV3:function(s) {
 		s=(typeof s=='undefined')?100:s; //default is 100
 		return (new babylon.Vector3(Math.random()*s,  Math.random()*s, Math.random()*s)); 
 	},
@@ -308,7 +283,7 @@ BIM.get={
 		//BIM.get.val('msg','hello world'); 
 		//usage - retrieve 'msg'
 		//BIM.get.val('msg');
-		alert(key.toString());
+		console.log(key.toString() + '='+ valu.toString());
 	},
 	valstore:{}
 };
@@ -324,7 +299,7 @@ BIM.input=function(input){return this.fun.trigger('bimInput', input);}
 BIM.keywords={};
 	
 // main light
-BIM.light=Light.demo(1);
+BIM.lights=require('lights/lights');
 	
 // Extended by user in API functions above
 BIM.options={

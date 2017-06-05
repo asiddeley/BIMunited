@@ -76,14 +76,13 @@ __.onInput=function(ev, input){
 
 //utility
 __.matchAll=function(sourceMesh, targetMesh) {
-	if (sourceMesh.bimHandler.bimType == targetMesh.bimHandler.bimType){
-		var tfc=targetMesh.bimHandler.getfeatures(targetMesh);
-		var sfc=sourceMesh.bimHandler.getfeatures(sourceMesh);
-		//go thru each source feature and apply the target property updater with the source prop as argument
-		for (var i in sfc) {
-			tfc[i].propUpdate(sfc[i].prop);
-		}
-	} else {BIM.func.log('warning, cannot match features of different bimTypes');}
+	var tfc=targetMesh.bimHandler.getfeatures(targetMesh);
+	var sfc=sourceMesh.bimHandler.getfeatures(sourceMesh);
+	//go thru each source feature and apply the target property updater with the source prop as argument
+	for (var key in sfc) {
+		//only match feature if there is a matching key in target 
+		if (tfc[key] != 'undefined'){tfc[key].propUpdate(sfc[key].prop);} 
+	}
 }
 
 __.start=function(mesh){
@@ -104,7 +103,7 @@ __.start=function(mesh){
 			fc.start();
 			this.controls.push(fc);
 		//} else { BIM.fun.log('Feature not editable'); }
-		} catch(er) {BIM.fun.log(er);}
+		} catch(er) { console.log(er);}
 	}
 };
 	

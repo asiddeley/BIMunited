@@ -28,7 +28,7 @@ define( function(require, exports, module){
 
 var babylon=require('babylon');
 var $=require('jquery');
-var Element=require('handlers/Element__Handler');
+var Element=require('handlers/Handler__Element');
 var Nameable=require('features/Nameable');
 var Position=require('features/Position');
 var Pickable=require('features/Pickable');
@@ -37,7 +37,7 @@ var McGrowable=require('features/McGrowable');
 var Voxelite=function(topFeatures){
 	Element.call(this, topFeatures);
 	
-	this.bimType='Voxelite'; //DEP?? - use instanceof or prototype.constructor
+	this.bimType='Voxelite'; //DEP?? - use instanceof or bimhandler.constructor.name
 	this.desc='A volumetric pixel or 10 unit cube that can be placed at 10 unit coordinates.';
 	//Note that the following method is inherited from Element...
 	this.addFeatures(
@@ -55,18 +55,21 @@ Voxelite.prototype.constructor=Element;
 //shortcut
 var __=Voxelite.prototype;	
 
-//override
-__.getfeatures=function(mesh){
-	return Element.prototype.getfeatures.call(this, mesh);
-};
+//override - remove remarks and add code below to override...
+//__.getfeatures=function(mesh){
+//	return Element.prototype.getfeatures.call(this, mesh);
+//};
 
 //static funtion so mesh first	arg ? No, mesh is optional so second arg
 //override Element.setScene
 __.setScene=function(scene, mesh){ 
-	//why is mesh provided as an argument if it is meant to be created here?
-	//Important convention - if calling prototype method then always do it first
-	//except that it needs to be called at the end here after mesh is created
-	//Element.prototype.setScene(scene, mesh); //...is at end of function.
+	/************
+	Q - Why is mesh provided as an argument if it is meant to be created here?
+	A - So that if Voxelite is extended, the inheritor may provide a mesh as its contribution. This mesh would have to be merged with the mesh created here using BABYLON.mesh.mergeMeshes([mesh1, mesh2]). Furthermore, Voxelite.setScene calls it's prototype Element.setScene() that adds other important non-vertex data to the mesh as well as applying all feature setScenes(), adding mesh action managers. This non-vertex data is merged into the mesh created here with $.extend() at bottom of this method.
+	**************/
+	
+	//Important convention - if calling the prototype method then always do it first
+	var featureized_mesh=Element.prototype.setScene.call(this, scene, mesh); 
 	
 	//__.BIM.func.dependency(babylon.StandardMaterial, 'voxelTexture', scene)
 	var m=new babylon.StandardMaterial("voxelTexture", scene);
@@ -91,10 +94,11 @@ __.setScene=function(scene, mesh){
 		]
 	};		
 	
+	
 	var mesh=BABYLON.MeshBuilder.CreateBox('voxelite', options, scene);
 	mesh.material=m;	
-	Element.prototype.setScene.call(this, scene, mesh);
-	return mesh;
+
+	return $.extend(mesh, featureized_mesh);
 };
 
 return Voxelite;

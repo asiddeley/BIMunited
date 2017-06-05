@@ -34,7 +34,7 @@ var ChooserFC=require('features/ChooserFC');
 
 var Position=function(mesh, more){ 
 	/***********
-	Static function that returns a fresh feature {}, scoped to a particular mesh.
+	Returns a fresh feature {}, scoped to a particular mesh.
 	A feature is a hash used by FeaturesUI to edit and update babylon mesh properties.
 	feature Eg.: {label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
 	*************/

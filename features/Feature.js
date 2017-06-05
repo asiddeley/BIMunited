@@ -27,6 +27,7 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module) {
 
+var $=require('jquery');
 var TextFC=require('features/TextFC');
 	
 var Feature=function(mesh, options){
@@ -35,14 +36,14 @@ var Feature=function(mesh, options){
 	//an object's (eg. babylon mesh) property (eg. position), and looks like this...
 	//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
 	
-	this.alias='name'; //meant to be overriden
+	this.alias='unnamedfeature'; //meant to be overriden
 	this.control=TextFC;//meant to be overriden
 	this.mesh=mesh;
 	this.prop=mesh.name; //meant for display only
-	this.propDefault='unnamed'; //meant to be overriden
+	this.propDefault='defaultvalue'; //meant to be overriden
 	this.propToBe=null; //meant to be overriden
 	if (typeof mesh.bimData=='undefined') {mesh.bimData={};}
-
+	if (typeof options!='undefined') {$.extend(this, options);}
 };
 
 Feature.prototype.propUpdate=function(propToBe){

@@ -126,7 +126,7 @@ __.propUpdate=function(propToBe){
 //override
 __.setScene=function(scene, mesh){
 	//first call prototype (or super in OOP), don't care what it returns
-	Feature.prototype.setScene(scene, mesh);
+	Feature.prototype.setScene.call(this, scene, mesh);
 	
 	if (typeof mesh.bimData=='undefinded') {mesh.bimData={};}
 	mesh.bimData.growEnabled=true;

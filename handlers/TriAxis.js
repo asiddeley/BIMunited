@@ -26,7 +26,7 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module) {
 
-var Element=require('handlers/Element__Handler');
+var Element=require('handlers/Handler__Element');
 var babylon=require('babylon');
 var $=require('jquery');
 //var Namable=require('features/nameable');
