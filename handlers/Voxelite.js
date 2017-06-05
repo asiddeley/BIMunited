@@ -44,7 +44,7 @@ var Voxelite=function(topFeatures){
 		Nameable, 
 		//userFeature('Desc', 'A 10 unit cube, that can be placed at 10 unit coordinates.'),
 		Position,
-		Pickable,
+		Pickable
  	);
 
 };

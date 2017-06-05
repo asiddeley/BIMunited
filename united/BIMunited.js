@@ -60,7 +60,7 @@ var PeekerUI=require('united/PeekerUI');
 var PokerUI=require('united/PokerUI');
 var FeaturesUI=require('united/FeaturesUI');
 //var Lights=require('lights/lights');
-var arcRotateCamera=require('cameras/arcRotateCamera');
+//var arcRotateCamera=require('cameras/arcRotateCamera');
 var TMC=require('textures/TMCstdLib');
 //var partsLibrary=require('parts/partsLibrary');
 var partsLibrary=require('handlers/handlers__elements');
@@ -125,9 +125,8 @@ BIM.engage=function(){
 		//that.fun.log(key);that.fun.log(m.handler.type);
 	}
 	
-	// initialize view-camera in scene
-	//this.viewLib.main.handler.setScene(this.viewLib.main);
-	this.views.main.create();
+	// initialize main view__camera for the scene
+	this.views.main.setScene(this.scene);
 	
 	// This is a cool Babylon feature
 	// s.debugLayer.show();
@@ -334,7 +333,8 @@ BIM.textures=TMC.stdLib();
 BIM.ui={};
 	
 //View library, A view is the BIM analog to babylon camera
-BIM.views={ main:arcRotateCamera };
+//BIM.views={ main:arcRotateCamera };
+BIM.views=require('cameras/cameras');
 	
 //Worldbox Library.  
 //A worldbox contains information about a model's bounds, units, and yonder ie sky box and ground

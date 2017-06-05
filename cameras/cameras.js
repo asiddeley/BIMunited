@@ -15,10 +15,10 @@
 
 	
 	project:	BIM united FC
-	module: 	module
+	module: 	cameras
 	desc: 
 	author: 	Andrew Siddeley 
-	started:	18-Feb-2017
+	started:	5-Jun-2017
 	
 */
 
@@ -26,17 +26,11 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define(function(require, exports, module){
 
-var Voxelite=require('handlers/Voxelite');
-var McGrowable=require('features/McGrowable');
-var Moveable=require('features/Moveable');
+var ArcRotate=require('cameras/ArcRotate');
 
-// library of element handlers
-// remember - one handler for every type of Bim element
-console.log('Building element library');
 return {
-	voxelite:new Voxelite(),
-	voxelite_isotope_1:new Voxelite( [McGrowable] ),
-	voxelite_isotope_2:new Voxelite( [Moveable] )
+	main:new ArcRotate( )
+	//arcRotate:new ArcRotate(  )
 };
 
 }); //end of define

@@ -20,17 +20,20 @@
 	started:	27-Jan-2017
 	
 ****************************************************************/
-define(
-// load dependencies...
-['babylon', 'jquery'],
+// Define a Module with Simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define(function(require, exports, module){
 
-// then do this...
-function(BABYLON, $){
+//var Babylon=require('babylon');
+var $=require('jquery');
+var Element=require('handlers/Handler__Element');
 
-// view handler methods...
-var ArcRotateCamera={
+var ArcRotateCamera=function(topFeatures){
+
+	Element.call(this, topFeatures);
 	
-	create:function(udata){
+	this.bimType='ArcRotateCamera';
+	this.setScene=function(scene, mesh, canvas){
 		//return $.extend({}, view, udata);
 		//view.baby=new BABYLON.FreeCamera('free', view.position , window.BIM.scene);
 		//new ArcRotateCamera(name, alpha, beta, radius, target, scene)
@@ -43,11 +46,20 @@ var ArcRotateCamera={
 			BIM.scene
 		);
 		
-        //cam.setTarget(new BABYLON.Vector3.Zero());
         cam.attachControl(BIM.options.canvas);	
-		cam.bimHandler=ArcRotateCamera;
+		//cam.bimHandler=ArcRotateCamera; //...done as following
+		Element.prototype.setScene.call(this, scene, cam);
+		
 		return cam;
-	},
-}
+	};
+};
+
+//inherit prototype from super
+ArcRotateCamera.prototype=Object.create(Element.prototype);
+ArcRotateCamera.prototype.constructor=Element;
+//shortcut
+//var __=ArcRotateCamera.prototype;	
+
+
 return ArcRotateCamera;
 });
