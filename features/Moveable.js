@@ -33,7 +33,7 @@ var ChooserFC=require('features/ChooserFC');
 
 var trigger=BABYLON.ActionManager.OnPickTrigger;
 
-var move=function(ev, more){
+var move=function(ev, data){
 	//function for BABYLON.executeCodeAction in growableFA.setScene()
 	//executed when mesh (or instance of mesh) is picked
 
@@ -41,32 +41,14 @@ var move=function(ev, more){
 	//thanks http://www.html5gamedevs.com/topic/22709-stop-camera-rotation-mouse-drag/
 	//BIM.fun.cameraPause('grown'); //unpaused when grown event triggered below 
 	//BIM.scene.activeCamera.detachControl(BIM.options.canvas);
+
+	//TO-DO show edit plane aka coaster
+	var pickResult=data.scene.pick(data.scene.pointerX, data.scene.pointerY, function(mesh) { return mesh==data.coaster;} );
+	if (pickResult.hit){
 	
-	var mori=ev.meshUnderPointer; //mesh or instance
-	var inst; //reserved for new instance
-	var pm=mori.position;
-	var pc=more.scene.activeCamera.position;
-	var pd=pm.subtract(pc);
-	var aa=BIM.fun.closestAxis(pd);
-	var np=new BABYLON.Vector3(pm.x-aa.x*10, pm.y-aa.y*10, pm.z-aa.z*10); //new position
 	
-	if (typeof mori.createInstance!='undefined'){
-		inst=mori.createInstance('grown');
-		//important to add bimData to instance
-		inst.bimData={mesh:mori}; //  TO-DO make this bimableFE??
-	} else {
-		inst=mori.bimData.mesh.createInstance('grown');
-		//important to add bimData to instance
-		inst.bimData=$.extend({}, mori.bimData); //add bimData to inst by cloning it from source
-	}
+	}	
 	
-	inst.position.copyFromFloats(np.x, np.y, np.z);
-	//add growable functionality to instance
-	McGrowable.prototype.setScene(more.scene, inst);
-	
-	//trigger grow event for any interested UIs
-	//BIM.fun.trigger('grown', inst);
-	//BIM.scene.activeCamera.attachControl(BIM.options.canvas);
 };
 
 var Moveable=function(mesh, more){ 
@@ -106,27 +88,26 @@ Moveable.prototype.propUpdate=function(propToBe){
 //override
 Moveable.prototype.setScene=function(scene, mesh){
 	Feature.prototype.setScene.call(this, scene, mesh);
-	/**************
-	if (typeof mesh.bimData=='undefinded') {mesh.bimData={};}
-	mesh.bimData.growEnabled=true;
+
 	if (typeof mesh.actionManager=='undefined'){
 		mesh.actionManager = new BABYLON.ActionManager(scene);
 	};
 	
-	mesh.actionManager.registerAction(
-		new BABYLON.ExecuteCodeAction(
-			BABYLON.ActionManager.OnLeftPickTrigger,
-			function(ev){ grow(ev, {scene:scene});}
-		)
+	var condition=BABYLON.StateCondition(
+		mesh.actionManager, //action manager
+		mesh.bimData.moveable,  //target
+		true //value
 	);
 	
 	mesh.actionManager.registerAction(
 		new BABYLON.ExecuteCodeAction(
-			BABYLON.ActionManager.OnRightPickTrigger,
-			cull
+			BABYLON.ActionManager.OnLeftPickDown, //trigger
+			function(ev){ move(ev, {scene:scene, mesh:mesh}); }, //code
+			condition //condition - mesh.bimData.moveable == true
 		)
 	);
-	*****************/
+
+
 	return mesh;
 };
 

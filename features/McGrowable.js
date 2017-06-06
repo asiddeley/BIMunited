@@ -58,11 +58,14 @@ var grow=function(ev, more){
 	//thanks http://www.html5gamedevs.com/topic/22709-stop-camera-rotation-mouse-drag/
 	//BIM.fun.cameraPause('grown'); //unpaused when grown event triggered below 
 	//BIM.scene.activeCamera.detachControl(BIM.options.canvas);
-	
+	var scene=more.scene;	
+	var pickinfo=scene.pick(scene.pointerX, scene.pointerY);
+
 	var mori=ev.meshUnderPointer; //mesh or instance
 	var inst; //reserved for new instance
 	var pm=mori.position;
-	var pc=more.scene.activeCamera.position;
+	//if for some rare reason scene.pick fails then default to camera position
+	var pc=(pickinfo.hit)?pickinfo.pickedPoint:more.scene.activeCamera.position;
 	var pd=pm.subtract(pc);
 	var aa=BIM.fun.closestAxis(pd);
 	var np=new BABYLON.Vector3(pm.x-aa.x*10, pm.y-aa.y*10, pm.z-aa.z*10); //new position
@@ -109,7 +112,7 @@ var McGrowable=function(mesh, more){
 	this.propToBe=null; //to be determined
 };
 
-//Inherit from prototype of the super class in OOP
+//Inherit from prototype
 McGrowable.prototype=Object.create(Feature.prototype);
 McGrowable.prototype.constructor=McGrowable;
 //shortcut
