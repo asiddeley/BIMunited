@@ -58,21 +58,25 @@ Feature.prototype.setScene=function(scene, mesh){
 	hence mesh is an argument
 	************/
 	
+	/****
+	NOOOOOOOOOO - this may be executed as a static function so keyword this is NA
 	//check if this function is being called as a method or via prototype...
+
 	if (typeof this.mesh != 'undefined'){
 		//setup property if not already there
 		if (typeof this.mesh[this.alias] == 'undefined'){
 			this.mesh[this.alias]=this.propDefault;
 		} else {
-		/*
-		TO-DO 
-		Consider further; Property already exists so either
-		it's a property being harnessed or that	
-		there's a conflict with another feature...  
 		
-		*/
+		//TO-DO 
+		//Consider further; Property already exists so either
+		//it's a property being harnessed or that	
+		//there's a conflict with another feature...  
+
 		}
+
 	}
+	**********/
 
 };
 

@@ -27,7 +27,7 @@
 define( function(require, exports, module) {
 
 var Element=require('handlers/Handler__Element');
-var babylon=require('babylon');
+//var babylon=require('babylon');
 var $=require('jquery');
 //var Namable=require('features/nameable');
 //var Position=require('features/Position');
@@ -37,12 +37,8 @@ var Coaster=function(){
 	
 	this.bimType='Coaster';
 	this.desc='Temporary plane for moving elements';
-	/*************** 
-	// triAxis is a constant with inaccessible properties so no features 
-	this.features=[ Nameable, Position];
-	*/
-	
-	return this;
+	//no features 
+	//this.features=[ Nameable, Position];
 }
 
 //Inherit from the super class
@@ -51,78 +47,27 @@ Coaster.prototype.constructor=Coaster;
 //shortcut
 var __=Coaster.prototype;
 
-__.axis=function(v1, v2, colour, scene) {
-	/*
-	var ax=BABYLON.Mesh.CreateTube(
-		"tube", //name
-		[v1, v2], //vertices
-		0.5, //radius, 
-		4, //tesselation, 
-		null, //radiusFunction, 
-		BABYLON.Mesh.CAP_ALL, //cap,
-		scene //scene
-	);
-	ax.material=new babylon.StandardMaterial('triad axis', scene);
-	ax.material.diffuseColor=colour;
-	*/
-	var ax=babylon.Mesh.CreateLines('axis', [v1, v2], scene);
-	ax.color=colour;
-	return ax;
-};
-
-__.cone=function(v1, v2, v3, colour, scene){
-
-	//https://doc.babylonjs.com/overviews/how_rotations_and_translations_work
-		
-	var tip=babylon.Mesh.CreateCylinder('tip', //name
-		10,	//height, 
-		0,	//diameterTop,
-		5,	//diameterBottom, 
-		4,	//tessellation, 
-		1,	//subdivisions
-		scene,	//scene 
-		false,	//canBeRegenerated(opt), 
-		babylon.Mesh.DEFAULTSIDE //	
-	);
-	tip.material=new babylon.StandardMaterial("triad", scene);
-	tip.material.diffuseColor=colour;
-	//Note that RotationFromAxis() changes the vertex objects provided by normalizing them
-	//so if they are used elsewhere, then it's best to provide copies (clones) as arguments
-	tip.rotation = new babylon.Vector3.RotationFromAxis(v1.clone(), v2.clone(), v3.clone());
-	tip.position=v2;
-	
-	return tip;
-}
-
-
-
 //override
-__.setScene=function(scene, more){
+__.setScene=function(scene, mesh, more){
 
-	Element.prototype.setScene.call(this, scene, more);
-	var coaster=BABYLON.Mesh.CreatePlane("plane", 10.0, scene, false, BABYLON.Mesh.DEFAULTSIDE);
-	var red=new babylon.Color3(1, 0, 0);
-	var green=new babylon.Color3(0, 1, 0);
-	var blue=new babylon.Color3(0, 0, 1);	
+
+	var coaster=BABYLON.Mesh.CreatePlane( 'coaster', 10, scene);
+
+	//coaster.position=mesh.position;
+	//coaster.parent=mesh; //coaster moves with mesh
 	
-	var v0=new babylon.Vector3(0, 0, 0);
-	var vx=new babylon.Vector3(20, 0, 0);
-	var vy=new babylon.Vector3(0, 20, 0);
-	var vz=new babylon.Vector3(0, 0, 20);
+	var red=new BABYLON.Color3(1, 0, 0);
+	var green=new BABYLON.Color3(0, 1, 0);
+	var blue=new BABYLON.Color3(0, 0, 1);	
 	
-	var xx=this.axis(v0, vx, red, scene);
-	var xxtip=this.cone( vz, vx, vy, red, scene);
-	var yy=this.axis(v0, vy, green, scene);
-	var yytip=this.cone( vx, vy, vz, green, scene);
-	var zz=this.axis(v0, vz, blue, scene);
-	var zztop=this.cone( vy, vz, vx, blue, scene);
+	coaster.material=new BABYLON.StandardMaterial("coaster", scene);
 	
-	//add bim handler to babylon mesh object
-	//assuming xx is the head mesh 
-	xx.bimHandler=this;
-		
-	//return the new mesh that was added to the scene
-	return xx;
+	//coaster.material.alpha=0.5; //50% opacity
+	coaster.material.diffuseColor=red;
+
+	
+	//add bimHandler and bimData info to coaster then return it
+	return 	Element.prototype.setScene.call(this, scene, coaster);
 };
 
 return Coaster;

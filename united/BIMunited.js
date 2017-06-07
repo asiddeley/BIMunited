@@ -34,6 +34,7 @@ requirejs.config({
 		"kernel": "../kernel",
 		"lights": "../lights",
 		"parts":"../parts",
+		"resources":"../resources",
 		"textures": "../textures",
 		"united": "../united",
 		//"jq": "jquery",
