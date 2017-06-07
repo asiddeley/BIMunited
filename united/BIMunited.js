@@ -63,7 +63,7 @@ var FeaturesUI=require('united/FeaturesUI');
 //var arcRotateCamera=require('cameras/arcRotateCamera');
 var TMC=require('textures/TMCstdLib');
 //var partsLibrary=require('parts/partsLibrary');
-var partsLibrary=require('handlers/handlers__elements');
+//var partsLibrary=require('handlers/handlers__elements');
 var BIM={};
 
 // The a, b, c, d & e main API methods...
@@ -310,18 +310,10 @@ BIM.options={
 };	
 	
 //parts library 
-BIM.parts=partsLibrary;
+BIM.parts=require('handlers/handlers__elements');
 	
 //Library of element/part libraries 	
-BIM.resources={
-	Arch:{alias:'Arch', url:'arch'},
-	Geology:{alias:'Geo', url:'geology'},
-	Elec:{alias:'Elec', url:'elec'},
-	Elements:{alias:'Elements', url:'handlers'},
-	Mech:{alias:'Mech', url:'Mech'},
-	OpsMan:{alias:'O & M', url:'OpsMaint'},
-	QSCA:{alias:'QS & CA', url:'QSCA'}
-};
+BIM.resources=require('resources/resources');
 	
 //Babylon scene, analog to BIM.model, initialized by engage()
 BIM.scene=null;

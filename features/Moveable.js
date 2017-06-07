@@ -43,7 +43,11 @@ var move=function(ev, data){
 	//BIM.scene.activeCamera.detachControl(BIM.options.canvas);
 
 	//TO-DO show edit plane aka coaster
-	var pickResult=data.scene.pick(data.scene.pointerX, data.scene.pointerY, function(mesh) { return mesh==data.coaster;} );
+	var pickResult=data.scene.pick(
+		data.scene.pointerX, 
+		data.scene.pointerY, 
+		function(mesh) { return mesh==data.coaster;}
+	);
 	if (pickResult.hit){
 	
 	
@@ -67,7 +71,7 @@ var Moveable=function(mesh, more){
 	//feature.extend({}); //merge or mixin 
 	
 	this.alias='moveable';
-	this.desc='Can be moved to any point on the plane provided';
+	this.desc='Element can be moved to any point on the coaster';
 	this.control=TextFC; //requires choices
 	//this.choices=[ ];
 	this.prop=mesh.bimData.moveable; //prop - meant for display only
