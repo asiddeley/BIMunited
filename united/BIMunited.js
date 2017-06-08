@@ -190,6 +190,7 @@ BIM.func={
 	},
 	
 	on:function(eventHandlers){
+		//eventHandlers eg. [ eventHandler, eventHandler2...]
 		//eventHandler eg. {name:'bimInput', data:this, handler:this.onInput }
 		var ee=eventHandlers, n, b$=BIM.options.board$;
 		//add event handlers to board, the acting event manager

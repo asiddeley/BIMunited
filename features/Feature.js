@@ -39,7 +39,7 @@ var Feature=function(mesh, options){
 	this.alias='unnamedfeature'; //meant to be overriden
 	this.control=TextFC;//meant to be overriden
 	this.mesh=mesh;
-	this.prop=mesh.name; //meant for display only
+	//this.prop=mesh.name; //meant for display only
 	this.propDefault='defaultvalue'; //meant to be overriden
 	this.propToBe=null; //meant to be overriden
 	if (typeof mesh.bimData=='undefined') {mesh.bimData={};}

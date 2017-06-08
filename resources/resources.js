@@ -28,6 +28,7 @@ define(function(require, exports, module){
 
 var Coaster=require('handlers/Coaster');
 var Voxelite=require('handlers/Voxelite');
+var TriAxis=require('handlers/TriAxis');
 var vox=new Voxelite();
 
 // Library of handler libraries
@@ -35,19 +36,24 @@ var vox=new Voxelite();
 // Mainlu used by PartsUI
 
 return {
-	Arch:{alias:'Arch', url:'arch'},
-	Geology:{alias:'Geo', url:'geology'},
-	Elec:{alias:'Elec', url:'elec'},
-	Elements:{alias:'Elements', url:'handlers'},
-	Mech:{alias:'Mech', url:'Mech'},
-	OpsMan:{alias:'O & M', url:'OpsMaint'},
-	QSCA:{alias:'QS & CA', url:'QSCA'},
-	temp:{
-		alias:'static',
-		handler__coaster:new Coaster(),
-		coaster:null,
-		url:null		
-	}
+
+	tools:{
+		coasterHandler:new Coaster(), //handler
+		coaster:null, //mesh
+		triAxisHandler: new TriAxis(),
+		triAxis:null,  //mesh
+	},
+	
+	handlerLibraries:[
+		{alias:'Arch', desc:'Arcitectural element collection', url:'Arch/archPartsLibrary.js'},
+		{alias:'Geology', desc:'Geological element collection', url:'Geology/geologicalElements.js'},
+		{alias:'Elec', desc:'Electrical Engineering element collection', url:'Elec/elecPartsLibrary.js'},
+		{alias:'Handlers', desc:'BIM handler (element) collection', url:'handlers/handlers__elements.js'},
+		{alias:'Mech', desc:'Mechanical Engineering element collection', url:'Mech/MechPartsLibrary.js'},
+		{alias:'OpsMaint', desc:'Building Operations & Maintenance element collection', url:'OpsMaint/OpsMaintLibrary.js'},
+		{alias:'QSCA', desc:'Quantity Surveying / Contract Administration element collection', url:'QSCA/QSCAelementsLibrary.js'}
+	]
+	
 };
 
 });

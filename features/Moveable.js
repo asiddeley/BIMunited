@@ -27,6 +27,7 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module) {
 
+var $=require('jquery');
 var Feature=require('features/Feature');
 var TextFC=require('features/TextFC');
 var ChooserFC=require('features/ChooserFC');
@@ -74,14 +75,14 @@ var Moveable=function(mesh, more){
 	****************/
 	Feature.call(this, mesh, more);
 	
-	if (typeof mesh.bimData.moveable=='undefined') {mesh.bimData.moveable=true;}
+	if (typeof mesh.bimData.moveable=='undefined') {mesh.bimData.moveable='off';}
 
 	
 	this.alias='moveable';
 	this.desc='Element can be moved to any point on the coaster';
 	this.control=ChooserFC; //requires choices
 	this.coaster=null; //a plane that follows the mesh, to intersect with the pointer to get a revised position for the mesh
-	this.choices=['off','XY red','YZ green', 'XZ blue'];
+	this.choices=['Off','XY red','YZ green', 'XZ blue'];
 	this.prop=mesh.bimData.moveable; //prop - meant for display only
 	this.propDefault='off';
 	this.propToBe=null; //to be determined
@@ -95,21 +96,34 @@ Moveable.prototype.constructor=Moveable;
 Moveable.prototype.propUpdate=function(propToBe){
 	//this function is called by this.control (chooserFC) when a choice is selected 
 	this.mesh.bimData[this.alias]=propToBe;
-	console.log(propToBe);
+	//console.log(propToBe);
 	//TO-DO change coaster or turn off depending on choices
-	//try{
+	
 	if (propToBe!='off'){
-		if (BIM.resources.temp.coaster==null){
-			BIM.resources.temp.coaster=BIM.resources.temp.handler__coaster.setScene(BIM.scene);	
+		if (BIM.resources.tools.coaster==null){
+			BIM.resources.tools.coaster=BIM.resources.tools.coasterHandler.setScene(BIM.scene);	
 		}
-		BIM.resources.temp.coaster.position.x=this.mesh.position.x;
-		BIM.resources.temp.coaster.position.y=this.mesh.position.y;
-		BIM.resources.temp.coaster.position.z=this.mesh.position.z;
+		BIM.resources.tools.coaster.position.x=this.mesh.position.x;
+		BIM.resources.tools.coaster.position.y=this.mesh.position.y;
+		BIM.resources.tools.coaster.position.z=this.mesh.position.z;
+		
+		//Setup event to track mousemovement 
+		//Babylon action manager triggers don't support this so use jquery event instead 
+		$(BIM.options.canvas).on( 'mousemove', {that:this}, function(ev){
+			//var pickinfo=scene.pick(scene.pointerX, scene.pointerY);
+			console.log(BIM.scene.pointerX, BIM.scene.pointerY);
+			//BIM.scene.activeCamera.detachControl(BIM.options.canvas);
+		});
+		
+		
 	} else {
-		BIM.resources.temp.coaster.dispose();
-		BIM.resources.temp.coaster=null;
+		//off selected - ensure coaster exists before trying to dispose it
+		if (BIM.resources.tools.coaster!=null){
+			BIM.resources.tools.coaster.dispose();
+			BIM.resources.tools.coaster=null;
+			$(BIM.options.canvas).off( 'mousemove');
+		}
 	}
-	//} catch(er) {console.log(er);}
 };
 
 //override
