@@ -81,9 +81,9 @@ var Moveable=function(mesh, more){
 	this.desc='Element can be moved to any point on the coaster';
 	this.control=ChooserFC; //requires choices
 	this.coaster=null; //a plane that follows the mesh, to intersect with the pointer to get a revised position for the mesh
-	this.choices=['off','XY-red','YZ-green', 'XZ-blue'];
+	this.choices=['off','XY red','YZ green', 'XZ blue'];
 	this.prop=mesh.bimData.moveable; //prop - meant for display only
-	this.propDefault=true; //property in boolean
+	this.propDefault='off';
 	this.propToBe=null; //to be determined
 };
 
@@ -96,17 +96,35 @@ Moveable.prototype.propUpdate=function(propToBe){
 	//this function is called by this.control (chooserFC) when a choice is selected 
 	this.mesh.bimData[this.alias]=propToBe;
 	console.log(propToBe);
-	//TO-DO change coaster or turn of depending on choices
-
+	//TO-DO change coaster or turn off depending on choices
+	//try{
+	if (propToBe!='off'){
+		if (BIM.resources.temp.coaster==null){
+			BIM.resources.temp.coaster=BIM.resources.temp.handler__coaster.setScene(BIM.scene);	
+		}
+		BIM.resources.temp.coaster.position.x=this.mesh.position.x;
+		BIM.resources.temp.coaster.position.y=this.mesh.position.y;
+		BIM.resources.temp.coaster.position.z=this.mesh.position.z;
+	} else {
+		BIM.resources.temp.coaster.dispose();
+		BIM.resources.temp.coaster=null;
+	}
+	//} catch(er) {console.log(er);}
 };
 
 //override
 Moveable.prototype.setScene=function(scene, mesh){
-	// static function so don't even think of using keyword 'this' here
+	/*****
+	Static function (I.e. may be called out of context) 
+	so don't even think of using keyword 'this' here unless
+	you have a clever way of checking the context
+	******/
 	// call prototype function first...
 	Feature.prototype.setScene(scene, mesh);
-
-	mesh.bimData.coaster=coasterHandler.setScene(scene, mesh); 
+	// console.log(scene);console.log(mesh);
+	//if (typeof BIM.resources.temp.coaster=='undefined'){
+		//mesh.bimData.coaster=coasterHandler.setScene(scene, mesh); 
+	//}
 	
 	if (typeof mesh.actionManager=='undefined'){
 		mesh.actionManager = new BABYLON.ActionManager(scene);
@@ -135,7 +153,6 @@ Moveable.prototype.setScene=function(scene, mesh){
 			//condition //condition - mesh.bimData.moveable == true
 		)
 	);
-
 
 	return mesh;
 };

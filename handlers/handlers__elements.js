@@ -26,6 +26,7 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define(function(require, exports, module){
 
+var Coaster=require('handlers/Coaster');
 var Voxelite=require('handlers/Voxelite');
 var McGrowable=require('features/McGrowable');
 var Moveable=require('features/Moveable');
@@ -34,9 +35,10 @@ var Moveable=require('features/Moveable');
 // remember - one handler for every type of Bim element
 console.log('Building element library');
 return {
+	coaster:new Coaster(),
 	voxelite:new Voxelite(),
 	voxelite_isotope_1:new Voxelite( [McGrowable] ),
-	voxelite_isotope_2:new Voxelite( [Moveable] )
+	voxelite_isotope_2:new Voxelite( [Moveable] ),
 };
 
 }); //end of define

@@ -26,6 +26,7 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define(function(require, exports, module){
 
+var Coaster=require('handlers/Coaster');
 var Voxelite=require('handlers/Voxelite');
 var vox=new Voxelite();
 
@@ -40,7 +41,13 @@ return {
 	Elements:{alias:'Elements', url:'handlers'},
 	Mech:{alias:'Mech', url:'Mech'},
 	OpsMan:{alias:'O & M', url:'OpsMaint'},
-	QSCA:{alias:'QS & CA', url:'QSCA'}
+	QSCA:{alias:'QS & CA', url:'QSCA'},
+	temp:{
+		alias:'static',
+		handler__coaster:new Coaster(),
+		coaster:null,
+		url:null		
+	}
 };
 
 });

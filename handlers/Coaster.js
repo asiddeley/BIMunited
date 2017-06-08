@@ -48,13 +48,18 @@ Coaster.prototype.constructor=Coaster;
 var __=Coaster.prototype;
 
 //override
-__.setScene=function(scene, mesh, more){
+__.setScene=function(scene, mesh){
 
 
-	var coaster=BABYLON.Mesh.CreatePlane( 'coaster', 10, scene);
+	var coaster=BABYLON.Mesh.CreatePlane( 'coaster', 100, scene, false, BABYLON.Mesh.DOUBLESIDE);
 
-	//coaster.position=mesh.position;
-	//coaster.parent=mesh; //coaster moves with mesh
+	if (typeof mesh!='undefined') {
+		//DO NOT do this with position, causes a babylonian error. Must be a new BABYLON.Vector3 obj
+		//coaster.position=mesh.position;
+
+		//coaster moves with mesh
+		//coaster.parent=mesh; 
+	}
 	
 	var red=new BABYLON.Color3(1, 0, 0);
 	var green=new BABYLON.Color3(0, 1, 0);
@@ -62,12 +67,12 @@ __.setScene=function(scene, mesh, more){
 	
 	coaster.material=new BABYLON.StandardMaterial("coaster", scene);
 	
-	//coaster.material.alpha=0.5; //50% opacity
+	coaster.material.alpha=0.5; //50% opacity
 	coaster.material.diffuseColor=red;
 
 	
 	//add bimHandler and bimData info to coaster then return it
-	return 	Element.prototype.setScene.call(this, scene, coaster);
+	return 	Element.prototype.setScene(scene, coaster);
 };
 
 return Coaster;
