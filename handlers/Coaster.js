@@ -50,7 +50,6 @@ var __=Coaster.prototype;
 //override
 __.setScene=function(scene, mesh){
 
-
 	var coaster=BABYLON.Mesh.CreatePlane( 'coaster', 100, scene, false, BABYLON.Mesh.DOUBLESIDE);
 
 	if (typeof mesh!='undefined') {
@@ -62,13 +61,16 @@ __.setScene=function(scene, mesh){
 	}
 	
 	var red=new BABYLON.Color3(1, 0, 0);
+	var yellow=new BABYLON.Color3(1, 1, 0);
 	var green=new BABYLON.Color3(0, 1, 0);
+	var cyan=new BABYLON.Color3(0, 1, 1);
 	var blue=new BABYLON.Color3(0, 0, 1);	
+	var magenta=new BABYLON.Color3(1, 0, 1);	
 	
 	coaster.material=new BABYLON.StandardMaterial("coaster", scene);
 	
-	coaster.material.alpha=0.5; //50% opacity
-	coaster.material.diffuseColor=red;
+	coaster.material.alpha=0.25; //50% opacity
+	coaster.material.diffuseColor=yellow;
 
 	
 	//add bimHandler and bimData info to coaster then return it

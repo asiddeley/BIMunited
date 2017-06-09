@@ -75,16 +75,16 @@ var Moveable=function(mesh, more){
 	****************/
 	Feature.call(this, mesh, more);
 	
-	if (typeof mesh.bimData.moveable=='undefined') {mesh.bimData.moveable='off';}
-
+	if (typeof mesh.bimData.moveable=='undefined') {mesh.bimData.moveable='Off';}
 	
+	//override following
 	this.alias='moveable';
 	this.desc='Element can be moved to any point on the coaster';
 	this.control=ChooserFC; //requires choices
 	this.coaster=null; //a plane that follows the mesh, to intersect with the pointer to get a revised position for the mesh
 	this.choices=['Off','XY red','YZ green', 'XZ blue'];
+	this.meshEngaged=false; //need engage mesh (I.e click on it) while the cosater is on in order to move it
 	this.prop=mesh.bimData.moveable; //prop - meant for display only
-	this.propDefault='off';
 	this.propToBe=null; //to be determined
 };
 
@@ -95,11 +95,8 @@ Moveable.prototype.constructor=Moveable;
 //override
 Moveable.prototype.propUpdate=function(propToBe){
 	//this function is called by this.control (chooserFC) when a choice is selected 
-	this.mesh.bimData[this.alias]=propToBe;
-	//console.log(propToBe);
-	//TO-DO change coaster or turn off depending on choices
 	
-	if (propToBe!='off'){
+	if (propToBe!='Off'){
 		if (BIM.resources.tools.coaster==null){
 			BIM.resources.tools.coaster=BIM.resources.tools.coasterHandler.setScene(BIM.scene);	
 		}
@@ -109,11 +106,20 @@ Moveable.prototype.propUpdate=function(propToBe){
 		
 		//Setup event to track mousemovement 
 		//Babylon action manager triggers don't support this so use jquery event instead 
-		$(BIM.options.canvas).on( 'mousemove', {that:this}, function(ev){
-			//var pickinfo=scene.pick(scene.pointerX, scene.pointerY);
-			console.log(BIM.scene.pointerX, BIM.scene.pointerY);
+		$(BIM.options.canvas).on( 'mousemove', {mesh:this.mesh, meshEngaged:this.meshEngaged}, function(ev){
+			var pickResult=BIM.scene.pick(
+				BIM.scene.pointerX, BIM.scene.pointerY,  //point to test
+				function(mesh){ return (mesh==BIM.resources.tools.coaster);} // predicate function for pickResult.hit
+			);
+			
 			//BIM.scene.activeCamera.detachControl(BIM.options.canvas);
-		});
+			if (pickResult.hit && ev.data.meshEngaged){
+				//console.log(BIM.scene.pointerX, BIM.scene.pointerY);
+				//move mesh to position where pointer hit coaster...
+				ev.data.mesh.position.x=pickResult.pickedPoint.x;
+				ev.data.mesh.position.y=pickResult.pickedPoint.y;
+			}
+	});
 		
 		
 	} else {
@@ -122,6 +128,7 @@ Moveable.prototype.propUpdate=function(propToBe){
 			BIM.resources.tools.coaster.dispose();
 			BIM.resources.tools.coaster=null;
 			$(BIM.options.canvas).off( 'mousemove');
+			this.meshEngaged=false;
 		}
 	}
 };
