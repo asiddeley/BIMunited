@@ -147,9 +147,8 @@ BIM.func={
 	// grows textarea fit text - useful for typing in a small textarea 
 	autoHeight:function(el){$(el).css('height','auto').css('height', el.scrollHeight+5);},
 	
-	//Depricated - stopped working and not necessary
 	cameraPause:function(eventName){
-		if (typeof eventName=='undefined') {eventName='unpause';}
+		if (typeof eventName=='undefined') {eventName='cameraplay';}
 		//detach camera
 		setTimeout(
 			function(){BIM.scene.activeCamera.detachControl(BIM.options.canvas);},
@@ -161,9 +160,15 @@ BIM.func={
 			name:eventName,
 			data:{},
 			handler:function(){
+				console.log('attach camera');
 				BIM.scene.activeCamera.attachControl(BIM.options.canvas,false);
 			}
 		}]);		
+	},
+	
+	cameraPlay:function(eventName){
+		if (typeof eventName=='undefined') {eventName='cameraplay';}
+		BIM.fun.trigger(eventName);	
 	},
 
 	//returns a BABYLON.Vector3 representing the closest axis to the argument vector
@@ -192,22 +197,22 @@ BIM.func={
 	on:function(eventHandlers){
 		//eventHandlers eg. [ eventHandler, eventHandler2...]
 		//eventHandler eg. {name:'bimInput', data:this, handler:this.onInput }
-		var ee=eventHandlers, n, b$=BIM.options.board$;
+		var ee=eventHandlers;
 		//add event handlers to board, the acting event manager
-		for (n in ee){b$.on(ee[n].name, ee[n].data, ee[n].handler);}	
+		for (var n in ee){BIM.options.board$.on(ee[n].name, ee[n].data, ee[n].handler);}	
 	},
 	
 	one:function(eventHandlers){
 		//eventHandlers - [{name:'bimInput', data:this, handler:this.onInput }...]
-		var ee=eventHandlers, n, b$=BIM.options.board$;		
-		for (n in ee){b$.one(ee[n].name, ee[n].data, ee[n].handler);}	
+		var ee=eventHandlers;		
+		for (var n in ee){BIM.options.board$.one(ee[n].name, ee[n].data, ee[n].handler);}	
 	},
 
 	off:function(eventHandlers){
 		//eventHandler eg. {name:'bimInput', data:this, handler:this.onInput }
-		var ee=eventHandlers, n, b$=BIM.options.board$;
+		var ee=eventHandlers;
 		//add event handlers to board, the acting event manager
-		for (n in ee){b$.off(ee[n], ee[n].data, ee[n].handler);}	
+		for (var n in ee){BIM.options.board$.off(ee[n], ee[n].data, ee[n].handler);}	
 	},
 
 	randomInt:function(s) {

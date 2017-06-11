@@ -71,7 +71,7 @@ __.onSubmit=function(ev){
 __.onFeatureChange=function(ev, feature){
 	//triggered by form submit
 	var that=ev.data; 	
-	//all FEDs called, but only update applicable FED/feature
+	//all FCs called, but only update applicable FC/feature
 	//BIM.fun.log('FED onFeatureChange:' + Object.keys(feature).toString());
 
 	if (feature === that.feature){
@@ -82,9 +82,7 @@ __.onFeatureChange=function(ev, feature){
 			else { that.prop$.text( feature.propToBe.toString() );}
 			//execute the feature callback function that applies the changed valu to the mesh object
 			if (typeof feature.propUpdate =='function'){feature.propUpdate(feature.propToBe);}
-		} catch(er) {
-			BIM.fun.log( er.toString() );
-		}
+		} catch(er) {console.log(er);}
 	}
 };
 

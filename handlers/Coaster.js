@@ -27,6 +27,7 @@
 define( function(require, exports, module) {
 
 var Element=require('handlers/Handler__Element');
+//var Element=require('handlers/TriAxis');
 //var babylon=require('babylon');
 var $=require('jquery');
 //var Namable=require('features/nameable');
@@ -44,37 +45,38 @@ var Coaster=function(){
 //Inherit from the super class
 Coaster.prototype=Object.create(Element.prototype);
 Coaster.prototype.constructor=Coaster;
-//shortcut
-var __=Coaster.prototype;
 
-//override
-__.setScene=function(scene, mesh){
-
-	var coaster=BABYLON.Mesh.CreatePlane( 'coaster', 100, scene, false, BABYLON.Mesh.DOUBLESIDE);
+//Override
+Coaster.prototype.setScene=function(scene, mesh, size, plane){
+	/****
+	scene - 
+	mesh - parent mesh | null
+	size - 
+	plane - XY yellow|YZ cyan|ZX magenta	
+	****/
+	if(typeof size=='undefined') size=50;
+	if(typeof plane=='undefined') plane='XY yellow';
+	
+	var coaster=BABYLON.Mesh.CreatePlane( 'coaster', size, scene, false, BABYLON.Mesh.DOUBLESIDE);
+	if (plane=='YZ cyan'){coaster.rotation=new BABYLON.Vector3(0, Math.PI*0.5, 0)}
+	else if (plane=='ZX magenta'){coaster.rotation = new BABYLON.Vector3(Math.PI*0.5, 0, 0);}
 
 	if (typeof mesh!='undefined') {
-		//DO NOT do this with position, causes a babylonian error. Must be a new BABYLON.Vector3 obj
+		//DO NOT do the following with position, causes a babylonian error. 
+		//Must be a new BABYLON.Vector3 obj
 		//coaster.position=mesh.position;
-
 		//coaster moves with mesh
 		//coaster.parent=mesh; 
 	}
 	
-	var red=new BABYLON.Color3(1, 0, 0);
-	var yellow=new BABYLON.Color3(1, 1, 0);
-	var green=new BABYLON.Color3(0, 1, 0);
-	var cyan=new BABYLON.Color3(0, 1, 1);
-	var blue=new BABYLON.Color3(0, 0, 1);	
-	var magenta=new BABYLON.Color3(1, 0, 1);	
-	
 	coaster.material=new BABYLON.StandardMaterial("coaster", scene);
-	
-	coaster.material.alpha=0.25; //50% opacity
-	coaster.material.diffuseColor=yellow;
-
+	coaster.material.alpha=0.25; //opacity
+	if (plane=='XY yellow') {coaster.material.diffuseColor=new BABYLON.Color3(1, 1, 0);}
+	else if (plane=='YZ cyan') {coaster.material.diffuseColor=new BABYLON.Color3(0, 1, 1);}
+	else if (plane=='ZX magenta') {coaster.material.diffuseColor=new BABYLON.Color3(1, 0, 1);}
 	
 	//add bimHandler and bimData info to coaster then return it
-	return 	Element.prototype.setScene(scene, coaster);
+	return Element.prototype.setScene(scene, coaster);
 };
 
 return Coaster;

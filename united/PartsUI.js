@@ -46,13 +46,12 @@ var PartsUI=function(board, title){
 	//CSS tip - container height must be explicitly set for content height to work
 	this.canvas$=$('<canvas></canvas>').css(
 		{'max-width':'49%', 'height':'100%', 'float':'right'}
-		//{'width':'150px', 'height':'100px', 'float':'right'}
 	);
 	
 	this.ok$=$('<button>ADD (to Model)</button>').on('click', this, function(ev){
 		//BIM.scene.addMesh(ev.data.sample); //no effect, needs work
 		//What about material and other dependencies?
-		var newpart=ev.data.bimHandler.setScene(BIM.scene);
+		var newpart=ev.data.partHandle.setScene(BIM.scene);
 		//match sample features to new part
 		FeaturesUI.prototype.matchAll(ev.data.sample, newpart);
 	});
@@ -73,8 +72,8 @@ var PartsUI=function(board, title){
 
 	this.partChoices=Object.keys(BIM.parts); 
 	this.partName=this.partChoices[0]; //1st item in list is default part
-	this.partHandler=BIM.parts[this.partName];
-	this.partDesc=this.partHandler.desc;
+	this.partHandle=BIM.parts[this.partName];
+	this.partDesc=this.partHandle.desc;
 	this.resource=null; //{label:arch, url:''...}
 	this.resourceChoices=Object.keys(BIM.resources);
 	this.resourceName=this.resourceChoices[0];
@@ -104,8 +103,9 @@ var PartsUI=function(board, title){
 		propUpdate:function(label){
 			//alert(label);
 			if (that.sample !=null) {that.sample.dispose();} //remake sample
-			that.bimHandler=BIM.parts[label]; //set to chosen part handler
-			that.sample=that.bimHandler.setScene(that.scene);	
+			//that.bimHandler=BIM.parts[label]; //set to chosen part handler
+			that.partHandle=BIM.parts[label]; //set to chosen part handler
+			that.sample=that.partHandle.setScene(that.scene);	
 			//connect and show features of sample
 			that.fui.start(that.sample);			
 		}		
@@ -128,7 +128,7 @@ var PartsUI=function(board, title){
 	});
 	this.resourceFC.start();
 	
-	//this.sample=this.partHandler.setScene(this.scene);	
+	//this.sample=this.partHandle.setScene(this.scene);	
 	//this.fui.start(this.sample);
 	
 	return this;

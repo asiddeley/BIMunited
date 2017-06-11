@@ -81,7 +81,12 @@ __.matchAll=function(sourceMesh, targetMesh) {
 	//go thru each source feature and apply the target property updater with the source prop as argument
 	for (var key in sfc) {
 		//only match feature if there is a matching key in target 
-		if (tfc[key] != 'undefined'){tfc[key].propUpdate(sfc[key].prop);} 
+		if (tfc[key] != 'undefined'){
+			//what about Moveable.propUpdate() that may start the move process? Harmless!
+			if (typeof sfc[key] !='undefined'){
+				tfc[key].propUpdate(sfc[key].prop);
+			}			
+		} 
 	}
 }
 

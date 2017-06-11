@@ -44,7 +44,7 @@ __.setScene=function(scene, mesh){
 	//mesh - babylon mesh, optional
 	
 	if (typeof mesh == 'undefined'){mesh={};}
-	mesh.bimHandler=this; //should be named .bimhandler or .bimelement__handler
+	mesh.bimHandler=this; //should be .bimhandle or .bimelement__handle
 	mesh.bimData={};
 	for (var i in this.Features){
 		//Features which are constructor functions so need to call their prototypes...

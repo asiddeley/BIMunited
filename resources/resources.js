@@ -38,9 +38,9 @@ var vox=new Voxelite();
 return {
 
 	tools:{
-		coasterHandler:new Coaster(), //handler
+		coasterHandle:new Coaster(), //handler
 		coaster:null, //mesh
-		triAxisHandler: new TriAxis(),
+		triAxisHandle: new TriAxis(),
 		triAxis:null,  //mesh
 	},
 	

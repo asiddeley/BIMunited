@@ -35,147 +35,129 @@ var Coaster=require('handlers/Coaster');
 var coasterHandler=new Coaster();
 
 
-var moveStart=function(ev, data){
-	//function for BABYLON.executeCodeAction in growableFA.setScene()
-	//executed when mesh (or instance of mesh) is picked
-
-	//not necessary to detach camera control
-	//thanks http://www.html5gamedevs.com/topic/22709-stop-camera-rotation-mouse-drag/
-	//BIM.fun.cameraPause('grown'); //unpaused when grown event triggered below 
-	//BIM.scene.activeCamera.detachControl(BIM.options.canvas);
-
-	//TO-DO show travelling plane for pointer collision AKA coaster
-	//if (data.coaster==null){data.coaster=new Coaster(data.mesh);}
-	
-	var pickResult=data.scene.pick(
-		data.scene.pointerX, 
-		data.scene.pointerY, 
-		function(mesh) { console.log('mesh name '+mesh.name);return mesh==data.coaster; }
-	);
-	
-	if (pickResult.hit){
-		//TO-DO revise mesh position based on pointer/coaster collision point
-		console.log('coaster hit');
-	}	
-	
-};
-
-var moveStop=function(ev, data){
-	//data.coaster.dispose();
-};
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-var Moveable=function(mesh, more){ 
+var Moveable=function(mesh, options){ 
 	/***************
-	Function that returns a fresh feature action object {}, scoped to a particular mesh
-	mesh - scope or context of this feature
+	Function that returns a fresh feature object {}, scoped to a particular mesh
+	mesh - scope or context of the feature
 	more - {} with additional data such as bimHandler, scene or whatever
 	****************/
-	Feature.call(this, mesh, more);
+	Feature.call(this, mesh, options);
 	
 	if (typeof mesh.bimData.moveable=='undefined') {mesh.bimData.moveable='Off';}
 	
 	//override following
-	this.alias='moveable';
+	this.alias='moveable'; //property key
 	this.desc='Element can be moved to any point on the coaster';
 	this.control=ChooserFC; //requires choices
-	this.coaster=null; //a plane that follows the mesh, to intersect with the pointer to get a revised position for the mesh
-	this.choices=['Off','XY red','YZ green', 'XZ blue'];
-	this.meshEngaged=false; //need engage mesh (I.e click on it) while the cosater is on in order to move it
-	this.prop=mesh.bimData.moveable; //prop - meant for display only
-	this.propToBe=null; //to be determined
+	this.choices=['Off','XY yellow','YZ cyan', 'ZX magenta'];
+	this.coaster=null; //mesh movement stencil, a plane for pointer to intersect to get position 
+	this.mesh=mesh;
+	this.moveStart=false; //need to click on mesh first while cosater is on, to start move
+	//this.propKey='moveable'; //TO-DO instead of this.alias
+	//this.propObj=mesh.bimData; //TO-DO instead of this.prop=... and this.mesh
+	this.prop=mesh.bimData.moveable; //prop - meant for display only 
+	this.propToBe=null; //proposed new value for property
+	this.propUpdate=function(propToBe){
+		//Feature.prototype.propUpdate.call(this, propToBe);
+		this.mesh.bimData[this.alias]=propToBe;
+		this.coasterManager(propToBe);
+	};
+	this.setScene=function(scene, mesh){
+		Feature.prototype.setScene(scene, mesh);	
+		return mesh;
+	};
+	this.size=50; //size of coaster. TO-DO create a dual variable FC, for choices & sizes
+
 };
 
 //Inherit from prototype 
 Moveable.prototype=Object.create(Feature.prototype);
 Moveable.prototype.constructor=Moveable;
 
-//override
-Moveable.prototype.propUpdate=function(propToBe){
+//Override
+Moveable.prototype.coasterManager=function(propToBe){
 	//this function is called by this.control (chooserFC) when a choice is selected 
-	
-	if (propToBe!='Off'){
-		if (BIM.resources.tools.coaster==null){
-			BIM.resources.tools.coaster=BIM.resources.tools.coasterHandler.setScene(BIM.scene);	
+	var data={mesh:this.mesh, moveable:this};
+	var tools=BIM.resources.tools;
+	var moveStart=function(ev){ 
+		var pickResult=BIM.scene.pick(
+			//point to test
+			BIM.scene.pointerX,	BIM.scene.pointerY, 
+			// predicate function for pickResult.hit
+			function(pickedmesh){ 
+				//console.log(pickedmesh.name);
+				//Duh! ev.data.mesh is the one in the sample, not in the main scene
+				return (pickedmesh===ev.data.mesh);
+			} 
+		);
+		//console.log("mousedown hit "+pickResult.hit);
+		if (pickResult.hit) {
+			//console.log("moveStart/cameraPause");
+			BIM.fun.cameraPause();
+			ev.data.moveable.moveStart=true;
 		}
-		BIM.resources.tools.coaster.position.x=this.mesh.position.x;
-		BIM.resources.tools.coaster.position.y=this.mesh.position.y;
-		BIM.resources.tools.coaster.position.z=this.mesh.position.z;
-		
-		//Setup event to track mousemovement 
-		//Babylon action manager triggers don't support this so use jquery event instead 
-		$(BIM.options.canvas).on( 'mousemove', {mesh:this.mesh, meshEngaged:this.meshEngaged}, function(ev){
-			var pickResult=BIM.scene.pick(
-				BIM.scene.pointerX, BIM.scene.pointerY,  //point to test
-				function(mesh){ return (mesh==BIM.resources.tools.coaster);} // predicate function for pickResult.hit
-			);
-			
-			//BIM.scene.activeCamera.detachControl(BIM.options.canvas);
-			if (pickResult.hit && ev.data.meshEngaged){
-				//console.log(BIM.scene.pointerX, BIM.scene.pointerY);
-				//move mesh to position where pointer hit coaster...
-				ev.data.mesh.position.x=pickResult.pickedPoint.x;
-				ev.data.mesh.position.y=pickResult.pickedPoint.y;
-			}
-	});
-		
-		
-	} else {
-		//off selected - ensure coaster exists before trying to dispose it
-		if (BIM.resources.tools.coaster!=null){
-			BIM.resources.tools.coaster.dispose();
-			BIM.resources.tools.coaster=null;
-			$(BIM.options.canvas).off( 'mousemove');
-			this.meshEngaged=false;
-		}
+		return false;
 	}
-};
-
-//override
-Moveable.prototype.setScene=function(scene, mesh){
-	/*****
-	Static function (I.e. may be called out of context) 
-	so don't even think of using keyword 'this' here unless
-	you have a clever way of checking the context
-	******/
-	// call prototype function first...
-	Feature.prototype.setScene(scene, mesh);
-	// console.log(scene);console.log(mesh);
-	//if (typeof BIM.resources.temp.coaster=='undefined'){
-		//mesh.bimData.coaster=coasterHandler.setScene(scene, mesh); 
-	//}
 	
-	if (typeof mesh.actionManager=='undefined'){
-		mesh.actionManager = new BABYLON.ActionManager(scene);
+	var moveOngoing=function(ev){ //event handler
+		//console.log('mousemove');
+		var pickResult=BIM.scene.pick(
+			BIM.scene.pointerX, BIM.scene.pointerY,  //point to test
+			// predicate function for pickResult.hit
+			function(mesh){ return (mesh==BIM.resources.tools.coaster);} 
+		);
+		//console.log(pickResult.hit);
+		if (pickResult.hit == true ){
+			//console.log(BIM.scene.pointerX, BIM.scene.pointerY);
+			//move mesh to position where pointer hit coaster...
+			if (ev.data.moveable.moveStart==true){
+				ev.data.mesh.position.copyFrom(pickResult.pickedPoint);
+				//ev.data.mesh.position.y=pickResult.pickedPoint.y;
+			}
+		}
+		//automatically call event.stopPropagation() and event.preventDefault() 
+		return false; 
+	};	
+
+	var moveStop=function(ev){
+		//console.log("moveStop/cameraPlay");
+		BIM.fun.cameraPlay(); //harmless - will have no effect unless cameraPaused
+		ev.data.moveable.moveStart=false;				
+		return false;
 	};
 	
-	var condition=BABYLON.StateCondition(
-		mesh.actionManager, //action manager
-		mesh.bimData.moveable,  //target
-		true //value
-	);
-
-	var data={scene:scene, mesh:mesh, coaster:mesh.bimData.coaster};
+	if (propToBe!='Off'){
+		//dispose existing coaster
+		if (tools.coaster!=null){
+			tools.coaster.dispose();
+			//tools.coasterHandle.dispose(tools.coaster);
+		}
+		//make new coaster
+		tools.coaster=tools.coasterHandle.setScene(BIM.scene, null, this.size, propToBe);	
+		tools.coaster.position.copyFrom(this.mesh.position);
 	
-	mesh.actionManager.registerAction(
-		new BABYLON.ExecuteCodeAction(
-			BABYLON.ActionManager.OnLeftPickTrigger, //trigger
-			function(ev){ moveStart(ev, data)} //code
-			//condition //condition - mesh.bimData.moveable == true
-		)
-	);
-	
-	mesh.actionManager.registerAction(
-		new BABYLON.ExecuteCodeAction(
-			BABYLON.ActionManager.OnRightPickTrigger, //trigger
-			function(ev){ moveStop(ev, data); } //code
-			//condition //condition - mesh.bimData.moveable == true
-		)
-	);
-
-	return mesh;
+		//Setup mouseup, mousedown and mousemove events for mesh to be moved by the pointer.
+		//Babylon action manager doesn't have a mousemove trigger so use jquery instead for all - 
+		//best not to mix jquery events and babylon action manager triggers to avoid conflicts
+		//Note use of namespace ie.moveable in events below per jquery best practices
+		$(BIM.options.canvas).on('mousedown.moveable', data, moveStart);
+		$(BIM.options.canvas).on('mousemove.moveable', data, moveOngoing);
+		$(BIM.options.canvas).on('mouseup.moveable', data, moveStop);		
+	} else {
+		//Off selected...
+		//Ensure coaster exists before trying to dispose it
+		if (BIM.resources.tools.coaster!=null){
+			BIM.resources.tools.coaster.dispose();
+			//BIM.resources.tools.coasterHandle.dispose();
+		}
+		//following are harmless if event handlers don't exist
+		$(BIM.options.canvas).off('mousemove.moveable'); 
+		$(BIM.options.canvas).off('mouseup.moveable');
+		$(BIM.options.canvas).off('mousedown.moveable');			
+		this.moveStart=false;
+	}
 };
 
 return Moveable;
