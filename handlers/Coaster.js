@@ -76,7 +76,8 @@ Coaster.prototype.setScene=function(scene, mesh, size, plane){
 	else if (plane=='ZX magenta') {coaster.material.diffuseColor=new BABYLON.Color3(1, 0, 1);}
 	
 	//add bimHandler and bimData info to coaster then return it
-	return Element.prototype.setScene(scene, coaster);
+	Element.prototype.setScene(scene, coaster);
+	return coaster;
 };
 
 return Coaster;

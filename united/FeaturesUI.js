@@ -76,8 +76,8 @@ __.onInput=function(ev, input){
 
 //utility
 __.matchAll=function(sourceMesh, targetMesh) {
-	var tfc=targetMesh.bimHandler.getfeatures(targetMesh);
-	var sfc=sourceMesh.bimHandler.getfeatures(sourceMesh);
+	var tfc=targetMesh.bimhandle.getfeatures(targetMesh);
+	var sfc=sourceMesh.bimhandle.getfeatures(sourceMesh);
 	//go thru each source feature and apply the target property updater with the source prop as argument
 	for (var key in sfc) {
 		//only match feature if there is a matching key in target 
@@ -98,7 +98,7 @@ __.start=function(mesh){
 	this.controls=[];
 	
 	var f, fc, features, i;
-	features=mesh.bimHandler.getfeatures(mesh); 
+	features=mesh.bimhandle.getfeatures(mesh); 
 
 	for (i in features){
 		f=features[i];

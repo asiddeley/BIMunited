@@ -52,19 +52,6 @@ TriAxis.prototype.constructor=TriAxis;
 var __=TriAxis.prototype;
 
 __.axis=function(v1, v2, colour, scene) {
-	/*
-	var ax=BABYLON.Mesh.CreateTube(
-		"tube", //name
-		[v1, v2], //vertices
-		0.5, //radius, 
-		4, //tesselation, 
-		null, //radiusFunction, 
-		BABYLON.Mesh.CAP_ALL, //cap,
-		scene //scene
-	);
-	ax.material=new babylon.StandardMaterial('triad axis', scene);
-	ax.material.diffuseColor=colour;
-	*/
 	var ax=babylon.Mesh.CreateLines('axis', [v1, v2], scene);
 	ax.color=colour;
 	return ax;
@@ -94,12 +81,9 @@ __.cone=function(v1, v2, v3, colour, scene){
 	return tip;
 }
 
-
-
 //override
-__.setScene=function(scene){
-
-	//Element.prototype.setScene(scene);
+__.setScene=function(scene, parentMesh){
+	//mesh - optional
 
 	var red=new babylon.Color3(1, 0, 0);
 	var green=new babylon.Color3(0, 1, 0);
@@ -119,10 +103,11 @@ __.setScene=function(scene){
 	
 	//add bim handler to babylon mesh object
 	//assuming xx is the head mesh 
-	xx.bimHandler=this;
-		
-	//return the new mesh that was added to the scene
-	return xx;
+	//xx.bimHandler=this;
+	Element.prototype.setScene(scene, parentMesh);
+	
+	//return only the the new mesh that was added to the scene
+	return [xx, yy, zz];
 };
 
 return TriAxis;

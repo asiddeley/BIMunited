@@ -40,7 +40,7 @@ return {
 	tools:{
 		coasterHandle:new Coaster(), //handler
 		coaster:null, //mesh
-		triAxisHandle: new TriAxis(),
+		triAxisHandle:new TriAxis(),
 		triAxis:null,  //mesh
 	},
 	

@@ -40,17 +40,17 @@ var Element__Handler=function(moreFeatures){
 };
 var __=Element__Handler.prototype;	
 
-__.setScene=function(scene, mesh){
+__.setScene=function(scene, parentMesh){
 	//mesh - babylon mesh, optional
 	
-	if (typeof mesh == 'undefined'){mesh={};}
-	mesh.bimHandler=this; //should be .bimhandle or .bimelement__handle
-	mesh.bimData={};
+	if (typeof parentMesh == 'undefined'){parentMesh={};}
+	parentMesh.bimhandle=this; //should be .bimhandle or .bimelement__handle
+	parentMesh.bimData={};
 	for (var i in this.Features){
 		//Features which are constructor functions so need to call their prototypes...
-		this.Features[i].prototype.setScene(scene, mesh);
+		this.Features[i].prototype.setScene(scene, parentMesh);
 	}
-	return mesh;
+	return parentMesh;
 };
 
 __.addFeatures=function(){
