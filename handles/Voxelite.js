@@ -28,7 +28,7 @@ define( function(require, exports, module){
 
 var babylon=require('babylon');
 var $=require('jquery');
-var Element=require('handlers/Handler__Element');
+var Element=require('handles/Handle');
 var Nameable=require('features/Nameable');
 var Position=require('features/Position');
 var Pickable=require('features/Pickable');

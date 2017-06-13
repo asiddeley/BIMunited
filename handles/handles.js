@@ -26,8 +26,8 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define(function(require, exports, module){
 
-var Coaster=require('handlers/Coaster');
-var Voxelite=require('handlers/Voxelite');
+var Coaster=require('handles/Coaster');
+var Voxelite=require('handles/Voxelite');
 var McGrowable=require('features/McGrowable');
 var Moveable=require('features/Moveable');
 

@@ -26,9 +26,9 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define(function(require, exports, module){
 
-var Coaster=require('handlers/Coaster');
-var Voxelite=require('handlers/Voxelite');
-var TriAxis=require('handlers/TriAxis');
+var Coaster=require('handles/Coaster');
+var Voxelite=require('handles/Voxelite');
+var Triaxis=require('handles/Triaxis');
 var vox=new Voxelite();
 
 // Library of handler libraries
@@ -40,8 +40,8 @@ return {
 	tools:{
 		coasterHandle:new Coaster(), //handler
 		coaster:null, //mesh
-		triAxisHandle:new TriAxis(),
-		triAxis:null,  //mesh
+		triaxisHandle:new Triaxis(),
+		triaxis:null,  //mesh
 	},
 	
 	handlerLibraries:[

@@ -26,8 +26,8 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module) {
 
-var Element=require('handlers/Handler__Element');
-//var Element=require('handlers/TriAxis');
+var Element=require('handles/Handle');
+//var Element=require('handles/Triaxis');
 //var babylon=require('babylon');
 var $=require('jquery');
 //var Namable=require('features/nameable');
@@ -76,7 +76,8 @@ Coaster.prototype.setScene=function(scene, mesh, size, plane){
 	else if (plane=='ZX magenta') {coaster.material.diffuseColor=new BABYLON.Color3(1, 0, 1);}
 	
 	//add bimHandler and bimData info to coaster then return it
-	Element.prototype.setScene(scene, coaster);
+	//Element.prototype.setScene(scene, coaster);
+	bimhandle=this;
 	return coaster;
 };
 

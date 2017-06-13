@@ -30,7 +30,7 @@ requirejs.config({
 		"cameras": "../cameras",
 		"editors":"../editors",
 		"features":"../features",
-		"handlers":"../handlers",
+		"handles":"../handles",
 		"kernel": "../kernel",
 		"lights": "../lights",
 		"parts":"../parts",
@@ -317,7 +317,7 @@ BIM.options={
 };	
 	
 //parts library 
-BIM.parts=require('handlers/handlers__elements');
+BIM.parts=require('handles/handles');
 	
 //Library of element/part libraries 	
 BIM.resources=require('resources/resources');

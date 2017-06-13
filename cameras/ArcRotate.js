@@ -26,11 +26,11 @@ define(function(require, exports, module){
 
 //var Babylon=require('babylon');
 var $=require('jquery');
-var Element=require('handlers/Handler__Element');
+var Instrument=require('handles/Handle');
 
 var ArcRotateCamera=function(topFeatures){
 
-	Element.call(this, topFeatures);
+	Instrument.call(this, topFeatures);
 	
 	this.bimType='ArcRotateCamera';
 	this.setScene=function(scene, mesh, canvas){
@@ -48,15 +48,15 @@ var ArcRotateCamera=function(topFeatures){
 		
         cam.attachControl(BIM.options.canvas);	
 		//cam.bimHandler=ArcRotateCamera; //...done as following
-		Element.prototype.setScene.call(this, scene, cam);
+		Instrument.prototype.setScene.call(this, scene, cam);
 		
 		return cam;
 	};
 };
 
 //inherit prototype from super
-ArcRotateCamera.prototype=Object.create(Element.prototype);
-ArcRotateCamera.prototype.constructor=Element;
+ArcRotateCamera.prototype=Object.create(Instrument.prototype);
+ArcRotateCamera.prototype.constructor=Instrument;
 //shortcut
 //var __=ArcRotateCamera.prototype;	
 

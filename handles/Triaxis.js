@@ -26,16 +26,16 @@
 // see http://requirejs.org/docs/api.html#cjsmodule
 define( function(require, exports, module) {
 
-var Element=require('handlers/Handler__Element');
+var Handle=require('handles/Handle');
 var babylon=require('babylon');
 var $=require('jquery');
 //var Namable=require('features/nameable');
 //var Position=require('features/Position');
 
-var TriAxis=function(){
-	Element.call(this);
+var Triaxis=function(){
+	Handle.call(this);
 	
-	this.bimType='TriAxis';
+	this.bimType='Triaxis';
 	this.desc='Three axiis of a coordinate system';
 	/*************** 
 	// triAxis is a constant with inaccessible properties so no features 
@@ -46,10 +46,10 @@ var TriAxis=function(){
 }
 
 //Inherit from the super class
-TriAxis.prototype=Object.create(Element.prototype);
-TriAxis.prototype.constructor=TriAxis;
+Triaxis.prototype=Object.create(Handle.prototype);
+Triaxis.prototype.constructor=Triaxis;
 //shortcut
-var __=TriAxis.prototype;
+var __=Triaxis.prototype;
 
 __.axis=function(v1, v2, colour, scene) {
 	var ax=babylon.Mesh.CreateLines('axis', [v1, v2], scene);
@@ -71,7 +71,7 @@ __.cone=function(v1, v2, v3, colour, scene){
 		false,	//canBeRegenerated(opt), 
 		babylon.Mesh.DEFAULTSIDE //	
 	);
-	tip.material=new babylon.StandardMaterial("triad", scene);
+	tip.material=new babylon.StandardMaterial("triaxis", scene);
 	tip.material.diffuseColor=colour;
 	//Note that RotationFromAxis() changes the vertex objects provided by normalizing them
 	//so if they are used elsewhere, then it's best to provide copies (clones) as arguments
@@ -101,16 +101,14 @@ __.setScene=function(scene, parentMesh){
 	var zz=this.axis(v0, vz, blue, scene);
 	var zztop=this.cone( vy, vz, vx, blue, scene);
 	
-	//add bim handler to babylon mesh object
-	//assuming xx is the head mesh 
-	//xx.bimHandler=this;
-	Element.prototype.setScene(scene, parentMesh);
+	//always call superclass method - adds bimhandle to babylon mesh object
+	Handle.prototype.setScene(scene, parentMesh);
 	
 	//return only the the new mesh that was added to the scene
-	return [xx, yy, zz];
+	return [xx, xxtip, yy, yytip, zz, zztop];
 };
 
-return TriAxis;
+return Triaxis;
 
 }); //end of define
 

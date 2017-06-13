@@ -30,7 +30,7 @@ define( function(require, exports, module){
 //var babylon=require('babylon');
 //var Nameable=require('features/Nameable');
 
-var Element__Handler=function(moreFeatures){
+var Handler=function(moreFeatures){
 
 	this.bimType='Element';
 	this.desc='prototype for all Bim-United-FC scene-model elements';
@@ -38,7 +38,7 @@ var Element__Handler=function(moreFeatures){
 	else {this.Features=[];}
 	//console.log(this.Features);
 };
-var __=Element__Handler.prototype;	
+var __=Handler.prototype;	
 
 __.setScene=function(scene, parentMesh){
 	//mesh - babylon mesh, optional
@@ -78,5 +78,5 @@ __.getfeatures=function(mesh) {
 	return features;
 }
 
-return Element__Handler;
+return Handler;
 });

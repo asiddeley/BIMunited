@@ -26,13 +26,13 @@ define( function(require, exports, module){
 
 var BABYLON=require('babylon');
 var $=require('jquery');
-var Element=require('handlers/Handler__Element');
+var Instrument=require('handles/Handle');
 var Nameable=require('features/Nameable');
 var Position=require('features/Position');
 
 var Hemispheric=function(topFeatures){
 
-	Element.call(this, topFeatures);
+	Instrument.call(this, topFeatures);
 	
 	this.bimType='Hemispheric'; //DEP? - instead use bimhandler.constructor.name
 	this.desc='A volumetric pixel or 10 unit cube that can be placed at 10 unit coordinates.';
@@ -41,13 +41,13 @@ var Hemispheric=function(topFeatures){
 }
 
 //inherit prototype from super
-Hemispheric.prototype=Object.create(Element.prototype);
-Hemispheric.prototype.constructor=Element;
+Hemispheric.prototype=Object.create(Instrument.prototype);
+Hemispheric.prototype.constructor=Instrument;
 //shortcut
 var __=Hemispheric.prototype;	
 
 __.setScene=function(scene, mesh){
-	Element.prototype.setScene.call(this, scene, mesh);
+	Instrument.prototype.setScene.call(this, scene, mesh);
 	var mesh=new BABYLON.HemisphericLight('hemiTop', new BABYLON.Vector3(0,10,0), BIM.scene);
 	//new BABYLON.HemisphericLight('hemiBottom', new BABYLON.Vector3(10,10,10), BIM.scene);
 	

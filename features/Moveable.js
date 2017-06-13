@@ -31,7 +31,7 @@ var $=require('jquery');
 var Feature=require('features/Feature');
 var TextFC=require('features/TextFC');
 var ChooserFC=require('features/ChooserFC');
-var Coaster=require('handlers/Coaster');
+var Coaster=require('handles/Coaster');
 var coasterHandler=new Coaster();
 
 
@@ -54,7 +54,6 @@ var Moveable=function(mesh, options){
 	this.choices=['Off','XY yellow','YZ cyan', 'ZX magenta'];
 	this.coaster=null; //mesh movement stencil, a plane for pointer to intersect to get position 
 	this.mesh=mesh;
-	this.moveStart=false; //need to click on mesh first while cosater is on, to start move
 	//this.propKey='moveable'; //TO-DO instead of this.alias
 	//this.propObj=mesh.bimData; //TO-DO instead of this.prop=... and this.mesh
 	this.prop=mesh.bimData.moveable; //prop - meant for display only 
@@ -68,7 +67,8 @@ var Moveable=function(mesh, options){
 		Feature.prototype.setScene(scene, mesh);	
 		return mesh;
 	};
-	this.size=50; //size of coaster. TO-DO create a dual variable FC, for choices & sizes
+	//TO-DO create a dual variable FC, for choices & sizes
+	this.size=50; //size of coaster. 
 
 };
 
@@ -82,50 +82,46 @@ Moveable.prototype.coasterManager=function(propToBe){
 	var data={mesh:this.mesh, moveable:this};
 	var tools=BIM.resources.tools;
 	var moveStart=function(ev){ 
+		//console.log("moveStart");
 		var pickResult=BIM.scene.pick(
 			//point to test
 			BIM.scene.pointerX,	BIM.scene.pointerY, 
 			// predicate function for pickResult.hit
 			function(pickedmesh){ 
-				//console.log(pickedmesh.name);
-				//Duh! ev.data.mesh is the one in the sample, not in the main scene
-				return (pickedmesh===ev.data.mesh);
+				//console.log("pickedMesh/featureMesh="+pickedmesh.name+"/"+ev.data.mesh.name);
+				return (pickedmesh.name==ev.data.mesh.name);
 			} 
 		);
-		//console.log("mousedown hit "+pickResult.hit);
+		//console.log("hit "+pickResult.hit);
 		if (pickResult.hit) {
-			//console.log("moveStart/cameraPause");
 			BIM.fun.cameraPause();
-			ev.data.moveable.moveStart=true;
+			$(BIM.options.canvas).on('mousemove.moveable', data, movement);
 		}
-		return false;
+		//return false;
 	}
 	
-	var moveOngoing=function(ev){ //event handler
-		//console.log('mousemove');
+	var movement=function(ev){ //event handler
+		//console.log('moveSome');
 		var pickResult=BIM.scene.pick(
 			BIM.scene.pointerX, BIM.scene.pointerY,  //point to test
 			// predicate function for pickResult.hit
 			function(mesh){ return (mesh==BIM.resources.tools.coaster);} 
 		);
 		//console.log(pickResult.hit);
-		if (pickResult.hit == true ){
+		if (pickResult.hit){
 			//console.log(BIM.scene.pointerX, BIM.scene.pointerY);
 			//move mesh to position where pointer hit coaster...
-			if (ev.data.moveable.moveStart==true){
-				ev.data.mesh.position.copyFrom(pickResult.pickedPoint);
-				//ev.data.mesh.position.y=pickResult.pickedPoint.y;
-			}
+			ev.data.mesh.position.copyFrom(pickResult.pickedPoint);
 		}
-		//automatically call event.stopPropagation() and event.preventDefault() 
-		return false; 
+		//return false to call event.stopPropagation() & event.preventDefault() 
+		//return false; 
 	};	
 
 	var moveStop=function(ev){
-		//console.log("moveStop/cameraPlay");
+		//console.log("moveStop");
 		BIM.fun.cameraPlay(); //harmless - will have no effect unless cameraPaused
-		ev.data.moveable.moveStart=false;				
-		return false;
+		$(BIM.options.canvas).off('mousemove.moveable');
+		//return false;
 	};
 	
 	if (propToBe!='Off'){
@@ -143,7 +139,6 @@ Moveable.prototype.coasterManager=function(propToBe){
 		//best not to mix jquery events and babylon action manager triggers to avoid conflicts
 		//Note use of namespace ie.moveable in events below per jquery best practices
 		$(BIM.options.canvas).on('mousedown.moveable', data, moveStart);
-		$(BIM.options.canvas).on('mousemove.moveable', data, moveOngoing);
 		$(BIM.options.canvas).on('mouseup.moveable', data, moveStop);		
 	} else {
 		//Off selected...
@@ -153,10 +148,9 @@ Moveable.prototype.coasterManager=function(propToBe){
 			//BIM.resources.tools.coasterHandle.dispose();
 		}
 		//following are harmless if event handlers don't exist
-		$(BIM.options.canvas).off('mousemove.moveable'); 
+		$(BIM.options.canvas).off('mousedown.moveable');
+		$(BIM.options.canvas).off('mousemove.moveable');
 		$(BIM.options.canvas).off('mouseup.moveable');
-		$(BIM.options.canvas).off('mousedown.moveable');			
-		this.moveStart=false;
 	}
 };
 
