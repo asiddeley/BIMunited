@@ -44,22 +44,30 @@ __.setScene=function(scene, parentMesh){
 	//mesh - babylon mesh, optional
 	
 	if (typeof parentMesh == 'undefined'){parentMesh={};}
-	parentMesh.bimhandle=this; //should be .bimhandle or .bimelement__handle
-	parentMesh.bimData={};
+	parentMesh.bimhandle=this; 
+	parentMesh.bimData={childMeshes:[] };
+	//apply Features to handle...
 	for (var i in this.Features){
-		//Features which are constructor functions so need to call their prototypes...
+		//Features are constructor functions so run setScene from prototypes...
 		this.Features[i].prototype.setScene(scene, parentMesh);
 	}
 	return parentMesh;
 };
 
 __.addFeatures=function(){
-	//adds a feature constructor function to this Element__Handler
+	//adds a feature constructor function to the handler being constructed
 	for (var a in arguments) {
 		this.Features.push(arguments[a]);
 		//console.log(arguments[a]);
 	}
 };	
+
+__.dispose=function(mesh){
+		//disposes mesh and any children, that is someMesh where someMesh.parent == mesh
+		var cc=mesh.getChildren();
+		for (var c in cc){cc[c].dispose();}
+		mesh.dispose();
+}
 
 __.getfeatures=function(mesh) {
 	/**********
@@ -76,6 +84,22 @@ __.getfeatures=function(mesh) {
 		features[feature.alias]=feature;
 	}
 	return features;
+}
+
+__.unite=function(parentMesh, mesh1, mesh2, mesh3, etc){
+	//Adds meshes to parentMesh.bimData
+	//usually called by inheritor's setScene()
+	//mesh refs are stored in bimData and unsed when disposing united meshes
+	for (var i=0; i<arguments.length; i++){
+		if (i==0){ 
+			parentMesh=arguments[i]; 
+		}
+		else {
+			parentMesh.bimData.childMeshes.push(arguments[i]);
+			//BABYLON parent mesh transfromations (translations, rotations etc) applied to each mesh
+			arguments[i].parent=parentMesh;
+		}
+	}
 }
 
 return Handler;

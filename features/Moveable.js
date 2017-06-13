@@ -81,8 +81,9 @@ Moveable.prototype.coasterManager=function(propToBe){
 	//this function is called by this.control (chooserFC) when a choice is selected 
 	var data={mesh:this.mesh, moveable:this};
 	var tools=BIM.resources.tools;
+	BIM.fun.cameraPause(); //need to pause camera first
 	var moveStart=function(ev){ 
-		//console.log("moveStart");
+		console.log("moveStart");
 		var pickResult=BIM.scene.pick(
 			//point to test
 			BIM.scene.pointerX,	BIM.scene.pointerY, 
@@ -94,7 +95,7 @@ Moveable.prototype.coasterManager=function(propToBe){
 		);
 		//console.log("hit "+pickResult.hit);
 		if (pickResult.hit) {
-			BIM.fun.cameraPause();
+			//BIM.fun.cameraPause();
 			$(BIM.options.canvas).on('mousemove.moveable', data, movement);
 		}
 		//return false;
@@ -120,7 +121,10 @@ Moveable.prototype.coasterManager=function(propToBe){
 	var moveStop=function(ev){
 		//console.log("moveStop");
 		BIM.fun.cameraPlay(); //harmless - will have no effect unless cameraPaused
-		$(BIM.options.canvas).off('mousemove.moveable');
+		//TO-DO trigger position changed to update
+		//$(BIM.options.canvas).off('mousemove.moveable');
+		//BIM.fun.trigger('featurechange', [ev.moveable]);
+		//TO-DO force choose Off so coaster can be disposed
 		//return false;
 	};
 	
@@ -134,8 +138,7 @@ Moveable.prototype.coasterManager=function(propToBe){
 		tools.coaster=tools.coasterHandle.setScene(BIM.scene, null, this.size, propToBe);	
 		tools.coaster.position.copyFrom(this.mesh.position);
 	
-		//Setup mouseup, mousedown and mousemove events for mesh to be moved by the pointer.
-		//Babylon action manager doesn't have a mousemove trigger so use jquery instead for all - 
+		//Babylon action manager doesn't have a mousemove trigger so used jquery instead for all - 
 		//best not to mix jquery events and babylon action manager triggers to avoid conflicts
 		//Note use of namespace ie.moveable in events below per jquery best practices
 		$(BIM.options.canvas).on('mousedown.moveable', data, moveStart);
@@ -144,8 +147,7 @@ Moveable.prototype.coasterManager=function(propToBe){
 		//Off selected...
 		//Ensure coaster exists before trying to dispose it
 		if (BIM.resources.tools.coaster!=null){
-			BIM.resources.tools.coaster.dispose();
-			//BIM.resources.tools.coasterHandle.dispose();
+			BIM.resources.tools.coasterHandle.dispose(BIM.resources.tools.coaster);
 		}
 		//following are harmless if event handlers don't exist
 		$(BIM.options.canvas).off('mousedown.moveable');
