@@ -55,7 +55,7 @@ var Moveable=function(mesh, options){
 	this.coaster=null; //mesh movement stencil, a plane for pointer to intersect to get position 
 	this.mesh=mesh;
 	//this.propKey='moveable'; //TO-DO instead of this.alias
-	//this.propObj=mesh.bimData; //TO-DO instead of this.prop=... and this.mesh
+	//this.propJar=mesh.bimData; //TO-DO instead of this.prop=... and this.mesh
 	this.prop=mesh.bimData.moveable; //prop - meant for display only 
 	this.propToBe=null; //proposed new value for property
 	this.propUpdate=function(propToBe){
@@ -81,6 +81,7 @@ Moveable.prototype.coasterManager=function(propToBe){
 	//this function is called by this.control (chooserFC) when a choice is selected 
 	var data={mesh:this.mesh, moveable:this};
 	var tools=BIM.resources.tools;
+	
 	var moveStart=function(ev){ 
 		//console.log("moveStart");
 		var pickResult=BIM.scene.pick(
@@ -119,8 +120,9 @@ Moveable.prototype.coasterManager=function(propToBe){
 
 	var moveStop=function(ev){
 		//console.log("moveStop");
-		BIM.fun.cameraPlay(); //harmless - will have no effect unless cameraPaused
 		$(BIM.options.canvas).off('mousemove.moveable');
+		BIM.fun.cameraPlay(); //harmless - will have no effect unless cameraPaused
+		BIM.fun.trigger("propertychanged", [ev.data.mesh, "position"]);
 		//return false;
 	};
 	

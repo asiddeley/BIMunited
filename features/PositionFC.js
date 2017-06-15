@@ -116,7 +116,7 @@ __.start=function(mesh, feature){
 		var propToBe=ev.data.text$.val();
 		//ensure result is a babylon.Vector3;
 		
-		BIM.fun.log('positionFeature is:'+propToBe.toString() );
+		//BIM.fun.log('positionFeature is:'+propToBe.toString() );
 		//feature.onFeatureChange(result);
 		//BIM.fun.trigger('bimFeatureChanged', [feature]);
 	});

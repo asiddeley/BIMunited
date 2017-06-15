@@ -17,7 +17,7 @@
 	
 	project:	BIM united FC (Feature & Function Collection)
 	module: 	__PartHandler
-	desc: 		Abstract base class for all part handlers.  Constructor function creates a handler Object, one handler per bimType
+	desc: 		Constructor function that creates a handle Object
 	author: 	Andrew Siddeley 
 	started:	8-May-2017
 	
@@ -30,22 +30,24 @@ define( function(require, exports, module){
 //var babylon=require('babylon');
 //var Nameable=require('features/Nameable');
 
-var Handler=function(moreFeatures){
+var Handle=function(moreFeatures){
 
-	this.bimType='Element';
+	//this.bimType='Handle';
 	this.desc='prototype for all Bim-United-FC scene-model elements';
 	if (Array.isArray(moreFeatures)){ this.Features=moreFeatures; }
 	else {this.Features=[];}
 	//console.log(this.Features);
 };
-var __=Handler.prototype;	
+var __=Handle.prototype;	
 
 __.setScene=function(scene, parentMesh){
 	//mesh - babylon mesh, optional
 	
 	if (typeof parentMesh == 'undefined'){parentMesh={};}
-	parentMesh.bimhandle=this; //should be .bimhandle or .bimelement__handle
+	parentMesh.bimhandle=this; 
 	parentMesh.bimData={};
+
+
 	for (var i in this.Features){
 		//Features which are constructor functions so need to call their prototypes...
 		this.Features[i].prototype.setScene(scene, parentMesh);
@@ -78,5 +80,5 @@ __.getfeatures=function(mesh) {
 	return features;
 }
 
-return Handler;
+return Handle;
 });

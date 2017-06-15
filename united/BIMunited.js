@@ -235,10 +235,10 @@ BIM.func={
 		)); 
 	},
 	
-	trigger:function(ev, arg1, arg2){
+	trigger:function(eventName, optArrOfExtraArgs){
 		//BIM.ui.uiBlackboard.div$.trigger(ev, arg1);
 		//BIM.fun.log('BIM.trigger:'+ev);
-		BIM.options.board$.trigger(ev, arg1, arg2);
+		BIM.options.board$.trigger(eventName, optArrOfExtraArgs);
 	},
 			
 	uid:function(name){

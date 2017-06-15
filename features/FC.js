@@ -53,7 +53,10 @@ var FeatureControl=function(place, feature) {
 var __=FeatureControl.prototype;
 
 __.getEvents=function(){
-	return [ {name:'featurechange', data:this, handler:this.onFeatureChange} ];
+	return [
+		{name:'featurechanged', data:this, handler:this.onFeatureChanged},
+		{name:'propertychanged', data:this, handler:this.onPropertyChanged}
+	];
 };
 
 __.onSubmit=function(ev){ 
@@ -64,18 +67,18 @@ __.onSubmit=function(ev){
 	var revisedValu=ev.data.feature.propToBe;
 	//BIM.fun.log('FED onSubmit:' + arguments.length);
 	if (typeof feature != 'undefined' && typeof revisedValu != 'undefined') {
-		BIM.fun.trigger('featurechange', [feature]);
+		BIM.fun.trigger('featurechanged', [feature]);
 	}	
 };
 
-__.onFeatureChange=function(ev, feature){
+__.onFeatureChanged=function(ev, feature){
 	//triggered by form submit
 	var that=ev.data; 	
 	//all FCs called, but only update applicable FC/feature
-	//BIM.fun.log('FED onFeatureChange:' + Object.keys(feature).toString());
+	//console.log('FED onFeatureChange:' + Object.keys(feature).toString());
 
 	if (feature === that.feature){
-		//BIM.fun.log('the one to update: ' + feature.propToBe);
+		//console.log('the one to update: ' + feature.propToBe);
 		try{
 			//update valu field with revised value
 			if (typeof feature.propToBe == 'string'){ that.prop$.text( feature.propToBe );}
@@ -86,6 +89,18 @@ __.onFeatureChange=function(ev, feature){
 	}
 };
 
+
+__.onPropertyChanged=function(ev, propJar, propKey){
+	//triggered externally to indicate that the subject property has changed, not by the feature
+	//console.log('onPropertyChanged...');
+	if (ev.data.feature.mesh == propJar && ev.data.feature.alias == propKey){
+		try {
+			//update valu field with revised value
+			if (typeof propJar[propKey] == 'string'){ ev.data.prop$.text( propJar[propKey] );}
+			else { ev.data.prop$.text( propJar[propKey].toString() );}
+		} catch(er) {console.log(er);}
+	}
+}
 
 __.remove=function(){
 	/*** 
