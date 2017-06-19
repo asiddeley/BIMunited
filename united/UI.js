@@ -101,11 +101,12 @@ __.onInput=function(ev, input){
 	//BIM.fun.log(input);
 	//call others to process input 
 	var firstWord=input.split(' ',1)[0];
-	var tester=function(item){return item == firstWord;};
+	//var tester=function(item){return item == firstWord;};
 	var ih=ev.data.inputHandlers;
 	var propagate=true;
 	for (var i in ih){
-		if (ih[i].inputs.find(tester)){
+		//if (ih[i].inputs.find(tester)){ //find not defined in Explorer 11
+		if (ih[i].inputs.indexOf(firstWord) > 0) {
 			//found inputHandler that matches input so execute handler so...
 			propagate=false; //stop event propagation
 			try{ih[i].handler(ev);} //safely execute handler

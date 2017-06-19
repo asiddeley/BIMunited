@@ -81,11 +81,7 @@ Moveable.prototype.coasterManager=function(propToBe){
 	//this function is called by this.control (chooserFC) when a choice is selected 
 	var data={mesh:this.mesh, moveable:this};
 	var tools=BIM.resources.tools;
-<<<<<<< HEAD
-	
-=======
-	BIM.fun.cameraPause(); //need to pause camera first
->>>>>>> 81e369d20c9b2a1c93b4cef1a3eb6e0d69c19a78
+
 	var moveStart=function(ev){ 
 		console.log("moveStart");
 		var pickResult=BIM.scene.pick(
@@ -124,17 +120,9 @@ Moveable.prototype.coasterManager=function(propToBe){
 
 	var moveStop=function(ev){
 		//console.log("moveStop");
-<<<<<<< HEAD
 		$(BIM.options.canvas).off('mousemove.moveable');
 		BIM.fun.cameraPlay(); //harmless - will have no effect unless cameraPaused
 		BIM.fun.trigger("propertychanged", [ev.data.mesh, "position"]);
-=======
-		BIM.fun.cameraPlay(); //harmless - will have no effect unless cameraPaused
-		//TO-DO trigger position changed to update
-		//$(BIM.options.canvas).off('mousemove.moveable');
-		//BIM.fun.trigger('featurechange', [ev.moveable]);
-		//TO-DO force choose Off so coaster can be disposed
->>>>>>> 81e369d20c9b2a1c93b4cef1a3eb6e0d69c19a78
 		//return false;
 	};
 	
@@ -151,6 +139,7 @@ Moveable.prototype.coasterManager=function(propToBe){
 		//Babylon action manager doesn't have a mousemove trigger so used jquery instead for all - 
 		//best not to mix jquery events and babylon action manager triggers to avoid conflicts
 		//Note use of namespace ie.moveable in events below per jquery best practices
+		BIM.fun.cameraPause(); //first need to pause camera i.e. detach camera mouse events so they're freed up
 		$(BIM.options.canvas).on('mousedown.moveable', data, moveStart);
 		$(BIM.options.canvas).on('mouseup.moveable', data, moveStop);		
 	} else {

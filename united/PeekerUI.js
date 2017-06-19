@@ -39,24 +39,23 @@ var PeekerUI=function(board, title){
 		
 	var that=this;
 	this.alias='Peek';
-	this.fui=new FeaturesUI(null, 'Features');
 	this.canvas2D=null; //initialized in start() by which time BIM.scene is initialized 
 	
-	//Note that FEDs can be used on any object as below, not just babylon meshes.
-	//Remember to start FEDs - see onTabsactivate
+	//Note that FCs can be used on any object as below, not just babylon meshes.
+	//Remember to start FCs - see onTabsactivate
 	
 	this.peekMode='single';
 	this.peekModeFC=new ChooserFC(this.div$, {
 		alias:'peek mode',
 		prop:this.peekMode,
 		propToBe:'byChoices',
-		propUpdater:function(ev, rv){},
-		choices:[
-			{label:'single', 
-			onChoose:function(ev){return 'single';}},
-			{label:'multiple',
-			onChoose:function(ev){return 'multiple';}}			
-		]
+		propUpdate:function(ev, rv){ },
+		choices:[ 'single', 'multiple']
+		//choices long form...
+		//choices:[
+			//{label:'single', onChoose:function(ev){return 'single';}},
+			//{label:'multiple', onChoose:function(ev){return 'multiple';}}			
+		//]
 	});
 	this.peekModeFC.start();
 	
@@ -64,11 +63,11 @@ var PeekerUI=function(board, title){
 	this.peekLimit=3;
 	this.peekLimitFC=new TextFC(this.div$, {
 		alias:'peek limit', 
-		prop:that.peekLimit,
+		prop:this.peekLimit,
 		propToBe:'TBD by user input',	
-		propUpdater:function(ev,r){	return r;}
+		propUpdate:function(ev,r){	return r;}
 	});	
-	this.peekLimitFC.start();
+	//this.peekLimitFC.start(); //see onTabsActivate
 	
 	this.peek$=null;
 	//this.div$.append(this.peekModeFED.div$,this.fui.div$);
@@ -78,6 +77,11 @@ var PeekerUI=function(board, title){
 	// array of tags - reused for each pick set
 	this.stickers=[];	
 	// return constructed ui object for chaining.
+	
+	this.fui=new FeaturesUI(null, 'Features');
+	this.div$.append(this.fui.div$);
+	//this.fui.start(); //see onTabsActivate
+	
 	return this;
 }
 
@@ -110,11 +114,18 @@ __.add=function( part ){
 __.getEvents=function(){
 	return [
 		//{name:'bimFeatureOK', data:this, handler:this.onFeatureOK },
-		{name:'bimInput', data:this, handler:this.onInput },
+		{name:'input', data:this, handler:this.onInput },
 		{name:'tabsactivate', data:this, handler:this.onTabsactivate }
 	];
+};
+
+__.getInputHandlers=function(){
+	return[
+		{inputs:['peek', 'pe'], desc:'show the Peek UI', handler:function(ev){ ev.data.toggle(); }  }	
+	];
 }
-	
+
+/***** deprecated
 //called by BIM.board when ui's created, may be used for input autocomplete
 //called by onInput() below
 __.getKeywords=function(){
@@ -150,17 +161,25 @@ __.onInput=function(ev, input){
 		//case 'ppx':	BIM.ui.picker.div$.dialog('close');
 	};		
 }
-	
+*/
+
 __.onFeatureOK=function(ev, part, valu){
 	//BIM.fun.log('picker onFeature '+ part + '-' + valu);
 	ev.data.stickersRegen();		
 }
 	
 __.onPointerDown=function (ev, pickResult) {
+	pickResult=BIM.scene.pick(
+		BIM.scene.pointerX, BIM.scene.pointerY,  
+		// predicate function for pickResult.hit
+		function(mesh){ return mesh;} 
+	);
+
+	console.log('pointer down');
 	if (pickResult.hit) {
 		if (pickResult.pickedMesh != null) {
-			if (typeof pickResult.pickedMesh.BimFC == "undefined"){
-				BIM.fun.log("Mesh has no BIM features");
+			if (typeof pickResult.pickedMesh.bimhandle == "undefined"){
+				console.log("Mesh has no BIM features");
 			} else {
 				BIM.get.cMesh(pickResult.pickedMesh); //set cMech to pick
 				BIM.input("_meshPicked"); //announce it to all uis
@@ -173,11 +192,18 @@ __.onPointerDown=function (ev, pickResult) {
 
 //start the picker
 __.onTabsactivate=function(ev){ 
+	console.log('PeekerUI tabsactivate');	
 	var that=ev.data;
+	//console.log(that.onPointerDown);
 	that.peekModeFC.start(); 
 	that.peekLimitFC.start(); 
+	that.fui.start();
 	
-	BIM.scene.onPointerDown=that.onPointerDown;
+	BIM.fun.cameraPause();
+	$(BIM.options.canvas).on('mousedown.peekerui', that, that.onPointerDown);
+
+	//babylon deprecated
+	//BIM.scene.onPointerDown=that.onPointerDown();
 	if (that.canvas2D==null) {
 		//BIM.fun.log('picker start, BIM.scene ' + BIM.scene);
 		that.canvas2D=new babylon2D.ScreenSpaceCanvas2D( BIM.scene, {
@@ -189,7 +215,8 @@ __.onTabsactivate=function(ev){
 	//this.div$.dialog('open');
 	//for chaining
 	return this; 
-}
+};
+
 	
 __.stickersCreate=function(mesh, i){
 	//first pick blue #0000FFFF 

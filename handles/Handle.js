@@ -45,14 +45,7 @@ __.setScene=function(scene, parentMesh){
 	
 	if (typeof parentMesh == 'undefined'){parentMesh={};}
 	parentMesh.bimhandle=this; 
-<<<<<<< HEAD
 	parentMesh.bimData={};
-
-
-=======
-	parentMesh.bimData={childMeshes:[] };
-	//apply Features to handle...
->>>>>>> 81e369d20c9b2a1c93b4cef1a3eb6e0d69c19a78
 	for (var i in this.Features){
 		//Features are constructor functions so run setScene from prototypes...
 		this.Features[i].prototype.setScene(scene, parentMesh);
@@ -92,25 +85,6 @@ __.getfeatures=function(mesh) {
 	return features;
 }
 
-<<<<<<< HEAD
 return Handle;
-=======
-__.unite=function(parentMesh, mesh1, mesh2, mesh3, etc){
-	//Adds meshes to parentMesh.bimData
-	//usually called by inheritor's setScene()
-	//mesh refs are stored in bimData and unsed when disposing united meshes
-	for (var i=0; i<arguments.length; i++){
-		if (i==0){ 
-			parentMesh=arguments[i]; 
-		}
-		else {
-			parentMesh.bimData.childMeshes.push(arguments[i]);
-			//BABYLON parent mesh transfromations (translations, rotations etc) applied to each mesh
-			arguments[i].parent=parentMesh;
-		}
-	}
-}
 
-return Handler;
->>>>>>> 81e369d20c9b2a1c93b4cef1a3eb6e0d69c19a78
 });
