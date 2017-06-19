@@ -29,9 +29,9 @@ var UI=require('united/UI');
 var FC=require('features/FC');
 var Feature=require('features/Feature');
 
-var FeaturesUI=function(board, title){
+var FeaturesUI=function(board, title, options){
 	//inherit constructor from UI
-	UI.call(this, board, title); 
+	UI.call(this, board, title, options); 
 
 	this.alias='Features';
 	this.controls=[];
@@ -51,27 +51,26 @@ __.getEvents=function(){
 	//For events, keyword 'this' refers to the event callers context
 	//The 'this' that refers to the FeaturesUI instance, is passed in ev.data 
 	return [
-		{name:'bimInput', data:this, handler:this.onInput},
-		{name:'bimPick', data:this, handler:this.onPick}
+		{name:'input', data:this, handler:this.onInput},
+		{name:'pick', data:this, handler:this.onPick}
 	];
 };
+
+//override
+__.getInputHandlers=function(){
+	//get inherited inputHandlers, commands such as 'events' & 'keywords'
+	var ih=UI.prototype.getInputHandlers.call(this);
 	
-__.onInput=function(ev, input){
-	switch (input){
-		case 'ff':
-		case 'features':ev.data.toggle();break;
-		case '_meshAdded':ev.data.start(BIM.get.cMesh());break;
-		case '_meshPicked':ev.data.start(BIM.get.cMesh());break;
-		case 'events':
-			//keys - Array of event names
-			var keys=Object.keys(ev.data.getEvents()); 
-			BIM.fun.log(ev.data.alias.toUpperCase()+'\n'+keys.join("\n"));
-			break;	
-		case 'keywords':
-			var keys=['ff', 'features', 'keywords', 'events'];
-			BIM.fun.log(ev.data.alias.toUpperCase()+'\n'+keys.join("\n"));
-			break;			
-	} 
+	//commands or inputHandlers for partsUI...
+	return ih.concat([{
+		inputs:['features', 'fu'], 
+		desc:'Brings up/down the features dialog box and tab',
+		handler:function(ev){ev.data.toggle(); return false;}
+	},{
+		inputs:['peek','_meshAdded', '_meshPicked'],
+		desc:'Show features of the current mesh',
+		handler:function(ev){ev.data.start(BIM.get.cMesh());}
+	}]);
 };
 
 //utility
@@ -112,10 +111,6 @@ __.start=function(mesh){
 	}
 };
 	
-__.toggle=function(){
-	if (this.div$.is(':ui-dialog')){ this.div$.dialog("close"); }
-	else if (this.isDialog) { this.div$.dialog("open"); }
-};
 	
 /*
 usage:

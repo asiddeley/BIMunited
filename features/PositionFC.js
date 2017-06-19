@@ -68,7 +68,7 @@ __.init=function(){
 			ev.data.text$.val(v.toString());
 			ev.data.menu$.hide();
 		}),
-		$('<li><div>snaped</div></li>').on('click',that, function(ev){
+		$('<li><div>snapped</div></li>').on('click',that, function(ev){
 			ev.data.text$.val('{to match snapped}');
 			ev.data.menu$.hide();
 		}),

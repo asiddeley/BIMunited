@@ -41,20 +41,14 @@ var PartsUI=function(board, title){
 	var that=this;
 	this.alias='Part';
 	this.scene=null;
-	this.fui=new FeaturesUI(null, 'Features of New Part');
+	this.fui=new FeaturesUI(null, 'Features of New Part', {ignoreInput:true});
 
 	//CSS tip - container height must be explicitly set for content height to work
 	this.canvas$=$('<canvas></canvas>').css(
 		{'max-width':'49%', 'height':'100%', 'float':'right'}
 	);
 	
-	this.ok$=$('<button>ADD (to Model)</button>').on('click', this, function(ev){
-		//BIM.scene.addMesh(ev.data.sample); //no effect, needs work
-		//What about material and other dependencies?
-		var newpart=ev.data.partHandle.setScene(BIM.scene);
-		//match sample features to new part
-		FeaturesUI.prototype.matchAll(ev.data.sample, newpart);
-	});
+	this.ok$=$('<button>ADD (to Model)</button>').on('click', this, this.addPart);
 	this.ok$.button().addClass('ui-controlgroup-label');
 	this.btnrow$=$('<div></div>').addClass('bimFC1');
 	this.btnrow$.append(this.ok$);
@@ -101,13 +95,8 @@ var PartsUI=function(board, title){
 		//prop.this.bimHandler,
 		propToBe:'TBD from Choices',
 		propUpdate:function(label){
-			//alert(label);
-			if (that.sample !=null) {that.sample.dispose();} //remake sample
-			//that.bimHandler=BIM.parts[label]; //set to chosen part handler
 			that.partHandle=BIM.parts[label]; //set to chosen part handler
-			that.sample=that.partHandle.setScene(that.scene);	
-			//connect and show features of sample
-			that.fui.start(that.sample);			
+			that.buildPart();
 		}		
 	});
 	this.partFC.start();
@@ -128,8 +117,10 @@ var PartsUI=function(board, title){
 	});
 	this.resourceFC.start();
 	
-	//this.sample=this.partHandle.setScene(this.scene);	
-	//this.fui.start(this.sample);
+	//this.part and this.scene initialized when tab gets focus in tabsactivate(),
+	//cannot do it earlier since this.scene needs this.canvas to be showing
+	this.part=null;
+	this.scene=null;
 	
 	return this;
 };
@@ -139,15 +130,61 @@ PartsUI.prototype=Object.create(UI.prototype);
 PartsUI.prototype.constructor=PartsUI;
 var __=PartsUI.prototype;
 
+__.addPart=function(ev){
+	//BIM.scene.addMesh(ev.data.sample); //no effect, needs work
+	//What about material and other dependencies?
+	var newpart=ev.data.partHandle.setScene(BIM.scene);
+	if (ev.data.part!=null){
+		//match sample features to new part
+		FeaturesUI.prototype.matchAll(ev.data.part, newpart);
+	}
+	//refresh sample part
+	ev.data.buildPart();	
+};
+
+__.buildPart=function(){
+	//var that=this;
+	if (this.part !=null) {this.part.dispose();} //remake sample
+	//that.bimHandler=BIM.parts[label]; //set to chosen part handler
+	this.part=this.partHandle.setScene(this.scene);	
+	//connect and show features of sample part
+	this.fui.start(this.part);
+};
+
+//override
 __.getEvents=function(){
-	return [
-		{name:'bimInput', data:this, handler:this.onInput },
+	//get inherited eventHandlers, events such as 'input'
+	var eh=UI.prototype.getEvents.call(this);
+
+	return eh.concat([
 		{name:'featurechange', data:this, handler:this.onFeatureChange },
 		{name:'restock', data:this, handler:this.onRestock },
 		{name:'resourcesupdate', data:this, handler:this.onResourcesUpdate },
 		{name:'tabsactivate', data:this, handler:this.onTabsactivate }
-	];
+	]);
 };
+
+//override
+__.getInputHandlers=function(){
+	//get inherited inputHandlers, commands such as 'events' & 'keywords'
+	var ih=UI.prototype.getInputHandlers.call(this);
+	
+	//commands or inputHandlers for partsUI...
+	return ih.concat([{
+		inputs:['parts-add', 'pa'], 
+		desc:'Adds new part to the scene',
+		handler:function(ev){ev.data.addPart(ev);}
+	},{
+		inputs:['parts-ui', 'pu'], 
+		desc:'Brings up/down the parts dialog box and tab',
+		handler:function(ev){ev.data.toggle(); return false;}
+	},{
+		inputs:['restock'],
+		desc:'Refreshes the parts library',
+		handler:function(){BIM.fun.trigger('restock', [BIM.parts]);}
+	}]);
+};
+
 
 __.onChooseResource=function(ev, ui, that){
 	//TO DO
@@ -158,25 +195,8 @@ __.onFeatureChange=function(ev, feature){
 
 };
 
-//inherited from UI but overriden
-__.onInput=function(ev, input){ 
-	//don't use keyword 'this' here as it will refer to the event caller's context, not uiPicker
-	switch(input){
-	case 'ap':
-	case 'parts': ev.data.toggle(); break;
-	case 'events':
-		//keys - Array of event names
-		var keys=Object.keys(ev.data.getEvents()); 
-		BIM.fun.log(ev.data.alias.toUpperCase()+'\n' + keys.join("\n"));
-		break;	
-	case 'keywords':
-		var keys=['ap', 'parts', 'events', 'keywords', 'restock'];
-		BIM.fun.log(ev.data.alias.toUpperCase()+'\n' + keys.join("\n"));
-		break;		
-	case 'restock':BIM.fun.trigger('bimRestock', [BIM.parts]); break;
-
-	}		
-};
+//override not necessary. Code for input handlers is in getKeywords()
+//__.onInput=function(ev, input){ };
 
 	
 __.onResourcesUpdate=function(ev, resources){
@@ -194,7 +214,6 @@ __.onResourcesUpdate=function(ev, resources){
 		ev.data.wigetize(ev.data);
 	}
 };
-
 
 	
 __.onRestock=function(ev, lib, resources){
@@ -226,6 +245,10 @@ __.onTabsactivate=function(ev, ui){
 		var mui=ev.data;
 		mui.engine=new babylon.Engine(mui.canvas$[0],  true);
 		mui.scene=new babylon.Scene(mui.engine);
+		//initialize sample part
+		mui.part=mui.partHandle.setScene(mui.scene);
+		mui.fui.start(mui.part);
+		
 		mui.setScene(mui.scene, mui.canvas$[0]);
 		mui.engine.runRenderLoop(function(){
 			//give camera a little spin

@@ -44,23 +44,25 @@ var Position=function(mesh, more){
 	this.control=ChooserFC; //feature control - ChooserFC requires choices below...
 	this.desc='Vertex rounded to the nearest 10 units';
 	this.prop=mesh.position; //meant for display only - call this.propUpdate to change
-	this.propDefault=new babylon.Vector3(0,0,0);
-	//this.propInit=function(){this.propUpdater(this.propDefault);};
+	//this.propDefault=new babylon.Vector3(0,0,0);
 	this.propToBe=null;
-	this.choices=[
-		{label:'random', 
+	this.choices=[{
+		label:'next available',
+		onChoose:function(){return BIM.get.nextAvailableV3();}
+	},{		
+		label:'random', 
 		onChoose:function(ev){ 
 			return new babylon.Vector3(
-				10*Math.floor(Math.random()*10), 
-				10*Math.floor(Math.random()*10), 
-				10*Math.floor(Math.random()*10)
-			); 
-		}}, 
-		{label:'origin',
+			10*Math.floor(Math.random()*10), 
+			10*Math.floor(Math.random()*10), 
+			10*Math.floor(Math.random()*10));
+		}
+	},{
+		label:'origin',
 		onChoose:function(ev){ 
 			return new babylon.Vector3(0,0,0); 
-		}}
-	]	
+		}
+	}]	
 };
 
 
@@ -72,14 +74,14 @@ var __=Position.prototype;
 
 //override
 __.propUpdate=function(propToBe){ 
-	//call prototype, or super method in OOP, for default behaviour
+	//For default behaviour call prototype (similar to super method in OOP) 
 	Feature.prototype.propUpdate.call(this, propToBe);
 	//this.mesh.position=propToBe; 
 };
 
 //override
 __.setScene=function(scene, mesh){
-	//call prototype, or super method in OOP, for default behaviour
+	//For default behaviour call prototype (similar to super method in OOP) 
 	Feature.prototype.setScene.call(this, scene, mesh);
 	//TO-DO...
 };

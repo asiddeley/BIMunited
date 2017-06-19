@@ -38,7 +38,7 @@ return {
 	//coaster:new Coaster(),
 	voxelite:new Voxelite(),
 	voxelite_isotope_1:new Voxelite( [McGrowable] ),
-	voxelite_isotope_2:new Voxelite( [Moveable] ),
+	voxelite_isotope_2:new Voxelite( [Moveable] )
 };
 
 }); //end of define

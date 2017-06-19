@@ -272,14 +272,15 @@ BIM.get={
 		else {return this.cMeshObj};	
 	},
 	cMeshObj:null,
-	
+	nextAvailableV3:function(){
+		return new BABYLON.Vector3(
+			10*Math.floor(Math.random()*10), 
+			10*Math.floor(Math.random()*10), 
+			10*Math.floor(Math.random()*10)
+		);		
+	},
 	bb:function(){ return BIM.ui.blackboard;},
 	canvas:function() {return BIM.options.canvas;},	
-	////////////////////////////////////
-	featurize:function(obj, feature1, feature2, etc){
-		//adds features {} and getFeatures function to obj
-		
-	},
 	scene: function() {return BIM.scene;},
 	uid: function(name) {return BIM.fun.uid(name);},
 	//global variable storage
@@ -299,8 +300,10 @@ BIM.help=function(input){
 }
 	
 //main method for user interaction
-BIM.input=function(input){return this.fun.trigger('bimInput', input);}
-	
+//BIM.input=function(input){return this.fun.trigger('bimInput', input);}
+BIM.input=function(input){return this.fun.trigger('input', input);}
+
+
 //list of commands, 
 BIM.keywords={};
 	
@@ -338,6 +341,8 @@ BIM.views=require('cameras/cameras');
 //Worldbox Library.  
 //A worldbox contains information about a model's bounds, units, and yonder ie sky box and ground
 BIM.worldBoxes={};
+
+BIM.zoom=require('cameras/cameras');
 
 window.BIM=BIM;
 return BIM;

@@ -30,7 +30,7 @@ define(
 // then do...
 function($, BJS){
 
-var UI=function(board, title){
+var UI=function(board, title, options){
 
 	// board - DOM element container for user intefaces (UI) 
 	this.div$=$('<div></div>');
@@ -43,43 +43,76 @@ var UI=function(board, title){
 		//use jquery-ui to turn div$ into a floating dialog box
 		this.div$.dialog({draggable:true, title:this.alias, autoOpen:true});
 	}
+	if (typeof options == 'undefined') {options={ignoreInput:false};}
+	
 	// REGISTER EVENTS 
-	BIM.fun.on(this.getEvents());	
+	BIM.fun.on(this.getEvents());
+	
+	// Init inputHandlers, array of {alias:['a'], desc:'about', handler:function}
+	// or an empty array [] if options.ignoreInput is true. Ignoring input 
+	// may be necessary if UI is not a stand-alone or used within another dialog
+	if (!options.ignoreInput) {this.inputHandlers=this.getInputHandlers();}
+	else {this.inputHandlers=[];}
+	
 	return this;
 };
 
 var __=UI.prototype;
 	
-__.getKeywords=function(keywords){
-	//get or set keyword-handlers
-	if (typeof keywords==Array){this.keywords=keywords}
-	else if (this.keywords==null){ this.keywords=[{
-			aliases:['dd', 'toggle'],
-			desc:'Open/close this dialog',
-			handler:function(that){return that.toggle();}	
-		}];
-	}
-	return this.keywords;
+__.getInputHandlers=function(){
+	//returns an array of {alias:['a'], desc:'about', handler:function}
+	//these inputHamdlers are common for all UI if inheritor so chooses
+		
+	return [{
+		inputs:['events', 'ev'],
+		desc:'Lists the events the UI responds to',
+		handler:function(ev){
+			//keys - Array of event names
+			var eh=ev.data.getEvents(); 
+			BIM.fun.log('*** User Interface:'+ev.data.alias); 
+			//list commands and description for eash input handler
+			for (var i in eh){BIM.fun.log("event:"+eh[i].name, "desc.:"+eh[i].desc);}
+		}
+	},{
+		inputs:['keywords', 'kw'],
+		desc:'Lists the inputs or commands the UI responds to',
+		handler:function(ev){
+			var ih=ev.data.inputHandlers;
+			//name of UI
+			BIM.fun.log('*** User Interface:'+ev.data.alias); 
+			//list commands and description for eash input handler
+			for (var i in ih){BIM.fun.log("commands:"+ih[i].inputs.join(", "), "desc.:"+ih[i].desc);}
+		}
+	}];
 };
 
 __.getEvents=function(){
 	// Beware of using 'this' in event handlers as it will refer to the callers context
 	// Instead assume 'this' is passed in event data thus... handler(ev){ev.data.toggle();}
-	return [{name:'bimInput',	handler:this.onInput, data:this }];
+	return [{
+		name:'input', 
+		desc:'handles user command input', 
+		data:this, 
+		handler:this.onInput
+	}];
 };
 
-__.keywords=null;
-	
 __.onInput=function(ev, input){
 	//BIM.fun.log(input);
 	//call others to process input 
-	//this.div$.trigger('bimInput', [command]);
-	
-	//Tabbed responsible for following input 
-	//ev.data=this which is context of TabbedUI instance
-	switch (input) {
-		case 'dd':ev.data.toggle();break;
-	};
+	var firstWord=input.split(' ',1)[0];
+	var tester=function(item){return item == firstWord;};
+	var ih=ev.data.inputHandlers;
+	var propagate=true;
+	for (var i in ih){
+		if (ih[i].inputs.find(tester)){
+			//found inputHandler that matches input so execute handler so...
+			propagate=false; //stop event propagation
+			try{ih[i].handler(ev);} //safely execute handler
+			catch(er){console.log(er);}
+		}		
+	}	
+	return propagate;
 };
 
 __.toggle=function(){
