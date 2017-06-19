@@ -101,11 +101,22 @@ __.setScene=function(scene, parentMesh){
 	var zz=this.axis(v0, vz, blue, scene);
 	var zztop=this.cone( vy, vz, vx, blue, scene);
 	
+	//add parent so that these move with parent
+	if (typeof parentMesh != 'undefined'){
+		xx.parent=parentMesh;
+		xxtip.parent=parentMesh;
+		yy.parent=parentMesh;
+		yytip.parent=parentMesh;
+		zz.parent=parentMesh;
+		zztop.parent=parentMesh;
+	}
+	
 	//always call superclass method - adds bimhandle to babylon mesh object
 	Handle.prototype.setScene(scene, parentMesh);
 	
-	//return only the the new mesh that was added to the scene
-	return [xx, xxtip, yy, yytip, zz, zztop];
+	//TO-DO figure out what should be returned
+	//return only the the new mesh that was added to the scene or the parentMesh or both or nothing?
+	//return [xx, xxtip, yy, yytip, zz, zztop];
 };
 
 return Triaxis;
