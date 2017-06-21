@@ -44,8 +44,8 @@ var PeekerUI=function(board, title){
 	//Note that FCs can be used on any object as below, not just babylon meshes.
 	//Remember to start FCs - see onTabsactivate
 	
-	this.peekMode='single';
-	this.peekModeFC=new ChooserFC(this.div$, {
+	this.mode='single';
+	this.modeFC=new ChooserFC(this.div$, {
 		alias:'peek mode',
 		prop:this.peekMode,
 		propToBe:'byChoices',
@@ -57,11 +57,11 @@ var PeekerUI=function(board, title){
 			//{label:'multiple', onChoose:function(ev){return 'multiple';}}			
 		//]
 	});
-	this.peekModeFC.start();
+	this.modeFC.start();
 	
 	//max number of picks to track
-	this.peekLimit=3;
-	this.peekLimitFC=new TextFC(this.div$, {
+	this.limit=3;
+	this.limitFC=new TextFC(this.div$, {
 		alias:'peek limit', 
 		prop:this.peekLimit,
 		propToBe:'TBD by user input',	
@@ -69,11 +69,10 @@ var PeekerUI=function(board, title){
 	});	
 	//this.peekLimitFC.start(); //see onTabsActivate
 	
-	this.peek$=null;
-	//this.div$.append(this.peekModeFED.div$,this.fui.div$);
+	this.count$=$('<div>0</div>');
 
-	// array of picked parts 
-	this.peeks=[];
+	// array of picked meshes 
+	this.picks=[];
 	// array of tags - reused for each pick set
 	this.stickers=[];	
 	// return constructed ui object for chaining.
@@ -90,20 +89,20 @@ PeekerUI.prototype=Object.create(UI.prototype);
 PeekerUI.prototype.constructor=PeekerUI;
 var __=PeekerUI.prototype; //define __ as shortcut
 	
-__.add=function( part ){ 
-	if (this.peekMode=="single"){this.picks=[];}
+__.add=function( mesh ){ 
+	if (this.mode=="single"){this.picks=[];}
 	//if part not in pick list...
-	if (this.peeks.indexOf(part) == -1) {
+	if (this.picks.indexOf(mesh) == -1) {
 		//add part to pick list
-		this.peeks.push(part);
+		this.picks.push(mesh);
 		//ensure number of picks does not exceed pick limit set by user
-		if (this.peeks.length>this.peekLimit) {this.peeks.shift();}
+		if (this.picks.length>this.limit) {this.picks.shift();}
 	} else {
 		//remove part from pick list by filtering it out
-		this.peeks=$.grep(this.peeks, function(v, i){return (part !== v);});
+		this.picks=$.grep(this.picks, function(v, i){return (mesh !== v);});
 	}
 	//refresh
-	this.divPeek$.text(this.picks.length.toString()); //update board
+	this.count$.text(this.picks.length.toString()); //update board
 	this.stickersRegen();
 	//trigger event - note that event is automatically passed as arg1
 	//$.trigger('customEvent', ['arg2', 'arg3'...])
@@ -125,44 +124,6 @@ __.getInputHandlers=function(){
 	];
 }
 
-/***** deprecated
-//called by BIM.board when ui's created, may be used for input autocomplete
-//called by onInput() below
-__.getKeywords=function(){
-	//this.keywords defined here because it can't be defined until BIM.ui.picker is
-	if (this.keywords==null){ this.keywords=[
-		{keywords:['peek','pe'], 
-			handler:function(){
-				//BIM.fun.log('Poke function TBD');
-				this.toggle();
-			},
-			help:'show/hide the peek dialog'}, 
-		{keywords:['close', 'peekx'], 
-			handler:function(){
-				//BIM.ui.uiPicker.div$.dialog('close');
-				BIM.fun.log('close peek WIP');
-			},
-			help:'close peek TBD'
-		}
-	];}
-	return this.keywords;
-}
-	
-//called by ui.blackboard when there is BIM user input
-__.onInput=function(ev, input){ 
-	//beware of using 'this' inside an eventhandler function!
-	//because 'this' will refer to the event caller's context, not uiPicker
-	switch (input) {
-		case 'peek':
-			//BIM.ui.uiPicker.toggle(); 
-			ev.data.start();
-			break;
-		case 'peek wipe': BIM.ui.picker.wipe(); break;
-		//case 'ppx':	BIM.ui.picker.div$.dialog('close');
-	};		
-}
-*/
-
 __.onFeatureOK=function(ev, part, valu){
 	//BIM.fun.log('picker onFeature '+ part + '-' + valu);
 	ev.data.stickersRegen();		
@@ -170,9 +131,10 @@ __.onFeatureOK=function(ev, part, valu){
 	
 __.onPointerDown=function (ev, pickResult) {
 	pickResult=BIM.scene.pick(
-		BIM.scene.pointerX, BIM.scene.pointerY,  
+		BIM.scene.pointerX, 
+		BIM.scene.pointerY
 		// predicate function for pickResult.hit
-		function(mesh){ return mesh;} 
+		//, function(mesh){ return mesh;} 
 	);
 
 	console.log('pointer down');
@@ -182,7 +144,7 @@ __.onPointerDown=function (ev, pickResult) {
 				console.log("Mesh has no BIM features");
 			} else {
 				BIM.get.cMesh(pickResult.pickedMesh); //set cMech to pick
-				BIM.input("_meshPicked"); //announce it to all uis
+				//BIM.input("_meshPicked"); //announce it to all uis
 				//BIM.ui.uiPicker.add(pickResult.pickedMesh.bimHandler);
 				ev.data.add(pickResult.pickedMesh);
 			}				
@@ -195,8 +157,9 @@ __.onTabsactivate=function(ev){
 	console.log('PeekerUI tabsactivate');	
 	var that=ev.data;
 	//console.log(that.onPointerDown);
-	that.peekModeFC.start(); 
-	that.peekLimitFC.start(); 
+	that.modeFC.start(); 
+	that.limitFC.start();
+	//that.countFC.start();
 	that.fui.start();
 	
 	BIM.fun.cameraPause();
