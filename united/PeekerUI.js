@@ -102,7 +102,7 @@ __.add=function( mesh ){
 		this.picks=$.grep(this.picks, function(v, i){return (mesh !== v);});
 	}
 	//refresh
-	this.count$.text(this.picks.length.toString()); //update board
+	this.count$.text('meshes picked: '+this.picks.length.toString()); //update board
 	this.stickersRegen();
 	//trigger event - note that event is automatically passed as arg1
 	//$.trigger('customEvent', ['arg2', 'arg3'...])
@@ -162,7 +162,7 @@ __.onTabsactivate=function(ev){
 	//that.countFC.start();
 	that.fui.start();
 	
-	BIM.fun.cameraPause();
+	//BIM.fun.cameraPause();
 	$(BIM.options.canvas).on('mousedown.peekerui', that, that.onPointerDown);
 
 	//babylon deprecated
@@ -231,8 +231,6 @@ __.stickersRegen=function(){
 		sticker=this.stickersCreate(this.picks[i], i);
 		this.stickers.push(sticker);
 	};
-	
-	this.divPick$.text('picked items:'+this.picks.length);
 }
 	
 __.wipe=function(){

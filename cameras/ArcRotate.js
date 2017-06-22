@@ -46,7 +46,7 @@ var ArcRotateCamera=function(topFeatures){
 			BIM.scene
 		);
 		
-        cam.attachControl(BIM.options.canvas);	
+        cam.attachControl(BIM.options.canvas, true);	
 		//cam.bimHandler=ArcRotateCamera; //...done as following
 		Instrument.prototype.setScene.call(this, scene, cam);
 		

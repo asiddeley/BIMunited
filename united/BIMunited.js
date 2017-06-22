@@ -161,7 +161,8 @@ BIM.func={
 			data:{},
 			handler:function(){
 				console.log('attach camera');
-				BIM.scene.activeCamera.attachControl(BIM.options.canvas,false);
+				//BIM.scene.activeCamera.attachControl(BIM.options.canvas, false); //preventDefalut(), I.e mouse events do not propagate.  Default
+				BIM.scene.activeCamera.attachControl(BIM.options.canvas, true); //does not perventDefault(), I.e. mouse events propagate
 			}
 		}]);		
 	},
