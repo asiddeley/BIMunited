@@ -153,8 +153,9 @@ __.onPointerDown=function (ev, pickResult) {
 }
 
 //start the picker
-__.onTabsactivate=function(ev){ 
-	console.log('PeekerUI tabsactivate');	
+__.onTabsactivate=function(ev, ui){ 
+	UI.prototype.onTabsactivate.call(this, ev, ui);
+	//console.log('PeekerUI tabsactivate');	
 	var that=ev.data;
 	//console.log(that.onPointerDown);
 	that.modeFC.start(); 

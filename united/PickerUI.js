@@ -171,7 +171,10 @@ __.onPointerDown=function (ev, pickResult) {
 }
 
 //start the picker
-__.onTabsactivate=function(ev){ 
+__.onTabsactivate=function(ev, ui){ 
+
+	UI.prototype.onTabsactivate.call(this, ev, ui);
+
 	var that=ev.data;
 	that.pickModeFC.start(); 
 	that.pickLimitFC.start(); 

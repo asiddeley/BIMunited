@@ -160,7 +160,7 @@ __.getEvents=function(){
 		{name:'featurechange', data:this, handler:this.onFeatureChange },
 		{name:'restock', data:this, handler:this.onRestock },
 		{name:'resourcesupdate', data:this, handler:this.onResourcesUpdate },
-		{name:'tabsactivate', data:this, handler:this.onTabsactivate }
+		//{name:'tabsactivate', data:this, handler:this.onTabsactivate }
 	]);
 };
 
@@ -230,11 +230,25 @@ __.onRestock=function(ev, lib, resources){
 	ev.data.wigetize(ev.data);
 };
 
+__.onFocus=function(ev, subjectUI){
+
+
+};
+
+__.onFocusOther=function(ev, subjectUI){
+
+};
+
+//override
 __.onTabsactivate=function(ev, ui){
 	// ev - event
 	// ev.data - 'this' as passed from MakerUI
 	// ui - div of tab that was just activated (got focus) in the jquery-ui tabs widget
 	// ui - {}
+	
+	//call prototype first.  executes all other onTabsactivateother
+	UI.prototype.onTabsactivate.call(this, ev, ui);
+
 	var myTabsGotFocus=(ui.newPanel.find('div')[0]==ev.data.div$[0]);
 	//BIM.fun.log('myTabsGotFocus '+ myTabsGotFocus.toString());
 
@@ -257,7 +271,12 @@ __.onTabsactivate=function(ev, ui){
 			mui.scene.render();
 		});	
 		//this.scene.debugLayer.show();
-	}
+	}	
+};
+
+__.onTabsactivateOther=function(ev, ui){
+	//an other tab has been activated, this one no longer on top
+	
 	
 	
 };

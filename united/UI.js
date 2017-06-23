@@ -23,12 +23,13 @@
 */
 
 
-define(
-// load dependencies...
-['jquery', 'babylon'],
+// Define a Module with Simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define( function(require, exports, module) {
 
-// then do...
-function($, BJS){
+// load dependencies...
+var $=require('jquery');
+var BJS=require('babylon');
 
 var UI=function(board, title, options){
 
@@ -53,6 +54,10 @@ var UI=function(board, title, options){
 	// may be necessary if UI is not a stand-alone or used within another dialog
 	if (!options.ignoreInput) {this.inputHandlers=this.getInputHandlers();}
 	else {this.inputHandlers=[];}
+	
+	//Add this UI instance to list - static list of all ui instances
+	if (typeof UI.instances =='undefined'){UI.instances=[];} 
+	else {UI.instances.push(this);}
 	
 	return this;
 };
@@ -94,6 +99,11 @@ __.getEvents=function(){
 		desc:'handles user command input', 
 		data:this, 
 		handler:this.onInput
+	},{
+		name:'tabsactivate',
+		desc:'occurs when a jquery-ui tabbed wigit tab is clicked and gets focus',
+		data:this,
+		handler:this.onTabsactivate
 	}];
 };
 
@@ -115,6 +125,33 @@ __.onInput=function(ev, input){
 	}	
 	return propagate;
 };
+
+__.onFocus=function(ev, subjectUI){
+	// focus handler if UI is a dialog
+	
+};
+
+__.onTabsactivate=function(ev, ui){
+	// focus handler if UI is a tab within another UI 
+	// ev - the jquery-ui tabsactivate event triggered when tab is clicked and gets focus
+	// ev.data - 'this' as passed from tabbed-UI
+	// ui - div of tab that was just activated (got focus) in the jquery-ui tabs widget
+	// ui - {}
+	console.log('tabsActivate THIS:'+ev.data.alias);
+	for (var i in UI.instances){
+		UI.instances[i].onTabsactivateother(ev, ui, UI.instances[i] );
+
+	}
+};
+
+__.onTabsactivateother=function(ev, ui, instance){
+	// ev - event
+	// ev.data - 'this' as passed from MakerUI
+	// ui - div of tab that was just activated (got focus) in the jquery-ui tabs widget
+	// ui - {}
+	console.log('tabsActivate OTHER:'+instance.alias);
+};
+
 
 __.toggle=function(){
 	if (this.div$.is(':ui-dialog')){
