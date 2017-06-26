@@ -80,7 +80,20 @@ __.addTab=function(){
 		// listeners include partsUI to initialize mini sample scene
 		// per jquery-ui docs, divs={newTab:{}, oldTab:{}, newPanel:{}, oldPanel:{}}
 		activate: function( ev, divs ) {
-			BIM.fun.trigger('tabsactivate', [divs]);
+			/////////BIM.fun.trigger('tabsactivate', [divs]); //activeui instead
+			
+			// ev - ontabsactive custom event triggered by tabbedUI when tab clicked.
+			// ev.data - 'this' as passed from 
+			// divs - div of tab that was just activated (got focus) in the jquery-ui tabs widget
+			// divs = {newTab:{}, oldTab:{}, newPanel:{}, oldPanel:{}} per jquery-ui docs, 
+			//console.clear();
+			var activeUI,i,ui;
+			for (i in UI.instances){
+				ui=UI.instances[i];
+				if (divs.newPanel.find('div')[0]==ui.div$[0]){activeUI=ui;}
+			}
+			BIM.fun.trigger('activeui', [activeUI]);
+			
 		}
 	});
 	return this;

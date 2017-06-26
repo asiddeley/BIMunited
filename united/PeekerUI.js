@@ -49,13 +49,8 @@ var PeekerUI=function(board, title){
 		alias:'peek mode',
 		prop:this.mode,
 		propToBe:'byChoices',
-		propUpdate:function(ev, rv){ return rv;},
+		propUpdate:function(rv){ return rv;},
 		choices:['single', 'multiple']
-		//choices long form...
-		//choices:[
-		//	{label:'single', onChoose:function(ev){return 'single';}},
-		//	{label:'multiple', onChoose:function(ev){return 'multiple';}}			
-		//]
 	});
 	this.modeFC.start();
 	
@@ -65,7 +60,7 @@ var PeekerUI=function(board, title){
 		alias:'peek limit', 
 		prop:this.limit,
 		propToBe:'TBD by user input',	
-		propUpdate:function(ev, r){	return r;}
+		propUpdate:function(rv){	return rv;}
 	});	
 	//this.peekLimitFC.start(); //see onTabsActivate
 	
@@ -91,23 +86,24 @@ PeekerUI.prototype.constructor=PeekerUI;
 var __=PeekerUI.prototype; //define __ as shortcut
 	
 __.add=function( mesh ){ 
-	console.log('mode', this.mode);
+	//console.log('mode', this.mode);
 	if (this.mode=="single"){this.picks=[];}
 	//if part not in pick list...
 	if (this.picks.indexOf(mesh) == -1) {
-		console.log('add mesh');
+		//console.log('add mesh');
 		//add part to pick list
 		this.picks.push(mesh);
 		//ensure number of picks does not exceed pick limit set by user
 		if (this.picks.length>this.limit) {this.picks.shift();}
 	} else {
-		console.log('remove mesh');
+		//console.log('remove mesh');
 		//remove mesh from pick list by filtering it out
 		this.picks=$.grep(this.picks, function(v, i){return (mesh !== v);});
 	}
 	//refresh
 	this.count$.text('meshes picked: '+this.picks.length.toString()); //update board
 	this.stickersRegen();
+	this.fui.start(this.picks[0]);
 	//trigger event - note that event is automatically passed as arg1
 	//$.trigger('customEvent', ['arg2', 'arg3'...])
 	//BIM.fun.trigger('bimPeek', [this.peeks]);
@@ -145,7 +141,7 @@ __.onActiveUI=function(ev, aui){
 		that.modeFC.start(); 
 		that.limitFC.start();
 		//that.countFC.start();
-		that.fui.start();
+		//that.fui.start(ev.data.picks[0]);
 		//BIM.fun.cameraPause(); //no need, can occur in tandem
 		//attach mouse control
 		$(BIM.options.canvas).on('mousedown.peekerui', that, that.onPointerDown);

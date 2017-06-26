@@ -101,16 +101,6 @@ __.getEvents=function(){
 		data:this, 
 		handler:this.onInput
 	},{
-		name:'focus',
-		desc:'occurs when a jquery-ui dialog wigit gets focus',
-		data:this,
-		handler:this.onFocus
-	},{
-		name:'tabsactivate',
-		desc:'occurs when a jquery-ui tabbed wigit tab is clicked and gets focus',
-		data:this,
-		handler:this.onTabsactivate
-	},{
 		name:'activeui',
 		desc:'occurs when a UI takes control of mouse events so that UI with control can release it',
 		data:this,
@@ -146,7 +136,7 @@ __.onActiveUI=function(ev, activeUI){
 	// ev - event
 	// ev.data - 'this' as passed from UI decendant instance
 	// activeUI - ui in focus
-	console.log('onActiveUI:', activeUI.alias);
+	//console.log('onActiveUI:', activeUI.alias);
 };
 
 __.onInput=function(ev, input){
@@ -176,24 +166,6 @@ __.onInput=function(ev, input){
 __.onFocus=function(ev){
 	// focus handler if UI is a dialog
 	BIM.fun.trigger('activeui', [ev.data]);
-};
-
-__.onTabsactivate=function(ev, divs){
-	// A 'got focus' handler if UI is a tab within another UI 
-	// ev - ontabsactive custom event triggered by tabbedUI when tab clicked.
-	// ev.data - 'this' as passed from 
-	// divs - div of tab that was just activated (got focus) in the jquery-ui tabs widget
-	// divs = {newTab:{}, oldTab:{}, newPanel:{}, oldPanel:{}} per jquery-ui docs, 
-
-	//console.clear();
-	var activeUI,i,ui;
-	for (i in UI.instances){
-		ui=UI.instances[i];
-		if (divs.newPanel.find('div')[0]==ui.div$[0]){activeUI=ui;}
-	}
-	
-	//BIM.fun.log('myTabsGotFocus '+ myTabsGotFocus.toString());
-	BIM.fun.trigger('activeui', [activeUI]);
 };
 
 __.toggle=function(){

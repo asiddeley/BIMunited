@@ -90,11 +90,12 @@ __.matchAll=function(sourceMesh, targetMesh) {
 }
 
 __.start=function(mesh){
-	if (typeof mesh=='undefined' || mesh==null){ return false; }
 	//this.reset();
 	//Dispose previously used control objs to free memory, new ones to be created
 	this.controls.forEach(function(fc){fc.remove();});
 	this.controls=[];
+
+	if (typeof mesh=='undefined' || mesh==null){ return false; }
 	
 	var f, fc, features, i;
 	features=mesh.bimhandle.getfeatures(mesh); 
