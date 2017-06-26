@@ -230,19 +230,48 @@ __.onRestock=function(ev, lib, resources){
 	ev.data.wigetize(ev.data);
 };
 
-__.onFocus=function(ev, subjectUI){
-
+//override
+__.onActiveUI=function(ev, activeUI){
+	
+	//call prototype even though it does nothing
+	UI.prototype.onActiveUI.call(this, ev, activeUI); 
+	
+	if (ev.data==activeUI){
+		//this ui has got focus
+		if (ev.data.scene==null){
+			//set up mini scene for making new part
+			var mui=ev.data;
+			mui.engine=new babylon.Engine(mui.canvas$[0],  true);
+			mui.scene=new babylon.Scene(mui.engine);
+			//initialize sample part
+			mui.part=mui.partHandle.setScene(mui.scene);
+			mui.fui.start(mui.part);
+			
+			mui.setScene(mui.scene, mui.canvas$[0]);
+			mui.engine.runRenderLoop(function(){
+				//give camera a little spin
+				mui.scene.activeCamera.alpha += .01;
+				mui.light.position=mui.cam.position;
+				mui.scene.render();
+			});	
+			//this.scene.debugLayer.show();		
+		}
+		
+		//attach mouse handlers
+		//console.log(ui.alias +' got control');
+	} else {
+		//detach mouse handlers
+		//console.log(ui.alias +' lost control');
+	}
 
 };
 
-__.onFocusOther=function(ev, subjectUI){
 
-};
-
+/*
 //override
 __.onTabsactivate=function(ev, ui){
 	// ev - event
-	// ev.data - 'this' as passed from MakerUI
+	// ev.data - 'this' as passed from PartsUI
 	// ui - div of tab that was just activated (got focus) in the jquery-ui tabs widget
 	// ui - {}
 	
@@ -273,13 +302,7 @@ __.onTabsactivate=function(ev, ui){
 		//this.scene.debugLayer.show();
 	}	
 };
-
-__.onTabsactivateOther=function(ev, ui){
-	//an other tab has been activated, this one no longer on top
-	
-	
-	
-};
+*/
 	
 __.setScene=function(scene, canvas){
 

@@ -22,13 +22,15 @@
 	
 */	
 
+// Define a Module with Simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define( function(require, exports, module) {
 
-define(
 // load dependencies...
-['jquery', 'babylon', 'united/UI'],
+var $=require('jquery');
+var BJS=require('babylon');
+var UI=require('united/UI');
 
-// then do...
-function($, BJS, UI){
 
 var TabbedUI=function(board, title){
 
@@ -75,10 +77,10 @@ __.addTab=function(){
 	this.divTabgroup$.tabs({
 		// jquery-ui tabs activate event is triggered when tab in focus.
 		// Get bim to broadcast it. 
-		// listened by makerUI to initialize mini scene to display sample
-		// per jquery-ui docs, ui={newTab:{}, oldTab:{}, newPanel:{}, oldPanel:{}}
-		activate: function( event, ui ) {
-			BIM.fun.trigger('tabsactivate', ui);
+		// listeners include partsUI to initialize mini sample scene
+		// per jquery-ui docs, divs={newTab:{}, oldTab:{}, newPanel:{}, oldPanel:{}}
+		activate: function( ev, divs ) {
+			BIM.fun.trigger('tabsactivate', [divs]);
 		}
 	});
 	return this;
@@ -99,11 +101,11 @@ __.createTabgroup=function(){
 			<li><a href="#tab-2"><span>Two</span></a></li>
 			<li><a href="#tab-3"><span>Three</span></a></li>
 		</ul>
-		<div id="tab-1">
+		<div id="panel-tab-1">
 		<p>First tab is active by default:</p>
 		<pre><code>$( "#tabs" ).tabs(); </code></pre>
 		</div>
-		<div id="tab-2">...
+		<div id="panel-tab-2">...
 	</div>
 	*******************************/
 
@@ -127,52 +129,28 @@ __.divTabgroup$=null;
 
 __.divUL$=null;
 
-__.getKeywords=function(keywords){
-	//get or set keyword-handlers
-	if (typeof keywords==Array){this.keywords=keywords}
-	else if (this.keywords==null){ this.keywords=[{
-			aliases:['dd', 'toggle'],
-			desc:'Open/close this dialog',
-			handler:function(that){return that.toggle();}	
-		}];
-	}
-	return this.keywords;
+__.getInputHandlers=function(){
+	//returns an array of {alias:['a'], desc:'about', handler:function}
+	//these inputHamdlers are common for all UI if inheritor so chooses
+	var ih=UI.prototype.getInputHandlers.call(this);
+	
+	return ih.concat([{
+		inputs:['ui'],
+		desc:'show the main UI', 
+		handler:function(ev){ ev.data.toggle(); }
+	}]);	
 };
 
 __.getEvents=function(){
-	// Beware of using 'this' in event handlers as it will refer to the callers context
-	// Instead assume 'this' is passed in event data thus... handler(ev){ev.data.toggle();}
-	return { 
-		bimInput: {name:'bimInput',	data:this, handler:this.onInput, data:this }
-	};
+	var eh=UI.prototype.getEvents.call(this);
+	
+	return eh.concat([
+		////{name:'bimFeatureOK', data:this, handler:this.onFeatureOK },
+		//{name:'input', data:this, handler:this.onInput },
+		//{name:'tabsactivate', data:this, handler:this.onTabsactivate }
+	]);
 };
 
-__.keywords=null;
-	
-__.onInput=function(ev, input){
-	//BIM.fun.log(input);
-	//call others to process input 
-	//this.div$.trigger('bimInput', [command]);
-	
-	//Tabbed responsible for following input 
-	//ev.data=this which is context of TabbedUI instance
-	switch (input) {
-		case 'mm':ev.data.toggle();break;
-		case 'mmdump':
-			var h=ev.data.divTabgroup$.html();
-			BIM.fun.dump( h.replace(/(.{65})/g, "$1\n") );
-		break;
-			case 'events':
-			//keys - Array of event names
-			var keys=Object.keys(ev.data.getEvents()); 
-			BIM.fun.log(ev.data.alias.toUpperCase()+'\n' + keys.join("\n"));
-			break;	
-		case 'keywords':
-			var keys=['bb', 'bbw', 'keywords', 'events'];
-			BIM.fun.log(ev.data.alias.toUpperCase()+'\n' + keys.join("\n"));
-			break;		
-	};
-};
 
 return TabbedUI;
 

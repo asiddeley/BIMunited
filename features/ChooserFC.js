@@ -97,7 +97,7 @@ __.initMenu=function(choices){
 					ev.data.that.feature.propToBe=ev.data.onChoose();
 					//note that submit event is local to this module 
 					ev.data.that.form$.trigger('submit', [ ev.data.that.feature ]);
-				} catch(er) { BIM.fun.log(er.toString()); }
+				} catch(er) { console.log(er.toString()); }
 			}
 		);
 

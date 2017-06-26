@@ -23,13 +23,14 @@
 */
 
 
-define(
-
+// Define a Module with Simplified CommonJS Wrapper...
+// see http://requirejs.org/docs/api.html#cjsmodule
+define( function(require, exports, module) {
+	
 // load dependencies...
-['jquery', 'babylon', 'united/UI'],
-
-// then do...
-function($, BJS, UI){
+var $=require('jquery');
+var BJS=require('babylon');
+var UI=require('united/UI');
 
 var BlackboardUI = function(board, title){
 
@@ -74,79 +75,68 @@ __.divDump$=null;
 
 __.divLog$=null;
 	
-__.getKeywords=function(){
-	if (this.keywords==null){ this.keywords=[
-		{keywords:['bb'], 
-		handler:this.toggle, 
-		help:'open/close the blackboard'}
-	];}
-	return this.keywords;
+__.getInputHandlers=function(){
+	//returns an array of {alias:['a'], desc:'about', handler:function}
+	//these inputHamdlers are common for all UI if inheritor so chooses
+	var ih=UI.prototype.getInputHandlers.call(this);
+	
+	return ih.concat([
+		{
+			inputs:['bb'],
+			desc:'open/close the blackboard', 
+			handler:this.toggle
+		},{
+			inputs:['debug'],
+			desc:'',
+			handler:this.toggleDebug		
+		},{
+			inputs:['dump'],
+			desc:'list scene contents',
+			handler:function(){
+				if (ev.data.divDump$.is(':visible')==true){
+					ev.data.divDump$.hide();
+				} else {
+					var s=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene) );
+					s=s.replace(/(.{100})/g, "$1\n");
+					ev.data.divDump$.show().html(s);
+				}
+			}
+		},{
+			inputs:['dumpg'],
+			desc:'list scene geometry contents',			
+			handler:function(){
+				var g=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene).geometries);
+				g=g.replace(/(.{100})/g, "$1\n");
+				ev.data.divDump$.show().text(g);
+			}
+		},{
+			inputs:['dumpm'],
+			desc:'list scene meshes contents',
+			handler:function(){
+				var m=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene).meshes);
+				m=m.replace(/(.{100})/g, "$1\n");
+				ev.data.divDump$.show().text(m);
+			}
+		}	
+	]);	
 };
 	
 __.getEvents=function(){
-	return [ 
-		{name:'bimInput', data:this, handler:this.onInput },
+	var eh=UI.prototype.getEvents.call(this);
+	
+	return eh.concat([
+		{name:'input', data:this, handler:this.onInput },
 		{name:'bimMsg', data:this, handler:function(ev, msg){ev.data.log(msg);}},
 		{name:'bimMsg', data:this, handler:function(ev, msg){ev.data.log('BIM FC');}}
-	];
+	]);
 };
 	
-__.keywords=null;
 
-// Inherited but overriden	
+//override	
 __.onInput=function(ev, input){
-	//BIM.ui.uiBlackboard.log(input);
 	ev.data.log("> "+input);
-	
-	//call others to process input 
-	//this.div$.trigger('bimInput', [command]);
-	
-	//blackboard responsible for following input 
-	//note how 'this' is passed in event data.  See getEvents()
-	switch (input) {
-		case 'bb':ev.data.toggle(ev.data);break;
-		case 'bbw':
-			ev.data.logStore=[];
-			ev.data.log$.html('');
-			break;
-		case 'debug':ev.data.toggleDebug();break;
-		//dump scene
-		case 'dump':
-			//alert ('dump');
-			//BIM.fun.log('visible '+BIM.ui.uiBlackboard.divDump$.is(':visible'));
-			if (ev.data.divDump$.is(':visible')==true){
-				ev.data.divDump$.hide();
-			} else {
-				var s=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene) );
-				s=s.replace(/(.{100})/g, "$1\n");
-				ev.data.divDump$.show().html(s);
-			}
-			break;
-		//dump scene Geometry
-		case 'dumpg':
-			var g=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene).geometries);
-			g=g.replace(/(.{100})/g, "$1\n");
-			ev.data.divDump$.show().text(g);
-			break;
-		//dump scene Meshes
-		case 'dumpm':
-			var m=JSON.stringify(BJS.SceneSerializer.Serialize(BIM.scene).meshes);
-			m=m.replace(/(.{100})/g, "$1\n");
-			ev.data.divDump$.show().text(m);
-			break;
-		
-		case 'events':
-			var keys=Object.keys(ev.data.getEvents()); //keys - Array of event names
-			ev.data.log(ev.data.alias.toUpperCase()+'\n' + keys.join("\n"));
-			break;				
-
-		case 'keywords':
-			var keys=['bb', 'bbw', 'keywords', 'events'];
-			ev.data.log(ev.data.alias.toUpperCase()+'\n' + keys.join("\n"));
-			break;			
-	};
+	UI.prototype.onInput.call(this, ev, input);
 };
-	
 
 __.log=function(msg){
 	//insert returns every 100 characters

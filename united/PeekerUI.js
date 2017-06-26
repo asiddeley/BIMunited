@@ -44,17 +44,17 @@ var PeekerUI=function(board, title){
 	//Note that FCs can be used on any object as below, not just babylon meshes.
 	//Remember to start FCs - see onTabsactivate
 	
-	this.mode='single';
+	this.mode='multiple';
 	this.modeFC=new ChooserFC(this.div$, {
 		alias:'peek mode',
-		prop:this.peekMode,
+		prop:this.mode,
 		propToBe:'byChoices',
-		propUpdate:function(ev, rv){ },
-		choices:[ 'single', 'multiple']
+		propUpdate:function(ev, rv){ return rv;},
+		choices:['single', 'multiple']
 		//choices long form...
 		//choices:[
-			//{label:'single', onChoose:function(ev){return 'single';}},
-			//{label:'multiple', onChoose:function(ev){return 'multiple';}}			
+		//	{label:'single', onChoose:function(ev){return 'single';}},
+		//	{label:'multiple', onChoose:function(ev){return 'multiple';}}			
 		//]
 	});
 	this.modeFC.start();
@@ -63,13 +63,14 @@ var PeekerUI=function(board, title){
 	this.limit=3;
 	this.limitFC=new TextFC(this.div$, {
 		alias:'peek limit', 
-		prop:this.peekLimit,
+		prop:this.limit,
 		propToBe:'TBD by user input',	
-		propUpdate:function(ev,r){	return r;}
+		propUpdate:function(ev, r){	return r;}
 	});	
 	//this.peekLimitFC.start(); //see onTabsActivate
 	
 	this.count$=$('<div>0</div>');
+	this.div$.append(this.count$);
 
 	// array of picked meshes 
 	this.picks=[];
@@ -90,15 +91,18 @@ PeekerUI.prototype.constructor=PeekerUI;
 var __=PeekerUI.prototype; //define __ as shortcut
 	
 __.add=function( mesh ){ 
+	console.log('mode', this.mode);
 	if (this.mode=="single"){this.picks=[];}
 	//if part not in pick list...
 	if (this.picks.indexOf(mesh) == -1) {
+		console.log('add mesh');
 		//add part to pick list
 		this.picks.push(mesh);
 		//ensure number of picks does not exceed pick limit set by user
 		if (this.picks.length>this.limit) {this.picks.shift();}
 	} else {
-		//remove part from pick list by filtering it out
+		console.log('remove mesh');
+		//remove mesh from pick list by filtering it out
 		this.picks=$.grep(this.picks, function(v, i){return (mesh !== v);});
 	}
 	//refresh
@@ -109,26 +113,56 @@ __.add=function( mesh ){
 	//BIM.fun.trigger('bimPeek', [this.peeks]);
 }
 	
-//called by UI when ui's created to register events and callbacks
+//override
 __.getEvents=function(){
-	return [
-		//{name:'bimFeatureOK', data:this, handler:this.onFeatureOK },
-		{name:'input', data:this, handler:this.onInput },
-		{name:'tabsactivate', data:this, handler:this.onTabsactivate }
-	];
+
+	var eh=UI.prototype.getEvents.call(this);
+	
+	return eh.concat([
+		////{name:'bimFeatureOK', data:this, handler:this.onFeatureOK },
+		//{name:'input', data:this, handler:this.onInput },
+		//{name:'tabsactivate', data:this, handler:this.onTabsactivate }
+	]);
 };
 
 __.getInputHandlers=function(){
-	return[
-		{inputs:['peek', 'pe'], desc:'show the Peek UI', handler:function(ev){ ev.data.toggle(); }  }	
-	];
+	var ih=UI.prototype.getInputHandlers.call(this);
+	return ih.concat([{
+		inputs:['peek', 'pe'],
+		desc:'show the Peek UI', 
+		handler:function(ev){ ev.data.toggle(); }
+	}]);
 }
 
-__.onFeatureOK=function(ev, part, valu){
-	//BIM.fun.log('picker onFeature '+ part + '-' + valu);
-	ev.data.stickersRegen();		
-}
-	
+
+//override
+__.onActiveUI=function(ev, aui){
+	var that=ev.data;
+	UI.prototype.onActiveUI.call(this, ev, aui);
+	//console.clear();
+	if (ev.data==aui){
+
+		that.modeFC.start(); 
+		that.limitFC.start();
+		//that.countFC.start();
+		that.fui.start();
+		//BIM.fun.cameraPause(); //no need, can occur in tandem
+		//attach mouse control
+		$(BIM.options.canvas).on('mousedown.peekerui', that, that.onPointerDown);
+		if (that.canvas2D==null) {
+			that.canvas2D=new babylon2D.ScreenSpaceCanvas2D( 
+				BIM.scene, 
+				{id:"uiPickerCanvas",cachingStrategy:babylon2D.CACHESTRATEGY_DONTCACHE}
+			);
+		};
+	} else {
+		//detach mouse control
+		$(BIM.options.canvas).off('mousedown.peekerui');
+	}
+	console.log("canvas events",$._data(BIM.options.canvas,"events"));
+
+};
+
 __.onPointerDown=function (ev, pickResult) {
 	pickResult=BIM.scene.pick(
 		BIM.scene.pointerX, 
@@ -137,7 +171,7 @@ __.onPointerDown=function (ev, pickResult) {
 		//, function(mesh){ return mesh;} 
 	);
 
-	console.log('pointer down');
+	//console.log('pointer down');
 	if (pickResult.hit) {
 		if (pickResult.pickedMesh != null) {
 			if (typeof pickResult.pickedMesh.bimhandle == "undefined"){
@@ -151,36 +185,6 @@ __.onPointerDown=function (ev, pickResult) {
 		}
 	}
 }
-
-//start the picker
-__.onTabsactivate=function(ev, ui){ 
-	UI.prototype.onTabsactivate.call(this, ev, ui);
-	//console.log('PeekerUI tabsactivate');	
-	var that=ev.data;
-	//console.log(that.onPointerDown);
-	that.modeFC.start(); 
-	that.limitFC.start();
-	//that.countFC.start();
-	that.fui.start();
-	
-	//BIM.fun.cameraPause();
-	$(BIM.options.canvas).on('mousedown.peekerui', that, that.onPointerDown);
-
-	//babylon deprecated
-	//BIM.scene.onPointerDown=that.onPointerDown();
-	if (that.canvas2D==null) {
-		//BIM.fun.log('picker start, BIM.scene ' + BIM.scene);
-		that.canvas2D=new babylon2D.ScreenSpaceCanvas2D( BIM.scene, {
-			id:"uiPickerCanvas",
-			//don't cache as bitmap, keep canvas2d fresh
-			cachingStrategy:babylon2D.CACHESTRATEGY_DONTCACHE  
-		} );
-	};
-	//this.div$.dialog('open');
-	//for chaining
-	return this; 
-};
-
 	
 __.stickersCreate=function(mesh, i){
 	//first pick blue #0000FFFF 
@@ -235,7 +239,7 @@ __.stickersRegen=function(){
 }
 	
 __.wipe=function(){
-	this.peeks=[];
+	this.picks=[];
 	this.stickerRegen();
 	//for chaining
 	return this; 

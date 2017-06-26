@@ -33,7 +33,7 @@ var Moveable=require('features/Moveable');
 
 // library of element handlers
 // remember - one handler for every type of Bim element
-console.log('Building element library');
+//console.log('Building element library');
 return {
 	//coaster:new Coaster(),
 	voxelite:new Voxelite(),

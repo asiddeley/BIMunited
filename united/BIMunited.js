@@ -87,9 +87,9 @@ BIM.board=function(div, options){
 	tui.addTab( 
 		this.ui.blackboard, 
 		new PartsUI(null, 'Part'),
-		new PeekerUI(null, 'Peek'),
-		new PickerUI(null, 'Pick'),
-		new PokerUI(null, 'Poke')
+		new PeekerUI(null, 'Peek')
+		//new PickerUI(null, 'Pick'),
+		//new PokerUI(null, 'Poke')
 	); 
 }
 
@@ -302,7 +302,7 @@ BIM.help=function(input){
 	
 //main method for user interaction
 //BIM.input=function(input){return this.fun.trigger('bimInput', input);}
-BIM.input=function(input){return this.fun.trigger('input', input);}
+BIM.input=function(input){return this.fun.trigger('input', [input]);}
 
 
 //list of commands, 

@@ -104,51 +104,35 @@ __.add=function( part ){
 	//BIM.fun.trigger('bimPick', [this.picks]);
 }
 	
-//called by UI when ui's created to register events and callbacks
+//override
 __.getEvents=function(){
-	return [
+	
+	var eh=UI.prototype.getEvents.call(this);
+
+	return eh.concat([
 		//{name:'bimFeatureOK', data:this, handler:this.onFeatureOK },
-		{name:'bimInput', data:this, handler:this.onInput },
-		{name:'tabsactivate', data:this, handler:this.onTabsactivate }
-	];
+		//{name:'bimInput', data:this, handler:this.onInput },
+		//{name:'tabsactivate', data:this, handler:this.onTabsactivate }
+	]);
 }
 	
-//called by BIM.board when ui's created, may be used for input autocomplete
-//called by onInput() below
-__.getKeywords=function(){
-	//this.keywords defined here because it can't be defined until BIM.ui.picker is
-	if (this.keywords==null){ this.keywords=[
-		{keywords:['pp'], 
-			handler:BIM.ui.uiPicker.toggle, 
-			help:'open the picker dialog'}, 
-		{keywords:['wipe','ppw'], 
-			handler:BIM.ui.uiPicker.wipe, 
-			help:'clear selection'}, 
-		{keywords:['close','pickx'], 
-			handler:function(){
-				//BIM.ui.uiPicker.div$.dialog('close');
-				BIM.fun.log('close handler not defined');
-			},
-			help:'close pick TBD'
-		}
-	];}
-	return this.keywords;
+//override
+__.getInputHandlers=function(){
+	//get inherited inputHandlers, commands such as 'events' & 'keywords'
+	var ih=UI.prototype.getInputHandlers.call(this);
+	
+	//commands or inputHandlers for partsUI...
+	return ih.concat([{
+		inputs:['pp'], 
+		desc:'open the picker dialog',
+		handler:function(ev){ev.data.toggle();}
+	},{
+		inputs:['wipe','ppw'],
+		desc:'clear selection',
+		handler:function(ev){ev.data.wipe();}
+	}]);
 }
 	
-//called by ui.blackboard when there is BIM user input
-__.onInput=function(ev, input){ 
-	//beware of using 'this' inside an eventhandler function!
-	//because 'this' will refer to the event caller's context, not uiPicker
-	switch (input) {
-		case 'pick':
-		case 'pp':  
-			//BIM.ui.uiPicker.toggle(); 
-			ev.data.start();
-			break;
-		case 'ppw': BIM.ui.picker.wipe(); break;
-		//case 'ppx':	BIM.ui.picker.div$.dialog('close');
-	};		
-}
 	
 __.onFeatureOK=function(ev, part, valu){
 	//BIM.fun.log('picker onFeature '+ part + '-' + valu);
@@ -170,7 +154,36 @@ __.onPointerDown=function (ev, pickResult) {
 	}
 }
 
-//start the picker
+//override
+__.onTakeControl=function(ev, ui){ 
+
+	UI.prototype.onTakeControl.call(this, ev, ui); 
+	var that=ev.data; //pickerUI
+	
+	if (that==ui) {
+		//this ui has control so setup mouse handlers
+		//console.log(that+' got control');
+		
+		
+		that.pickModeFC.start(); 
+		that.pickLimitFC.start(); 
+		//BIM.scene.onPointerDown=that.onPointerDown;
+		if (that.canvas2D==null) {
+			that.canvas2D=new babylon2D.ScreenSpaceCanvas2D( BIM.scene, {
+				id:"uiPickerCanvas",
+				//don't cache as bitmap, keep canvas2d fresh
+				cachingStrategy:babylon2D.CACHESTRATEGY_DONTCACHE  
+			});
+		};
+	} else {
+		//this ui has lost control so remove mouse handlers
+		//console.log(that+' lost control');
+		
+	};
+	
+}
+
+/*
 __.onTabsactivate=function(ev, ui){ 
 
 	UI.prototype.onTabsactivate.call(this, ev, ui);
@@ -192,6 +205,8 @@ __.onTabsactivate=function(ev, ui){
 	//for chaining
 	return this; 
 }
+*/
+
 	
 __.stickersCreate=function(mesh, i){
 	//first pick blue #0000FFFF 
