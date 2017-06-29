@@ -67,6 +67,80 @@ var TMC=require('textures/TMCstdLib');
 //var partsLibrary=require('handlers/handlers__elements');
 var BIM={};
 
+BIM.activate=function(options){
+
+	var that=this;	
+
+	if (typeof options=='undefined') { options={}; }
+	this.options=options;
+	
+	//board
+	if (typeof div == 'undefined'){div=$('<div></div>').appendTo(window.document.body);}
+	//wrap div with jquery if not already
+	if (div instanceof window.Element){div=$(div);}
+	
+	$.extend( this.options, {board$:div}, options );	
+	
+	var tui=new TabbedUI(div, "Main");
+	this.ui.blackboard=new BlackboardUI(null, "Log");
+	tui.addTab( 
+		this.ui.blackboard, 
+		new PartsUI(null, 'Part'),
+		new PeekerUI(null, 'Peek')
+		//new PickerUI(null, 'Pick'),
+		//new PokerUI(null, 'Poke')
+	); 
+	
+	
+	//canvas
+	if (typeof options.canvas=='undefined'){	this.canvas=$('<canvas></canvas>'); $('body').append(this.canvas); } 
+	else { this.canvas=options.canvas; }
+	
+	// prepare engine	
+	this.engine = new babylon.Engine(c,  true);
+	this.options.engine=engine;
+	// why warning re. webgl dest rect smaller than viewport rect?
+	// See, http://doc.babylonjs.com/classes/2.5/Engine, try this...
+	// this.engine.setViewport(new babylon.Viewport(0,0,700,500));
+	
+	// initialize the scene
+	this.scene=new babylon.Scene(engine);
+	var s=this.scene;
+	
+	// set light in scene
+	this.lights.main.setScene(this.scene);
+	
+	// visit all parts to set the babylon scene		
+	//this.model.handler.setScene(this.model);
+	
+	// initialize scene materials
+	//this.fun.log('initializing tcm');
+	for (var key in this.tcmLib) {
+		var m=this.tcmLib[key];
+		m.handler.setScene(m);
+		//that.fun.log(key);that.fun.log(m.handler.type);
+	}
+	
+	// initialize main view__camera for the scene
+	this.views.main.setScene(this.scene);
+	
+	// This is a cool Babylon feature
+	// s.debugLayer.show();
+	
+	// engage the engine!
+	engine.runRenderLoop(function(){ s.render();} );
+	
+	// announce it
+	this.options.board$.trigger('bimEngage');
+
+
+};
+
+BIM.canvas$=null;
+BIM.board$=null;
+BIM.database=null;
+BIM.engine=null;
+
 // The a, b, c, d & e main API methods...
 BIM.admin=function(user, options){
 	user=(typeof user=='undefined')?'admin':user;
@@ -296,9 +370,9 @@ BIM.get={
 	valstore:{}
 };
 
-BIM.help=function(input){
-	this.fun.log('help on '+input);
-}
+//BIM.help=function(input){this.fun.log('help on '+input);}
+BIM.handles=require('handles/handles');
+
 	
 //main method for user interaction
 //BIM.input=function(input){return this.fun.trigger('bimInput', input);}

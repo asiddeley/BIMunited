@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>BIM</title>
+<meta charset="utf-8">
+
+<!--script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script-->
+<script src="javascript/jquery.js"></script>
+<script src="javascript/jquery-ui.js"></script>
+<STYLE type="text/css">
+.bimFC {
+	margin:0px; 
+	padding:1px; 
+	border-top: 1px solid black;
+	background: #0b3e6f url("javascript/images/ui-bg_diagonals-thick_15_0b3e6f_40x40.png") 50% 50% repeat;	
+	display:block; 
+	width:100%;
+}
+.bimFC1 {
+	margin:0px; 
+	padding:1px; 
+	border-top: 1px solid black;
+	background-color:silver; 
+	display:block; 
+	width:100%;
+}
+</STYLE>
+<script data-main="united/BIMunited.js" src="javascript/require/require.js"></script>
+<link rel="stylesheet" type="text/css" href="javascript/jquery-ui.theme.css">
+<link rel="stylesheet" type="text/css" href="javascript/jquery-ui.structure.css">
+<!--link rel="stylesheet" type="text/css" href="kernel/BIMstyle.css"-->
+
+<script type="text/javascript">
+
+function inputHandler(ev){
+	ev.preventDefault(); //disable normal form submit behavior that refreshes page
+	var i=$("#myInput").val(); //get text from form 
+	$("#myInput").val(''); //clear the form
+	BIM.input(i); //pass command to BIM for processing
+	return false; //prevent further bubbling of event
+};
+
+function initMenus(navbuttonIdStr, menuExtStr){
+	var ids=navbuttonIdStr.split(" "), i;
+	for (i in ids){
+		// Register following function triggered by each nav button
+		// When executed, function positions menu at each navbutton location
+		$('#'+ids[i]).mouseenter({id:ids[i], ext:menuExtStr}, function(ev){
+			//note how data is passed using first argument of mouseenter
+			var navbutton=ev.data.id; 
+			var menu=ev.data.id + ev.data.ext;
+			$('.menu').hide();
+			// Show and position menu of interest at its navbutton
+			$('#'+ menu).show().position({
+				my:'left top',
+				at:'left bottom',
+				of:'#'+navbutton
+			});
+			// autohide in case menu is left hanging - don't forget to disarm if entered
+			document.DDAH=setTimeout(function(){$('#'+menu).hide();}, 2000);
+		});
+	};
+};
+
+$(document).ready(function(){
+
+//setup Navbar using jquery-ui controlgroup widget
+$("#navbar").controlgroup({items:{
+	//widgetToApply:selector
+	"button": "a, button, input[type=text], input[type=button], input[type=submit]",
+	"controlgroupLabel": ".ui-controlgroup-label",
+	"checkboxradio": "input[type='checkbox'], input[type='radio']",
+	"selectmenu": "select",
+	"menu":"ul, .dropdown-items",
+	"spinner": ".ui-spinner-input"
+}});
+
+//set behaviour of dropdown menus... 
+$(".menu").menu().css("position","absolute", "width", "200px").hide();
+
+//cleanup any open dropdown menus
+$(".menu").on('mouseleave',function(){$(".menu").hide();});
+//clear dropdown autohide (DDAH)
+$(".menu").on('mouseenter',function(){clearTimeout(document.DDAH);});
+
+//initialize drop-down menus with homemade functions by providing DOM tag ids:
+//"file tool..." and extension "-menu" for corresponding drop-downs
+//"file-menu tool-menu..."
+initMenus("file tool part help", "-menu");
+
+//inhibit the browser's right-click context menu
+$(document).on('contextmenu', false);
+
+//Load and launch BIM United FC
+requirejs(['BIMunited'], function(BIM){
+	var canvas=window.document.getElementById('canvas');
+	var board=window.document.getElementById('board');
+	// the BIM a.b.c.d.e starter functions...
+	BIM.admin({users:['admin','asiddeley','guest']}); 
+	BIM.board(board);
+	BIM.canvas(canvas);
+	BIM.database("database connection API");
+	BIM.engage();
+	//BIM.activate({
+	//	board:window.document.getElementById('board'),
+	//	canvas:window.document.getElementById('canvas'),
+	//	database:"database connection API")
+	//});
+});
+
+
+}); //document ready
+
+</script>
+
+</head>
+<body>
+
+<div id="board" class="container-fluid">
+
+<form id="navbar" class="controlgroup ui-widget-header" style="padding:4px; width:790px;" onSubmit="return inputHandler(event)">
+	<button>BIM United FC</button>
+	<button id="file">Files</button>
+	<button id="tool">Tools</button>
+	<button id="part">Parts</button>	
+	<button id="help">Help</button>	
+
+	<ul id="file-menu" class="menu">
+		<li><div>Database</div>
+		<ul>
+			<li><div>Admin</div></li>
+			<li><div>Models</div></li>
+		</ul>
+		</li>
+		<li>--</li>
+		<li><div>New</div></li>
+		<li><div>Open</div></li>
+		<li><div>Open Read-Only</div></li>
+		<li><div>Save</div></li>
+		<li><div>Save as</div></li>
+		<li>--</li>
+		<li><div>Exit</div></li>
+	</ul>
+
+	<ul id="tool-menu" class="menu">
+		<li onclick="BIM.input('bb')"><div>Blackboard</div></li>
+		<li>--</li>
+		<li onclick="BIM.input('part')"><div>Make</div></li>
+		<li onclick="BIM.input('peek')"><div>Peek</div></li>
+		<li onclick="BIM.input('pick')"><div>Pick</div></li>
+		<li onclick="BIM.input('poke')"><div>Poke</div></li>
+		<li>--</li>
+		<li onclick="BIM.input('push')"><div>Push</div></li>
+		<li onclick="BIM.input('pull')"><div>Pull</div></li>
+		<li onclick="BIM.input('punch')"><div>Punch</div></li>
+		<li onclick="BIM.input('point')"><div>Point</div></li>
+	</ul>
+
+	<ul id="part-menu" class="menu">
+		<li><div>Voxelite</div></li>
+		<li><div>Parcela</div></li>
+		<li><div>Floor</div></li>
+		<li><div>Wall</div></li>
+		<li><div>Opening</div></li>
+		<li><div>Worldbox</div></li>
+	</ul>
+
+	<ul id="help-menu" class="menu">
+		<li><div>About</div></li>
+		<li><div>User</div>
+			<ul>
+			<li><div>Overview</div></li>
+			<li><div>Command list</div></li>
+			<li><div>Documentation</div></li>
+			<li><div>Tutorials</div></li>
+			</ul>
+		</li>
+		<li><div>Develper</div>
+			<ul>
+			<li><div>Dev Overview</div></li>
+			<li><div>System events</div></li>
+			</ul>		
+		</li>
+		<li><div>GNU License</div></li>
+	</ul>
+	<input id="myInput" type="text" placeholder="command">
+	<input type="submit" value="Ok">	
+</form>
+
+<canvas id="canvas" style="width:800px; height:400px;"></canvas>
+
+</div><!-- board -->
+
+
+
+</body>
+
+
+
+</html>
