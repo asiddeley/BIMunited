@@ -54,14 +54,17 @@ var __=FeatureControl.prototype;
 
 __.getEvents=function(){
 	return [
-		{name:'featurechanged', data:this, handler:this.onFeatureChanged},
+		//{name:'featurechanged', data:this, handler:this.onFeatureChanged},
 		{name:'propertychanged', data:this, handler:this.onPropertyChanged}
 	];
 };
 
+/* DEPRECATED 
 __.onSubmit=function(ev){ 
 	//this base class has no way of submitting, that's for inheritors to implement
 	//with an ok button (or such) that would trigger the form submit event.
+	//submit event => onSubmit triggers featurechange event => onFeatureChange evaluates feature.propUpdate() 
+
 	ev.preventDefault(); 
 	var feature=ev.data.feature;
 	var revisedValu=ev.data.feature.propToBe;
@@ -89,11 +92,19 @@ __.onFeatureChanged=function(ev, feature){
 	}
 };
 
+*/
+
+__.onSubmit=function(ev){ 
+	//this base class has no way of submitting, that's for inheritors to implement
+	//with an ok button (or such) that would trigger the form submit event.
+	//submit event => onSubmit evaluates feature.propUpdate() and triggers propertychange => 
+
+}
 
 __.onPropertyChanged=function(ev, propJar, propKey){
 	//triggered externally to indicate that the subject property has changed, not by the feature
 	//console.log('onPropertyChanged...');
-	if (ev.data.feature.mesh == propJar && ev.data.feature.alias == propKey){
+	if ((ev.data.feature.mesh == propJar) && (ev.data.feature.alias == propKey)){
 		try {
 			//update valu field with revised value
 			if (typeof propJar[propKey] == 'string'){ ev.data.prop$.text( propJar[propKey] );}
@@ -104,7 +115,10 @@ __.onPropertyChanged=function(ev, propJar, propKey){
 
 __.remove=function(){
 	/*** 
-	See jquery docs...use $.remove() when you want to remove the element itself, as well as everything inside it. In addition to the elements themselves, all bound events and jQuery data associated with the elements are removed. To remove the elements without removing data and events, use .detach() instead.	
+	See jquery docs...use $.remove() when you want to remove the element itself, 
+	as well as everything inside it. In addition to the elements themselves, 
+	all bound events and jQuery data associated with the elements are removed. 
+	To remove the elements without removing data and events, use .detach() instead.	
 	***/
 	this.label$.remove();
 	this.prop$.remove();
