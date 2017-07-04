@@ -58,6 +58,12 @@ var grow=function(ev, more){
 	//thanks http://www.html5gamedevs.com/topic/22709-stop-camera-rotation-mouse-drag/
 	//BIM.fun.cameraPause('grown'); //unpaused when grown event triggered below 
 	//BIM.scene.activeCamera.detachControl(BIM.options.canvas);
+	
+	//console.log('action manager ev',ev);
+	//console.log('default prevented',ev.sourceEvent.defaultPrevented);
+	//only grow if in POKE mode - don't want to interfere with other tools
+	//if BIM.ui.POKE==true;
+	
 	var scene=more.scene;	
 	var pickinfo=scene.pick(scene.pointerX, scene.pointerY);
 
@@ -74,10 +80,14 @@ var grow=function(ev, more){
 		inst=mori.createInstance('grown');
 		//important to add bimData to instance
 		inst.bimData={mesh:mori}; //  TO-DO make this bimableFE??
+		//important to add bimhandle to instance
+		inst.bimhandle=mori.bimhandle;
 	} else {
 		inst=mori.bimData.mesh.createInstance('grown');
 		//important to add bimData to instance
 		inst.bimData=$.extend({}, mori.bimData); //add bimData to inst by cloning it from source
+		//important to add bimhandle to instance
+		inst.bimhandle=mori.bimhandle;
 	}
 	
 	inst.position.copyFromFloats(np.x, np.y, np.z);

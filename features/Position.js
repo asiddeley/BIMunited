@@ -74,9 +74,12 @@ var __=Position.prototype;
 
 //override
 __.propUpdate=function(propToBe){ 
-	//For default behaviour call prototype (similar to super method in OOP) 
-	Feature.prototype.propUpdate.call(this, propToBe);
-	//this.mesh.position=propToBe; 
+	//Feature.prototype.propUpdate.call(this, propToBe);
+	//update property by matching propToBe object
+	console.log('Position.propUpdate, this:',this);
+	this.prop.x=propToBe.x;
+	this.prop.y=propToBe.y;
+	this.prop.z=propToBe.z;
 };
 
 //override

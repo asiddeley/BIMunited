@@ -97,6 +97,7 @@ __.initMenu=function(choices){
 					ev.data.that.feature.propToBe=ev.data.onChoose();
 					//note that submit event is local to this module 
 					ev.data.that.form$.trigger('submit', [ ev.data.that.feature ]);
+										
 				} catch(er) { console.log(er.toString()); }
 			}
 		);
@@ -112,22 +113,27 @@ __.initMenu=function(choices){
 // override 
 __.onSubmit=function(ev){
 	//Important to pass (event, feature, revisedValu)
-	FC.prototype.onSubmit.call(ev.data, ev, ev.data.feature);
-}
+	//FC.prototype.onSubmit.call(ev.data, ev, ev.data.feature);
+	//ev - event triggered by <form></form> inside the FC
+	//ev.data - this or the FC which also has a link to its feature
+	FC.prototype.onSubmit.call(ev.data, ev);
+};
 
-// override
-__.onFeatureChange=function(ev, feature){
-	FC.prototype.onFeatureChange.call(ev.data, ev, feature);	
-}
+
+// override 
+__.onPropertyChanged=function(ev, prop){
+	FC.prototype.onPropertyChanged.call(ev.data, prop);	
+};
+
 
 // override 
 __.remove=function(){
 	FC.prototype.remove.call(this);
 	this.menu$.remove();
 	//this.ok$.remove();
-}
+};
 
-// override start function
+// override 
 __.start=function(){
 	// call super function - takes care of <form>, <label>, undo...
 	FC.prototype.start.call(this);

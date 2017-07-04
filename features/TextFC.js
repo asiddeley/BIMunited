@@ -48,20 +48,14 @@ var __=TextFC.prototype;
 
 //override 
 __.onSubmit=function(ev) {
-	//ok button triggers local form event
-	//call prototype function and pass as arguments, event, feature and updated valu
-	//onSubmit triggers the featureChange event 	
-	ev.data.feature.propToBe=ev.data.text$.val(); //note how new property value is passed for base class to call updater() with
-	FC.prototype.onSubmit.call(ev.data, ev, ev.data.feature);
+	//ev - submit event triggered by ok button inside <form></form> inside textFC
+	//ev.data - textFC
+	//note how new property value is passed for base class to process
+	ev.data.feature.propToBe=ev.data.text$.val(); 
+	//call prototype method (super method in OOP) which triggers propertychanged event...
+	FC.prototype.onSubmit.call(ev.data, ev);
 };
 
-//override
-__.onFeatureChange=function(ev, feature){
-	//this function is called by the BIM wide featureChange event (triggered by onSubmit) 
-	//calling the prototype function takes care of executing feature-callback function to update mesh
-	FC.prototype.onFeatureChange.call(ev.data, ev, feature); 
-	//To Do - anything that needs updating due the changed feature 
-};
 
 //override start function
 __.start=function(){

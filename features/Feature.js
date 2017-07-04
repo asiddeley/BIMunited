@@ -36,46 +36,40 @@ var Feature=function(mesh, options){
 	//an object's (eg. babylon mesh) property (eg. position), and looks like this...
 	//{label:'name', valu:mesh.variable, onFeatureChange:fn(ev,mesh,res){...}, editor:featureEditor}
 	
-	this.alias='unnamedfeature'; //meant to be overriden
-	this.control=TextFC;//meant to be overriden
+	this.alias='unnamedfeature'; //key or name - meant to be overriden
+	this.control=TextFC;//User control - meant to be overriden
 	this.mesh=mesh;
-	this.prop=mesh.name; //meant for display only
-	this.propDefault='defaultvalue'; //meant to be overriden
+	this.prop=mesh.name; //string, number or object - meant for display only
+	//this.propDefault='defaultvalue'; //meant to be overriden
 	this.propToBe=null; //meant to be overriden
+	/**********
+	//propUpdate must not be defined here but further below as prototype
+	//it does make a difference - it doesn't appear to be overridable if defined here! 
+	this.propUpdate=function(){console.log('feature propUpdate', propToBe);} 
+	***********/
 	if (typeof mesh.bimData=='undefined') {mesh.bimData={};}
 	if (typeof options!='undefined') {$.extend(this, options);}
 };
 
-Feature.prototype.propUpdate=function(propToBe){
-	this.mesh[this.alias]=propToBe;
+
+Feature.prototype.propUpdate=function(prop, propToBe){
+	/***************
+	Meant to be overriden.
+	If propToBe is primitive (number, string, boolean, null, undefined) then 
+	update is easy, prop=propToBe
+	If propToBe is complex (object, function) then prop is meant to match propToBe so
+	update is an operation such as prop.x=propToBe.x, prop.y=propToBe.y etc 
+	simply doing prop=propToBe will just assign the prop to another one which
+	will continue to change with future unrelated feature operations 
+	****************/
+	//console.log('feature propUpdate', propToBe);
 };
 
-Feature.prototype.setScene=function(scene, mesh){
+
+Feature.prototype.setScene=function(scene){
 	/**********
-	note that this function is also meant to be called as via 
-	prototype.setScene (ie. as a static function)
-	in which case is mesh is not available via this.mesh 
-	hence mesh is an argument
-	************/
-	
-	/****
-	NOOOOOOOOOO - this may be executed as a static function so keyword this is NA
-	//check if this function is being called as a method or via prototype...
-
-	if (typeof this.mesh != 'undefined'){
-		//setup property if not already there
-		if (typeof this.mesh[this.alias] == 'undefined'){
-			this.mesh[this.alias]=this.propDefault;
-		} else {
-		
-		//TO-DO 
-		//Consider further; Property already exists so either
-		//it's a property being harnessed or that	
-		//there's a conflict with another feature...  
-
-		}
-
-	}
+	If used then call as a static function then call it on the applicable mesh ie
+	Feature.prototype.setScene.call(mesh, scene)
 	**********/
 
 };

@@ -76,9 +76,9 @@ var PartsUI=function(board, title){
 	this.partDescFC=new FC(this.column$, {
 		//This feature should answer to restock event!!
 		alias:null, //Description
-		clan:'bimFC1', 
+		clan:'bimFC1',
 		control:FC,
-		prop:this.partDesc, 
+		prop:this.partDesc,
 		propToBe:null,
 		propUpdate:function(propToBe){ /*Read-only so don't do or return anything*/},
 		setScene:function(scene, mesh){}
@@ -93,9 +93,10 @@ var PartsUI=function(board, title){
 		//control:ChooserFC,
 		prop:that.partName,
 		//prop.this.bimHandler,
-		propToBe:'TBD from Choices',
-		propUpdate:function(label){
-			that.partHandle=BIM.parts[label]; //set to chosen part handler
+		propToBe:'TBD by choice menu',
+		propUpdate:function(propToBe){
+			that.partName=propToBe;//NEW
+			that.partHandle=BIM.parts[propToBe];
 			that.buildPart();
 		}		
 	});
@@ -110,6 +111,9 @@ var PartsUI=function(board, title){
 		prop:that.resourceName,
 		propToBe:'TBD from Choices',
 		propUpdate:function(label){
+			//update property
+			that.resourceName=label; //NEW
+			//update relevant
 			that.resource=BIM.resources[label];
 			//TO DO
 			//BIM.fun.trigger('change-parts', that.resourceName)

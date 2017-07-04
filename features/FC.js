@@ -38,13 +38,17 @@ var FeatureControl=function(place, feature) {
 	this.form$.append(this.label$, this.prop$).addClass(clan);
 	$(place).append(this.form$);
 	
-	//register this guy's events	
+	//register this guy's events - unregistered by remove() 	
 	BIM.func.on(this.getEvents());
 
 	this.feature=feature;
-	if (feature.alias==null) {this.label$.hide();} else {this.label$.text(feature.alias);} //hide label if empty string
-	if (typeof feature.prop == 'string') { this.prop$.text(feature.prop);} //converted to text for display
-	else  { /*this.prop$.text(feature.prop.toString());*/}
+	if (feature.alias==null) {this.label$.hide();} 
+	else {this.label$.text(feature.alias);} //hide label if empty string
+	
+	//if (typeof feature.prop == 'string') { 
+	//display the property
+	this.prop$.text(feature.prop.toString()); 
+	//} else  { /*this.prop$.text(feature.prop.toString());*/}
 	
 	return this;
 };
@@ -55,63 +59,40 @@ var __=FeatureControl.prototype;
 __.getEvents=function(){
 	return [
 		//{name:'featurechanged', data:this, handler:this.onFeatureChanged},
-		{name:'propertychanged', data:this, handler:this.onPropertyChanged}
+		{name:'propertychange', data:this, handler:this.onPropertyChange}
 	];
 };
 
-/* DEPRECATED 
 __.onSubmit=function(ev){ 
-	//this base class has no way of submitting, that's for inheritors to implement
-	//with an ok button (or such) that would trigger the form submit event.
-	//submit event => onSubmit triggers featurechange event => onFeatureChange evaluates feature.propUpdate() 
-
-	ev.preventDefault(); 
-	var feature=ev.data.feature;
-	var revisedValu=ev.data.feature.propToBe;
-	//BIM.fun.log('FED onSubmit:' + arguments.length);
-	if (typeof feature != 'undefined' && typeof revisedValu != 'undefined') {
-		BIM.fun.trigger('featurechanged', [feature]);
-	}	
+	/***********
+	This base class has a text box and submits after a keystroke (I think)
+	inheritors to override/implement submit with an ok button (or such)
+	this.form$=$('<form></form>').on('submit', this, this.onSubmit);
+	that triggers the form submit event.
+	submit event => onSubmit evaluates feature.propUpdate() and triggers propertychange => 
+	ev - submit event triggered from FC or inheritor such as TextFC
+	ev.data - FC or FC or inheritor such as TextFC
+	******/
+	
+	ev.preventDefault(); //prevent page refresh
+	try {
+		//console.log('propUpdate...', ev.data.feature.propUpdate);
+		//ev.data.feature.propUpdate(ev.data.feature.prop, ev.data.feature.propToBe);
+		ev.data.feature.propUpdate(ev.data.feature.propToBe);
+		//console.log('propertychange trigger...', ev.data.feature.propToBe);
+		BIM.fun.trigger('propertychange', [ev.data.feature.prop]);
+	} catch(er) {console.log(er);}
 };
 
-__.onFeatureChanged=function(ev, feature){
-	//triggered by form submit
-	var that=ev.data; 	
-	//all FCs called, but only update applicable FC/feature
-	//console.log('FED onFeatureChange:' + Object.keys(feature).toString());
-
-	if (feature === that.feature){
-		//console.log('the one to update: ' + feature.propToBe);
-		try{
-			//update valu field with revised value
-			if (typeof feature.propToBe == 'string'){ that.prop$.text( feature.propToBe );}
-			else { that.prop$.text( feature.propToBe.toString() );}
-			//execute the feature callback function that applies the changed valu to the mesh object
-			if (typeof feature.propUpdate =='function'){feature.propUpdate(feature.propToBe);}
-		} catch(er) {console.log(er);}
+__.onPropertyChange=function(ev, prop){
+	//meant to be overriden
+	//prop - property that has changed
+	if (ev.data.feature.prop === prop){
+		//console.log('propertychange handled by', ev.data.feature.mesh.name);
+		//the property was changed so update the display of it
+		ev.data.prop$.text(ev.data.feature.propToBe.toString());
 	}
 };
-
-*/
-
-__.onSubmit=function(ev){ 
-	//this base class has no way of submitting, that's for inheritors to implement
-	//with an ok button (or such) that would trigger the form submit event.
-	//submit event => onSubmit evaluates feature.propUpdate() and triggers propertychange => 
-
-}
-
-__.onPropertyChanged=function(ev, propJar, propKey){
-	//triggered externally to indicate that the subject property has changed, not by the feature
-	//console.log('onPropertyChanged...');
-	if ((ev.data.feature.mesh == propJar) && (ev.data.feature.alias == propKey)){
-		try {
-			//update valu field with revised value
-			if (typeof propJar[propKey] == 'string'){ ev.data.prop$.text( propJar[propKey] );}
-			else { ev.data.prop$.text( propJar[propKey].toString() );}
-		} catch(er) {console.log(er);}
-	}
-}
 
 __.remove=function(){
 	/*** 

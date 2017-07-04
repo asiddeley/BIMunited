@@ -48,21 +48,17 @@ var PeekerUI=function(board, title){
 	this.modeFC=new ChooserFC(this.div$, {
 		alias:'peek mode',
 		prop:this.mode,
-		propToBe:'byChoices',
-		propUpdate:function(rv){ return rv;},
+		propUpdate:function(propToBe){ this.mode=propToBe;},
 		choices:['single', 'multiple']
 	});
-	this.modeFC.start();
 	
 	//max number of picks to track
 	this.limit=3;
 	this.limitFC=new TextFC(this.div$, {
 		alias:'peek limit', 
 		prop:this.limit,
-		propToBe:'TBD by user input',	
-		propUpdate:function(rv){	return rv;}
+		propUpdate:function(v){this.limit=v;}
 	});	
-	//this.peekLimitFC.start(); //see onTabsActivate
 	
 	this.count$=$('<div>0</div>');
 	this.div$.append(this.count$);
@@ -73,7 +69,7 @@ var PeekerUI=function(board, title){
 	this.stickers=[];	
 	// return constructed ui object for chaining.
 	
-	this.fui=new FeaturesUI(null, 'Features');
+	this.fui=new FeaturesUI(null, 'Features', false);
 	this.div$.append(this.fui.div$);
 	//this.fui.start(); //see onTabsActivate
 	
@@ -155,7 +151,7 @@ __.onActiveUI=function(ev, aui){
 		//detach mouse control
 		$(BIM.options.canvas).off('mousedown.peekerui');
 	}
-	console.log("canvas events",$._data(BIM.options.canvas,"events"));
+	//console.log("canvas events",$._data(BIM.options.canvas,"events"));
 
 };
 
@@ -224,7 +220,11 @@ __.stickersCreate=function(mesh, i){
 	
 __.stickersRegen=function(){
 	//delete and remake stickers
-	for (i=0; i<this.stickers.length; i++){	this.stickers[i].dispose();};
+	var i, sticker;
+	for (i=0; i<this.stickers.length; i++){	
+		sticker=this.stickers[i];
+		if (typeof sticker!='undefined'){sticker.dispose();}
+	};
 	this.stickers=[]; 
 	var sticker;
 	for (i=0; i<this.picks.length; i++){

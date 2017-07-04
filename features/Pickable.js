@@ -64,11 +64,10 @@ Pickable.prototype.constructor=Pickable;
 var __=Pickable.prototype;
 
 //override
-__.propUpdate.prototype=function(propToBe){
+__.propUpdate=function(propToBe){
 	//call prototype, or super method in OOP. Don't care what it returns
 	Feature.prototype.propUpdate(propToBe);
 
-	Feature.propUpdate(propToBe);
 	if (propToBe){
 		//enable action
 	}
@@ -76,7 +75,7 @@ __.propUpdate.prototype=function(propToBe){
 };
 
 //override
-__.setScene.prototype=function(scene, mesh){
+__.setScene=function(scene, mesh){
 
 	//call prototype, or super method in OOP. Don't care what it returns
 	Feature.prototype.setScene(scene, mesh);

@@ -31,7 +31,7 @@ var $=require('jquery');
 var Element=require('handles/Handle');
 var Nameable=require('features/Nameable');
 var Position=require('features/Position');
-var Pickable=require('features/Pickable');
+//var Pickable=require('features/Pickable');
 var McGrowable=require('features/McGrowable');
 
 var Voxelite=function(topFeatures){
@@ -43,8 +43,8 @@ var Voxelite=function(topFeatures){
 	this.addFeatures(
 		Nameable, 
 		//userFeature('Desc', 'A 10 unit cube, that can be placed at 10 unit coordinates.'),
-		Position,
-		Pickable
+		Position
+		//Pickable
  	);
 
 };
