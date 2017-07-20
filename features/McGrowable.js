@@ -77,12 +77,14 @@ var grow=function(ev, more){
 	var np=new BABYLON.Vector3(pm.x-aa.x*10, pm.y-aa.y*10, pm.z-aa.z*10); //new position
 	
 	if (typeof mori.createInstance!='undefined'){
+		//mori is an instance  
 		inst=mori.createInstance('grown');
 		//important to add bimData to instance
 		inst.bimData={mesh:mori}; //  TO-DO make this bimableFE??
 		//important to add bimhandle to instance
 		inst.bimhandle=mori.bimhandle;
 	} else {
+		//mori is a mesh
 		inst=mori.bimData.mesh.createInstance('grown');
 		//important to add bimData to instance
 		inst.bimData=$.extend({}, mori.bimData); //add bimData to inst by cloning it from source
@@ -149,8 +151,12 @@ __.setScene=function(scene, mesh){
 	
 	mesh.actionManager.registerAction(
 		new BABYLON.ExecuteCodeAction(
-			BABYLON.ActionManager.OnLeftPickTrigger,
-			function(ev){ grow(ev, {scene:scene});}
+			//trigger
+			BABYLON.ActionManager.OnLeftPickTrigger,  
+			//code
+			function(ev){ grow(ev, {scene:scene});}, 
+			//condition
+			new BABYLON.PredicateCondition(mesh.actionManager, function(){return BIM.options.actionsEnabled;})
 		)
 	);
 	

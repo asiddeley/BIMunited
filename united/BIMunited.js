@@ -262,6 +262,12 @@ BIM.func={
 	
 	dump:function(txt){	BIM.ui.blackboard.divDump$.show().text(txt);},
 	
+	isActionEnabled:function(){
+		return BIM.fun.isActionEnabledValu;
+	},
+	
+	isActionEnabledValu:false,
+	
 	//this.trigger('bimMsg', message);
 	log:function() {for (var a in arguments) BIM.ui.blackboard.log(arguments[a].toString());},
 
@@ -388,6 +394,7 @@ BIM.lights=require('lights/lights');
 // Extended by user in API functions above
 BIM.options={
 	admin:{user:"unnamed", disc:'arch'},
+	actionsEnabled:false,
 	board:null,
 	canvas:null,
 	database:null,
