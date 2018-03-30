@@ -127,26 +127,21 @@ requirejs(['BIMunited'], function(BIM){
 	<button id="help">Help</button>	
 
 	<ul id="file-menu" class="menu">
-		<li><div>Database</div>
-		<ul>
-			<li><div>Admin</div></li>
-			<li><div>Models</div></li>
-		</ul>
-		</li>
+		<li onclick="BIM.input('new')"><div>New</div></li>
+		<li onclick="BIM.input('open')"><div>Open</div></li>
+		<li onclick="BIM.input('openro')"><div>Open Read-Only</div></li>
+		<li onclick="BIM.input('save')"><div>Save</div></li>
+		<li onclick="BIM.input('saveas')"><div>Save as</div></li>
 		<li>--</li>
-		<li><div>New</div></li>
-		<li><div>Open</div></li>
-		<li><div>Open Read-Only</div></li>
-		<li><div>Save</div></li>
-		<li><div>Save as</div></li>
+		<li onclick="BIM.input('admin')"><div>Admin</div></li>
 		<li>--</li>
-		<li><div>Exit</div></li>
+		<li onclick="BIM.input('exit')"><div>Exit</div></li>
 	</ul>
 
 	<ul id="tool-menu" class="menu">
 		<li onclick="BIM.input('bb')"><div>Blackboard</div></li>
 		<li>--</li>
-		<li onclick="BIM.input('part')"><div>Make</div></li>
+		<li onclick="BIM.input('make')"><div>Make</div></li>
 		<li onclick="BIM.input('peek')"><div>Peek</div></li>
 		<li onclick="BIM.input('pick')"><div>Pick</div></li>
 		<li onclick="BIM.input('poke')"><div>Poke</div></li>
@@ -158,22 +153,20 @@ requirejs(['BIMunited'], function(BIM){
 	</ul>
 
 	<ul id="part-menu" class="menu">
-		<li><div>Voxelite</div></li>
-		<li><div>Parcela</div></li>
-		<li><div>Floor</div></li>
-		<li><div>Wall</div></li>
-		<li><div>Opening</div></li>
-		<li><div>Worldbox</div></li>
+		<li onclick="BIM.input('voxelite')"><div>Voxelite</div></li>
+		<li onclick="BIM.input('floor')"><div>Floor</div></li>
+		<li onclick="BIM.input('wall')"><div>Wall</div></li>
+		<li onclick="BIM.input('opwning')"><div>Opening</div></li>
+		<li onclick="BIM.input('worldbox')"><div>Worldbox</div></li>
 	</ul>
 
 	<ul id="help-menu" class="menu">
-		<li><div>About</div></li>
+		<li onclick="BIM.input('about')"><div>About</div></li>
 		<li><div>User</div>
 			<ul>
-			<li><div>Overview</div></li>
-			<li><div>Command list</div></li>
-			<li><div>Documentation</div></li>
-			<li><div>Tutorials</div></li>
+			<li onclick="BIM.input('overview')"><div>Overview</div></li>
+			<li onclick="BIM.input('commandlist')"><div>Command list</div></li>
+			<li onclick="BIM.input('documentation')"><div>Documentation</div></li>
 			</ul>
 		</li>
 		<li><div>Develper</div>

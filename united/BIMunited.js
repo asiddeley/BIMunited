@@ -93,7 +93,8 @@ BIM.activate=function(options){
 	
 	
 	//canvas
-	if (typeof options.canvas=='undefined'){	this.canvas=$('<canvas></canvas>'); $('body').append(this.canvas); } 
+	if (typeof options.canvas=='undefined'){
+		this.canvas=$('<canvas></canvas>'); $('body').append(this.canvas); } 
 	else { this.canvas=options.canvas; }
 	
 	// prepare engine	
